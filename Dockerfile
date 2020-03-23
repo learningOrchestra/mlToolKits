@@ -6,4 +6,5 @@ RUN pip install flask
 
 EXPOSE 5000
 
-CMD [ "python", "server.py" ]
+ENV FLASK_APP  server.py
+ENTRYPOINT ["python", "-m", "flask", "run", "--host=0.0.0.0"]
