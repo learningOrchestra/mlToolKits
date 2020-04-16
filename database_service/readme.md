@@ -8,7 +8,7 @@ Os documentos são manipulados em formato json, sendo que a chave primária de c
 Insere um json no banco de dados através do path /add pelo método POST, o json deve estar contido no body da requisição http.
 ## GET /files
 Retorna todos os arquivos inseridos no banco de dados.
-## GET /file/<filename>
-Uma requisição com o filename do arquivo, retornando o arquivo caso exista um com dado valor.
-## DELETE /file/<filename>
-Requisição do tipo DELETE, informando o filename do arquivo, excluindo o arquivo do banco de dados, caso exista um com dado valor.
+## GET /file/filename
+Uma requisição com o valor do campo filename do arquivo, retornando o arquivo caso exista um com dado valor.
+## DELETE /file/filename
+Requisição do tipo DELETE, informando o valor do campo filename do arquivo, excluindo o arquivo do banco de dados, caso exista um com dado valor.
