@@ -1,6 +1,6 @@
 # Learning Orquestra: a Machine Learning resource orchestration
 
-The Learning Orchestra is a tool to paralelization of machine learning tasks using microservices.
+The Learning Orchestra is a tool to parallelization of machine learning tasks using microservices.
 
 ## tools used in this framework
 
