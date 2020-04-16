@@ -2,7 +2,7 @@
 
 The Learning Orchestra is a tool to parallelization of machine learning tasks using microservices.
 
-## tools used in this framework
+## tools used in this project
 
 Docker - Container \
 Docker Swarm - Container Orchestrator \
