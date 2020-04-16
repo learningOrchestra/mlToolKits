@@ -6,5 +6,5 @@ The Learning Orchestra is a tool to parallelization of machine learning tasks us
 
 Docker - Container \
 Docker Swarm - Container Orchestrator \
-Mongo - DataBase 
+Mongo - DataBase \
 GridFS - Mongo specification to work with large size files ( > 16 MB)
