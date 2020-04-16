@@ -6,4 +6,4 @@ The Learning Orchestra is a tool to parallelization of machine learning tasks us
 
 Docker (Container) \
 Docker Swarm (Container Orchestrator) \
-Mongo (DataBase) \
+Mongo (DataBase) 
