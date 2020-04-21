@@ -1,4 +1,4 @@
-# Learning Orquestra: a Machine Learning resource orchestration
+# Learning Orquestra: a Machine Learning resource orchestration (Building)
 
 The Learning Orchestra is a tool to parallelization of machine learning tasks using microservices.
 
