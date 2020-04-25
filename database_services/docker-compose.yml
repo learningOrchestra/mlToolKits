@@ -3,16 +3,23 @@ services:
     mongo_api:
         build: .
         restart: always
+        image: 127.0.0.1:5050/mongo_api 
         ports:
             - "5000:5000"
         depends_on:
             - mongo_db
+            - images
         links:
             - mongo_db
 
     mongo_db:
-        restart: always
+        restart: always 
         image: mongo
         ports:
             - "27017:27017"
+    images:
+        restart: always
+        image: registry
+        ports:
+            - "5050:5000"
 
