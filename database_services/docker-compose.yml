@@ -2,6 +2,7 @@ version: '3'
 services:
     mongo_api:
         build: .
+        restart: always
         ports:
             - "5000:5000"
         depends_on:
@@ -10,6 +11,7 @@ services:
             - mongo_db
 
     mongo_db:
+        restart: always
         image: mongo
         ports:
             - "27017:27017"
