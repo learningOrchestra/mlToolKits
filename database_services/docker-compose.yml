@@ -11,17 +11,24 @@ services:
             - images
         links:
             - mongo_db
+        deploy:
+            replicas: 1
 
     mongo_db:
         restart: always 
         image: mongo
         ports:
             - "27017:27017"
+        deploy:
+            replicas: 1
+
     images:
         restart: always
         image: registry
         ports:
             - "5050:5000"
+        deploy:
+            replicas: 1
 
     vizualizer:
         image: dockersamples/visualizer
@@ -29,3 +36,5 @@ services:
         - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
         - "8080:8080"
+        deploy:
+            replicas: 1
