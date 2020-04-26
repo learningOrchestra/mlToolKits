@@ -30,7 +30,7 @@ services:
         deploy:
             replicas: 1
 
-    vizualizer:
+    visualizer:
         image: dockersamples/visualizer
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
