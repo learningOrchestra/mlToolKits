@@ -2,8 +2,8 @@ version: '3'
 services:
     database_api:
         build: ./database_api_service
-        restart: always
-        image: 0.0.0.0:5050/database_api 
+        restart: on-failure
+        image: 5050/images:database_api
         ports:
             - "5000:5000"
         depends_on:
@@ -13,17 +13,21 @@ services:
             - database
         deploy:
             replicas: 1
+        networks:
+            database_service
 
     database:
-        restart: always 
+        restart: on-failure 
         image: mongo
         ports:
             - "27017:27017"
         deploy:
             replicas: 1
+        networks:
+            database_service
 
     images:
-        restart: always
+        restart: on-failure
         image: registry
         ports:
             - "5050:5000"
@@ -31,6 +35,7 @@ services:
             replicas: 1
 
     visualizer:
+        restart: on-failure
         image: dockersamples/visualizer
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
@@ -41,3 +46,6 @@ services:
             placement:
                 constraints:
                   - "node.role==manager"
+    
+networks:
+    database_service:
