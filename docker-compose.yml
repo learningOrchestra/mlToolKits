@@ -1,0 +1,43 @@
+version: '3'
+services:
+    database_api:
+        build: ./database_api_service
+        restart: always
+        image: 0.0.0.0:5050/database_api 
+        ports:
+            - "5000:5000"
+        depends_on:
+            - database
+            - images
+        links:
+            - database
+        deploy:
+            replicas: 1
+
+    database:
+        restart: always 
+        image: mongo
+        ports:
+            - "27017:27017"
+        deploy:
+            replicas: 1
+
+    images:
+        restart: always
+        image: registry
+        ports:
+            - "5050:5000"
+        deploy:
+            replicas: 1
+
+    visualizer:
+        image: dockersamples/visualizer
+        volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+        ports:
+        - "8080:8080"
+        deploy:
+            replicas: 1
+            placement:
+                constraints:
+                  - "node.role==manager"
