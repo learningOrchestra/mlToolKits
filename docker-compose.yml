@@ -14,7 +14,7 @@ services:
         deploy:
             replicas: 1
         networks:
-            database_service
+            - database_service
 
     database:
         restart: on-failure 
@@ -24,7 +24,7 @@ services:
         deploy:
             replicas: 1
         networks:
-            database_service
+            - database_service
 
     images:
         restart: on-failure
