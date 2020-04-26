@@ -33,7 +33,8 @@ services:
             - "5050:5000"
         deploy:
             replicas: 1
-
+        networks:
+            - database_service
     visualizer:
         restart: on-failure
         image: dockersamples/visualizer
