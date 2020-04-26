@@ -3,7 +3,7 @@ services:
     mongo_api:
         build: .
         restart: always
-        image: 127.0.0.1:5050/mongo_api 
+        image: 0.0.0.0:5050/mongo_api 
         ports:
             - "5000:5000"
         depends_on:
@@ -23,3 +23,9 @@ services:
         ports:
             - "5050:5000"
 
+    vizualizer:
+        image: dockersamples/visualizer
+        volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+        ports:
+        - "8080:8080"
