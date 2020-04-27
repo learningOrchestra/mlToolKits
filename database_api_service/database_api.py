@@ -47,7 +47,6 @@ def file(filename):
         return jsonify("File not found")
 
 
-
 @app.route('/delete/<filename>', methods=['DELETE'])
 def delete_file(filename):
     try:
@@ -58,7 +57,6 @@ def delete_file(filename):
         return response
     except:
         return jsonify("A error has ocurred in DELETE")
-
 
 
 @app.errorhandler(404)
