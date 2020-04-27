@@ -9,7 +9,8 @@ from flask import jsonify, request
 import gridfs
 
 app = Flask(__name__)
-mongo = MongoClient('mongo_db', 27017)
+mongo = MongoClient(os.environ["DATABASE_URL"],
+                    int(os.environ["DATABASE_PORT"]))
 files_gridfs = gridfs.GridFS(mongo.db)
 
 
