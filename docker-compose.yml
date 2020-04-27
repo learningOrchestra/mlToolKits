@@ -3,7 +3,7 @@ services:
     database_api:
         build: ./database_api_service
         restart: on-failure
-        image: 5050/images:database_api
+        image: 5050/database_api:database_api
         ports:
             - "5000:5000"
         depends_on:
