@@ -1,4 +1,5 @@
 version: '3'
+
 services:
     database_api:
         build: ./database_api_service
@@ -41,6 +42,7 @@ services:
                 condition: on-failure
         networks:
             - database
+
     visualizer:
         image: dockersamples/visualizer
         volumes:
@@ -54,6 +56,6 @@ services:
             placement:
                 constraints:
                   - "node.role==manager"
-    
+
 networks:
     database:
