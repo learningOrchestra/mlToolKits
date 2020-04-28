@@ -5,10 +5,10 @@ echo "Buiding own service images..."
 docker-compose build 
 
 echo "Adding the image service in docker daemon security exception..."
-echo "{
-  "insecure-registries" : ["myregistry:5000"]
+echo '{
+  "insecure-registries" : ["127.0.0.1:5050"]
 }
-" > /etc/docker/daemon.json
+' > /etc/docker/daemon.json
 
 
 echo "Restarting docker service..."
