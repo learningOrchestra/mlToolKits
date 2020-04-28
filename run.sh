@@ -6,7 +6,7 @@ docker-compose build
 
 echo "Adding the image service in docker daemon security exception..."
 echo '{
-  "insecure-registries" : ["127.0.0.1:5050"]
+  "insecure-registries" : ["myregistry:5050"]
 }
 ' > /etc/docker/daemon.json
 
