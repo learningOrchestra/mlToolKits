@@ -52,6 +52,8 @@ services:
 
         networks:
             - database
+        volumes:
+            - images:/var/lib/registry
 
     visualizer:
         image: dockersamples/visualizer
@@ -69,3 +71,6 @@ services:
 
 networks:
     database:
+
+volumes:
+    images:
