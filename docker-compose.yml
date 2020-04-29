@@ -21,14 +21,12 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=database
+            - DATABASE_URL=database_1
             - DATABASE_PORT=27017 
 
-    database:
+    database_1:
         image: mongo:4
         command: mongod --replSet "replica_set"
-        ports:
-            - "27017:27017"
         deploy:
             replicas: 1
             restart_policy:
@@ -39,11 +37,9 @@ services:
         networks:
             - database
 
-    database_replica_1:
+    database_2:
         image: mongo:4
         command: mongod --replSet "replica_set"
-        ports:
-            - "27017:27017"
         deploy:
             replicas: 1
             restart_policy:
@@ -54,11 +50,9 @@ services:
         networks:
             - database
 
-    database_replica_2:
+    database_3:
         image: mongo:4
         command: mongod --replSet "replica_set"
-        ports:
-            - "27017:27017"
         deploy:
             replicas: 1
             restart_policy:
