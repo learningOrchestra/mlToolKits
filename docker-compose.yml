@@ -25,7 +25,7 @@ services:
             - DATABASE_PORT=27017 
 
     database:
-        image: mongo
+        image: mongo:4
         ports:
             - "27017:27017"
         deploy:
@@ -39,7 +39,7 @@ services:
             - database
 
     images:
-        image: registry
+        image: registry:2
         ports:
             - "5050:5000"
         deploy:
