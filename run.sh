@@ -35,13 +35,6 @@ echo "------------------------------------------------"
 sleep 20
 docker push 127.0.0.1:5050/database_api:database_api
 
-echo "------------------------------------------------"
-echo "Configuring replica set in database services..."
-echo "------------------------------------------------"
-
-sleep 20
-
-docker exec $(docker stack ps service -q -f name="service_database_1") ./database_replica_set.sh
 
 echo "------------------------------------------------"
 echo "End."
