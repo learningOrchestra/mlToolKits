@@ -53,7 +53,7 @@ services:
         networks:
             - database
         volumes:
-            - images:./images
+            - images:/var/lib/registry
 
     visualizer:
         image: dockersamples/visualizer
