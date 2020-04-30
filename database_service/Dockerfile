@@ -1,4 +1,4 @@
 FROM mongo:4
-COPY script.sh /usr/local/bin/
-RUN chmod +x ./script.sh
-ENTRYPOINT ["./script.sh"]
+COPY script.sh /tmp/script.sh
+RUN chmod +x /tmp/script.sh
+ENTRYPOINT ["/tmp/script.sh"]
