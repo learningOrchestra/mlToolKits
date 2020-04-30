@@ -34,7 +34,7 @@ echo "------------------------------------------------"
 
 sleep 20
 docker push 127.0.0.1:5050/database_api:database_api
-docker push 127.0.0.1:5050/database:database
+docker push 127.0.0.1:5050/rs:rs
 
 
 echo "------------------------------------------------"

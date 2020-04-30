@@ -19,54 +19,34 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=database_1
+            - DATABASE_URL=rs1
             - DATABASE_PORT=27017 
 
-    database_1:
-        build: ./database_service
-        image: 127.0.0.1:5050/database:database
-        command: mongod --replSet "replica_set"
-        ports:
-            - "27017:27017"
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+    rs1:
+        image: mongo:4
+        command: mongod --replSet "rs0"
+        networks:
+            - database
+    rs2:
+        image: mongo:4
+        command: mongod --replSet "rs0"
+        networks:
+            - database
+    
+    rs3:
+        image: mongo:4
+        command: mongod --replSet "rs0"
         networks:
             - database
 
-    database_2:
-        image: mongo:4
-        ports:
-            - "27018:27017"
-        command: mongod --replSet "replica_set"
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+    rs:
+        image: 127.0.0.1:5050/rs:rs
+        build: ./mongors
         networks:
             - database
-
-    database_3:
-        image: mongo:4
-        ports:
-            - "27019:27017"
-        command: mongod --replSet "replica_set"
         deploy:
-            replicas: 1
             restart_policy:
                 condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - database
 
     images:
         image: registry:2
