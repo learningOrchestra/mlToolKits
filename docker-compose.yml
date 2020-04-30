@@ -7,7 +7,10 @@ services:
         ports:
             - "5000:5000"
         depends_on:
-            - database_1
+            - rs
+            - rs1
+            - rs2
+            - rs3
             - images
         deploy:
             replicas: 1
