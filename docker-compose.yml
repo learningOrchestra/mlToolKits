@@ -30,17 +30,23 @@ services:
         command: mongod --replSet "rs0"
         networks:
             - database
+        ports:
+            - "27017:27017"
+
     rs2:
         image: mongo:4
         command: mongod --replSet "rs0"
         networks:
             - database
-    
+        ports:
+            - "27018:27017"    
     rs3:
         image: mongo:4
         command: mongod --replSet "rs0"
         networks:
             - database
+        ports:
+            - "27019:27017"
 
     rs:
         image: 127.0.0.1:5050/rs:rs
