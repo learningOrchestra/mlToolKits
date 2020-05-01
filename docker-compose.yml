@@ -19,7 +19,7 @@ services:
         networks:
             - database
         environment:
-             - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
             - DATABASE_PORT=27017 
 
     database_primary:
