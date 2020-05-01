@@ -30,7 +30,7 @@ services:
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_ROOT_PASSWORD=owl45#21    
         volumes:
-            - 'database:/database'
+            - 'database:/bitnami'
         networks:
             - database
         deploy:
@@ -97,7 +97,7 @@ services:
         networks:
             - database
         volumes:
-            - images:/images
+            - images:/var/lib/images
 
     visualizer:
         image: dockersamples/visualizer
