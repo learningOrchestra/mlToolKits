@@ -77,9 +77,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
-                placement:
-                    constraints:
-                        - "node.role==worker"
+            placement:
+                constraints:
+                    - "node.role==worker"
 
     images:
         image: registry:2
