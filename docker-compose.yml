@@ -97,7 +97,7 @@ services:
         networks:
             - database
         volumes:
-            - images:/var/lib/images
+            - images:/var/lib/registry
 
     visualizer:
         image: dockersamples/visualizer
