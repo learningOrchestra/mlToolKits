@@ -13,6 +13,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
         networks:
             - database
         environment:
@@ -34,6 +37,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==manager"
 
     database_secondary:
         image: 'bitnami/mongodb:4'
@@ -51,6 +57,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
 
     database_arbiter:
         image: 'bitnami/mongodb:4'
@@ -68,6 +77,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+                placement:
+                    constraints:
+                        - "node.role==worker"
 
     images:
         image: registry:2
@@ -95,6 +107,9 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==manager"
 
 networks:
     database:
