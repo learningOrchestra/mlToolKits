@@ -19,7 +19,7 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://root:password123@mongodb-primary,mongodb-secondary/?replicaSet=replicasetkey123
+            - DATABASE_URL=mongodb://root:password123@mongodb-primary,mongodb-secondary/?replicaSet=replicaset
             - DATABASE_PORT=27017 
 
     mongodb-primary:
