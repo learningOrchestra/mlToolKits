@@ -2,7 +2,7 @@
 
 echo "learningOrschestra: a machine learning resource orchestrator"
 echo "------------------------------------------------"
-echo "Buiding own service images..."
+echo "Buiding own images service..."
 echo "------------------------------------------------"
 
 docker-compose build 
@@ -28,13 +28,13 @@ echo "------------------------------------------------"
 
 docker stack deploy --compose-file=docker-compose.yml service
 
-
 echo "------------------------------------------------"
 echo "Pushing the own service images in local repository..."
 echo "------------------------------------------------"
 
 sleep 20
 docker push 127.0.0.1:5050/database_api:database_api
+
 
 echo "------------------------------------------------"
 echo "End."

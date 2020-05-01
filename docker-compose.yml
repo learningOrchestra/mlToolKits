@@ -7,10 +7,8 @@ services:
         ports:
             - "5000:5000"
         depends_on:
-            - database
+            - database_primary
             - images
-        links:
-            - database
         deploy:
             replicas: 1
             restart_policy:
@@ -21,13 +19,41 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=database
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
             - DATABASE_PORT=27017 
 
-    database:
-        image: mongo:4
-        ports:
-            - "27017:27017"
+    database_primary:
+        image: 'bitnami/mongodb:4'
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=database_primary
+            - MONGODB_REPLICA_SET_MODE=primary
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_ROOT_PASSWORD=owl45#21    
+        volumes:
+            - 'database:/bitnami'
+        networks:
+            - database
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==manager"
+
+    database_secondary:
+        image: 'bitnami/mongodb:4'
+        depends_on:
+            - database_primary
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=database_secondary
+            - MONGODB_REPLICA_SET_MODE=secondary
+            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_PORT_NUMBER=27017
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+        networks:
+            - database
         deploy:
             replicas: 1
             restart_policy:
@@ -35,8 +61,27 @@ services:
             placement:
                 constraints:
                     - "node.role==worker"
+
+    database_arbiter:
+        image: 'bitnami/mongodb:4'
+        depends_on:
+         - database_primary
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=database_arbiter
+            - MONGODB_REPLICA_SET_MODE=arbiter
+            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_PORT_NUMBER=27017
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
         networks:
             - database
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
 
     images:
         image: registry:2
@@ -49,7 +94,6 @@ services:
             placement:
                 constraints:
                     - "node.role==manager"
-
         networks:
             - database
         volumes:
@@ -67,10 +111,11 @@ services:
                 condition: on-failure
             placement:
                 constraints:
-                  - "node.role==manager"
+                    - "node.role==manager"
 
 networks:
     database:
 
 volumes:
     images:
+    database:
