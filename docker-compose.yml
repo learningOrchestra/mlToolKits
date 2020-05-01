@@ -7,10 +7,7 @@ services:
         ports:
             - "5000:5000"
         depends_on:
-            - rs
-            - rs1
-            - rs2
-            - rs3
+            - mongodb-primary
             - images
         deploy:
             replicas: 1
@@ -22,25 +19,48 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=rs1
+            - DATABASE_URL=mongodb-primary
             - DATABASE_PORT=27017 
 
-    rs1:
-        image: mongo:4
-        command: mongod — replSet “rs0”
-
-    rs2:
-        image: mongo:4
-        command: mongod — replSet “rs0”
-
-    rs3:
-        image: mongo:4
-        command: mongod — replSet “rs0”
-
-    rs:
-        build: ./mongors
-        image: 127.0.0.1:5050/rs:rs
-
+    mongodb-primary:
+        image: 'bitnami/mongodb:latest'
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+            - MONGODB_REPLICA_SET_MODE=primary
+            - MONGODB_ROOT_PASSWORD=password123
+            - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    
+        volumes:
+            - 'mongodb_master_data:/bitnami'
+        networks:
+            - database
+            
+    mongodb-secondary:
+        image: 'bitnami/mongodb:latest'
+        depends_on:
+            - mongodb-primary
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+            - MONGODB_REPLICA_SET_MODE=secondary
+            - MONGODB_PRIMARY_HOST=mongodb-primary
+            - MONGODB_PRIMARY_PORT_NUMBER=27017
+            - MONGODB_PRIMARY_ROOT_PASSWORD=password123
+            - MONGODB_REPLICA_SET_KEY=replicasetkey123
+        networks:
+            - database
+    mongodb-arbiter:
+        image: 'bitnami/mongodb:latest'
+        depends_on:
+         - mongodb-primary
+        environment:
+            - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+            - MONGODB_REPLICA_SET_MODE=arbiter
+            - MONGODB_PRIMARY_HOST=mongodb-primary
+            - MONGODB_PRIMARY_PORT_NUMBER=27017
+            - MONGODB_PRIMARY_ROOT_PASSWORD=password123
+            - MONGODB_REPLICA_SET_KEY=replicasetkey123
+        networks:
+            - database
     images:
         image: registry:2
         ports:
@@ -77,3 +97,4 @@ networks:
 
 volumes:
     images:
+    mongodb_master_data:
