@@ -19,7 +19,7 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://database_primary,database_secondary/?replicaSet=replicaset
+             - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
             - DATABASE_PORT=27017 
 
     database_primary:
@@ -28,7 +28,7 @@ services:
             - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
             - MONGODB_REPLICA_SET_KEY=replicasetkey
-    
+            - MONGODB_ROOT_PASSWORD=owl45#21    
         volumes:
             - 'database:/database'
         networks:
@@ -51,6 +51,7 @@ services:
             - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
         networks:
             - database
         deploy:
@@ -71,6 +72,7 @@ services:
             - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
         networks:
             - database
         deploy:
