@@ -27,35 +27,19 @@ services:
 
     rs1:
         image: mongo:4
-        command: mongod --replSet "rs0"
-        networks:
-            - database
-        ports:
-            - "27017:27017"
+        command: mongod — replSet “rs0”
 
     rs2:
         image: mongo:4
-        command: mongod --replSet "rs0"
-        networks:
-            - database
-        ports:
-            - "27018:27017"    
+        command: mongod — replSet “rs0”
+
     rs3:
         image: mongo:4
-        command: mongod --replSet "rs0"
-        networks:
-            - database
-        ports:
-            - "27019:27017"
+        command: mongod — replSet “rs0”
 
     rs:
-        image: 127.0.0.1:5050/rs:rs
         build: ./mongors
-        networks:
-            - database
-        deploy:
-            restart_policy:
-                condition: on-failure
+        image: 127.0.0.1:5050/rs:rs
 
     images:
         image: registry:2
