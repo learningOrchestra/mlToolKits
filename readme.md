@@ -1,4 +1,4 @@
-# learningOrquestra: a Machine Learning resource orchestration :whale: (Building) 
+# learningOrquestra: a machine learning resource orchestrator :whale: (Building...) 
 
 The learningOrchestra is a tool to parallelization of machine learning tasks using microservices.
 
