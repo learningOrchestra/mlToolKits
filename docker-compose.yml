@@ -7,7 +7,7 @@ services:
         ports:
             - "5000:5000"
         depends_on:
-            - mongodb-primary
+            - database_primary
             - images
         deploy:
             replicas: 1
@@ -19,16 +19,16 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://root:password123@mongodb-primary,mongodb-secondary/?replicaSet=replicasetkey123
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
             - DATABASE_PORT=27017 
 
-    mongodb-primary:
+    database_primary:
         image: 'bitnami/mongodb:4.2'
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+            - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
-            - MONGODB_ROOT_PASSWORD=password123
-            - MONGODB_REPLICA_SET_KEY=replicasetkey123  
+            - MONGODB_REPLICA_SET_KEY=replicaset
+            - MONGODB_ROOT_PASSWORD=owl45#21    
         volumes:
             - 'database:/bitnami'
         networks:
@@ -41,17 +41,17 @@ services:
                 constraints:
                     - "node.role==manager"
 
-    mongodb-secondary:
+    database_secondary:
         image: 'bitnami/mongodb:4.2'
         depends_on:
-            - mongodb-primary
+            - database_primary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+            - MONGODB_ADVERTISED_HOSTNAME=database_secondary
             - MONGODB_REPLICA_SET_MODE=secondary
-            - MONGODB_PRIMARY_HOST=mongodb-primary
+            - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_PRIMARY_ROOT_PASSWORD=password123
-            - MONGODB_REPLICA_SET_KEY=replicasetkey123
+            - MONGODB_REPLICA_SET_KEY=replicaset
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
         networks:
             - database
         deploy:
@@ -62,17 +62,17 @@ services:
                 constraints:
                     - "node.role==worker"
 
-    mongodb-arbiter:
+    database_arbiter:
         image: 'bitnami/mongodb:4.2'
         depends_on:
-            - mongodb-primary
+         - database_primary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+            - MONGODB_ADVERTISED_HOSTNAME=database_arbiter
             - MONGODB_REPLICA_SET_MODE=arbiter
-            - MONGODB_PRIMARY_HOST=mongodb-primary
+            - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_PRIMARY_ROOT_PASSWORD=password123
-            - MONGODB_REPLICA_SET_KEY=replicasetkey123
+            - MONGODB_REPLICA_SET_KEY=replicaset
+            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
         networks:
             - database
         deploy:
