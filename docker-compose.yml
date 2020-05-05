@@ -23,7 +23,7 @@ services:
             - DATABASE_PORT=27017 
 
     database_primary:
-        image: 'bitnami/mongodb:latest'
+        image: 'bitnami/mongodb:4.2'
         environment:
             - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
@@ -42,7 +42,7 @@ services:
                     - "node.role==manager"
 
     database_secondary:
-        image: 'bitnami/mongodb:latest'
+        image: 'bitnami/mongodb:4.2'
         depends_on:
             - database_primary
         environment:
@@ -63,7 +63,7 @@ services:
                     - "node.role==worker"
 
     database_arbiter:
-        image: 'bitnami/mongodb:latest'
+        image: 'bitnami/mongodb:4.2'
         depends_on:
          - database_primary
         environment:
@@ -115,6 +115,7 @@ services:
 
 networks:
     database:
+        driver: overlay
 
 volumes:
     images:
