@@ -23,6 +23,7 @@ The learningOrchestra is a tool to parallelization of machine learning tasks usi
 * Linux hosts 
 * [Docker Engine](https://docs.docker.com/engine/install/) installed in all instances of your cluster
 * [Docker Compose](https://docs.docker.com/compose/install/) installed in manager instance of your cluster
+* Ensure wich your cluster environment no has network traffic block, as firewalls rules in your network or owner firewall in linux hosts, case has firewalls or other blockers, insert learningOrchestra in blocked exceptions
 
 ### Deploy
 
