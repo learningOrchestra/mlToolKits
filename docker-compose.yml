@@ -19,16 +19,17 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replicaset
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set
             - DATABASE_PORT=27017 
 
     database_primary:
-        image: 'bitnami/mongodb:4'
+        image: 'bitnami/mongodb:3.6'
         environment:
             - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
             - MONGODB_REPLICA_SET_KEY=replicasetkey
-            - MONGODB_ROOT_PASSWORD=owl45#21    
+            - MONGODB_ROOT_PASSWORD=owl45#21
+            - MONGODB_REPLICA_SET_NAME=replica_set    
         volumes:
             - 'database:/bitnami'
         networks:
@@ -42,7 +43,7 @@ services:
                     - "node.role==manager"
 
     database_secondary:
-        image: 'bitnami/mongodb:4'
+        image: 'bitnami/mongodb:3.6'
         depends_on:
             - database_primary
         environment:
@@ -52,6 +53,7 @@ services:
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+            - MONGODB_REPLICA_SET_NAME=replica_set
         networks:
             - database
         deploy:
@@ -63,7 +65,7 @@ services:
                     - "node.role==worker"
 
     database_arbiter:
-        image: 'bitnami/mongodb:4'
+        image: 'bitnami/mongodb:3.6'
         depends_on:
          - database_primary
         environment:
@@ -73,6 +75,7 @@ services:
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+            - MONGODB_REPLICA_SET_NAME=replica_set
         networks:
             - database
         deploy:
