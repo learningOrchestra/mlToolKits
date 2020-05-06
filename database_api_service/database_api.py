@@ -7,6 +7,7 @@ from bson import encode
 from bson import decode
 from flask import jsonify, request
 import gridfs
+import requests
 
 app = Flask(__name__)
 mongo = MongoClient(os.environ["DATABASE_URL"],
@@ -17,14 +18,25 @@ files_gridfs = gridfs.GridFS(mongo.db)
 @app.route('/add', methods=['POST'])
 def add_file():
     try:
-        files_gridfs.put(encode(request.json),
+        file_downloaded = requests.get(request.json["url"])
+
+        if(file_downloaded.status_code != 200):
+            response = jsonify({"stage": "download_file"})
+            response.status_code = file_downloaded.status_code
+            return response
+
+        inserted_file = request.json
+        inserted_file.update({"content": file_downloaded.json()})
+        files_gridfs.put(encode(inserted_file),
                          filename=request.json["filename"])
-        response = jsonify('file with filename = ' +
-                           str(request.json["filename"]) + ' added!')
+        response = jsonify({"stage": "inserted_file"})
         response.status_code = 200
         return response
+
     except:
-        return jsonify("A Error has ocurred, file not added!")
+        response = jsonify({"stage": "unknow_error"})
+        response.status_code = 500
+        return response
 
 
 @app.route('/files')
