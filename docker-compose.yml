@@ -27,7 +27,7 @@ services:
         environment:
             - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
-            - MONGODB_REPLICA_SET_KEY=replica_set_key
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_ROOT_PASSWORD=owl45#21
             - MONGODB_REPLICA_SET_NAME=replica_set    
         volumes:
@@ -51,7 +51,7 @@ services:
             - MONGODB_REPLICA_SET_MODE=secondary
             - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_REPLICA_SET_KEY=replica_set_key
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
             - MONGODB_REPLICA_SET_NAME=replica_set
         networks:
@@ -73,7 +73,7 @@ services:
             - MONGODB_REPLICA_SET_MODE=arbiter
             - MONGODB_PRIMARY_HOST=database_primary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_REPLICA_SET_KEY=replica_set_key
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
             - MONGODB_REPLICA_SET_NAME=replica_set
         networks:
