@@ -32,7 +32,7 @@ echo "------------------------------------------------"
 echo "Pushing the own service images in local repository..."
 echo "------------------------------------------------"
 
-sleep 20
+sleep 30
 docker push 127.0.0.1:5050/database_api:database_api
 
 
