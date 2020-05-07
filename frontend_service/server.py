@@ -18,9 +18,10 @@ def send_file():
         "url": request.form["url"]
     }
 
-    response = requests.post("http://" + os.environ["DATABASE_API_HOST"] +
-                             ":" + os.environ["DATABASE_API_PORT"] +
+    response = requests.post(os.environ["DATABASE_API_HOST"] +
+                             ":" + str(os.environ["DATABASE_API_PORT"]) +
                              "/add", json=body)
+
     return response.text
 
 
