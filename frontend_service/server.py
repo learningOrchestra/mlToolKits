@@ -13,17 +13,15 @@ def root():
 
 @app.route('/send-file', methods=['POST'])
 def send_file():
-    print(request.form['cpf'])
     body = {
         "filename": request.form['filename'],
         "url": request.form["url"]
     }
 
-    response = requests.post(str(DATABASE_API_HOST) + ":" +
-                             str(DATABASE_API_PORT) +
+    response = requests.post(os.environ["DATABASE_API_HOST"] + ":" +
+                             os.environ["DATABASE_API_PORT"] +
                              "/add", json=body)
-    json_object = json.loads(json.dumps(response.json()))
-    return json.dumps(json_object, indent=2)
+    return response.text
 
 
 if __name__ == '__main__':
