@@ -1,15 +1,13 @@
-FROM node:10
+FROM python:3
+
 WORKDIR /usr/src/frontend
-
 COPY . /usr/src/frontend
-RUN npm install
+RUN pip install -r requirements.txt
 
-EXPOSE 8000
+ENV FRONTEND_SERVER_HOST "0.0.0.0"
+ENV FRONTEND_SERVER_PORT 8000
 
-ENV HOST '0.0.0.0'
-ENV PORT 8000
-
+ENV DATABASE_API_HOST "0.0.0.0"
 ENV DATABASE_API_PORT 5000
-ENV DATABASE_API_HOST '0.0.0.0'
 
-CMD [ "node", "server.js" ]
+CMD ["python", "server.py"]
