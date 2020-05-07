@@ -3,7 +3,7 @@ version: '3'
 services:
     frontend:
         build: ./frontend_service
-        image: 127.0.0.1:5050/frontend:frontend
+        image: images:5050/frontend:frontend
         ports:
             - "80:8000"
         depends_on:
@@ -16,14 +16,14 @@ services:
                 constraints:
                     - "node.role==worker"
         networks:
-            - database
+            - frontend
         environment:
             - DATABASE_API_HOST=http://database_api
             - DATABASE_API_PORT=5000
 
     database_api:
         build: ./database_api_service
-        image: 127.0.0.1:5050/database_api:database_api
+        image: images:5050/database_api:database_api
         ports:
             - "5000:5000"
         depends_on:
@@ -38,6 +38,7 @@ services:
                     - "node.role==worker"
         networks:
             - database
+            - frontend
         environment:
             - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set
             - DATABASE_PORT=27017 
@@ -138,6 +139,7 @@ services:
 
 networks:
     database:
+    frontend:
 
 volumes:
     images:
