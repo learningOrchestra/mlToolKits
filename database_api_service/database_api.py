@@ -71,12 +71,9 @@ def delete_file(filename):
 @app.errorhandler(http_status_code_not_found)
 def not_found(error=None):
     global http_status_code_not_found
-    message = {
-        'status': http_status_code_not_found,
-        'message': 'Not Found: ' + request.url,
-    }
-    return jsonify(message), http_status_code_not_found
+    return jsonify('not_found: ' + request.url), http_status_code_not_found
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host=os.environ["DATABASE_API_HOST"],
+            port=int(os.environ["DATABASE_API_PORT"]))

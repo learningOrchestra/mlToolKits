@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+    frontend:
+        build: ./frontend_service
+        image: 127.0.0.1:5050/fronted:fronted
+        ports:
+            - "80:8000"
+        depends_on:
+            - database_api
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+
     database_api:
         build: ./database_api_service
         image: 127.0.0.1:5050/database_api:database_api
