@@ -5,7 +5,7 @@ echo "------------------------------------------------"
 echo "Buiding own images service..."
 echo "------------------------------------------------"
 
-docker-compose build 
+docker-compose build --no-cache
 
 echo "------------------------------------------------"
 echo "Adding the image service in docker daemon security exception..."
@@ -32,7 +32,7 @@ echo "------------------------------------------------"
 echo "Pushing the own service images in local repository..."
 echo "------------------------------------------------"
 
-sleep 20
+sleep 30
 docker push 127.0.0.1:5050/database_api:database_api
 
 

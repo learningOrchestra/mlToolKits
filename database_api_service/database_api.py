@@ -7,8 +7,14 @@ from bson import encode
 from bson import decode
 from flask import jsonify, request
 import gridfs
+import requests
+
+http_status_code_success = 200
+http_status_code_sucess_created = 201
+http_status_code_not_found = 404
 
 app = Flask(__name__)
+
 mongo = MongoClient(os.environ["DATABASE_URL"],
                     int(os.environ["DATABASE_PORT"]))
 files_gridfs = gridfs.GridFS(mongo.db)
@@ -16,58 +22,60 @@ files_gridfs = gridfs.GridFS(mongo.db)
 
 @app.route('/add', methods=['POST'])
 def add_file():
-    try:
-        files_gridfs.put(encode(request.json),
-                         filename=request.json["filename"])
-        response = jsonify('file with filename = ' +
-                           str(request.json["filename"]) + ' added!')
-        response.status_code = 200
-        return response
-    except:
-        return jsonify("A Error has ocurred, file not added!")
+    global http_status_code_sucess_created, http_status_code_success
+
+    file_downloaded = requests.get(request.json["url"])
+    if(file_downloaded.status_code != http_status_code_success):
+        return jsonify("url_not_downloaded"), file_downloaded.status_code
+
+    inserted_file = request.json
+    inserted_file.update({"content": file_downloaded.json()})
+    files_gridfs.put(encode(inserted_file),
+                     filename=request.json["filename"])
+
+    return jsonify("file_created"), http_status_code_sucess_created
 
 
 @app.route('/files')
 def files():
+    global http_status_code_success
+
     result = []
     for files in files_gridfs.find():
         result.append(decode(files.read()))
-    return dumps(result)
+
+    return dumps(result), http_status_code_success
 
 
 @app.route('/file/<filename>',)
 def file(filename):
-    try:
-        result = []
-        for files in files_gridfs.find({"filename": filename}):
-            result.append(decode(files.read()))
-        return dumps(result)
+    global http_status_code_success
 
-    except:
-        return jsonify("File not found")
+    result = []
+    for files in files_gridfs.find({"filename": filename}):
+        result.append(decode(files.read()))
+
+    return dumps(result), http_status_code_success
 
 
 @app.route('/delete/<filename>', methods=['DELETE'])
 def delete_file(filename):
-    try:
-        file_id = files_gridfs.get_version(filename)._id
-        files_gridfs.delete(file_id)
-        response = jsonify('File deleted!')
-        response.status_code = 200
-        return response
-    except:
-        return jsonify("A error has ocurred in DELETE")
+    global http_status_code_success
+
+    file_id = files_gridfs.get_version(filename)._id
+    files_gridfs.delete(file_id)
+
+    return jsonify("file_deleted"), http_status_code_success
 
 
-@app.errorhandler(404)
+@app.errorhandler(http_status_code_not_found)
 def not_found(error=None):
+    global http_status_code_not_found
     message = {
-        'status': 404,
+        'status': http_status_code_not_found,
         'message': 'Not Found: ' + request.url,
     }
-    resp = jsonify(message)
-    resp.status_code = 404
-    return resp
+    return jsonify(message), http_status_code_not_found
 
 
 if __name__ == "__main__":
