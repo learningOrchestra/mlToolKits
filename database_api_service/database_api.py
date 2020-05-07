@@ -12,6 +12,7 @@ import requests
 http_status_code_success = 200
 http_status_code_sucess_created = 201
 http_status_code_not_found = 404
+http_status_code_server_error = 500
 
 app = Flask(__name__)
 
@@ -24,9 +25,12 @@ files_gridfs = gridfs.GridFS(mongo.db)
 def add_file():
     global http_status_code_sucess_created, http_status_code_success
 
-    file_downloaded = requests.get(request.json["url"])
-    if(file_downloaded.status_code != http_status_code_success):
-        return jsonify("url_not_downloaded"), file_downloaded.status_code
+    try:
+        file_downloaded = requests.get(request.json["url"])
+        if(file_downloaded.status_code != http_status_code_success):
+            return jsonify("invalid_url"), file_downloaded.status_code
+    except Exception:
+        return jsonify("invalid_url"), http_status_code_server_error
 
     inserted_file = request.json
     inserted_file.update({"content": file_downloaded.json()})
