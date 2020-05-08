@@ -1,6 +1,26 @@
 version: '3'
 
 services:
+    frontend:
+        build: ./frontend_service
+        image: 127.0.0.1:5050/frontend:frontend
+        ports:
+            - "80:8000"
+        depends_on:
+            - database_api
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - frontend
+        environment:
+            - DATABASE_API_HOST=http://database_api
+            - DATABASE_API_PORT=5000
+
     database_api:
         build: ./database_api_service
         image: 127.0.0.1:5050/database_api:database_api
@@ -18,12 +38,13 @@ services:
                     - "node.role==worker"
         networks:
             - database
+            - frontend
         environment:
             - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set
             - DATABASE_PORT=27017 
 
     database_primary:
-        image: 'bitnami/mongodb:3.6'
+        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         environment:
             - MONGODB_ADVERTISED_HOSTNAME=database_primary
             - MONGODB_REPLICA_SET_MODE=primary
@@ -43,7 +64,7 @@ services:
                     - "node.role==manager"
 
     database_secondary:
-        image: 'bitnami/mongodb:3.6'
+        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
             - database_primary
         environment:
@@ -65,7 +86,7 @@ services:
                     - "node.role==worker"
 
     database_arbiter:
-        image: 'bitnami/mongodb:3.6'
+        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
          - database_primary
         environment:
@@ -87,7 +108,7 @@ services:
                     - "node.role==worker"
 
     images:
-        image: registry:2
+        image: registry:2.7.1
         ports:
             - "5050:5000"
         deploy:
@@ -103,7 +124,7 @@ services:
             - images:/var/lib/registry
 
     visualizer:
-        image: dockersamples/visualizer
+        image: dockersamples/visualizer:latest
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
@@ -118,6 +139,7 @@ services:
 
 networks:
     database:
+    frontend:
 
 volumes:
     images:

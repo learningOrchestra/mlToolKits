@@ -1,10 +1,10 @@
 FROM python:3
 
-ADD database_api.py /
-WORKDIR /
-COPY requirements.txt .
+WORKDIR /usr/src/database_api
+COPY . /usr/src/database_api
 RUN pip install -r requirements.txt
-EXPOSE 5000
 
-ENV FLASK_APP  database_api.py
-ENTRYPOINT ["python", "-m", "flask", "run", "--host=0.0.0.0"]
+ENV DATABASE_API_HOST "0.0.0.0"
+ENV DATABASE_API_PORT 5000
+
+CMD ["python", "database_api.py"]

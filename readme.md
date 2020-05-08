@@ -41,7 +41,7 @@ sudo ./run.sh
 If all things is happen good, the learningOrchestra is have been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
 ### Use
-* Visualize cluster state (deployed services instances and machines) - IP_FROM_CLUSTER:8080
-
+* Visualize cluster state (deployed services tasks and cluster's machines) - IP_FROM_CLUSTER:8080
+* learningOrchestra GUI - IP_FROM_CLUSTER (PORT 80)
 
 
