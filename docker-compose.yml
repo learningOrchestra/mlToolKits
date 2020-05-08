@@ -124,7 +124,7 @@ services:
             - images:/var/lib/registry
 
     visualizer:
-        image: dockersamples/visualizer:stable
+        image: dockersamples/visualizer:latest
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
