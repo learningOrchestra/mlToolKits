@@ -8,11 +8,13 @@ from bson import decode
 from flask import jsonify, request
 import gridfs
 import requests
+import json
 
 http_status_code_success = 200
 http_status_code_sucess_created = 201
 http_status_code_not_found = 404
 http_status_code_server_error = 500
+file_handler_name = "response_handler"
 
 app = Flask(__name__)
 
@@ -26,14 +28,23 @@ def add_file():
     global http_status_code_sucess_created, http_status_code_success
 
     try:
-        file_downloaded = requests.get(request.json["url"])
-        if(file_downloaded.status_code != http_status_code_success):
-            return jsonify("invalid_url"), file_downloaded.status_code
+        response = requests.get(request.json["url"], stream=True)
+        if(response.status_code != http_status_code_success):
+            return jsonify("invalid_url"), response.status_code
     except Exception:
         return jsonify("invalid_url"), http_status_code_server_error
 
+    response_handler = open(file_handler_name, "wb")
+
+    for chunk in response.iter_content(chunk_size=1024):
+        if chunk:
+            response_handler.write(chunk)
+
+    response_handler.close()
+    response_file = open(file_handler_name, "rb")
     inserted_file = request.json
-    inserted_file.update({"content": file_downloaded.json()})
+
+    inserted_file.update({"content": json.loads(response_file.read())})
     files_gridfs.put(encode(inserted_file),
                      filename=request.json["filename"])
 
