@@ -48,6 +48,7 @@ def add_file():
     files_gridfs.put(encode(inserted_file),
                      filename=request.json["filename"])
 
+    response_file.close()
     return jsonify("file_created"), http_status_code_sucess_created
 
 
