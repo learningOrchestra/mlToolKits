@@ -7,7 +7,7 @@ from bson import encode
 from bson import decode
 from flask import jsonify, request
 import gridfs
-from grifs import GridFSBucket
+from gridfs import GridFSBucket
 import requests
 import json
 
