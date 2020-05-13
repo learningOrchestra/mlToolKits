@@ -21,6 +21,7 @@ app = Flask(__name__)
 mongo = MongoClient(os.environ["DATABASE_URL"],
                     int(os.environ["DATABASE_PORT"]))
 files_gridfs = gridfs.GridFS(mongo.db)
+files_bucket = GridFSBucket(mongo.db)
 
 
 @app.route('/add', methods=['POST'])
@@ -42,14 +43,14 @@ def add_file():
 
     response_handler.close()
     response_file = open(file_handler_name, "rb")
-    inserted_file = request.json
 
-    inserted_file.update({"content": json.loads(response_file.read())})
-    files_gridfs.put(encode(inserted_file),
-                     filename=request.json["filename"])
+    file_stream = files_bucket.open_upload_stream(request.json["filename"],
+                                                  chunk_size_bytes=1024,
+                                                  metadata=request.json)
 
+    file_stream.write(response_file)
+    file_stream.close()
     response_file.close()
-    os.remove(file_handler_name)
 
     return jsonify("file_created"), http_status_code_sucess_created
 
