@@ -64,7 +64,7 @@ def files():
     for files in files_gridfs.find():
         result.append(files.read())
 
-    return {response: [result]}, http_status_code_success
+    return {'response': result}, http_status_code_success
 
 
 @app.route('/file/<filename>',)
@@ -75,7 +75,7 @@ def file(filename):
     for files in files_gridfs.find({"filename": filename}):
         result.append(files.read())
 
-    return {response: [result]}, http_status_code_success
+    return {'response': result}, http_status_code_success
 
 
 @app.route('/delete/<filename>', methods=['DELETE'])
