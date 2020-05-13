@@ -62,7 +62,7 @@ def files():
 
     result = []
     for files in files_gridfs.find():
-        result.append(decode(files.read()))
+        result.append(files.read())
 
     return dumps(result), http_status_code_success
 
