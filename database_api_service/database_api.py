@@ -49,6 +49,8 @@ def add_file():
                      filename=request.json["filename"])
 
     response_file.close()
+    os.remove(file_handler_name)
+
     return jsonify("file_created"), http_status_code_sucess_created
 
 
