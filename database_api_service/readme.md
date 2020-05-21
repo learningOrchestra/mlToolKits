@@ -3,19 +3,30 @@
 The database system has 4 services, the database_primary, database_secondary and database_arbiter, which uses an bitnami image of mongodb on DockerHub to host the database, this services work to database replication, in case of database_primary service fall, the database_secondary service will respond all read operations, the database_arbiter service will setting replication in database_primary and database_secondary services. There is a database API service (database_api), where it is created a level of abstraction through a REST API to use the database.
 
 # database_api service
-Documents are handled in json format, the primary key for each document being the filename field contained in the sent json file.
+Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 ## POST /add
-Insert a json into the database via path / add using the POST method, json must be contained in the body of the http request.
-The inserted json must contained the fields: \
+Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
+The inserted json must contained the fields: 
 ```
 {
   filename: "key_to_document_identification",
-  url: "http://sitetojson.file/path/to/json"
+  url: "http://sitetojson.file/path/to/csv"
 }
 ```
-## GET /files
-Returns all files inserted in the database.
-## GET /file/filename
-A request with the value of the file's filename field, returning the file if there is one with a given value.
+## POST /files
+Returns all files wich mach in query, and paginate in query result
+```
+{
+	"filename": "inserted_file_filename",
+	"skip": 0,
+	"limit": 10,
+	"query": {"Variable_name": "Total income"}
+}
+```
+* filename - filename of inserted file
+* skip - amount lines to skip in csv file
+* limit - limit of returned query result
+* query - query to find documents, if use method only to paginate, use blank json, as {}
+
 ## DELETE /file/filename
 Request of type DELETE, informing the value of the file's filename field, excluding the database file, if one exists with a given value.
