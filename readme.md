@@ -1,6 +1,6 @@
 # learningOrchestra: a machine learning resource orchestrator :whale: (Building...) 
 
-The learningOrchestra is a tool for distribuited machine learning processing.
+The learningOrchestra is a tool for distributed machine learning processing.
 
 # Services
 
