@@ -6,7 +6,7 @@ from flask import jsonify, request
 import requests
 from contextlib import closing
 import csv
-import json 
+import json
 import codecs
 
 HTTP_STATUS_CODE_SUCESS = 200
@@ -63,7 +63,7 @@ def add_file():
 @app.route('/file', methods=['POST'])
 def file():
     result = []
-    file_collection = database[request.json['filename']]
+    file_collection = database[request.json[MESSAGE_FILENAME]]
 
     skip = request.json['skip']
     limit = request.json['limit']
