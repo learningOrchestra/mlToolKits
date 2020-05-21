@@ -1,29 +1,24 @@
 import os
 from flask import Flask
-from pymongo import MongoClient
-from bson.json_util import dumps
-from bson.objectid import ObjectId
-from bson import encode
-from bson import decode
+from pymongo import MongoClient, errors
+from bson.json_util import loads, dumps
 from flask import jsonify, request
-import gridfs
-from gridfs import GridFSBucket
 import requests
-import json
+from contextlib import closing
+import csv
+import json 
+import codecs
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
-HTTP_STATUS_CODE_NOT_FOUND = 404
 HTTP_STATUS_CODE_SERVER_ERROR = 500
-FILE_HANDLER_NAME = "response_handler"
 MESSAGE_INVALID_URL = "invalid_url"
+MESSAGE_DUPLICATE_FILE = "duplicate_file"
 MESSAGE_RESULT = "result"
 MESSAGE_CREATED_FILE = "file_created"
 MESSAGE_FILENAME = "filename"
 MESSAGE_DELETED_FILE = "deleted_file"
-MESSAGE_INVALID_PARAMETER = "invalid_parameter"
-CHUNK_SIZE = 1024
-
+UTF8 = "utf-8"
 DATABASE_API_HOST = "DATABASE_API_HOST"
 DATABASE_API_PORT = "DATABASE_API_PORT"
 DATABASE_URL = "DATABASE_URL"
@@ -31,61 +26,51 @@ DATABASE_PORT = "DATABASE_PORT"
 
 app = Flask(__name__)
 
-mongo = MongoClient(os.environ[DATABASE_URL],
-                    int(os.environ[DATABASE_PORT]))
-files_gridfs = gridfs.GridFS(mongo.db)
-files_bucket = GridFSBucket(mongo.db)
+mongo_client = MongoClient(os.environ[DATABASE_URL],
+                           int(os.environ[DATABASE_PORT]))
+database = mongo_client.database
 
 
 @app.route('/add', methods=['POST'])
 def add_file():
+    result = []
     try:
-        response = requests.get(request.json["url"], stream=True)
+        with closing(requests.get(request.json['url'], stream=True)) as r:
+            reader = csv.reader(
+                codecs.iterdecode(r.iter_lines(), encoding=UTF8),
+                delimiter=',', quotechar='"')
+            count = 1
+            file_collection = database[request.json[MESSAGE_FILENAME]]
+            headers = next(reader)
+            for row in reader:
+                json_object = {headers[i]: row[i] for i in range(len(headers))}
+                json_object["_id"] = count
+                file_collection.insert_one(json_object)
+                count += 1
 
-        if(response.status_code != HTTP_STATUS_CODE_SUCESS):
-            return jsonify({MESSAGE_RESULT: MESSAGE_INVALID_URL}), \
-                response.status_code
-    except Exception:
+    except requests.exceptions.RequestException:
         return jsonify({MESSAGE_RESULT: MESSAGE_INVALID_URL}), \
             HTTP_STATUS_CODE_SERVER_ERROR
 
-    response_handler = open(FILE_HANDLER_NAME, "wb")
-
-    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-        if chunk:
-            response_handler.write(chunk)
-
-    response_handler.close()
-    response_file = open(FILE_HANDLER_NAME, "rb")
-
-    file_stream = files_bucket.open_upload_stream(
-                        request.json[MESSAGE_FILENAME],
-                        chunk_size_bytes=CHUNK_SIZE,
-                        metadata=request.json)
-
-    file_stream.write(response_file)
-    file_stream.close()
-    response_file.close()
+    except errors.PyMongoError:
+        return jsonify({MESSAGE_RESULT: MESSAGE_DUPLICATE_FILE}), \
+            HTTP_STATUS_CODE_SERVER_ERROR
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}), \
         HTTP_STATUS_CODE_SUCESS_CREATED
 
 
-@app.route('/files')
-def files():
+@app.route('/file', methods=['POST'])
+def file():
     result = []
-    for file in files_gridfs.find():
-        result.append(json.loads(file.read()))
+    file_collection = database[request.json['filename']]
 
-    return jsonify({MESSAGE_RESULT: result}), \
-        HTTP_STATUS_CODE_SUCESS
+    skip = request.json['skip']
+    limit = request.json['limit']
+    query = request.get_json()['query']
 
-
-@app.route('/file/<filename>',)
-def file(filename):
-    result = []
-    for file in files_gridfs.find({MESSAGE_FILENAME: filename}):
-        result.append(json.loads(file.read()))
+    for file in file_collection.find(query).skip(skip).limit(limit):
+        result.append(json.loads(dumps(file)))
 
     return jsonify({MESSAGE_RESULT: result}), \
         HTTP_STATUS_CODE_SUCESS
@@ -93,12 +78,8 @@ def file(filename):
 
 @app.route('/delete/<filename>', methods=['DELETE'])
 def delete_file(filename):
-    try:
-        file_id = files_gridfs.get_version(filename)._id
-        files_gridfs.delete(file_id)
-    except Exception:
-        return jsonify({MESSAGE_RESULT: MESSAGE_INVALID_PARAMETER}), \
-            HTTP_STATUS_CODE_SERVER_ERROR
+    file_collection = database[filename]
+    file_collection.drop()
 
     return jsonify({MESSAGE_RESULT: MESSAGE_DELETED_FILE}), \
         HTTP_STATUS_CODE_SUCESS
