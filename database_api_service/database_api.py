@@ -120,7 +120,18 @@ class FileStorage:
 
             self.database_connection.insert_one(json_object)
 
+        self.database_connection.update_one(
+            {'_id': 0}, {'$set': {'finished': True}})
+
     def start(self):
+        metadata_file = {
+            'filename': self.filename,
+            'url': self.url,
+            '_id': 0,
+            'finished': False
+        }
+        self.database_connection.insert_one(metadata_file)
+
         self.thread_pool.submit(self.download_file)
 
         self.thread_pool.submit(self.tratament_file)
