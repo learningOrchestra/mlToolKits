@@ -6,7 +6,14 @@ The database system has 4 services, the database_primary, database_secondary and
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 
 ## GET /files (request's body equals Null or None)
-Return all filenames in database.
+Return an array of metadata files in database.
+```
+{
+	"filename": "key_to_document_identification",
+	"finished": true,
+	"url": "http://sitetojson.file/path/to/csv"
+}
+```
 
 ## GET /files (request's body whith contents)
 Return rows of filename, and paginate in query result
@@ -28,9 +35,9 @@ The first row is the metadata file, metadata contain the fields:
 {
 
 	"_id": 0,
-	"filename": "filename",
+	"filename": "key_to_document_identification",
 	"finished": true or false,
-	"url": "url"
+	"url": "http://sitetojson.file/path/to/csv"
         
 }
 ```
