@@ -5,20 +5,17 @@ The database system has 4 services, the database_primary, database_secondary and
 # database_api service
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 
-## GET /files
-Return all filenames in database.
-
-## POST /add
-Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
-The inserted json must contained the fields: 
+## GET /files (request's body equals Null or None)
+Return an array of metadata files in database.
 ```
 {
-  filename: "key_to_document_identification",
-  url: "http://sitetojson.file/path/to/csv"
+	"filename": "key_to_document_identification",
+	"finished": true,
+	"url": "http://sitetojson.file/path/to/csv"
 }
 ```
 
-## POST /file
+## GET /files (request's body whith contents)
 Return rows of filename, and paginate in query result
 ```
 {
@@ -38,12 +35,26 @@ The first row is the metadata file, metadata contain the fields:
 {
 
 	"_id": 0,
-	"filename": "filename",
+	"filename": "key_to_document_identification",
 	"finished": true or false,
-	"url": "url"
+	"url": "http://sitetojson.file/path/to/csv"
         
 }
 ```
+## POST /files
+Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
+The inserted json must contained the fields: 
+```
+{
+  filename: "key_to_document_identification",
+  url: "http://sitetojson.file/path/to/csv"
+}
+```
 
-## DELETE /file/filename
-Request of type DELETE, informing the value of file's filename field, deleting the database file, if one exists with that value.
+## DELETE /files
+Request of type DELETE, informing the value of file's filename field in body request, deleting the database file, if one exists with that value.
+```
+{
+  filename: "key_to_document_identification"
+}
+```

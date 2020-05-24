@@ -58,7 +58,12 @@ class DatabaseApi:
         result = []
 
         for item in self.database.list_collection_names():
-            result.append(item)
+            file_collection = self.database[item]
+
+            metadata_collection = file_collection.find_one({'_id': 0})
+            metadata_collection.pop('_id')
+
+            result.append(metadata_collection)
 
         return result
 
@@ -66,7 +71,8 @@ class DatabaseApi:
 class FileStorage:
     MAX_QUEUE_SIZE = 1000
     MAX_NUMBER_THREADS = 3
-    FINISHED_FLAG = "finished"
+    FINISHED = "finished"
+    METADATA_FILE_ID = 0
 
     def __init__(self, filename, url, database_connection):
         self.thread_pool = ThreadPoolExecutor(
@@ -84,51 +90,53 @@ class FileStorage:
                 codecs.iterdecode(r.iter_lines(), encoding='utf-8'),
                 delimiter=',', quotechar='"')
             self.file_headers = next(reader)
-            count = 1
 
             for row in reader:
                 self.download_tratament_queue.put(row)
 
-        self.download_tratament_queue.put(self.FINISHED_FLAG)
+        self.download_tratament_queue.put(self.FINISHED)
 
     def tratament_file(self):
-        count = 1
+        row_count = 1
 
         while(True):
             downloaded_row = self.download_tratament_queue.get()
 
-            if(downloaded_row == self.FINISHED_FLAG):
+            if(downloaded_row == self.FINISHED):
                 break
 
             json_object = {self.file_headers[index]: downloaded_row[index]
                            for index
                            in range(len(self.file_headers))}
 
-            json_object["_id"] = count
+            json_object["_id"] = row_count
 
             self.tratament_save_queue.put(json_object)
-            count += 1
+            row_count += 1
 
-        self.tratament_save_queue.put(self.FINISHED_FLAG)
+        self.tratament_save_queue.put(self.FINISHED)
 
     def save_file(self):
         while(True):
             json_object = self.tratament_save_queue.get()
 
-            if(json_object == self.FINISHED_FLAG):
+            if(json_object == self.FINISHED):
                 break
 
             self.database_connection.insert_one(json_object)
 
         self.database_connection.update_one(
-            {'_id': 0}, {'$set': {'finished': True}})
+            {'_id': self.METADATA_FILE_ID}, {
+                '$set': {
+                    self.FINISHED: True
+                }})
 
     def start(self):
         metadata_file = {
             'filename': self.filename,
             'url': self.url,
-            '_id': 0,
-            'finished': False
+            '_id': self.METADATA_FILE_ID,
+            self.FINISHED: False
         }
         self.database_connection.insert_one(metadata_file)
 
