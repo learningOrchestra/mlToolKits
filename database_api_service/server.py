@@ -22,7 +22,7 @@ app = Flask(__name__)
 database = DatabaseApi()
 
 
-@app.route('/file', methods=[GET, DELETE, POST])
+@app.route('/files', methods=[GET, DELETE, POST])
 def file_manager():
     if(request.method == POST):
 
