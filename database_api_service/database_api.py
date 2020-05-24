@@ -89,7 +89,7 @@ class FileStorage:
             for row in reader:
                 self.download_tratament_queue.put(row)
 
-        self.download_tratament_queue.put(str(self.FINISHED_FLAG))
+        self.download_tratament_queue.put(self.FINISHED_FLAG)
 
     def tratament_file(self):
         count = 1
@@ -109,7 +109,7 @@ class FileStorage:
             self.tratament_save_queue.put(json_object)
             count += 1
 
-        self.tratament_save_queue.put(str(self.FINISHED_FLAG))
+        self.tratament_save_queue.put(self.FINISHED_FLAG)
 
     def save_file(self):
         while(True):
