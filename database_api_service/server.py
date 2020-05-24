@@ -18,7 +18,6 @@ database = DatabaseApi()
 
 @app.route('/add', methods=['POST'])
 def add_file():
-
     result = database.add_file(request.json["url"], request.json["filename"])
 
     if(result == DatabaseApi.MESSAGE_INVALID_URL):

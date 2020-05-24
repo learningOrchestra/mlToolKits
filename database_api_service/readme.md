@@ -33,5 +33,17 @@ Return rows of filename, and paginate in query result
 * limit - limit of returned query result
 * query - query to find documents, if use method only to paginate, use blank json, as {}
 
+The first row is the metadata file, metadata contain the fields:
+```
+{
+
+	"_id": 0,
+	"filename": "filename",
+	"finished": true or false,
+	"url": "url"
+        
+}
+```
+
 ## DELETE /file/filename
 Request of type DELETE, informing the value of file's filename field, deleting the database file, if one exists with that value.
