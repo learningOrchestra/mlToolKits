@@ -11,51 +11,62 @@ DATABASE_API_PORT = "DATABASE_API_PORT"
 
 MESSAGE_RESULT = "result"
 
+FILENAME = "filename"
+
+GET = 'GET'
+POST = 'POST'
+DELETE = 'DELETE'
+
 app = Flask(__name__)
 
 database = DatabaseApi()
 
 
-@app.route('/add', methods=['POST'])
-def add_file():
-    result = database.add_file(request.json["url"], request.json["filename"])
+@app.route('/file', methods=[GET, DELETE, POST])
+def file_manager():
+    if(request.method == POST):
 
-    if(result == DatabaseApi.MESSAGE_INVALID_URL):
-        return jsonify({MESSAGE_RESULT: DatabaseApi.MESSAGE_INVALID_URL}), \
-            HTTP_STATUS_CODE_SERVER_ERROR
+        result = database.add_file(
+            request.json["url"],
+            request.json[FILENAME])
 
-    elif(result == DatabaseApi.MESSAGE_DUPLICATE_FILE):
-        return jsonify({MESSAGE_RESULT: DatabaseApi.MESSAGE_DUPLICATE_FILE}), \
-            HTTP_STATUS_CODE_SERVER_ERROR
+        if(result == DatabaseApi.MESSAGE_INVALID_URL):
+            return jsonify(
+                {MESSAGE_RESULT: DatabaseApi.MESSAGE_INVALID_URL}),\
+                    HTTP_STATUS_CODE_SERVER_ERROR
 
-    else:
-        return jsonify({MESSAGE_RESULT: DatabaseApi.MESSAGE_CREATED_FILE}), \
-            HTTP_STATUS_CODE_SUCESS_CREATED
+        elif(result == DatabaseApi.MESSAGE_DUPLICATE_FILE):
+            return jsonify(
+                {MESSAGE_RESULT: DatabaseApi.MESSAGE_DUPLICATE_FILE}),\
+                    HTTP_STATUS_CODE_SERVER_ERROR
 
+        else:
+            return jsonify(
+                {MESSAGE_RESULT: DatabaseApi.MESSAGE_CREATED_FILE}),\
+                    HTTP_STATUS_CODE_SUCESS_CREATED
 
-@app.route('/file', methods=['POST'])
-def read_file():
-    file_result = database.read_file(
-        request.json['filename'], request.json['skip'],
-        request.json['limit'], request.json['query'])
+    elif(request.method == GET):
 
-    return jsonify({MESSAGE_RESULT: file_result}), \
-        HTTP_STATUS_CODE_SUCESS
+        if(request.data):
+            file_result = database.read_file(
+                request.json[FILENAME], request.json['skip'],
+                request.json['limit'], request.json['query'])
 
+            return jsonify(
+                {MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS
 
-@app.route('/delete/<filename>', methods=['DELETE'])
-def delete_file(filename):
-    result = database.delete_file(filename)
+        else:
+            return jsonify({MESSAGE_RESULT: database.get_files()}),\
+                HTTP_STATUS_CODE_SUCESS
 
-    if(result == DatabaseApi.MESSAGE_DELETED_FILE):
-        return jsonify({MESSAGE_RESULT: DatabaseApi.MESSAGE_DELETED_FILE}), \
-            HTTP_STATUS_CODE_SUCESS
+    elif(request.method == DELETE):
 
+        result = database.delete_file(request.json[FILENAME])
 
-@app.route('/files')
-def get_files():
-    return jsonify({MESSAGE_RESULT: database.get_files()}), \
-            HTTP_STATUS_CODE_SUCESS
+        if(result == DatabaseApi.MESSAGE_DELETED_FILE):
+            return jsonify(
+                {MESSAGE_RESULT: DatabaseApi.MESSAGE_DELETED_FILE}),\
+                    HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":
