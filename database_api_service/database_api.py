@@ -9,6 +9,7 @@ import codecs
 import threading
 from concurrent.futures import ThreadPoolExecutor, wait
 import time
+from queue import Queue
 
 DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
@@ -63,15 +64,18 @@ class DatabaseApi:
 
 
 class FileStorage:
-    DELAY_BETWEEN_STAGES = 1
+    MAX_QUEUE_SIZE = 1000
+    MAX_NUMBER_THREADS = 3
+    FINISHED_FLAG = "finished"
 
     def __init__(self, filename, url, database_connection):
-        self.thread_pool = ThreadPoolExecutor()
+        self.thread_pool = ThreadPoolExecutor(
+            max_workers=self.MAX_NUMBER_THREADS)
         self.filename = filename
         self.url = url
         self.database_connection = database_connection
-        self.download_tratament_queue = []
-        self.tratament_save_queue = []
+        self.download_tratament_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
+        self.tratament_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.file_headers = None
 
     def download_file(self):
@@ -83,32 +87,42 @@ class FileStorage:
             count = 1
 
             for row in reader:
-                self.download_tratament_queue.insert(0, row)
+                self.download_tratament_queue.put(row)
+
+        self.download_tratament_queue.put(str(self.FINISHED_FLAG))
 
     def tratament_file(self):
         count = 1
 
-        while(self.download_tratament_queue):
-            downloaded_row = self.download_tratament_queue.pop()
+        while(True):
+            downloaded_row = self.download_tratament_queue.get()
+
+            if(downloaded_row == self.FINISHED_FLAG):
+                break
 
             json_object = {self.file_headers[index]: downloaded_row[index]
                            for index
                            in range(len(self.file_headers))}
 
             json_object["_id"] = count
-            self.tratament_save_queue.insert(0, json_object)
+
+            self.tratament_save_queue.put(json_object)
             count += 1
 
+        self.tratament_save_queue.put(str(self.FINISHED_FLAG))
+
     def save_file(self):
-        while(self.tratament_save_queue):
-            self.database_connection.insert_one(
-                self.tratament_save_queue.pop())
+        while(True):
+            json_object = self.tratament_save_queue.get()
+
+            if(json_object == self.FINISHED_FLAG):
+                break
+
+            self.database_connection.insert_one(json_object)
 
     def start(self):
-        self.thread_pool.submit(self.download_file())
-        time.sleep(self.DELAY_BETWEEN_STAGES)
+        self.thread_pool.submit(self.download_file)
 
-        self.thread_pool.submit(self.tratament_file())
-        time.sleep(self.DELAY_BETWEEN_STAGES)
+        self.thread_pool.submit(self.tratament_file)
 
-        self.thread_pool.submit(self.save_file())
+        self.thread_pool.submit(self.save_file)
