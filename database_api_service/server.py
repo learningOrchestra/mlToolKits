@@ -49,10 +49,10 @@ def file_manager():
 
     elif(request.method == GET):
 
-        if(request.json):
+        if(request.args):
             file_result = database.read_file(
-                request.json[FILENAME], request.json['skip'],
-                request.json['limit'], request.json['query'])
+                request.args.get(FILENAME), request.args.get('skip'),
+                request.args.get('limit'), request.args.get('query'))
 
             return jsonify(
                 {MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS

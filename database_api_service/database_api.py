@@ -44,7 +44,11 @@ class DatabaseApi:
         result = []
         file_collection = self.database[filename]
 
-        for file in file_collection.find(query).skip(skip).limit(limit):
+        query_object = json.loads(query)
+        skip = int(skip)
+        limit = int(limit)
+
+        for file in file_collection.find(query_object).skip(skip).limit(limit):
             result.append(json.loads(dumps(file)))
 
         return result

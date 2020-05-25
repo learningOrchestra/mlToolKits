@@ -5,7 +5,7 @@ The database system has 4 services, the database_primary, database_secondary and
 # database_api service
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 
-## GET /files (request's body equals Null or None)
+## GET /files
 Return an array of metadata files in database.
 ```
 {
@@ -15,16 +15,9 @@ Return an array of metadata files in database.
 }
 ```
 
-## GET /files (request's body whith contents)
+## GET /files?filename=filename_key&skip=number&limit=number&query={}
 Return rows of filename, and paginate in query result
-```
-{
-	"filename": "inserted_file_filename",
-	"skip": 0,
-	"limit": 10,
-	"query": {"Variable_name": "Total income"}
-}
-```
+
 * filename - filename of inserted file
 * skip - amount lines to skip in csv file
 * limit - limit of returned query result
