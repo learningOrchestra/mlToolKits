@@ -11,8 +11,8 @@ from concurrent.futures import ThreadPoolExecutor, wait
 import time
 from queue import Queue
 
-DATABASE_URL = "DATABASE_URL"
-DATABASE_PORT = "DATABASE_PORT"
+ROW_ID = "_id"
+METADATA_ROW_ID = 0
 
 
 class DatabaseApi:
@@ -20,11 +20,13 @@ class DatabaseApi:
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
     MESSAGE_CREATED_FILE = "file_created"
     MESSAGE_DELETED_FILE = "deleted_file"
+    DATABASE_URL = "DATABASE_URL"
+    DATABASE_PORT = "DATABASE_PORT"
 
     def __init__(self):
         self.mongo_client = MongoClient(
-                os.environ[DATABASE_URL],
-                int(os.environ[DATABASE_PORT]))
+                os.environ[self.DATABASE_URL],
+                int(os.environ[self.DATABASE_PORT]))
         self.database = self.mongo_client.database
 
     def add_file(self, url, filename):
@@ -64,8 +66,9 @@ class DatabaseApi:
         for item in self.database.list_collection_names():
             file_collection = self.database[item]
 
-            metadata_collection = file_collection.find_one({'_id': 0})
-            metadata_collection.pop('_id')
+            metadata_collection = file_collection.find_one(
+                {ROW_ID: METADATA_ROW_ID})
+            metadata_collection.pop(ROW_ID)
 
             result.append(metadata_collection)
 
@@ -76,7 +79,6 @@ class FileStorage:
     MAX_QUEUE_SIZE = 1000
     MAX_NUMBER_THREADS = 3
     FINISHED = "finished"
-    METADATA_FILE_ID = 0
 
     def __init__(self, filename, url, database_connection):
         self.thread_pool = ThreadPoolExecutor(
@@ -113,7 +115,7 @@ class FileStorage:
                            for index
                            in range(len(self.file_headers))}
 
-            json_object["_id"] = row_count
+            json_object[ROW_ID] = row_count
 
             self.tratament_save_queue.put(json_object)
             row_count += 1
@@ -130,7 +132,7 @@ class FileStorage:
             self.database_connection.insert_one(json_object)
 
         self.database_connection.update_one(
-            {'_id': self.METADATA_FILE_ID}, {
+            {ROW_ID: METADATA_ROW_ID}, {
                 '$set': {
                     self.FINISHED: True
                 }})
@@ -139,7 +141,7 @@ class FileStorage:
         metadata_file = {
             'filename': self.filename,
             'url': self.url,
-            '_id': self.METADATA_FILE_ID,
+            ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False
         }
         self.database_connection.insert_one(metadata_file)
