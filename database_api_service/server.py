@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from database_api import DatabaseApi
+from flask_cors import CORS
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -18,6 +19,7 @@ POST = 'POST'
 DELETE = 'DELETE'
 
 app = Flask(__name__)
+CORS(app)
 
 database = DatabaseApi()
 
@@ -47,7 +49,7 @@ def file_manager():
 
     elif(request.method == GET):
 
-        if(request.data):
+        if(request.json):
             file_result = database.read_file(
                 request.json[FILENAME], request.json['skip'],
                 request.json['limit'], request.json['query'])
