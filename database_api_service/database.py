@@ -10,6 +10,8 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, wait
 import time
 from queue import Queue
+from datetime import datetime
+import pytz
 
 ROW_ID = "_id"
 METADATA_ROW_ID = 0
@@ -198,9 +200,13 @@ class FileDownloaderAndSaver(FileManagerInterface):
                 }})
 
     def storage_file(self, filename, url, database_connection):
+        timezone_london = pytz.timezone('Europe/London')
+        london_time = datetime.now(timezone_london)
+
         metadata_file = {
             'filename': filename,
             'url': url,
+            'time_created': london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False
         }
