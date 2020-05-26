@@ -200,7 +200,7 @@ class FileDownloaderAndSaver(FileManagerInterface):
                 }})
 
     def storage_file(self, filename, url, database_connection):
-        timezone_london = pytz.timezone('Europe/London')
+        timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
 
         metadata_file = {
