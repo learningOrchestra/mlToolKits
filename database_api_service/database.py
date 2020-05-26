@@ -209,7 +209,11 @@ class FileDownloaderAndSaver(FileManagerInterface):
 
             first_line = next(reader)
 
-            if(first_line[0][0] == "{" or first_line[0][0] == "<"):
+            first_symbol_html = '<'
+            first_symbol_json = '{'
+
+            if(first_line[0][0] == first_symbol_html or
+               first_line[0][0] == first_symbol_json):
                 raise requests.exceptions.RequestException
 
     def storage_file(self, filename, url, database_connection):
