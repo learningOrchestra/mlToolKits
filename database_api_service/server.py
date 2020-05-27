@@ -5,7 +5,8 @@ from flask_cors import CORS
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
-HTTP_STATUS_CODE_SERVER_ERROR = 500
+HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
+HTTP_STATUS_CODE_CONFLICT = 409
 
 DATABASE_API_HOST = "DATABASE_API_HOST"
 DATABASE_API_PORT = "DATABASE_API_PORT"
@@ -35,12 +36,12 @@ def create_file():
     if(result == DatabaseApi.MESSAGE_INVALID_URL):
         return jsonify(
             {MESSAGE_RESULT: DatabaseApi.MESSAGE_INVALID_URL}),\
-                HTTP_STATUS_CODE_SERVER_ERROR
+                HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     elif(result == DatabaseApi.MESSAGE_DUPLICATE_FILE):
         return jsonify(
             {MESSAGE_RESULT: DatabaseApi.MESSAGE_DUPLICATE_FILE}),\
-                HTTP_STATUS_CODE_SERVER_ERROR
+                HTTP_STATUS_CODE_CONFLICT
 
     else:
         return jsonify(

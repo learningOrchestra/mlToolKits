@@ -153,6 +153,7 @@ class FileDownloaderAndSaver(FileManagerInterface):
 
     def download_file(self, url):
         with closing(requests.get(url, stream=True)) as r:
+
             reader = csv.reader(
                 codecs.iterdecode(r.iter_lines(), encoding='utf-8'),
                 delimiter=',', quotechar='"')
@@ -199,7 +200,25 @@ class FileDownloaderAndSaver(FileManagerInterface):
                     self.FINISHED: True
                 }})
 
+    def validate_csv_url(self, url):
+        with closing(requests.get(url, stream=True)) as r:
+
+            reader = csv.reader(
+                codecs.iterdecode(r.iter_lines(), encoding='utf-8'),
+                delimiter=',', quotechar='"')
+
+            first_line = next(reader)
+
+            first_symbol_html = '<'
+            first_symbol_json = '{'
+
+            if(first_line[0][0] == first_symbol_html or
+               first_line[0][0] == first_symbol_json):
+                raise requests.exceptions.RequestException
+
     def storage_file(self, filename, url, database_connection):
+        self.validate_csv_url(url)
+
         timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
 
