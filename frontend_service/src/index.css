@@ -1,0 +1,21 @@
+:root {
+  --color-primary: #2196F3;
+  --color-secondary: #FFFFFF;
+  --color-typography: #2F2F2F;
+  --color-support-primary: #8D8D8D;
+  --color-support-secondary: #E4E4E4;
+  --color-background: #F2F2F2;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+hr {
+  border-top: 1px solid var(--color-support-secondary);
+  border-bottom: 0;
+  margin: 16px 0;
+} 

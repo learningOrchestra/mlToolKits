@@ -1,10 +1,12 @@
-FROM python:3
-
+FROM node:10
 WORKDIR /usr/src/frontend
+
 COPY . /usr/src/frontend
-RUN pip install -r requirements.txt
+RUN yarn
 
-ENV FRONTEND_SERVER_HOST "0.0.0.0"
-ENV FRONTEND_SERVER_PORT 8000
+EXPOSE 8000
 
-CMD ["python", "server.py"]
+ENV DATABASE_API_PORT 5000
+ENV DATABASE_API_HOST '0.0.0.0'
+
+CMD ["yarn", "start"]
