@@ -48,7 +48,7 @@ export default () => {
               <Home /> 
               <p>Project Overview</p>
             </NavItem>
-            <NavItem href="#">
+            <NavItem href="/workflow">
               <Workflow /> 
               <p>Workflow</p>
             </NavItem>
@@ -56,7 +56,7 @@ export default () => {
               <Data /> 
               <p>Data</p>
             </NavItem>
-            <NavItem href="/functions">
+            <NavItem href="#">
               <Function /> 
               <p>Functions</p>
             </NavItem>

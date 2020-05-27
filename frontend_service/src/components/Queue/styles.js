@@ -25,6 +25,7 @@ export const Queue = styled.div`
   }
 
   div.container-file-table {
+    /* width: 110%; */
     padding-top: 16px;
   }
 
@@ -52,19 +53,21 @@ export const Queue = styled.div`
   }
 
   p.file {
-    width: 10%;
+    margin-right: 16px;
   }
 
   p.name {
-    width: 40%;
+    width: 20%;
+    margin: 0 16px;
   }
 
-  p.size {
-    width: 15%;
+  p.url {
+    width: 45%;
+    margin: 0 16px;
   }
 
   p.status {
-    width: 20%;
+    margin: 0 16px;
   }
 
 `;

@@ -11,12 +11,12 @@ export const Card = styled.div`
 `;
 
 export const Main = styled.main`
+  overflow-x: hidden !important;
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  width: 100vw;
   padding-left: calc(100vw / 5);
-  background: linear-gradient(var(--color-primary) 33vh, var(--color-background) 33vh);
+  ${props => props.withoutBackground ? '' : 'background: linear-gradient(var(--color-primary) 33vh, var(--color-background) 33vh);'} 
 `;
 
 export const Wrapper = styled.div`
