@@ -140,7 +140,7 @@ services:
                 constraints:
                     - "node.role==manager"
 
-    spark_manager:
+    sparkmaster:
         image: birgerk/apache-spark
         ports:
             - 4040:4040
@@ -153,13 +153,13 @@ services:
 
     spark_worker:
         image: birgerk/apache-spark
-        entrypoint: dockerize -wait tcp://spark_manager:7077 -timeout 240s /sbin/my_init
+        entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
         ports:
             - 8081:8081
         links:
-            - spark_manager
+            - sparkmaster
         environment:
-            - SPARK_MASTER=spark_manager
+            - SPARK_MASTER=sparkmaster
             - SPARK_ROLE=slave
         deploy:
             replicas: 2
