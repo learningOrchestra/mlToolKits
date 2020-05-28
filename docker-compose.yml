@@ -141,7 +141,7 @@ services:
                     - "node.role==manager"
 
     sparkmaster:
-        image: birgerk/apache-spark
+        image: birgerk/apache-spark:2.2.1
         ports:
             - 4040:4040
             - 7077:7077
@@ -151,8 +151,8 @@ services:
         networks:
             - spark
 
-    spark_worker:
-        image: birgerk/apache-spark
+    sparkworker:
+        image: birgerk/apache-spark:2.2.1
         entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
         ports:
             - 8081:8081
