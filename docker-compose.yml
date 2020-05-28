@@ -131,7 +131,7 @@ services:
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
-        - "8080:8080"
+        - "8000:8080"
         deploy:
             replicas: 1
             restart_policy:
@@ -140,9 +140,38 @@ services:
                 constraints:
                     - "node.role==manager"
 
+    spark_manager:
+        image: birgerk/apache-spark:2.2.1
+        ports:
+            - 4040:4040
+            - 7077:7077
+            - 8080:8080
+        environment:
+            SPARK_ROLE: master
+        networks:
+            - spark
+
+    spark_worker:
+        image: birgerk/apache-spark:2.2.1
+        entrypoint: dockerize -wait tcp://spark_manager:7077 -timeout 240s /sbin/my_init
+        ports:
+            - 8081:8081
+        links:
+            - spark_manager
+        environment:
+            SPARK_MASTER: spark_manager
+            SPARK_ROLE: slave
+        deploy:
+            replicas: 2
+            restart_policy:
+                condition: on-failure
+        networks:
+            - spark
+
 networks:
     database:
     frontend:
+    spark:
 
 volumes:
     images:
