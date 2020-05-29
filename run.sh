@@ -34,6 +34,7 @@ echo "--------------------------------------------------------------------"
 
 sleep 30
 
+
 database_api_repository=127.0.0.1:5050/database_api
 database_api_tag=database_api
 
@@ -48,6 +49,7 @@ echo "Removing database_api image from local host..."
 echo "--------------------------------------------------------------------"
 docker rmi $database_api_repository:$database_api_tag
 
+
 frontend_repository=127.0.0.1:5050/frontend
 frontend_tag=frontend
 
@@ -61,6 +63,7 @@ echo "Removing frontend image from local host..."
 echo "--------------------------------------------------------------------"
 docker rmi $frontend_repository:$frontend_tag
 
+
 spark_repository=127.0.0.1:5050/spark
 spark_tag=spark
 
@@ -73,6 +76,20 @@ echo "--------------------------------------------------------------------"
 echo "Removing spark image from local host..."
 echo "--------------------------------------------------------------------"
 docker rmi $spark_repository:$spark_tag
+
+
+projection_repository=127.0.0.1:5050/projection
+projection_tag=projection
+
+echo "--------------------------------------------------------------------"
+echo "Pushing projection service image..."
+echo "--------------------------------------------------------------------"
+docker push $projection_repository:$projection_tag
+
+echo "--------------------------------------------------------------------"
+echo "Removing projection image from local host..."
+echo "--------------------------------------------------------------------"
+docker rmi $projection_repository:$projection_tag
 
 echo "--------------------------------------------------------------------"
 echo "End."
