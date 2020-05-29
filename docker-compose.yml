@@ -163,7 +163,7 @@ services:
             - SPARK_MASTER=sparkmaster
             - SPARK_ROLE=slave
         deploy:
-            replicas: 2
+            replicas: 1
             restart_policy:
                 condition: on-failure
         networks:
