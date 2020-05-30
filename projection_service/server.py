@@ -21,19 +21,17 @@ MESSAGE_RESULT = "result"
 app = Flask(__name__)
 CORS(app)
 
-# filename
-# projection_filename
-# fields
-@app.route('/projections', methods=[GET])
+
+@app.route('/projections', methods=[POST])
 def create_projection():
     spark_manager = SparkManager(
                             os.environ[DATABASE_URL],
                             DATABASE_NAME,
-                            request.args.get("filename"),
-                            request.args.get(
-                                "projection_filename")
+                            request.json["filename"],
+                            request.json[
+                                "projection_filename"]
                                 )
-    spark_manager.projection(request.args.getlist('fields', type=str))
+    spark_manager.projection(request.json['fields'], type=str)
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
         HTTP_STATUS_CODE_SUCESS_CREATED

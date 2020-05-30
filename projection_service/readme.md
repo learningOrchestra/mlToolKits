@@ -1,0 +1,11 @@
+# Projection service
+Projection service provide an api to make a projection from file inserted in database service, generating a new file and putting in database service
+
+## POST /projections
+```
+{
+    filename: filename_of_file,
+    filename_projection : filename_to_save_projection,
+    fields : [list, of, fields, to, be, used, in, projection]
+}
+```
