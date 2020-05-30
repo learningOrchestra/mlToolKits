@@ -5,7 +5,7 @@ Projection service provide an api to make a projection from file inserted in dat
 ```
 {
     filename: filename_of_file,
-    filename_projection : filename_to_save_projection,
+    projection_filename : filename_to_save_projection,
     fields : [list, of, fields, to, be, used, in, projection]
 }
 ```
