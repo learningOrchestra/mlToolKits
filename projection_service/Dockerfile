@@ -1,7 +1,7 @@
 FROM python:3.7.7
 
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk
+    apt-get install -y openjdk-11-jdk
 
 WORKDIR /usr/src/projection
 COPY . /usr/src/projection
