@@ -27,8 +27,8 @@ class SparkManager(ProcessorInterface):
                                     database_name + '.' +
                                     filename_output) \
                             .master("spark://" +
-                                    os.environ(SPARKMASTER_HOST) +
-                                    ':' + os.environ(SPARKMASTER_PORT)) \
+                                    os.environ[SPARKMASTER_HOST] +
+                                    ':' + str(os.environ[SPARKMASTER_PORT])) \
                             .getOrCreate()
 
     def projection(self, fields):
