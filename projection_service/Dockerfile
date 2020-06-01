@@ -5,9 +5,25 @@ RUN apt-get update && \
 
 WORKDIR /usr/src/projection
 COPY . /usr/src/projection
+
 RUN pip install -r requirements.txt
+RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
 
 ENV PROJECTION_HOST "0.0.0.0"
 ENV PROJECTION_PORT 5001
 
+ENV SPARKMASTER_HOST "0.0.0.0"
+ENV SPARKMASTER_PORT 7077
+
+
+ENV SPARK_VERSION 2.4.5
+ENV SPARK_INSTALL /usr/local
+ENV SPARK_HOME $SPARK_INSTALL/spark
+ENV HADOOP_VERSION 2.7
+ENV PYSPARK_PYTHON python
+
+RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION.tgz | tar -xz -C $SPARK_INSTALL && \
+    cd $SPARK_INSTALL && ln -s spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION spark
+
+RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
 CMD ["python", "server.py"]
