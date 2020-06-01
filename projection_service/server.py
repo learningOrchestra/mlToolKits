@@ -31,7 +31,7 @@ def create_projection():
                             request.json[
                                 "projection_filename"]
                                 )
-    spark_manager.projection(request.json['fields'], type=str)
+    spark_manager.projection(request.json['fields'])
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
         HTTP_STATUS_CODE_SUCESS_CREATED
