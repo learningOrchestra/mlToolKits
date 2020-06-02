@@ -5,7 +5,7 @@ echo "--------------------------------------------------------------------"
 echo "Buiding own images service..."
 echo "--------------------------------------------------------------------"
 
-docker-compose build --no-cache
+docker-compose build
 
 echo "--------------------------------------------------------------------"
 echo "Adding the image service in docker daemon security exception..."
