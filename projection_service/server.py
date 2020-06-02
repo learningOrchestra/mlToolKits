@@ -28,9 +28,8 @@ def create_projection():
                             os.environ[DATABASE_URL],
                             DATABASE_NAME,
                             request.json["filename"],
-                            request.json[
-                                "projection_filename"]
-                                )
+                            request.json["projection_filename"])
+
     spark_manager.projection(request.json['fields'])
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
