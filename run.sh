@@ -44,11 +44,6 @@ echo "Pushing database_api service image..."
 echo "--------------------------------------------------------------------"
 docker push $database_api_repository:$database_api_tag
 
-echo "--------------------------------------------------------------------"
-echo "Removing database_api image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $database_api_repository:$database_api_tag
-
 
 frontend_repository=127.0.0.1:5050/frontend
 frontend_tag=frontend
@@ -57,11 +52,6 @@ echo "--------------------------------------------------------------------"
 echo "Pushing frontend service image..."
 echo "--------------------------------------------------------------------"
 docker push $frontend_repository:$frontend_tag
-
-echo "--------------------------------------------------------------------"
-echo "Removing frontend image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $frontend_repository:$frontend_tag
 
 
 spark_repository=127.0.0.1:5050/spark
@@ -72,11 +62,6 @@ echo "Pushing spark service image..."
 echo "--------------------------------------------------------------------"
 docker push $spark_repository:$spark_tag
 
-echo "--------------------------------------------------------------------"
-echo "Removing spark image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $spark_repository:$spark_tag
-
 
 projection_repository=127.0.0.1:5050/projection
 projection_tag=projection
@@ -86,10 +71,6 @@ echo "Pushing projection service image..."
 echo "--------------------------------------------------------------------"
 docker push $projection_repository:$projection_tag
 
-echo "--------------------------------------------------------------------"
-echo "Removing projection image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $projection_repository:$projection_tag
 
 echo "--------------------------------------------------------------------"
 echo "End."
