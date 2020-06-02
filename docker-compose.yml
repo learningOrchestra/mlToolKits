@@ -198,8 +198,6 @@ services:
             placement:
                 constraints:
                     - "node.role==worker"
-        volumes:
-            - 'database_api:/database_api'
         networks:
             - database
             - frontend
