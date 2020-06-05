@@ -32,6 +32,10 @@ class SparkManager(ProcessorInterface):
                             .getOrCreate()
 
     def projection(self, fields):
-        data_frame = self.spark_session.read.format("mongo").load()
+        data_frame = self.spark_session.read.format(
+                "com.mongodb.spark.sql.DefaultSource").load()
+
         projection_data_frame = data_frame.select(fields).collect()
-        projection_data_frame.write.format("mongo").save()
+
+        projection_data_frame.write.format(
+                "com.mongodb.spark.sql.DefaultSource").save()
