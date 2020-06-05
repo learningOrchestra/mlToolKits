@@ -12,7 +12,7 @@ RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
 ENV PROJECTION_HOST "0.0.0.0"
 ENV PROJECTION_PORT 5001
 
-ENV SPARKMASTER_HOST "0.0.0.0"
+ENV SPARKMASTER_HOST "sparkmaster"
 ENV SPARKMASTER_PORT 7077
 
 
