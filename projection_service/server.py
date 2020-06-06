@@ -35,7 +35,7 @@ def create_projection():
         os.environ[DATABASE_NAME] + '.' + \
         request.json["projection_filename"] + "?replicaSet=" + \
         os.environ[DATABASE_REPLICA_SET] + \
-        "authSource=admin"
+        "&authSource=admin"
 
     spark_manager = SparkManager(
                             database_url_input,
