@@ -25,15 +25,15 @@ CORS(app)
 
 @app.route('/projections', methods=[POST])
 def create_projection():
-    database_url_input = os.envirion(DATABASE_URL) + '/' + \
-        os.environ(DATABASE_NAME) + '.' + \
+    database_url_input = os.envirion[DATABASE_URL] + '/' + \
+        os.environ[DATABASE_NAME] + '.' + \
         request.json["filename"] + "?replicaSet=" + \
-        os.environ(DATABASE_REPLICA_SET)
+        os.environ[DATABASE_REPLICA_SET]
 
-    database_url_output = os.envirion(DATABASE_URL) + '/' + \
-        os.environ(DATABASE_NAME) + '.' + \
+    database_url_output = os.envirion[DATABASE_URL] + '/' + \
+        os.environ[DATABASE_NAME] + '.' + \
         request.json["projection_filename"] + "?replicaSet=" + \
-        os.environ(DATABASE_REPLICA_SET)
+        os.environ[DATABASE_REPLICA_SET]
 
     spark_manager = SparkManager(
                             database_url_input,
