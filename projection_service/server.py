@@ -10,7 +10,8 @@ PROJECTION_HOST = "PROJECTION_HOST"
 PROJECTION_PORT = "PROJECTION_PORT"
 
 DATABASE_URL = "DATABASE_URL"
-DATABASE_NAME = "db"
+DATABASE_NAME = "DATABASE_NAME"
+DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 GET = 'GET'
 POST = 'POST'
@@ -24,11 +25,19 @@ CORS(app)
 
 @app.route('/projections', methods=[POST])
 def create_projection():
+    database_url_input = os.envirion(DATABASE_URL) + '/' + \
+        os.environ(DATABASE_NAME) + '.' + \
+        request.json["filename"] + "?replicaSet=" + \
+        os.environ(DATABASE_REPLICA_SET)
+
+    database_url_output = os.envirion(DATABASE_URL) + '/' + \
+        os.environ(DATABASE_NAME) + '.' + \
+        request.json["projection_filename"] + "?replicaSet=" + \
+        os.environ(DATABASE_REPLICA_SET)
+
     spark_manager = SparkManager(
-                            os.environ[DATABASE_URL],
-                            DATABASE_NAME,
-                            request.json["filename"],
-                            request.json["projection_filename"])
+                            database_url_input,
+                            database_url_output)
 
     spark_manager.projection(request.json['fields'])
     return jsonify(
@@ -38,4 +47,4 @@ def create_projection():
 
 if __name__ == "__main__":
     app.run(host=os.environ[PROJECTION_HOST],
-            port=int(os.environ[PROJECTION_PORT]), debug=True)
+            port=int(os.environ[PROJECTION_PORT]))

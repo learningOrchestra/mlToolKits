@@ -13,19 +13,14 @@ class ProcessorInterface():
 class SparkManager(ProcessorInterface):
     MESSAGE_CREATED_FILE = "file_created"
 
-    def __init__(self, database_url, database_name, filename_input,
-                 filename_output):
+    def __init__(self, database_url_input, database_url_output):
         self.spark_session = SparkSession \
                             .builder \
                             .appName("projection") \
                             .config("spark.mongodb.input.uri",
-                                    database_url +
-                                    database_name + '.' +
-                                    filename_input) \
+                                    database_url_input) \
                             .config("spark.mongodb.output.uri",
-                                    database_url +
-                                    database_name + '.' +
-                                    filename_output) \
+                                    database_url_output) \
                             .config('spark.jars.packages',
                                     'org.mongodb.spark:mongo-spark' +
                                     '-connector_2.11:2.4.2')\
