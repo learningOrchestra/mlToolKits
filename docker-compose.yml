@@ -203,7 +203,7 @@ services:
             - frontend
             - spark
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set\
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set/
             - DATABASE_PORT=27017 
 
 networks:
