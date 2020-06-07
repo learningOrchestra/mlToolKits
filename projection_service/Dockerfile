@@ -1,7 +1,15 @@
 FROM python:3.7.7
 
-RUN apt-get update && \
-    apt-get install -y openjdk-11-jdk
+RUN apt update && \
+    apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
+
+RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+
+RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+
+RUN apt update && \
+    apt install -y adoptopenjdk-8-hotspot
+
 
 WORKDIR /usr/src/projection
 COPY . /usr/src/projection
