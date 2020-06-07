@@ -37,6 +37,9 @@ def create_projection():
         os.environ[DATABASE_REPLICA_SET] + \
         "&authSource=admin"
 
+    print(database_url_input, flush=True)
+    print(database_url_output, flush=True)
+
     spark_manager = SparkManager(
                             database_url_input,
                             database_url_output)
@@ -49,4 +52,4 @@ def create_projection():
 
 if __name__ == "__main__":
     app.run(host=os.environ[PROJECTION_HOST],
-            port=int(os.environ[PROJECTION_PORT]))
+            port=int(os.environ[PROJECTION_PORT]), debug=True)
