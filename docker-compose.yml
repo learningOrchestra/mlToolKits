@@ -147,8 +147,6 @@ services:
             - 4040:4040
             - 7077:7077
             - 8080:8080
-            - 41000:41000
-            - 41001:41001
         environment:
             - SPARK_ROLE=master
         deploy:
