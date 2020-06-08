@@ -3,6 +3,7 @@ import os
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
+SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 
 
 class ProcessorInterface():
@@ -21,13 +22,8 @@ class SparkManager(ProcessorInterface):
                                     database_url_input) \
                             .config("spark.mongodb.output.uri",
                                     database_url_output) \
-                            .config("spark.driver.port", 41000) \
-                            .config("spark.fileserver.port", 51811) \
-                            .config("spark.broadcast.port", 51812) \
-                            .config("spark.replClassServer.port", 51813) \
-                            .config("spark.blockManager.port", 51814) \
-                            .config("spark.executor.port", 51815) \
-                            .config("spark.port.maxRetries", 1) \
+                            .config("spark.driver.port",
+                                    os.environ[SPARK_DRIVER_PORT]) \
                             .config('spark.jars.packages',
                                     'org.mongodb.spark:mongo-spark' +
                                     '-connector_2.11:2.4.2')\
