@@ -21,6 +21,8 @@ class SparkManager(ProcessorInterface):
                                     database_url_input) \
                             .config("spark.mongodb.output.uri",
                                     database_url_output) \
+                            .config("spark.driver.port", 41000) \
+                            .config("spark.port.maxRetries", 1) \
                             .config('spark.jars.packages',
                                     'org.mongodb.spark:mongo-spark' +
                                     '-connector_2.11:2.4.2')\
