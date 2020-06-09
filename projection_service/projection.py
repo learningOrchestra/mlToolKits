@@ -20,6 +20,7 @@ class SparkManager(ProcessorInterface):
     FINISHED = "finished"
     DOCUMENT_ID = '_id'
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
+    METADATA_FILE_ID = 0
 
     def __init__(self, database_url_input, database_url_output):
         self.spark_session = SparkSession \
@@ -50,7 +51,7 @@ class SparkManager(ProcessorInterface):
                          False,
                          london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
                          filename,
-                         0)],
+                         self.METADATA_FILE_ID)],
                         ("filename",
                          self.FINISHED,
                          "time_created",
@@ -70,7 +71,9 @@ class SparkManager(ProcessorInterface):
         data_frame = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
 
-        data_frame = data_frame.filter(data_frame[self.DOCUMENT_ID] != 0)
+        data_frame = data_frame.filter(
+            data_frame[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
+
         projection_data_frame = data_frame.select(*fields)
 
         projection_data_frame.write.format(
@@ -80,7 +83,7 @@ class SparkManager(ProcessorInterface):
                 self.MONGO_SPARK_SOURCE).load()
 
         metadata_data_frame = resulted_data_frame.filter(
-                                resulted_data_frame[self.DOCUMENT_ID] == 0)
+                resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
 
         metadata_data_frame.withColumn(
             self.FINISHED,
