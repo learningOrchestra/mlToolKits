@@ -36,8 +36,6 @@ class SparkManager(ProcessorInterface):
         data_frame = self.spark_session.read.format(
                 "com.mongodb.spark.sql.DefaultSource").load()
 
-        data_frame.printSchema()
-
         projection_data_frame = data_frame.select(*fields)
 
         projection_data_frame.write.format(

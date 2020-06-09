@@ -12,6 +12,7 @@ PROJECTION_PORT = "PROJECTION_PORT"
 DATABASE_URL = "DATABASE_URL"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
+DOCUMENT_ID = '_id'
 
 GET = 'GET'
 POST = 'POST'
@@ -23,28 +24,39 @@ app = Flask(__name__)
 CORS(app)
 
 
+def collection_database_url(database_url, database_name, database_filename,
+                            database_replica_set):
+    return database_url + '/' + \
+        database_name + '.' + \
+        database_filename + "?replicaSet=" + \
+        database_replica_set + \
+        "&authSource=admin"
+
+
 @app.route('/projections', methods=[POST])
 def create_projection():
-    database_url_input = os.environ[DATABASE_URL] + '/' + \
-        os.environ[DATABASE_NAME] + '.' + \
-        request.json["filename"] + "?replicaSet=" + \
-        os.environ[DATABASE_REPLICA_SET] + \
-        "&authSource=admin"
+    database_url_input = collection_database_url(
+                            os.environ[DATABASE_URL],
+                            os.environ[DATABASE_NAME],
+                            request.json["filename"],
+                            os.environ[DATABASE_REPLICA_SET])
 
-    database_url_output = os.environ[DATABASE_URL] + '/' + \
-        os.environ[DATABASE_NAME] + '.' + \
-        request.json["projection_filename"] + "?replicaSet=" + \
-        os.environ[DATABASE_REPLICA_SET] + \
-        "&authSource=admin"
-
-    print(database_url_input, flush=True)
-    print(database_url_output, flush=True)
+    database_url_output = collection_database_url(
+                            os.environ[DATABASE_URL],
+                            os.environ[DATABASE_NAME],
+                            request.json["projection_filename"],
+                            os.environ[DATABASE_REPLICA_SET])
 
     spark_manager = SparkManager(
                             database_url_input,
                             database_url_output)
 
-    spark_manager.projection(request.json['fields'])
+    projection_fields = request.json['fields']
+    if(DOCUMENT_ID not in projection_fields):
+        projection_fields.append(DOCUMENT_ID)
+
+    spark_manager.projection(projection_fields)
+
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
         HTTP_STATUS_CODE_SUCESS_CREATED
@@ -52,4 +64,4 @@ def create_projection():
 
 if __name__ == "__main__":
     app.run(host=os.environ[PROJECTION_HOST],
-            port=int(os.environ[PROJECTION_PORT]), debug=True)
+            port=int(os.environ[PROJECTION_PORT]))
