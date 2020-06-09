@@ -19,6 +19,8 @@ POST = 'POST'
 DELETE = 'DELETE'
 
 MESSAGE_RESULT = "result"
+FILENAME_NAME = "filename"
+PROJECTION_FILENAME_NAME = "projection_filename"
 
 app = Flask(__name__)
 CORS(app)
@@ -38,13 +40,13 @@ def create_projection():
     database_url_input = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
-                            request.json["filename"],
+                            request.json[FILENAME_NAME],
                             os.environ[DATABASE_REPLICA_SET])
 
     database_url_output = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
-                            request.json["projection_filename"],
+                            request.json[PROJECTION_FILENAME_NAME],
                             os.environ[DATABASE_REPLICA_SET])
 
     spark_manager = SparkManager(
@@ -55,7 +57,10 @@ def create_projection():
     if(DOCUMENT_ID not in projection_fields):
         projection_fields.append(DOCUMENT_ID)
 
-    spark_manager.projection(projection_fields)
+    spark_manager.projection(
+        projection_fields,
+        request.json[FILENAME_NAME],
+        request.json[PROJECTION_FILENAME_NAME])
 
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
