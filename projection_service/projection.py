@@ -52,11 +52,11 @@ class SparkManager(ProcessorInterface):
                          london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
                          filename,
                          self.METADATA_FILE_ID)],
-                        ("filename",
+                        ["filename",
                          self.FINISHED,
                          "time_created",
                          "parent_filename",
-                         self.DOCUMENT_ID))
+                         self.DOCUMENT_ID])
 
         metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).save()
@@ -70,24 +70,19 @@ class SparkManager(ProcessorInterface):
     def submit_projection_job_spark(self, fields):
         data_frame = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
-
         data_frame = data_frame.filter(
             data_frame[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
 
         projection_data_frame = data_frame.select(*fields)
-
         projection_data_frame.write.format(
                 self.MONGO_SPARK_SOURCE).save()
 
         resulted_data_frame = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
-
         metadata_data_frame = resulted_data_frame.filter(
                 resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
-
         metadata_data_frame.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
-
         metadata_data_frame.write.format(
                 self.MONGO_SPARK_SOURCE).save()
