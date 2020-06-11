@@ -6,8 +6,8 @@ from projection import SparkManager
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 
-PROJECTION_HOST = "PROJECTION_HOST"
-PROJECTION_PORT = "PROJECTION_PORT"
+PROJECTION_HOST_IP = "PROJECTION_HOST_IP"
+PROJECTION_HOST_PORT = "PROJECTION_HOST_PORT"
 
 DATABASE_URL = "DATABASE_URL"
 DATABASE_NAME = "DATABASE_NAME"
@@ -68,5 +68,5 @@ def create_projection():
 
 
 if __name__ == "__main__":
-    app.run(host=os.environ[PROJECTION_HOST],
-            port=int(os.environ[PROJECTION_PORT]))
+    app.run(host=os.environ[PROJECTION_HOST_IP],
+            port=int(os.environ[PROJECTION_HOST_PORT]))
