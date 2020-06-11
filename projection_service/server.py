@@ -58,9 +58,9 @@ def create_projection():
         projection_fields.append(DOCUMENT_ID)
 
     spark_manager.projection(
-        projection_fields,
         request.json[FILENAME_NAME],
-        request.json[PROJECTION_FILENAME_NAME])
+        request.json[PROJECTION_FILENAME_NAME],
+        projection_fields)
 
     return jsonify(
         {MESSAGE_RESULT: SparkManager.MESSAGE_CREATED_FILE}),\
