@@ -83,11 +83,11 @@ class SparkManager(ProcessorInterface):
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
         metadata_schema = StructType([
-                StructField("filename", StringType(), True),
-                StructField(self.FINISHED, BooleanType(), True),
-                StructField("time_created", StringType(), True),
-                StructField("parent_filename", StringType(), True),
-                StructField(self.DOCUMENT_ID, IntegerType(), True)
+                StructField("filename", StringType(), False),
+                StructField(self.FINISHED, BooleanType(), False),
+                StructField("time_created", StringType(), False),
+                StructField("parent_filename", StringType(), False),
+                StructField(self.DOCUMENT_ID, IntegerType(), False)
         ])
 
         resulted_data_frame = self.spark_session.read.schema(
