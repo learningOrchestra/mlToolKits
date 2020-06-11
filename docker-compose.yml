@@ -188,6 +188,8 @@ services:
         ports:
             - "5001:5001"
             - 41000:41000
+        extra_hosts:
+            - "projection:0.0.0.0"
         depends_on:
             - database_primary
             - images
