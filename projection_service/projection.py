@@ -9,6 +9,7 @@ from pyspark.sql.types import (
     StructType, BooleanType,
     IntegerType
 )
+import socket
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -29,6 +30,9 @@ class SparkManager(ProcessorInterface):
     METADATA_FILE_ID = 0
 
     def __init__(self, database_url_input, database_url_output):
+        host_name = socket.gethostname()
+        host_ip = socket.gethostbyname(host_name)
+
         self.spark_session = SparkSession \
                             .builder \
                             .appName("projection") \
@@ -39,7 +43,7 @@ class SparkManager(ProcessorInterface):
                             .config("spark.driver.port",
                                     os.environ[SPARK_DRIVER_PORT]) \
                             .config("spark.driver.host",
-                                    os.environ[PROJECTION_HOST_NAME])\
+                                    host_ip)\
                             .config('spark.jars.packages',
                                     'org.mongodb.spark:mongo-spark' +
                                     '-connector_2.11:2.4.2')\
