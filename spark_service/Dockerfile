@@ -10,7 +10,7 @@ ENV SPARK_WORKER_PORT 41352
 ENV SPARK_MASTER_HOST "0.0.0.0"
 ENV PYSPARK_PYTHON python3
 ENV DOCKERIZE_VERSION v0.2.0
-
+ENV PYSPARK_DRIVER_PYTHON python3
 RUN apt-get update && \
     apt-get install -y openjdk-8-jdk autossh python3-pip && \
     apt-get clean && \

@@ -1,4 +1,4 @@
-FROM python:3.7.7
+FROM python:3.5
 
 RUN apt update && \
     apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
