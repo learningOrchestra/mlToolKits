@@ -36,4 +36,5 @@ RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPAR
     cd $SPARK_INSTALL && ln -s spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION spark
 
 RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
+RUN sudo -- sh -c "echo '0.0.0.0 projection' >> /etc/hosts"
 CMD ["python", "server.py"]
