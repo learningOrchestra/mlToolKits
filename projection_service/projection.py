@@ -13,6 +13,7 @@ from pyspark.sql.types import (
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
 SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
+PROJECTION_HOST = "PROJECTION_HOST"
 
 
 class ProcessorInterface():
@@ -37,6 +38,8 @@ class SparkManager(ProcessorInterface):
                                     database_url_output) \
                             .config("spark.driver.port",
                                     os.environ[SPARK_DRIVER_PORT]) \
+                            .config("spark.driver.host",
+                                    os.environ[PROJECTION_HOST])\
                             .config('spark.jars.packages',
                                     'org.mongodb.spark:mongo-spark' +
                                     '-connector_2.11:2.4.2')\
