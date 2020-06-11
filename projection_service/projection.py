@@ -4,7 +4,11 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
 import pytz
 from pyspark.sql import functions as F
-from pyspark.sql import types
+from pyspark.sql.types import (
+    StringType, StructField,
+    StructType, BooleanType,
+    IntegerType
+)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
