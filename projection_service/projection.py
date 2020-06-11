@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
 import pytz
 from pyspark.sql import functions as F
+from pyspark.sql import types
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -77,8 +78,18 @@ class SparkManager(ProcessorInterface):
         projection_data_frame.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
-        resulted_data_frame = self.spark_session.read.format(
-                self.MONGO_SPARK_SOURCE).load()
+        metadata_schema = StructType([
+                StructField("filename", StringType(), True),
+                StructField(self.FINISHED, BooleanType(), True),
+                StructField("time_created", StringType(), True),
+                StructField("parent_filename", StringType(), True),
+                StructField(self.DOCUMENT_ID, IntegerType(), True)
+        ])
+
+        resulted_data_frame = self.spark_session.read.schema(
+                metadata_schema).format(
+                    self.MONGO_SPARK_SOURCE).load()
+
         metadata_data_frame = resulted_data_frame.filter(
                 resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
         metadata_data_frame.withColumn(
