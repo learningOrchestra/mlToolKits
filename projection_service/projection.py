@@ -75,7 +75,7 @@ class SparkManager(ProcessorInterface):
 
         projection_data_frame = data_frame.select(*fields)
         projection_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).save()
+                self.MONGO_SPARK_SOURCE).mode("append").save()
 
         resulted_data_frame = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
@@ -85,4 +85,4 @@ class SparkManager(ProcessorInterface):
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
         metadata_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).save()
+                self.MONGO_SPARK_SOURCE).mode("append").save()
