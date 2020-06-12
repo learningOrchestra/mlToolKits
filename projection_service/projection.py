@@ -73,9 +73,9 @@ class SparkManager(ProcessorInterface):
             self.submit_projection_job_spark,
             fields)'''
 
-        self.submit_projection_job_spark(fields, metadata_dataframe)
+        self.submit_projection_job_spark(fields)
 
-    def submit_projection_job_spark(self, fields, metadata_dataframe):
+    def submit_projection_job_spark(self, fields):
         dataframe = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
@@ -85,7 +85,7 @@ class SparkManager(ProcessorInterface):
         projection_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
-        '''metadata_schema = StructType([
+        metadata_schema = StructType([
                 StructField("filename", StringType(), False),
                 StructField(self.FINISHED, BooleanType(), False),
                 StructField("time_created", StringType(), False),
@@ -97,20 +97,14 @@ class SparkManager(ProcessorInterface):
                 metadata_schema).format(
                     self.MONGO_SPARK_SOURCE).load()
 
-         metadata_dataframe = resulted_dataframe.filter(
-                resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
+        metadata_dataframe = resulted_dataframe.filter(
+                resulted_dataframe[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
 
-        new_metadata_data_frame = resulted_dataframe.withColumn(
+        new_metadata_data_frame = metadata_dataframe.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
 
         new_metadata_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).mode("append").save()'''
+                self.MONGO_SPARK_SOURCE).mode("overwrite").save()
 
-        metadata_dataframe = metadata_dataframe.withColumn(
-            self.FINISHED,
-            F.when(F.col(self.FINISHED) == False, True)
-            .otherwise(F.col(self.FINISHED)))
 
-        metadata_dataframe.write.format(
-                self.MONGO_SPARK_SOURCE).save()
