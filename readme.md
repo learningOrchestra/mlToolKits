@@ -1,10 +1,25 @@
-# learningOrchestra: a machine learning resource orchestrator :whale: (Building...) 
+# learningOrchestra: a machine learning resource orchestrator 
+
+[![status](https://img.shields.io/badge/status-building-yellow.svg)](https://shields.io/)
+[![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+[![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+[![contributors](https://img.shields.io/github/contributors/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+[![repo size](https://img.shields.io/github/repo-size/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 
 The learningOrchestra is a tool for distributed machine learning processing.
 
 # Services
 
-![](/readme_content/cluster.png)
+* visualizer - Visualize cluster state, including machines, up services, resources, etc
+* images - Private image repository to store images for own projects
+* database_primary - Main database, used to read and write data
+* database_secondary - Database used in downtime database_primary , used only to read
+* database_arbiter - Manage the database replica set, setting database_primary and database_secondary
+* database_api - Service used to download and handling files in database
+* frontend - GUI of learningOrchestra
+* sparkmaster - Manager of spark cluster
+* sparkworker - Worker of spark cluster
+* projection - Make projections of stored files in database using spark cluster
 
 ## Tools and techniques used in this project
 
@@ -15,6 +30,7 @@ The learningOrchestra is a tool for distributed machine learning processing.
 * [Visualizer](https://hub.docker.com/r/dockersamples/visualizer) - A service to state visualization of cluster 
 * [Registry](https://hub.docker.com/_/registry) -  A private image repository service 
 * [Mongo Replication](https://docs.mongodb.com/manual/replication/) - Data replication in mongo instances
+* [Spark](https://spark.apache.org/) - Large-scale data processing engine
 
 ## Documentation
 
