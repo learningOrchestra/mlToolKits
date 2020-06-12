@@ -63,13 +63,15 @@ class SparkManager(ProcessorInterface):
                             filename,
                             self.METADATA_FILE_ID)
 
+        metadata_fields = ["filename",
+                           self.FINISHED,
+                           "time_created",
+                           "parent_filename",
+                           self.DOCUMENT_ID]
+
         metadata_dataframe = self.spark_session.createDataFrame(
                         [metadata_content],
-                        ["filename",
-                         self.FINISHED,
-                         "time_created",
-                         "parent_filename",
-                         self.DOCUMENT_ID])
+                        metadata_fields)
 
         metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).save()
@@ -78,9 +80,11 @@ class SparkManager(ProcessorInterface):
             self.submit_projection_job_spark,
             fields)'''
 
-        self.submit_projection_job_spark(fields, metadata_content)
+        self.submit_projection_job_spark(fields, metadata_content,
+                                         metadata_fields)
 
-    def submit_projection_job_spark(self, fields, metadata_content):
+    def submit_projection_job_spark(self, fields, metadata_content,
+                                    metadata_fields):
         dataframe = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
@@ -90,38 +94,13 @@ class SparkManager(ProcessorInterface):
         projection_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
-        '''metadata_schema = StructType([
-                StructField("filename", StringType(), False),
-                StructField(self.FINISHED, BooleanType(), False),
-                StructField("time_created", StringType(), False),
-                StructField("parent_filename", StringType(), False),
-                StructField(self.DOCUMENT_ID, IntegerType(), False)
-        ])
-
-        resulted_dataframe = self.spark_session.read.schema(
-                metadata_schema).format(
-                    self.MONGO_SPARK_SOURCE).option(
-                        "uri", self.database_url_output).load()
-
-
-        new_metadata_data_frame = resulted_dataframe.withColumn(
-            self.FINISHED,
-            F.when(F.col(self.FINISHED) == False, True))
-
-        new_metadata_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).mode("overwrite").save()'''
-
         metadata_content_list = list(metadata_content)
-        metadata_content_list[1] = True
+        metadata_content_list[metadata_content_list.index(False)] = True
         new_metadata_content = tuple(metadata_content_list)
 
         new_metadata_dataframe = self.spark_session.createDataFrame(
                         [new_metadata_content],
-                        ["filename",
-                         self.FINISHED,
-                         "time_created",
-                         "parent_filename",
-                         self.DOCUMENT_ID])
+                        metadata_fields)
 
         new_metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
