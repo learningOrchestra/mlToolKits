@@ -27,8 +27,11 @@ class SparkManager(ProcessorInterface):
     DOCUMENT_ID = '_id'
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     METADATA_FILE_ID = 0
+    database_url_output = None
 
     def __init__(self, database_url_input, database_url_output):
+        self.database_url_output = database_url_output
+
         self.spark_session = SparkSession \
                             .builder \
                             .appName("projection") \
@@ -95,7 +98,8 @@ class SparkManager(ProcessorInterface):
 
         resulted_dataframe = self.spark_session.read.schema(
                 metadata_schema).format(
-                    self.MONGO_SPARK_SOURCE).load()
+                    self.MONGO_SPARK_SOURCE).option(
+                        "uri", self.database_url_output).load()
 
         metadata_dataframe = resulted_dataframe.filter(
                 F.col(self.DOCUMENT_ID) == self.METADATA_FILE_ID)
