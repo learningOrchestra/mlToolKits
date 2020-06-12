@@ -101,10 +101,7 @@ class SparkManager(ProcessorInterface):
                     self.MONGO_SPARK_SOURCE).option(
                         "uri", self.database_url_output).load()
 
-        metadata_dataframe = resulted_dataframe.filter(
-                F.col(self.DOCUMENT_ID) == self.METADATA_FILE_ID)
-
-        new_metadata_data_frame = metadata_dataframe.withColumn(
+        new_metadata_data_frame = resulted_dataframe.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
 
