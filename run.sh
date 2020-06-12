@@ -5,7 +5,7 @@ echo "--------------------------------------------------------------------"
 echo "Buiding own images service..."
 echo "--------------------------------------------------------------------"
 
-docker-compose build --no-cache
+docker-compose build
 
 echo "--------------------------------------------------------------------"
 echo "Adding the image service in docker daemon security exception..."
@@ -34,6 +34,7 @@ echo "--------------------------------------------------------------------"
 
 sleep 30
 
+
 database_api_repository=127.0.0.1:5050/database_api
 database_api_tag=database_api
 
@@ -43,10 +44,6 @@ echo "Pushing database_api service image..."
 echo "--------------------------------------------------------------------"
 docker push $database_api_repository:$database_api_tag
 
-echo "--------------------------------------------------------------------"
-echo "Removing database_api image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $database_api_repository:$database_api_tag
 
 frontend_repository=127.0.0.1:5050/frontend
 frontend_tag=frontend
@@ -56,10 +53,6 @@ echo "Pushing frontend service image..."
 echo "--------------------------------------------------------------------"
 docker push $frontend_repository:$frontend_tag
 
-echo "--------------------------------------------------------------------"
-echo "Removing frontend image from local host..."
-echo "--------------------------------------------------------------------"
-docker rmi $frontend_repository:$frontend_tag
 
 spark_repository=127.0.0.1:5050/spark
 spark_tag=spark
@@ -69,10 +62,15 @@ echo "Pushing spark service image..."
 echo "--------------------------------------------------------------------"
 docker push $spark_repository:$spark_tag
 
+
+projection_repository=127.0.0.1:5050/projection
+projection_tag=projection
+
 echo "--------------------------------------------------------------------"
-echo "Removing spark image from local host..."
+echo "Pushing projection service image..."
 echo "--------------------------------------------------------------------"
-docker rmi $spark_repository:$spark_tag
+docker push $projection_repository:$projection_tag
+
 
 echo "--------------------------------------------------------------------"
 echo "End."

@@ -149,14 +149,23 @@ services:
             - 8080:8080
         environment:
             - SPARK_ROLE=master
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
         networks:
             - spark
+            - database
 
     sparkworker:
         image: 127.0.0.1:5050/spark:spark
         entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
         ports:
             - 8081:8081
+            - 41352:41352
         links:
             - sparkmaster
         environment:
@@ -166,8 +175,42 @@ services:
             replicas: 1
             restart_policy:
                 condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
         networks:
             - spark
+            - database
+
+    projection:
+        build: ./projection_service
+        image: 127.0.0.1:5050/projection:projection
+        ports:
+            - "5001:5001"
+            - 41000:41000
+        extra_hosts:
+            - "projection:0.0.0.0"
+        depends_on:
+            - database_primary
+            - images
+            - sparkmaster
+            - sparkworker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - database
+            - frontend
+            - spark
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
 
 networks:
     database:

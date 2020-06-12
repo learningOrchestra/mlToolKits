@@ -30,8 +30,21 @@ The first row is the metadata file, metadata contain the fields:
 	"_id": 0,
 	"filename": "key_to_document_identification",
 	"finished": true or false,
-	"url": "http://sitetojson.file/path/to/csv"
-        
+	"url": "http://sitetojson.file/path/to/csv",
+	"time_created": "creation time of file"   
+}
+```
+
+If metadata file belong to preprocessed filename, there are the fields:
+
+```
+{
+
+	"_id": 0,
+	"filename": "key_to_document_identification",
+	"finished": true or false,
+	"parent_filename": "filename used to preprocessing",
+	"time_created": "creation time of file"
 }
 ```
 ## POST /files

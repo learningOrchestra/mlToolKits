@@ -6,9 +6,11 @@ ENV SPARK_HOME $SPARK_INSTALL/spark
 ENV SPARK_ROLE master
 ENV HADOOP_VERSION 2.7
 ENV SPARK_MASTER_PORT 7077
+ENV SPARK_WORKER_PORT 41352
+ENV SPARK_MASTER_HOST "0.0.0.0"
 ENV PYSPARK_PYTHON python3
 ENV DOCKERIZE_VERSION v0.2.0
-
+ENV PYSPARK_DRIVER_PYTHON python3
 RUN apt-get update && \
     apt-get install -y openjdk-8-jdk autossh python3-pip && \
     apt-get clean && \
@@ -27,7 +29,7 @@ RUN mkdir /etc/service/spark
 ADD script/spark.sh /etc/service/spark/run
 RUN chmod +x /etc/service/**/*
 
-EXPOSE 4040 6066 7077 7078 8080 8081 8888
+EXPOSE 4040 6066 7077 7078 8080 8081 8888 41352
 
 VOLUME ["$SPARK_HOME/logs"]
 
