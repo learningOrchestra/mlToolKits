@@ -57,12 +57,14 @@ class SparkManager(ProcessorInterface):
         timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
 
+        metadata_content = (projection_filename,
+                            False,
+                            london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+                            filename,
+                            self.METADATA_FILE_ID)
+
         metadata_dataframe = self.spark_session.createDataFrame(
-                        [(projection_filename,
-                         False,
-                         london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
-                         filename,
-                         self.METADATA_FILE_ID)],
+                        [metadata_content],
                         ["filename",
                          self.FINISHED,
                          "time_created",
@@ -76,9 +78,9 @@ class SparkManager(ProcessorInterface):
             self.submit_projection_job_spark,
             fields)'''
 
-        self.submit_projection_job_spark(fields)
+        self.submit_projection_job_spark(fields, metadata_content)
 
-    def submit_projection_job_spark(self, fields):
+    def submit_projection_job_spark(self, fields, metadata_content):
         dataframe = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
@@ -88,7 +90,7 @@ class SparkManager(ProcessorInterface):
         projection_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
-        metadata_schema = StructType([
+        '''metadata_schema = StructType([
                 StructField("filename", StringType(), False),
                 StructField(self.FINISHED, BooleanType(), False),
                 StructField("time_created", StringType(), False),
@@ -101,9 +103,23 @@ class SparkManager(ProcessorInterface):
                     self.MONGO_SPARK_SOURCE).option(
                         "uri", self.database_url_output).load()
 
+
         new_metadata_data_frame = resulted_dataframe.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
 
         new_metadata_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).mode("overwrite").save()
+                self.MONGO_SPARK_SOURCE).mode("overwrite").save()'''
+
+        new_metadata_content = metadata_content.replace(1, True)
+
+        new_metadata_dataframe = self.spark_session.createDataFrame(
+                        [new_metadata_content],
+                        ["filename",
+                         self.FINISHED,
+                         "time_created",
+                         "parent_filename",
+                         self.DOCUMENT_ID])
+
+        new_metadata_dataframe.write.format(
+                self.MONGO_SPARK_SOURCE).mode("append").save()
