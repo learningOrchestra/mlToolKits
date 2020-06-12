@@ -111,7 +111,9 @@ class SparkManager(ProcessorInterface):
         new_metadata_data_frame.write.format(
                 self.MONGO_SPARK_SOURCE).mode("overwrite").save()'''
 
-        new_metadata_content = metadata_content.replace(1, True)
+        metadata_content_list = list(metadata_content)
+        metadata_content_list[1] = True
+        new_metadata_content = tuple(metadata_content_list)
 
         new_metadata_dataframe = self.spark_session.createDataFrame(
                         [new_metadata_content],
