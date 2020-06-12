@@ -103,4 +103,4 @@ class SparkManager(ProcessorInterface):
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
         metadata_data_frame.write.format(
-                self.MONGO_SPARK_SOURCE).mode("append").save()
+                self.MONGO_SPARK_SOURCE).mode("overwrite").save()
