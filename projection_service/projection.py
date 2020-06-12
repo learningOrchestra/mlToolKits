@@ -100,7 +100,7 @@ class SparkManager(ProcessorInterface):
         # metadata_data_frame = resulted_data_frame.filter(
         #        resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
 
-        new_metadata_data_frame = metadata_data_frame.withColumn(
+        new_metadata_data_frame = resulted_data_frame.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
 
