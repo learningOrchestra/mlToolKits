@@ -98,7 +98,7 @@ class SparkManager(ProcessorInterface):
                     self.MONGO_SPARK_SOURCE).load()
 
         metadata_dataframe = resulted_dataframe.filter(
-                resulted_dataframe[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
+                F.col(self.DOCUMENT_ID) == self.METADATA_FILE_ID)
 
         new_metadata_data_frame = metadata_dataframe.withColumn(
             self.FINISHED,
@@ -106,5 +106,3 @@ class SparkManager(ProcessorInterface):
 
         new_metadata_data_frame.write.format(
                 self.MONGO_SPARK_SOURCE).mode("overwrite").save()
-
-
