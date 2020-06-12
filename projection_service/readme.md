@@ -9,3 +9,5 @@ Projection service provide an api to make a projection from file inserted in dat
     fields : [list, of, fields, to, be, used, in, projection]
 }
 ```
+
+The files are stored in database service, to read preprocessed files, need use the database_api service 
