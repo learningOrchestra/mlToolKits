@@ -73,19 +73,19 @@ class SparkManager(ProcessorInterface):
             self.submit_projection_job_spark,
             fields)'''
 
-        self.submit_projection_job_spark(fields)
+        self.submit_projection_job_spark(fields, metadata_dataframe)
 
-    def submit_projection_job_spark(self, fields):
-        data_frame = self.spark_session.read.format(
+    def submit_projection_job_spark(self, fields, metadata_dataframe):
+        dataframe = self.spark_session.read.format(
                 self.MONGO_SPARK_SOURCE).load()
-        data_frame = data_frame.filter(
-            data_frame[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
+        dataframe = dataframe.filter(
+            dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
 
-        projection_data_frame = data_frame.select(*fields)
-        projection_data_frame.write.format(
+        projection_dataframe = dataframe.select(*fields)
+        projection_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
 
-        metadata_schema = StructType([
+        '''metadata_schema = StructType([
                 StructField("filename", StringType(), False),
                 StructField(self.FINISHED, BooleanType(), False),
                 StructField("time_created", StringType(), False),
@@ -93,16 +93,24 @@ class SparkManager(ProcessorInterface):
                 StructField(self.DOCUMENT_ID, IntegerType(), False)
         ])
 
-        resulted_data_frame = self.spark_session.read.schema(
+        resulted_dataframe = self.spark_session.read.schema(
                 metadata_schema).format(
                     self.MONGO_SPARK_SOURCE).load()
 
-        # metadata_data_frame = resulted_data_frame.filter(
-        #        resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
+         metadata_dataframe = resulted_dataframe.filter(
+                resulted_data_frame[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
 
-        new_metadata_data_frame = resulted_data_frame.withColumn(
+        new_metadata_data_frame = resulted_dataframe.withColumn(
             self.FINISHED,
             F.when(F.col(self.FINISHED) == False, True))
 
         new_metadata_data_frame.write.format(
+                self.MONGO_SPARK_SOURCE).mode("append").save()'''
+
+        metadata_dataframe = metadata_dataframe.withColumn(
+            self.FINISHED,
+            F.when(F.col(self.FINISHED) == False, True)
+            .otherwise(F.col(self.FINISHED)))
+
+        metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
