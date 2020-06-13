@@ -40,9 +40,9 @@ def collection_database_url(database_url, database_name, database_filename,
 
 @app.route('/projections', methods=[POST])
 def create_projection():
-    if(not request.json[FILENAME_NAME] or
-       not request.json[PROJECTION_FILENAME_NAME] or
-       not request.json['fields']):
+    if(not (request.json[FILENAME_NAME] and
+       request.json[PROJECTION_FILENAME_NAME] and
+       request.json['fields'])):
         return jsonify(
             {MESSAGE_RESULT: MESSAGE_MISSING_FIELDS}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
