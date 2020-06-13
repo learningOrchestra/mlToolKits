@@ -18,7 +18,7 @@ PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
 class DatabaseInterface():
-    def update_one_in_file(self, filename, new_value, query):
+    def find_one_in_file(self, filename, query):
         pass
 
 
