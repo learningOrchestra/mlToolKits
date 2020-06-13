@@ -9,6 +9,7 @@ from pyspark.sql.types import (
     StructType, BooleanType,
     IntegerType
 )
+from pymongo import MongoClient, errors
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -16,10 +17,14 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
+class DatabaseInterface():
+    def update_one_in_file(self, filename, new_value, query):
+        pass
+
+
 class ProcessorInterface():
     MESSAGE_CREATED_FILE = "file_created"
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
 
     def projection(self, filename, projection_filename, fields):
         pass
@@ -57,19 +62,7 @@ class SparkManager(ProcessorInterface):
         self.thread_pool = ThreadPoolExecutor()
 
     def projection(self, filename, projection_filename, fields):
-        dataframe = self.spark_session.read.format(
-                self.MONGO_SPARK_SOURCE).load()
-        dataframe = dataframe.filter(
-            dataframe[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
-
-        parent_file_fields = \
-            dataframe.select("fields").collect().values.tolist()[0]
-
         fields_without_id = list(fields).remove(self.DOCUMENT_ID)
-
-        for field in fields:
-            if fields_without_id not in parent_file_fields:
-                return self.MESSAGE_INVALID_FIELDS
 
         timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
@@ -124,3 +117,15 @@ class SparkManager(ProcessorInterface):
 
         new_metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
+
+
+class MongoOperations(DatabaseInterface):
+
+    def __init__(self, database_url, database_name):
+        self.mongo_client = MongoClient(
+            database_url)
+        self.database = self.mongo_client.database_name
+
+    def find_one_in_file(self, filename, query):
+        file_collection = self.database[filename]
+        return file_collection.find_one(query)
