@@ -17,12 +17,14 @@ PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
 class ProcessorInterface():
+    MESSAGE_CREATED_FILE = "file_created"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+
     def projection(self, filename, projection_filename, fields):
         pass
 
 
 class SparkManager(ProcessorInterface):
-    MESSAGE_CREATED_FILE = "file_created"
     FINISHED = "finished"
     DOCUMENT_ID = '_id'
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
@@ -72,13 +74,17 @@ class SparkManager(ProcessorInterface):
         metadata_dataframe = self.spark_session.createDataFrame(
                         [metadata_content],
                         metadata_fields)
-
-        metadata_dataframe.write.format(
-                self.MONGO_SPARK_SOURCE).save()
+        try:
+            metadata_dataframe.write.format(
+                    self.MONGO_SPARK_SOURCE).save()
+        except Exception:
+            return self.MESSAGE_DUPLICATE_FILE
 
         self.thread_pool.submit(
             self.submit_projection_job_spark,
             fields, metadata_content, metadata_fields)
+
+        return self.MESSAGE_CREATED_FILE
 
     def submit_projection_job_spark(self, fields, metadata_content,
                                     metadata_fields):
