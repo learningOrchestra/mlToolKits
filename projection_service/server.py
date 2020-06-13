@@ -82,6 +82,11 @@ def create_projection():
             {MESSAGE_RESULT: ProcessorInterface.MESSAGE_DUPLICATE_FILE}),\
             HTTP_STATUS_CODE_CONFLICT
 
+    elif(result == ProcessorInterface.MESSAGE_INVALID_FIELDS):
+        return jsonify(
+            {MESSAGE_RESULT: ProcessorInterface.MESSAGE_INVALID_FIELDS}),\
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
 
 
 if __name__ == "__main__":
