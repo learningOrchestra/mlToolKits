@@ -63,13 +63,15 @@ class SparkManager(ProcessorInterface):
                             False,
                             london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
                             filename,
-                            self.METADATA_FILE_ID)
+                            self.METADATA_FILE_ID,
+                            fields)
 
         metadata_fields = ["filename",
                            self.FINISHED,
                            "time_created",
                            "parent_filename",
-                           self.DOCUMENT_ID]
+                           self.DOCUMENT_ID,
+                           "fields"]
 
         metadata_dataframe = self.spark_session.createDataFrame(
                         [metadata_content],

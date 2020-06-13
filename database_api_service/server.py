@@ -84,4 +84,4 @@ def delete_file():
 
 if __name__ == "__main__":
     app.run(host=os.environ[DATABASE_API_HOST],
-            port=int(os.environ[DATABASE_API_PORT]), debug=True)
+            port=int(os.environ[DATABASE_API_PORT]))

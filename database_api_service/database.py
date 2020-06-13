@@ -197,7 +197,8 @@ class FileDownloaderAndSaver(FileManagerInterface):
             filename,
             {ROW_ID: METADATA_ROW_ID}, {
                 '$set': {
-                    self.FINISHED: True
+                    self.FINISHED: True,
+                    'fields': self.file_headers
                 }})
 
     def validate_csv_url(self, url):
@@ -227,7 +228,8 @@ class FileDownloaderAndSaver(FileManagerInterface):
             'url': url,
             'time_created': london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             ROW_ID: METADATA_ROW_ID,
-            self.FINISHED: False
+            self.FINISHED: False,
+            'fields': "processing"
         }
         database_connection.insert_one_in_file(filename, metadata_file)
 
