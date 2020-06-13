@@ -64,7 +64,7 @@ class SparkManager(ProcessorInterface):
 
         parent_file_fields = dataframe.select("fields").collect()
 
-        fields_without_id = list(fields).remove(DOCUMENT_ID)
+        fields_without_id = list(fields).remove(self.DOCUMENT_ID)
 
         for field in fields:
             if fields_without_id not in parent_file_fields:
