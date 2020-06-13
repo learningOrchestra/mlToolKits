@@ -53,7 +53,7 @@ def create_projection():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database = MongoOperations(
-        os.environ[DATABASE_URL] + '?replicaSet=' +
+        os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_NAME])
 
     filename_metadata_query = {DOCUMENT_ID: METADATA_DOCUMENT_ID}
