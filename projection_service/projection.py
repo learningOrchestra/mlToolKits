@@ -62,7 +62,8 @@ class SparkManager(ProcessorInterface):
         dataframe = dataframe.filter(
             dataframe[self.DOCUMENT_ID] == self.METADATA_FILE_ID)
 
-        parent_file_fields = dataframe.select("fields").collect()
+        parent_file_fields = \
+            dataframe.select("fields").collect().values.tolist()[0]
 
         fields_without_id = list(fields).remove(self.DOCUMENT_ID)
 
