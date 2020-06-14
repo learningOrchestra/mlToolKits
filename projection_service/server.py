@@ -31,6 +31,7 @@ FILENAME_NAME = "filename"
 PROJECTION_FILENAME_NAME = "projection_filename"
 FIELDS_NAME = "fields"
 
+MESSAGE_CREATED_FILE = "created_file"
 
 app = Flask(__name__)
 CORS(app)
@@ -104,7 +105,7 @@ def create_projection():
                 projection_fields)
 
     return jsonify(
-        {MESSAGE_RESULT: ProcessorInterface.MESSAGE_CREATED_FILE}),\
+        {MESSAGE_RESULT: MESSAGE_CREATED_FILE}),\
         HTTP_STATUS_CODE_SUCESS_CREATED
 
 
