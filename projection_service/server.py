@@ -56,9 +56,9 @@ def create_projection():
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_NAME])
 
-    filename_metadata_query = {DOCUMENT_ID: METADATA_DOCUMENT_ID}
+    filename_metadata_query = {FILENAME_NAME: request.json[FILENAME_NAME]}
 
-    filename_metadata = database.find(
+    filename_metadata = database.find_one(
         request.json[FILENAME_NAME], filename_metadata_query)
 
     for field in request.json[FIELDS_NAME]:
