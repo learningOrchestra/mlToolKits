@@ -25,8 +25,6 @@ class DatabaseInterface():
 
 
 class ProcessorInterface():
-    MESSAGE_CREATED_FILE = "file_created"
-
     def projection(self, filename, projection_filename, fields):
         pass
 
@@ -35,6 +33,7 @@ class RequestValidatorInterface():
     MESSAGE_INVALID_FIELDS = "invalid_fields"
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_MISSING_FIELDS = "missing_fields"
 
     def filename_validator(self, filename):
         pass
@@ -109,8 +108,6 @@ class SparkManager(ProcessorInterface):
             self.submit_projection_job_spark,
             fields, metadata_content, metadata_fields)
 
-        return self.MESSAGE_CREATED_FILE
-
     def submit_projection_job_spark(self, fields, metadata_content,
                                     metadata_fields):
         dataframe = self.spark_session.read.format(
@@ -157,15 +154,18 @@ class ProjectionRequestValidator(RequestValidatorInterface):
         filenames = self.database.get_filenames()
 
         if(filename not in filenames):
-            return self.MESSAGE_INVALID_FILENAME
+            raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def projection_filename_validator(self, projection_filename):
         filenames = self.database.get_filenames()
 
         if(projection_filename in filenames):
-            return self.MESSAGE_DUPLICATE_FILE
+            raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def projection_fields_validator(self, filename, projection_fields):
+        if not projection_fields:
+            raise Exception(self.MESSAGE_MISSING_FIELDS)
+
         filename_metadata_query = {"filename": filename}
 
         filename_metadata = self.database.find_one(
@@ -173,4 +173,4 @@ class ProjectionRequestValidator(RequestValidatorInterface):
 
         for field in projection_fields:
             if field not in filename_metadata["fields"]:
-                return self.MESSAGE_INVALID_FIELDS
+                raise Exception(self.MESSAGE_INVALID_FIELDS)

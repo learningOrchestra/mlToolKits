@@ -54,25 +54,28 @@ def create_projection():
 
     request_validator = ProjectionRequestValidator(database)
 
-    if(request_validator.projection_filename_validator(
-            request.json[PROJECTION_FILENAME_NAME]) ==
-            request_validator.MESSAGE_DUPLICATE_FILE):
+    try:
+        request_validator.projection_filename_validator(
+            request.json[PROJECTION_FILENAME_NAME])
+    except Exception as error_message:
         return jsonify(
-            {MESSAGE_RESULT: request_validator.MESSAGE_DUPLICATE_FILE}),\
+            {MESSAGE_RESULT: error_message}),\
             HTTP_STATUS_CODE_CONFLICT
 
-    if(request_validator.filename_validator(
-            request.json[FILENAME_NAME]) ==
-            request_validator.MESSAGE_INVALID_FILENAME):
+    try:
+        request_validator.filename_validator(
+            request.json[FILENAME_NAME])
+    except Exception as error_message:
         return jsonify(
-            {MESSAGE_RESULT: request_validator.MESSAGE_INVALID_FILENAME}),\
+            {MESSAGE_RESULT: error_message}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
-    if(request_validator.projection_fields_validator(
-            request.json[FILENAME_NAME], request.json[FIELDS_NAME]) ==
-            request_validator.MESSAGE_INVALID_FIELDS):
+    try:
+        request_validator.projection_fields_validator(
+            request.json[FILENAME_NAME], request.json[FIELDS_NAME])
+    except Exception as error_message:
         return jsonify(
-            {MESSAGE_RESULT: request_validator.MESSAGE_INVALID_FIELDS}),\
+            {MESSAGE_RESULT: error_message}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_input = collection_database_url(
@@ -95,15 +98,14 @@ def create_projection():
 
     projection_fields.append(DOCUMENT_ID)
 
-    result = spark_manager.projection(
+    spark_manager.projection(
                 request.json[FILENAME_NAME],
                 request.json[PROJECTION_FILENAME_NAME],
                 projection_fields)
 
-    if(result == ProcessorInterface.MESSAGE_CREATED_FILE):
-        return jsonify(
-            {MESSAGE_RESULT: ProcessorInterface.MESSAGE_CREATED_FILE}),\
-            HTTP_STATUS_CODE_SUCESS_CREATED
+    return jsonify(
+        {MESSAGE_RESULT: ProcessorInterface.MESSAGE_CREATED_FILE}),\
+        HTTP_STATUS_CODE_SUCESS_CREATED
 
 
 if __name__ == "__main__":
