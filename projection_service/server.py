@@ -2,7 +2,10 @@ from flask import jsonify, request, Flask
 import os
 from flask_cors import CORS
 from pyspark.sql import SparkSession
-from projection import SparkManager, ProcessorInterface, MongoOperations
+from projection import (
+    SparkManager, ProcessorInterface,
+    MongoOperations,
+    ProjectionRequestValidator)
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -28,10 +31,6 @@ FILENAME_NAME = "filename"
 PROJECTION_FILENAME_NAME = "projection_filename"
 FIELDS_NAME = "fields"
 
-MESSAGE_MISSING_FIELDS = "missing_request_fields"
-MESSAGE_INVALID_FIELDS = "invalid_fields"
-MESSAGE_INVALID_FILENAME = "invalid_filename"
-MESSAGE_DUPLICATE_FILE = "duplicate_file"
 
 app = Flask(__name__)
 CORS(app)
@@ -48,44 +47,33 @@ def collection_database_url(database_url, database_name, database_filename,
 
 @app.route('/projections', methods=[POST])
 def create_projection():
-    if(not (request.json[FILENAME_NAME] and
-       request.json[PROJECTION_FILENAME_NAME] and
-       request.json[FIELDS_NAME])):
-        return jsonify(
-            {MESSAGE_RESULT: MESSAGE_MISSING_FIELDS}),\
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE
-
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
 
-    filenames = database.get_filenames()
+    request_validator = ProjectionRequestValidator(database)
 
-    if(request.json[PROJECTION_FILENAME_NAME] in filenames):
+    if(request_validator.projection_filename_validator(
+            request.json[PROJECTION_FILENAME_NAME]) ==
+            request_validator.MESSAGE_DUPLICATE_FILE):
         return jsonify(
-            {MESSAGE_RESULT: MESSAGE_DUPLICATE_FILE}),\
+            {MESSAGE_RESULT: request_validator.MESSAGE_DUPLICATE_FILE}),\
             HTTP_STATUS_CODE_CONFLICT
 
-    if(request.json[FILENAME_NAME] not in filenames):
+    if(request_validator.filename_validator(
+            request.json[FILENAME_NAME]) ==
+            request_validator.MESSAGE_INVALID_FILENAME):
         return jsonify(
-            {MESSAGE_RESULT: MESSAGE_INVALID_FILENAME}),\
+            {MESSAGE_RESULT: request_validator.MESSAGE_INVALID_FILENAME}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
-    filename_metadata_query = {FILENAME_NAME: request.json[FILENAME_NAME]}
-
-    filename_metadata = database.find_one(
-        request.json[FILENAME_NAME], filename_metadata_query)
-
-    for field in request.json[FIELDS_NAME]:
-        if field not in filename_metadata[FIELDS_NAME]:
-            return jsonify(
-                {MESSAGE_RESULT: MESSAGE_INVALID_FIELDS}),\
-                HTTP_STATUS_CODE_NOT_ACCEPTABLE
-
-    projection_fields = request.json[FIELDS_NAME]
-
-    projection_fields.append(DOCUMENT_ID)
+    if(request_validator.projection_fields_validator(
+            request.json[FILENAME_NAME], request.json[FIELDS_NAME]) ==
+            request_validator.MESSAGE_INVALID_FIELDS):
+        return jsonify(
+            {MESSAGE_RESULT: request_validator.MESSAGE_INVALID_FIELDS}),\
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_input = collection_database_url(
                             os.environ[DATABASE_URL],
@@ -102,6 +90,10 @@ def create_projection():
     spark_manager = SparkManager(
                             database_url_input,
                             database_url_output)
+
+    projection_fields = request.json[FIELDS_NAME]
+
+    projection_fields.append(DOCUMENT_ID)
 
     result = spark_manager.projection(
                 request.json[FILENAME_NAME],

@@ -4,12 +4,11 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
 import pytz
 from pyspark.sql import functions as F
+from pymongo import MongoClient
 from pyspark.sql.types import (
     StringType, StructField,
     StructType, BooleanType,
-    IntegerType
-)
-from pymongo import MongoClient, errors
+    IntegerType)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -29,6 +28,21 @@ class ProcessorInterface():
     MESSAGE_CREATED_FILE = "file_created"
 
     def projection(self, filename, projection_filename, fields):
+        pass
+
+
+class RequestValidatorInterface():
+    MESSAGE_INVALID_FIELDS = "invalid_fields"
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+
+    def filename_validator(self, filename):
+        pass
+
+    def projection_filename_validator(self, projection_filename):
+        pass
+
+    def projection_fields_validator(self, filename, projection_fields):
         pass
 
 
@@ -133,3 +147,30 @@ class MongoOperations(DatabaseInterface):
 
     def get_filenames(self):
         return self.database.list_collection_names()
+
+
+class ProjectionRequestValidator(RequestValidatorInterface):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
+    def filename_validator(self, filename):
+        filenames = self.database.get_filenames()
+
+        if(filename not in filenames):
+            return self.MESSAGE_INVALID_FILENAME
+
+    def projection_filename_validator(self, projection_filename):
+        filenames = self.database.get_filenames()
+
+        if(projection_filename in filenames):
+            return self.MESSAGE_DUPLICATE_FILE
+
+    def projection_fields_validator(self, filename, projection_fields):
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = database.find_one(
+            filename, filename_metadata_query)
+
+        for field in projection_fields:
+            if field not in filename_metadata["fields"]:
+                return self.MESSAGE_INVALID_FIELDS
