@@ -124,7 +124,7 @@ class MongoOperations(DatabaseInterface):
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(
             database_url, int(database_port))
-        self.database = self.mongo_client.database_name
+        self.database = self.mongo_client[database_name]
 
     def find_one(self, filename, query):
         file_collection = self.database[filename]
