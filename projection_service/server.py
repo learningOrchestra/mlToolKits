@@ -12,6 +12,7 @@ PROJECTION_HOST_IP = "PROJECTION_HOST_IP"
 PROJECTION_HOST_PORT = "PROJECTION_HOST_PORT"
 
 DATABASE_URL = "DATABASE_URL"
+DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
@@ -54,7 +55,8 @@ def create_projection():
 
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
-        os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_NAME])
+        os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
 
     filename_metadata_query = {FILENAME_NAME: request.json[FILENAME_NAME]}
 
