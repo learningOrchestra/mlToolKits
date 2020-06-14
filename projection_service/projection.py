@@ -21,10 +21,12 @@ class DatabaseInterface():
     def find_one(self, filename, query):
         pass
 
+    def get_filenames(self):
+        pass
+
 
 class ProcessorInterface():
     MESSAGE_CREATED_FILE = "file_created"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
 
     def projection(self, filename, projection_filename, fields):
         pass
@@ -85,11 +87,9 @@ class SparkManager(ProcessorInterface):
         metadata_dataframe = self.spark_session.createDataFrame(
                         [metadata_content],
                         metadata_fields)
-        try:
-            metadata_dataframe.write.format(
-                    self.MONGO_SPARK_SOURCE).save()
-        except Exception:
-            return self.MESSAGE_DUPLICATE_FILE
+
+        metadata_dataframe.write.format(
+                self.MONGO_SPARK_SOURCE).save()
 
         self.thread_pool.submit(
             self.submit_projection_job_spark,
@@ -130,3 +130,6 @@ class MongoOperations(DatabaseInterface):
     def find_one(self, filename, query):
         file_collection = self.database[filename]
         return file_collection.find_one(query)
+
+    def get_filenames(self):
+        return self.database.list_collection_names()

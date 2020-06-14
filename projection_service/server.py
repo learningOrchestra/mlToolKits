@@ -30,6 +30,8 @@ FIELDS_NAME = "fields"
 
 MESSAGE_MISSING_FIELDS = "missing_request_fields"
 MESSAGE_INVALID_FIELDS = "invalid_fields"
+MESSAGE_INVALID_FILENAME = "invalid_filename"
+MESSAGE_DUPLICATE_FILE = "duplicate_file"
 
 app = Flask(__name__)
 CORS(app)
@@ -57,6 +59,18 @@ def create_projection():
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
+
+    filenames = database.get_filenames()
+
+    if(request.json[PROJECTION_FILENAME_NAME] in filenames):
+        return jsonify(
+            {MESSAGE_RESULT: MESSAGE_DUPLICATE_FILE}),\
+            HTTP_STATUS_CODE_CONFLICT
+
+    if(request.json[FILENAME_NAME] not in filenames):
+        return jsonify(
+            {MESSAGE_RESULT: MESSAGE_INVALID_FILENAME}),\
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     filename_metadata_query = {FILENAME_NAME: request.json[FILENAME_NAME]}
 
@@ -98,11 +112,6 @@ def create_projection():
         return jsonify(
             {MESSAGE_RESULT: ProcessorInterface.MESSAGE_CREATED_FILE}),\
             HTTP_STATUS_CODE_SUCESS_CREATED
-
-    elif(result == ProcessorInterface.MESSAGE_DUPLICATE_FILE):
-        return jsonify(
-            {MESSAGE_RESULT: ProcessorInterface.MESSAGE_DUPLICATE_FILE}),\
-            HTTP_STATUS_CODE_CONFLICT
 
 
 if __name__ == "__main__":
