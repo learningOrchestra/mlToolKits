@@ -57,25 +57,25 @@ def create_projection():
     try:
         request_validator.projection_filename_validator(
             request.json[PROJECTION_FILENAME_NAME])
-    except Exception as error_message:
+    except Exception as invalid_projection_filename:
         return jsonify(
-            {MESSAGE_RESULT: error_message}),\
+            {MESSAGE_RESULT: invalid_projection_filename}),\
             HTTP_STATUS_CODE_CONFLICT
 
     try:
         request_validator.filename_validator(
             request.json[FILENAME_NAME])
-    except Exception as error_message:
+    except Exception as invalid_filename:
         return jsonify(
-            {MESSAGE_RESULT: error_message}),\
+            {MESSAGE_RESULT: invalid_filename}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     try:
         request_validator.projection_fields_validator(
             request.json[FILENAME_NAME], request.json[FIELDS_NAME])
-    except Exception as error_message:
+    except Exception as invalid_fields:
         return jsonify(
-            {MESSAGE_RESULT: error_message}),\
+            {MESSAGE_RESULT: invalid_fields}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_input = collection_database_url(
