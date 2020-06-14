@@ -33,6 +33,8 @@ FIELDS_NAME = "fields"
 
 MESSAGE_CREATED_FILE = "created_file"
 
+FIRST_ARGUMENT = 0
+
 app = Flask(__name__)
 CORS(app)
 
@@ -55,12 +57,15 @@ def create_projection():
 
     request_validator = ProjectionRequestValidator(database)
 
+    first_argument = 0
+
     try:
         request_validator.projection_filename_validator(
             request.json[PROJECTION_FILENAME_NAME])
     except Exception as invalid_projection_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_projection_filename.args[0]}),\
+            {MESSAGE_RESULT:
+                invalid_projection_filename.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_CONFLICT
 
     try:
@@ -68,7 +73,7 @@ def create_projection():
             request.json[FILENAME_NAME])
     except Exception as invalid_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_filename.args[0]}),\
+            {MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     try:
@@ -76,7 +81,7 @@ def create_projection():
             request.json[FILENAME_NAME], request.json[FIELDS_NAME])
     except Exception as invalid_fields:
         return jsonify(
-            {MESSAGE_RESULT: invalid_fields.args[0]}),\
+            {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_input = collection_database_url(
