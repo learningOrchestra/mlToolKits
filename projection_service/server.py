@@ -3,7 +3,6 @@ import os
 from flask_cors import CORS
 from pyspark.sql import SparkSession
 from projection import SparkManager, ProcessorInterface, MongoOperations
-from bson.objectid import ObjectId
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -17,7 +16,7 @@ DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 DOCUMENT_ID = '_id'
-METADATA_DOCUMENT_ID = '0'
+METADATA_DOCUMENT_ID = 0
 
 GET = 'GET'
 POST = 'POST'
@@ -57,7 +56,7 @@ def create_projection():
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_NAME])
 
-    filename_metadata_query = {DOCUMENT_ID: ObjectId(METADATA_DOCUMENT_ID)}
+    filename_metadata_query = {DOCUMENT_ID: METADATA_DOCUMENT_ID}
 
     filename_metadata = database.find_one_in_file(
         request.json[FILENAME_NAME], filename_metadata_query)
