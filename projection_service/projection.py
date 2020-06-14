@@ -4,11 +4,11 @@ from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
 import pytz
 from pyspark.sql import functions as F
+from pymongo import MongoClient
 from pyspark.sql.types import (
     StringType, StructField,
     StructType, BooleanType,
-    IntegerType
-)
+    IntegerType)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -16,13 +16,36 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
+class DatabaseInterface():
+    def find_one(self, filename, query):
+        pass
+
+    def get_filenames(self):
+        pass
+
+
 class ProcessorInterface():
     def projection(self, filename, projection_filename, fields):
         pass
 
 
+class RequestValidatorInterface():
+    MESSAGE_INVALID_FIELDS = "invalid_fields"
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_MISSING_FIELDS = "missing_fields"
+
+    def filename_validator(self, filename):
+        pass
+
+    def projection_filename_validator(self, projection_filename):
+        pass
+
+    def projection_fields_validator(self, filename, projection_fields):
+        pass
+
+
 class SparkManager(ProcessorInterface):
-    MESSAGE_CREATED_FILE = "file_created"
     FINISHED = "finished"
     DOCUMENT_ID = '_id'
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
@@ -57,17 +80,22 @@ class SparkManager(ProcessorInterface):
         timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
 
+        fields_without_id = fields.copy()
+        fields_without_id.remove(self.DOCUMENT_ID)
+
         metadata_content = (projection_filename,
                             False,
                             london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
                             filename,
-                            self.METADATA_FILE_ID)
+                            self.METADATA_FILE_ID,
+                            fields_without_id)
 
         metadata_fields = ["filename",
                            self.FINISHED,
                            "time_created",
                            "parent_filename",
-                           self.DOCUMENT_ID]
+                           self.DOCUMENT_ID,
+                           "fields"]
 
         metadata_dataframe = self.spark_session.createDataFrame(
                         [metadata_content],
@@ -101,3 +129,48 @@ class SparkManager(ProcessorInterface):
 
         new_metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
+
+
+class MongoOperations(DatabaseInterface):
+
+    def __init__(self, database_url, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url, int(database_port))
+        self.database = self.mongo_client[database_name]
+
+    def find_one(self, filename, query):
+        file_collection = self.database[filename]
+        return file_collection.find_one(query)
+
+    def get_filenames(self):
+        return self.database.list_collection_names()
+
+
+class ProjectionRequestValidator(RequestValidatorInterface):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
+    def filename_validator(self, filename):
+        filenames = self.database.get_filenames()
+
+        if(filename not in filenames):
+            raise Exception(self.MESSAGE_INVALID_FILENAME)
+
+    def projection_filename_validator(self, projection_filename):
+        filenames = self.database.get_filenames()
+
+        if(projection_filename in filenames):
+            raise Exception(self.MESSAGE_DUPLICATE_FILE)
+
+    def projection_fields_validator(self, filename, projection_fields):
+        if not projection_fields:
+            raise Exception(self.MESSAGE_MISSING_FIELDS)
+
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = self.database.find_one(
+            filename, filename_metadata_query)
+
+        for field in projection_fields:
+            if field not in filename_metadata["fields"]:
+                raise Exception(self.MESSAGE_INVALID_FIELDS)
