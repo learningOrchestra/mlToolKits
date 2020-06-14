@@ -59,7 +59,7 @@ def create_projection():
             request.json[PROJECTION_FILENAME_NAME])
     except Exception as invalid_projection_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_projection_filename.message}),\
+            {MESSAGE_RESULT: *invalid_projection_filename.args}),\
             HTTP_STATUS_CODE_CONFLICT
 
     try:
@@ -67,7 +67,7 @@ def create_projection():
             request.json[FILENAME_NAME])
     except Exception as invalid_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_filename.message}),\
+            {MESSAGE_RESULT: *invalid_filename.args}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     try:
@@ -75,7 +75,7 @@ def create_projection():
             request.json[FILENAME_NAME], request.json[FIELDS_NAME])
     except Exception as invalid_fields:
         return jsonify(
-            {MESSAGE_RESULT: invalid_fields.message}),\
+            {MESSAGE_RESULT: *invalid_fields.args}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_input = collection_database_url(
