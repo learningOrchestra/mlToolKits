@@ -69,6 +69,10 @@ def create_projection():
                 {MESSAGE_RESULT: MESSAGE_INVALID_FIELDS}),\
                 HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
+    projection_fields = request.json[FIELDS_NAME]
+
+    projection_fields.append(DOCUMENT_ID)
+
     database_url_input = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
@@ -84,11 +88,6 @@ def create_projection():
     spark_manager = SparkManager(
                             database_url_input,
                             database_url_output)
-
-    projection_fields = request.json[FIELDS_NAME]
-
-    if(DOCUMENT_ID not in projection_fields):
-        projection_fields.append(DOCUMENT_ID)
 
     result = spark_manager.projection(
                 request.json[FILENAME_NAME],

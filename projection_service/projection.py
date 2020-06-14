@@ -62,10 +62,11 @@ class SparkManager(ProcessorInterface):
         self.thread_pool = ThreadPoolExecutor()
 
     def projection(self, filename, projection_filename, fields):
-        fields_without_id = list(fields).remove(self.DOCUMENT_ID)
-
         timezone_london = pytz.timezone('Etc/Greenwich')
         london_time = datetime.now(timezone_london)
+
+        fields_without_id = fields.copy()
+        fields_without_id.remove(self.DOCUMENT_ID)
 
         metadata_content = (projection_filename,
                             False,
