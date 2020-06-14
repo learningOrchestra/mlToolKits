@@ -168,7 +168,7 @@ class ProjectionRequestValidator(RequestValidatorInterface):
     def projection_fields_validator(self, filename, projection_fields):
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = database.find_one(
+        filename_metadata = self.database.find_one(
             filename, filename_metadata_query)
 
         for field in projection_fields:
