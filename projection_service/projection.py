@@ -18,7 +18,7 @@ PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
 class DatabaseInterface():
-    def find_one_in_file(self, filename, query):
+    def find(self, filename, query):
         pass
 
 
@@ -126,6 +126,6 @@ class MongoOperations(DatabaseInterface):
             database_url)
         self.database = self.mongo_client.database_name
 
-    def find_one_in_file(self, filename, query):
+    def find(self, filename, query):
         file_collection = self.database[filename]
-        return file_collection.find_one(query)
+        return file_collection.find(query)

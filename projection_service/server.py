@@ -58,7 +58,7 @@ def create_projection():
 
     filename_metadata_query = {DOCUMENT_ID: METADATA_DOCUMENT_ID}
 
-    filename_metadata = database.find_one_in_file(
+    filename_metadata = database.find(
         request.json[FILENAME_NAME], filename_metadata_query)
 
     for field in request.json[FIELDS_NAME]:
