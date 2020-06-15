@@ -1,5 +1,5 @@
 import os
-from pymongo import MongoClient, errors
+from pymongo import MongoClient, errors, ASCENDING, DESCENDING
 from bson.json_util import dumps
 import requests
 from contextlib import closing
@@ -117,7 +117,8 @@ class MongoOperations(DatabaseInterface):
 
     def find_in_file(self, filename, query, skip=0, limit=1):
         file_collection = self.database[filename]
-        return file_collection.find(query).skip(skip).limit(limit)
+        return file_collection.find(query).sort(
+            ROW_ID, ASCENDING).skip(skip).limit(limit)
 
     def delete_file(self, filename):
         file_collection = self.database[filename]
