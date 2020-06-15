@@ -1,14 +1,14 @@
-FROM python:3.5
+FROM python:3.7-slim
 
-RUN apt update && \
-    apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
 
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
 
 RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 
-RUN apt update && \
-    apt install -y adoptopenjdk-8-hotspot
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y adoptopenjdk-8-hotspot
 
 
 WORKDIR /usr/src/projection

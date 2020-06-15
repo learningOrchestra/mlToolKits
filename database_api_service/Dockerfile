@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.7-slim
 
 WORKDIR /usr/src/database_api
 COPY . /usr/src/database_api
