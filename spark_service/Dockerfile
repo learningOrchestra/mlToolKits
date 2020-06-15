@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.22
+FROM phusion/baseimage:18.04-1.0.0
 
 ENV SPARK_VERSION 2.4.5
 ENV SPARK_INSTALL /usr/local
@@ -12,8 +12,9 @@ ENV PYSPARK_PYTHON python3
 ENV DOCKERIZE_VERSION v0.2.0
 ENV PYSPARK_DRIVER_PYTHON python3
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk autossh python3-pip && \
+    apt-get install --no-install-recommends -y openjdk-8-jdk autossh python3-pip && \
     apt-get clean && \
+    apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN curl -L -O https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \

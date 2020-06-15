@@ -1,14 +1,14 @@
-FROM python:3.5
+FROM python:3.6
 
-RUN apt update && \
-    apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
 
 RUN wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
 
 RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 
-RUN apt update && \
-    apt install -y adoptopenjdk-8-hotspot
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y adoptopenjdk-8-hotspot 
 
 
 WORKDIR /usr/src/projection
@@ -36,4 +36,8 @@ RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPAR
     cd $SPARK_INSTALL && ln -s spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION spark
 
 RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
+
+RUN apt-get autoremove && \
+    apt-get clean
+
 CMD ["python", "server.py"]
