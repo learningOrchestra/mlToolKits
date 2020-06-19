@@ -1,8 +1,5 @@
 FROM python:3.6
 
-WORKDIR /usr/src/spark_task
-COPY . /usr/src/spark_task
-
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
 
@@ -12,8 +9,6 @@ RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y adoptopenjdk-8-hotspot 
-
-
 
 ENV SPARK_VERSION 2.4.5
 ENV SPARK_INSTALL /usr/local
@@ -27,8 +22,7 @@ RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPAR
 
 RUN pip install pyspark==$SPARK_VERSION
 
-RUN pyspark --packages org.mongodb.spark:mongo-spark-connector_2.11:2.4.1
-
 RUN apt-get autoremove && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
