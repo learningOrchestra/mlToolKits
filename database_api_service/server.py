@@ -60,7 +60,7 @@ def create_file():
 
 @app.route('/files', methods=[GET])
 def read_files():
-    file_downloader_and_saver = FileDownloaderAndSaver()
+    file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
@@ -79,7 +79,7 @@ def read_files():
 
 @app.route('/files', methods=[DELETE])
 def delete_file():
-    file_downloader_and_saver = FileDownloaderAndSaver()
+    file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
