@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from database import FileDownloaderAndSaver, DatabaseApi, MongoOperations
+from database import CsvDownloader, DatabaseApi, MongoOperations
 from flask_cors import CORS
 
 HTTP_STATUS_CODE_SUCESS = 200
@@ -15,6 +15,13 @@ MESSAGE_RESULT = "result"
 
 FILENAME = "filename"
 
+FIRST_ARGUMENT = 0
+
+MESSAGE_INVALID_URL = "invalid_url"
+MESSAGE_DUPLICATE_FILE = "duplicate_file"
+MESSAGE_CREATED_FILE = "file_created"
+MESSAGE_DELETED_FILE = "deleted_file"
+
 GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
@@ -25,33 +32,35 @@ CORS(app)
 
 @app.route('/files', methods=[POST])
 def create_file():
-    file_downloader_and_saver = FileDownloaderAndSaver()
+    file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    result = database.add_file(
-        request.json["url"],
-        request.json[FILENAME])
+    try:
+        database.add_file(
+            request.json["url"],
+            request.json[FILENAME])
 
-    if(result == DatabaseApi.MESSAGE_INVALID_URL):
-        return jsonify(
-            {MESSAGE_RESULT: DatabaseApi.MESSAGE_INVALID_URL}),\
-                HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    except Exception as error_message:
 
-    elif(result == DatabaseApi.MESSAGE_DUPLICATE_FILE):
-        return jsonify(
-            {MESSAGE_RESULT: DatabaseApi.MESSAGE_DUPLICATE_FILE}),\
-                HTTP_STATUS_CODE_CONFLICT
+        if(error_message.args[FIRST_ARGUMENT] == MESSAGE_INVALID_URL):
+            return jsonify(
+                {MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),\
+                    HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
-    else:
-        return jsonify(
-            {MESSAGE_RESULT: DatabaseApi.MESSAGE_CREATED_FILE}),\
-                HTTP_STATUS_CODE_SUCESS_CREATED
+        elif(error_message.args[FIRST_ARGUMENT] == MESSAGE_DUPLICATE_FILE):
+            return jsonify(
+                {MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),\
+                    HTTP_STATUS_CODE_CONFLICT
+
+    return jsonify(
+        {MESSAGE_RESULT: MESSAGE_CREATED_FILE}),\
+        HTTP_STATUS_CODE_SUCESS_CREATED
 
 
 @app.route('/files', methods=[GET])
 def read_files():
-    file_downloader_and_saver = FileDownloaderAndSaver()
+    file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
@@ -70,16 +79,15 @@ def read_files():
 
 @app.route('/files', methods=[DELETE])
 def delete_file():
-    file_downloader_and_saver = FileDownloaderAndSaver()
+    file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
     result = database.delete_file(request.json[FILENAME])
 
-    if(result == DatabaseApi.MESSAGE_DELETED_FILE):
-        return jsonify(
-            {MESSAGE_RESULT: DatabaseApi.MESSAGE_DELETED_FILE}),\
-                HTTP_STATUS_CODE_SUCESS
+    return jsonify(
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
+        HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":

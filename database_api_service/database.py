@@ -20,8 +20,6 @@ METADATA_ROW_ID = 0
 class DatabaseApi:
     MESSAGE_INVALID_URL = "invalid_url"
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_CREATED_FILE = "file_created"
-    MESSAGE_DELETED_FILE = "deleted_file"
 
     def __init__(self, database_object, file_manager_object):
         self.database_object = database_object
@@ -33,12 +31,10 @@ class DatabaseApi:
                 filename, url, self.database_object)
 
         except requests.exceptions.RequestException:
-            return DatabaseApi.MESSAGE_INVALID_URL
+            raise Exception(self.MESSAGE_INVALID_URL)
 
         except errors.PyMongoError:
-            return DatabaseApi.MESSAGE_DUPLICATE_FILE
-
-        return DatabaseApi.MESSAGE_CREATED_FILE
+            raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def read_file(self, filename, skip, limit, query):
         result = []
@@ -56,7 +52,6 @@ class DatabaseApi:
 
     def delete_file(self, filename):
         self.database_object.delete_file(filename)
-        return DatabaseApi.MESSAGE_DELETED_FILE
 
     def get_files(self):
         result = []
@@ -97,7 +92,7 @@ class DatabaseInterface():
         pass
 
 
-class FileManagerInterface():
+class CsvManagerInterface():
     def storage_file(self, filename, url, database_connection):
         pass
 
@@ -140,7 +135,7 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class FileDownloaderAndSaver(FileManagerInterface):
+class CsvDownloader(CsvManagerInterface):
     MAX_QUEUE_SIZE = 1000
     MAX_NUMBER_THREADS = 3
     FINISHED = "finished"

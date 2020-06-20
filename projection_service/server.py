@@ -57,8 +57,6 @@ def create_projection():
 
     request_validator = ProjectionRequestValidator(database)
 
-    first_argument = 0
-
     try:
         request_validator.projection_filename_validator(
             request.json[PROJECTION_FILENAME_NAME])
