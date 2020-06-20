@@ -5,6 +5,9 @@ echo "--------------------------------------------------------------------"
 echo "Buiding own images service..."
 echo "--------------------------------------------------------------------"
 
+docker build --tag spark_task ./spark_task_image
+docker push 127.0.0.1:5050/spark_task
+
 docker-compose build
 
 echo "--------------------------------------------------------------------"
