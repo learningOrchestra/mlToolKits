@@ -212,7 +212,7 @@ services:
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
-    model_builder:
+    modelbuilder:
         build: ./model_builder_service
         image: 127.0.0.1:5050/model_builder:model_builder
         ports:
