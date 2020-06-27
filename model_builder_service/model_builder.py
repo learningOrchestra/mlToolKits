@@ -21,8 +21,6 @@ class ModelBuilderInterface():
 
 class SparkModelBuilder(ModelBuilderInterface):
     def __init__(self):
-        self.database_url_output = database_url_output
-
         self.spark_session = SparkSession \
                             .builder \
                             .appName("model_builder") \
