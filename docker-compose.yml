@@ -219,7 +219,7 @@ services:
             - "5002:5002"
             - 41100:41100
         extra_hosts:
-            - "model_builder:0.0.0.0"
+            - "modelbuilder:0.0.0.0"
         depends_on:
             - database_primary
             - images
