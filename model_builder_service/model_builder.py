@@ -15,7 +15,23 @@ MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 
 class ModelBuilderInterface():
-    def build_model(self):
+    def build_model(self, database_url_training, database_url_test):
+        pass
+
+
+class DatabaseInterface():
+    def get_filenames(self):
+        pass
+
+
+class RequestValidatorInterface():
+    MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
+    MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
+
+    def training_filename_validator(self, training_filename):
+        pass
+
+    def test_filename_validator(self, test_filename):
         pass
 
 
@@ -36,21 +52,9 @@ class SparkModelBuilder(ModelBuilderInterface):
                                     ':' + str(os.environ[SPARKMASTER_PORT])) \
                             .getOrCreate()
 
-    def build_model(self):
-        training = self.spark_session.createDataFrame([
-            (0, "a b c d e spark", 1.0),
-            (1, "b d", 0.0),
-            (2, "spark f g h", 1.0),
-            (3, "hadoop mapreduce", 0.0),
-            (4, "b spark who", 1.0),
-            (5, "g d a y", 0.0),
-            (6, "spark fly", 1.0),
-            (7, "was mapreduce", 0.0),
-            (8, "e spark program", 1.0),
-            (9, "a e c l", 0.0),
-            (10, "spark compile", 1.0),
-            (11, "hadoop software", 0.0)
-        ], ["id", "text", "label"])
+    def build_model(self, database_url_training, database_url_test):
+        training = self.spark_session.read.format("mongo").option(
+            "uri", database_url_training).load()
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
@@ -70,14 +74,38 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         cvModel = crossval.fit(training)
 
-        test = self.spark_session.createDataFrame([
-            (4, "spark i j k"),
-            (5, "l m n"),
-            (6, "mapreduce spark"),
-            (7, "apache hadoop")
-        ], ["id", "text"])
+        test = self.spark_session.read.format("mongo").option(
+            "uri", database_url_test).load()
 
         prediction = cvModel.transform(test)
         selected = prediction.select("id", "text", "probability", "prediction")
         for row in selected.collect():
             print(row, flush=True)
+
+
+class MongoOperations(DatabaseInterface):
+
+    def __init__(self, database_url, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url, int(database_port))
+        self.database = self.mongo_client[database_name]
+
+    def get_filenames(self):
+        return self.database.list_collection_names()
+
+
+class ModelBuilderRequestValidator(RequestValidatorInterface):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
+    def training_filename_validator(self, training_filename):
+        filenames = self.database.get_filenames()
+
+        if(training_filename not in filenames):
+            raise Exception(self.MESSAGE_INVALID_TRAINING_FILENAME)
+
+    def test_filename_validator(self, test_filename):
+        filenames = self.database.get_filenames()
+
+        if(test_filename not in filenames):
+            raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)

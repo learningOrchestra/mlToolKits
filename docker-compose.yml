@@ -236,6 +236,11 @@ services:
             - database
             - frontend
             - spark
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
 
 networks:
     database:
