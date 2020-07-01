@@ -61,6 +61,9 @@ class DataTypeConverter(DataTypeConverterInterface):
             elif(field_type == self.NUMBER_TYPE):
                 values[field] = float(document[field])
 
+                if(values[field].is_integer()):
+                    values[field] = int(values[field])
+
             self.database_connector.update_one(
                 filename, values, document)
 
