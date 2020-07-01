@@ -57,6 +57,8 @@ class SparkModelBuilder(ModelBuilderInterface):
         training = self.spark_session.read.format("mongo").option(
             "uri", database_url_training).load()
 
+        training = training.filter(training._id != 0)
+
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
                               outputCol="features")
@@ -77,6 +79,8 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         test = self.spark_session.read.format("mongo").option(
             "uri", database_url_test).load()
+
+        test = test.filter(test._id != 0)
 
         prediction = cvModel.transform(test)
         selected = prediction.select("id", "text", "probability", "prediction")
