@@ -1,4 +1,4 @@
-from flask import jsonify, Flask
+from flask import jsonify, Flask, request
 import os
 from flask_cors import CORS
 from data_type_handler import (
