@@ -86,7 +86,7 @@ class MongoOperations(DatabaseInterface):
     def update_one(self, filename, new_value, query):
         new_values_query = {"$set": new_value}
         file_collection = self.database[filename]
-        file_collection.update_one(new_values_query, query)
+        file_collection.update_one(query, new_values_query)
 
     def find_one(self, filename, query):
         file_collection = self.database[filename]
