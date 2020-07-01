@@ -55,7 +55,6 @@ class DataTypeConverter(DataTypeConverterInterface):
 
             values = {}
             if(field_type == self.STRING_TYPE):
-                new_document[field] = str(document[field])
                 values[field] = str(document[field])
             elif(field_type == self.NUMBER_TYPE):
                 values[field] = float(document[field])
