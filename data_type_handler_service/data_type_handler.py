@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from concurrent.futures import ThreadPoolExecutor, wait
 
 
 class DatabaseInterface():
@@ -46,6 +47,7 @@ class DataTypeConverter(DataTypeConverterInterface):
 
     def __init__(self, database_connector):
         self.database_connector = database_connector
+        self.thread_pool = ThreadPoolExecutor()
 
     def field_converter(self, filename, field, field_type):
         query = {}
@@ -63,9 +65,15 @@ class DataTypeConverter(DataTypeConverterInterface):
                 filename, values, document)
 
     def file_converter(self, filename, fields_dictionary):
+        threads = []
+
         for field in fields_dictionary:
-            self.field_converter(
-                filename, field, fields_dictionary[field])
+            threads.append(
+                self.thread_pool.submit(
+                    self.field_converter,
+                    filename, field, fields_dictionary[field]))
+
+        wait(threads)
 
 
 class MongoOperations(DatabaseInterface):
