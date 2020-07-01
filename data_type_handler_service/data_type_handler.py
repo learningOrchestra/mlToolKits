@@ -53,15 +53,15 @@ class DataTypeConverter(DataTypeConverterInterface):
             if(document[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID):
                 continue
 
-            new_document = document
-
+            values = {}
             if(field_type == self.STRING_TYPE):
                 new_document[field] = str(document[field])
+                values[field] = str(document[field])
             elif(field_type == self.NUMBER_TYPE):
-                new_document[field] = float(document[field])
+                values[field] = float(document[field])
 
             self.database_connector.update_one(
-                filename, new_document, document)
+                filename, values, document)
 
     def file_converter(self, filename, fields_dictionary):
         for field in fields_dictionary:
@@ -84,8 +84,9 @@ class MongoOperations(DatabaseInterface):
         return self.database.list_collection_names()
 
     def update_one(self, filename, new_value, query):
+        new_values_query = {"$set": new_value}
         file_collection = self.database[filename]
-        file_collection.update_one(new_value, query)
+        file_collection.update_one(new_values_query, query)
 
     def find_one(self, filename, query):
         file_collection = self.database[filename]
