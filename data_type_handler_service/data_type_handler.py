@@ -41,12 +41,18 @@ class DataTypeConverterInterface():
 
 
 class DataTypeConverter(DataTypeConverterInterface):
+    METADATA_DOCUMENT_ID = 0
+    DOCUMENT_ID_NAME = "_id"
+
     def __init__(self, database_connector):
         self.database_connector = database_connector
 
     def field_converter(self, filename, field, field_type):
         query = {}
         for document in self.database_connector.find(filename, query):
+            if(document[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID):
+                continue
+
             new_document = document
 
             if(field_type == self.STRING_TYPE):
