@@ -37,6 +37,9 @@ class RequestValidatorInterface():
 
 
 class SparkModelBuilder(ModelBuilderInterface):
+    METADATA_DOCUMENT_ID = 0
+    DOCUMENT_ID_NAME = "_id"
+
     def __init__(self):
         self.spark_session = SparkSession \
                             .builder \
@@ -57,7 +60,8 @@ class SparkModelBuilder(ModelBuilderInterface):
         training = self.spark_session.read.format("mongo").option(
             "uri", database_url_training).load()
 
-        training = training.filter(training._id != 0)
+        training = training.filter(
+            training[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
@@ -73,14 +77,15 @@ class SparkModelBuilder(ModelBuilderInterface):
         crossval = CrossValidator(estimator=pipeline,
                                   estimatorParamMaps=paramGrid,
                                   evaluator=BinaryClassificationEvaluator(),
-                                  numFolds=2)  # use 3+ folds in practice
+                                  numFolds=2)
 
         cvModel = crossval.fit(training)
 
         test = self.spark_session.read.format("mongo").option(
             "uri", database_url_test).load()
 
-        test = test.filter(test._id != 0)
+        test = test.filter(
+            test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         prediction = cvModel.transform(test)
         selected = prediction.select("id", "text", "probability", "prediction")
