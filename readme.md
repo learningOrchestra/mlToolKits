@@ -8,9 +8,9 @@
 
 The learningOrchestra is a tool for distributed machine learning processing.
 
-# Services
+# Microservices
 
-* visualizer - Visualize cluster state, including machines, up services, resources, etc
+* visualizer - Visualize cluster state, including machines, up microservices, resources, etc
 * images - Private image repository to store images for own projects
 * database_primary - Main database, used to read and write data
 * database_secondary - Database used in downtime database_primary , used only to read
@@ -57,7 +57,7 @@ sudo ./run.sh
 If all things is happen good, the learningOrchestra is have been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
 ### Use
-* Visualize cluster state (deployed services tasks and cluster's machines) - IP_FROM_CLUSTER:8080
+* Visualize cluster state (deployed microservices tasks and cluster's machines) - IP_FROM_CLUSTER:8080
 * learningOrchestra GUI - IP_FROM_CLUSTER (PORT 80)
 
 
