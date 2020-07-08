@@ -69,7 +69,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         lr = LogisticRegression(maxIter=10)
         pipeline = Pipeline(stages=[tokenizer, hashingTF, lr])
 
-        paramGrid = ParamGridBuilder()
+        paramGrid = ParamGridBuilder().build()
 
         crossval = CrossValidator(estimator=pipeline,
                                   estimatorParamMaps=paramGrid,
