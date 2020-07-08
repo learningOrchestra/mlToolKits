@@ -88,8 +88,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         prediction = cvModel.transform(test)
-        selected = prediction.select("id", "text", "probability", "prediction")
-        for row in selected.collect():
+
+        for row in prediction.collect():
             print(row, flush=True)
 
 
