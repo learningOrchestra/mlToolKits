@@ -73,11 +73,12 @@ class SparkModelBuilder(ModelBuilderInterface):
         training_file = self.file_processor(database_url_training)
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
-        hashing = HashingTF(inputCol=tokenizer.getOutputCol(),
-                            outputCol="features")
+        hashing_tf = HashingTF(
+                        inputCol=tokenizer.getOutputCol(),
+                        outputCol="features")
         logistic_regression = LogisticRegression(maxIter=10)
 
-        pipeline = Pipeline(stages=[tokenizer, hashing, logistic_regression])
+        pipeline = Pipeline(stages=[tokenizer, hashing_tf, logistic_regression])
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
                             estimator=pipeline,
