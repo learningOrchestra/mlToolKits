@@ -93,6 +93,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         training_string_fields = self.fields_from_dataframe(
             training_file, True)
+
         for column in training_string_fields:
             tokenizer = Tokenizer(
                 inputCol=column, outputCol=(column + "_words"))
