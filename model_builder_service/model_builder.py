@@ -42,19 +42,19 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def __init__(self):
         self.spark_session = SparkSession \
-                            .builder \
-                            .appName("model_builder") \
-                            .config("spark.driver.port",
-                                    os.environ[SPARK_DRIVER_PORT]) \
-                            .config("spark.driver.host",
-                                    os.environ[MODEL_BUILDER_HOST_NAME])\
-                            .config('spark.jars.packages',
-                                    'org.mongodb.spark:mongo-spark' +
-                                    '-connector_2.11:2.4.2')\
-                            .master("spark://" +
-                                    os.environ[SPARKMASTER_HOST] +
-                                    ':' + str(os.environ[SPARKMASTER_PORT])) \
-                            .getOrCreate()
+            .builder \
+            .appName("model_builder") \
+            .config("spark.driver.port",
+                    os.environ[SPARK_DRIVER_PORT]) \
+            .config("spark.driver.host",
+                    os.environ[MODEL_BUILDER_HOST_NAME])\
+            .config('spark.jars.packages',
+                    'org.mongodb.spark:mongo-spark' +
+                    '-connector_2.11:2.4.2')\
+            .master("spark://" +
+                    os.environ[SPARKMASTER_HOST] +
+                    ':' + str(os.environ[SPARKMASTER_PORT])) \
+            .getOrCreate()
 
     def file_processor(self, database_url):
         file = self.spark_session.read.format("mongo").option(
@@ -78,7 +78,8 @@ class SparkModelBuilder(ModelBuilderInterface):
                         outputCol="features")
         logistic_regression = LogisticRegression(maxIter=10)
 
-        pipeline = Pipeline(stages=[tokenizer, hashing_tf, logistic_regression])
+        pipeline = Pipeline(
+            stages=[tokenizer, hashing_tf, logistic_regression])
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
                             estimator=pipeline,
