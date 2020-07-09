@@ -91,7 +91,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         logistic_regression = LogisticRegression(maxIter=10)
 
         pipeline = Pipeline(
-            stages=[pre_processing_text, logistic_regression])
+            stages=[*pre_processing_text, logistic_regression])
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
                             estimator=pipeline,
