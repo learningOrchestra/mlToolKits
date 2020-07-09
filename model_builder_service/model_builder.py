@@ -16,7 +16,7 @@ MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 
 class ModelBuilderInterface():
-    def build_model(self, database_url_training, database_url_test):
+    def build_model(self, database_url_training, database_url_test, label):
         pass
 
 
@@ -80,11 +80,12 @@ class SparkModelBuilder(ModelBuilderInterface):
         else:
             for column in dataframe.schema.names:
                 if(type(first_row[column]) != str):
-                    text_fields.append(column)            
+                    text_fields.append(column)
 
         return text_fields
 
-    def build_model(self, database_url_training, database_url_test):
+    def build_model(self, database_url_training, database_url_test,
+                    label='label'):
         training_file = self.file_processor(database_url_training)
 
         pre_processing_text = list()
@@ -109,7 +110,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             training_file, False)
 
         for column in training_number_fields:
-            assembler_columns_input.append(column)
+            if(column != label):
+                assembler_columns_input.append(column)
 
         assembler = VectorAssembler(
             inputCols=assembler_columns_input,
