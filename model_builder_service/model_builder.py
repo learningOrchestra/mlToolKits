@@ -70,26 +70,24 @@ class SparkModelBuilder(ModelBuilderInterface):
         return processed_file
 
     def build_model(self, database_url_training, database_url_test):
-        training = self.file_processor(database_url_training)
+        training_file = self.file_processor(database_url_training)
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
-        hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
-                              outputCol="features")
-        lr = LogisticRegression(maxIter=10)
-        pipeline = Pipeline(stages=[tokenizer, hashingTF, lr])
+        hashing = HashingTF(inputCol=tokenizer.getOutputCol(),
+                            outputCol="features")
+        logistic_regression = LogisticRegression(maxIter=10)
 
-        paramGrid = ParamGridBuilder().build()
+        pipeline = Pipeline(stages=[tokenizer, hashing, logistic_regression])
+        param_grid = ParamGridBuilder().build()
+        cross_validator = CrossValidator(
+                            estimator=pipeline,
+                            estimatorParamMaps=param_grid,
+                            evaluator=BinaryClassificationEvaluator(),
+                            numFolds=2)
+        cross_validator_model = cross_validator.fit(training_file)
 
-        crossval = CrossValidator(estimator=pipeline,
-                                  estimatorParamMaps=paramGrid,
-                                  evaluator=BinaryClassificationEvaluator(),
-                                  numFolds=2)
-
-        cvModel = crossval.fit(training)
-
-        test = self.file_processor(database_url_test)
-
-        prediction = cvModel.transform(test)
+        test_file = self.file_processor(database_url_test)
+        prediction = cross_validator_model.transform(test_file)
 
         for row in prediction.collect():
             print(row, flush=True)
