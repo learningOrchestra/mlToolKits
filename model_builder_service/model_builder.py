@@ -63,8 +63,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         training = training.filter(
             training[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
-        training_fields = training["fields"]
-        training = training.select(*training_fields)
+        training = training.drop("_id")
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
@@ -87,8 +86,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         test = test.filter(
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
-        test_fields = test["fields"]
-        test = test.select(*test_fields)
+        test = test.drop("_id")
 
         prediction = cvModel.transform(test)
 
