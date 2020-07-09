@@ -85,7 +85,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
                 hashing_tf = HashingTF(
                                 inputCol=tokenizer.getOutputCol(),
-                                outputCol=(column + "_features"))
+                                outputCol=("features"))
                 pre_processing_text.append(hashing_tf)
 
         logistic_regression = LogisticRegression(maxIter=10)
