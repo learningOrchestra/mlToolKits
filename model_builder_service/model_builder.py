@@ -83,6 +83,14 @@ class SparkModelBuilder(ModelBuilderInterface):
         test = self.spark_session.read.format("mongo").option(
             "uri", database_url_test).load()
 
+        test_metadata = test.filter(
+            test[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID) \
+            .collect()(self.METADATA_DOCUMENT_ID)
+
+        test_fields = [field for field in test_metadata.select("fields")]
+        print(test_fields)
+        print(type(test_fields))
+
         test = test.filter(
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
