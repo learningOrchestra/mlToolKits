@@ -83,19 +83,15 @@ class SparkModelBuilder(ModelBuilderInterface):
         test = self.spark_session.read.format("mongo").option(
             "uri", database_url_test).load()
 
-        test_metadata = test.filter(
-            test[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID)
-
-        test_metadata = test_metadata[self.METADATA_DOCUMENT_ID]
-
-        test_fields = [field for field in test_metadata.select("fields")]
-        print(test_fields, flush=True)
-        print(type(test_fields), flush=True)
-
         test = test.filter(
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         test = test.drop("_id")
+        test.drop("fields")
+        test.drop("filename")
+        test.drop("finished")
+        test.drop("time_created")
+        test.drop("url")
 
         prediction = cvModel.transform(test)
 
