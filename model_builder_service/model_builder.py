@@ -70,7 +70,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         return processed_file
 
     def build_model(self, database_url_training, database_url_test):
-        training_file = self.file_processor(database_url_training)
+        training = self.file_processor(database_url_training)
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
