@@ -72,17 +72,26 @@ class SparkModelBuilder(ModelBuilderInterface):
     def build_model(self, database_url_training, database_url_test):
         training_file = self.file_processor(database_url_training)
 
-        for column in training_file.schema.names:
-            print(column, flush=True)
+        pre_processing_text = list()
+        first_row = training_file.first()
 
-        tokenizer = Tokenizer(inputCol="text", outputCol="words")
-        hashing_tf = HashingTF(
-                        inputCol=tokenizer.getOutputCol(),
-                        outputCol="features")
+        for column in training_file.schema.names:
+            if(type(first_row[column]) == str):
+                print(column, flush=True)
+
+                tokenizer = Tokenizer(
+                    inputCol=column, outputCol=(column + "_words"))
+                pre_processing_text.append(tokenizer)
+
+                hashing_tf = HashingTF(
+                                inputCol=tokenizer.getOutputCol(),
+                                outputCol=(column + "_features"))
+                pre_processing_text.append(hashing_tf)
+
         logistic_regression = LogisticRegression(maxIter=10)
 
         pipeline = Pipeline(
-            stages=[tokenizer, hashing_tf, logistic_regression])
+            stages=[pre_processing_text, logistic_regression])
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
                             estimator=pipeline,
