@@ -72,6 +72,9 @@ class SparkModelBuilder(ModelBuilderInterface):
     def build_model(self, database_url_training, database_url_test):
         training_file = self.file_processor(database_url_training)
 
+        for column in training_file.schema.names:
+            print(column, flush=True)
+
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashing_tf = HashingTF(
                         inputCol=tokenizer.getOutputCol(),
