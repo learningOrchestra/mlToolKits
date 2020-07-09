@@ -86,12 +86,10 @@ class SparkModelBuilder(ModelBuilderInterface):
         test = test.filter(
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
-        test = test.drop("_id")
-        test.drop("fields")
-        test.drop("filename")
-        test.drop("finished")
-        test.drop("time_created")
-        test.drop("url")
+        metadata_fields = [
+            "_id", "fields", "filename", "finished", "time_created", "url"]
+
+        test = test.drop(*metadata_fields)
 
         prediction = cvModel.transform(test)
 
