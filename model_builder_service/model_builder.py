@@ -56,14 +56,21 @@ class SparkModelBuilder(ModelBuilderInterface):
                                     ':' + str(os.environ[SPARKMASTER_PORT])) \
                             .getOrCreate()
 
+    def file_processor(self, database_url):
+        file = self.spark_session.read.format("mongo").option(
+            "uri", database_url).load()
+
+        file_without_metadata = file.filter(
+            file[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
+
+        metadata_fields = [
+            "_id", "fields", "filename", "finished", "time_created", "url"]
+        processed_file = file_without_metadata.drop(*metadata_fields)
+
+        return processed_file
+
     def build_model(self, database_url_training, database_url_test):
-        training = self.spark_session.read.format("mongo").option(
-            "uri", database_url_training).load()
-
-        training = training.filter(
-            training[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
-
-        training = training.drop("_id")
+        training_file = self.file_processor(database_url_training)
 
         tokenizer = Tokenizer(inputCol="text", outputCol="words")
         hashingTF = HashingTF(inputCol=tokenizer.getOutputCol(),
@@ -80,16 +87,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         cvModel = crossval.fit(training)
 
-        test = self.spark_session.read.format("mongo").option(
-            "uri", database_url_test).load()
-
-        test = test.filter(
-            test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
-
-        metadata_fields = [
-            "_id", "fields", "filename", "finished", "time_created", "url"]
-
-        test = test.drop(*metadata_fields)
+        test = self.file_processor(database_url_test)
 
         prediction = cvModel.transform(test)
 
