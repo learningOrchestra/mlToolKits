@@ -5,7 +5,7 @@ from datetime import datetime
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
-from pyspark.ml.feature import HashingTF, Tokenizer
+from pyspark.ml.feature import HashingTF, Tokenizer, VectorAssembler
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 from pymongo import MongoClient
 
@@ -69,29 +69,56 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         return processed_file
 
+    def fields_from_dataframe(self, dataframe, is_string):
+        text_fields = []
+        first_row = dataframe.first()
+
+        if(is_string):
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) == str):
+                    text_fields.append(column)
+        else:
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) != str):
+                    text_fields.append(column)            
+
+        return text_fields
+
     def build_model(self, database_url_training, database_url_test):
         training_file = self.file_processor(database_url_training)
 
         pre_processing_text = list()
-        first_row = training_file.first()
+        assembler_columns_input = []
 
-        for column in training_file.schema.names:
-            if(type(first_row[column]) == str):
-                print(column, flush=True)
+        training_string_fields = self.fields_from_dataframe(
+            training_file, True)
+        for column in training_string_fields:
+            tokenizer = Tokenizer(
+                inputCol=column, outputCol=(column + "_words"))
+            pre_processing_text.append(tokenizer)
 
-                tokenizer = Tokenizer(
-                    inputCol=column, outputCol=(column + "_words"))
-                pre_processing_text.append(tokenizer)
+            hashing_tf_output_column_name = column + "_features"
 
-                hashing_tf = HashingTF(
-                                inputCol=tokenizer.getOutputCol(),
-                                outputCol=("features"))
-                pre_processing_text.append(hashing_tf)
+            hashing_tf = HashingTF(
+                            inputCol=tokenizer.getOutputCol(),
+                            outputCol=hashing_tf_output_column_name)
+            pre_processing_text.append(hashing_tf)
+            assembler_columns_input.append(hashing_tf_output_column_name)
+
+        training_number_fields = self.fields_from_dataframe(
+            training_file, False)
+
+        for column in training_number_fields:
+            assembler_columns_input.append(column)
+
+        assembler = VectorAssembler(
+            inputCols=assembler_columns_input,
+            outputCol="features")
 
         logistic_regression = LogisticRegression(maxIter=10)
 
         pipeline = Pipeline(
-            stages=[*pre_processing_text, logistic_regression])
+            stages=[*pre_processing_text, assembler, logistic_regression])
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
                             estimator=pipeline,
