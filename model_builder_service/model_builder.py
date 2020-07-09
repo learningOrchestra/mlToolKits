@@ -88,7 +88,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         test_fields = test["fields"]
-        test.select(*test_fields)
+        test = test.select(*test_fields)
 
         prediction = cvModel.transform(test)
 
