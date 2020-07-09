@@ -84,12 +84,13 @@ class SparkModelBuilder(ModelBuilderInterface):
             "uri", database_url_test).load()
 
         test_metadata = test.filter(
-            test[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID) \
-            .collect()(self.METADATA_DOCUMENT_ID)
+            test[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID)
+
+        test_metadata = test_metadata[self.METADATA_DOCUMENT_ID]
 
         test_fields = [field for field in test_metadata.select("fields")]
-        print(test_fields)
-        print(type(test_fields))
+        print(test_fields, flush=True)
+        print(type(test_fields), flush=True)
 
         test = test.filter(
             test[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
