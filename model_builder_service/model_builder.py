@@ -184,5 +184,5 @@ class ModelBuilderRequestValidator(RequestValidatorInterface):
         filename_metadata = self.database.find_one(
             filename, filename_metadata_query)
 
-        if field not in filename_metadata["fields"]:
+        if file_field not in filename_metadata["fields"]:
             raise Exception(self.MESSAGE_INVALID_LABEL)
