@@ -24,15 +24,23 @@ class DatabaseInterface():
     def get_filenames(self):
         pass
 
+    def find_one(self, filename, query):
+        pass
+
 
 class RequestValidatorInterface():
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
     MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
+    MESSAGE_MISSING_LABEL = "missing_label"
+    MESSAGE_INVALID_LABEL = "invalid_label"
 
     def training_filename_validator(self, training_filename):
         pass
 
     def test_filename_validator(self, test_filename):
+        pass
+
+    def field_validator(self, filename, file_field):
         pass
 
 
@@ -84,8 +92,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         return text_fields
 
-    def build_model(self, database_url_training, database_url_test,
-                    label='label'):
+    def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
 
         pre_processing_text = list()
@@ -118,7 +125,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             inputCols=assembler_columns_input,
             outputCol="features")
 
-        logistic_regression = LogisticRegression(maxIter=10)
+        logistic_regression = LogisticRegression(maxIter=10, labelCol=label)
 
         pipeline = Pipeline(
             stages=[*pre_processing_text, assembler, logistic_regression])
@@ -147,6 +154,10 @@ class MongoOperations(DatabaseInterface):
     def get_filenames(self):
         return self.database.list_collection_names()
 
+    def find_one(self, filename, query):
+        file_collection = self.database[filename]
+        return file_collection.find_one(query)
+
 
 class ModelBuilderRequestValidator(RequestValidatorInterface):
     def __init__(self, database_connector):
@@ -163,3 +174,16 @@ class ModelBuilderRequestValidator(RequestValidatorInterface):
 
         if(test_filename not in filenames):
             raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
+
+    def field_validator(self, filename, file_field):
+        if not file_field:
+            raise Exception(self.MESSAGE_MISSING_LABEL)
+
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = self.database.find_one(
+            filename, filename_metadata_query)
+
+        for field in file_field:
+            if field not in filename_metadata["fields"]:
+                raise Exception(self.MESSAGE_INVALID_LABEL)

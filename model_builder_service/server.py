@@ -27,6 +27,7 @@ DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 TRAINING_FILENAME = "training_filename"
 TEST_FILENAME = "test_filename"
+LABEL_NAME = "label"
 
 FIRST_ARGUMENT = 0
 
@@ -69,6 +70,14 @@ def create_model():
             {MESSAGE_RESULT: invalid_test_filename.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
+    try:
+        request_validator.field_validator(
+            request.json[TRAINING_FILENAME], request.json[LABEL_NAME])
+    except Exception as invalid_label:
+        return jsonify(
+            {MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),\
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
     database_url_training = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
@@ -84,7 +93,7 @@ def create_model():
     model_constructor = SparkModelBuilder()
 
     model_constructor.build_model(
-        database_url_training, database_url_test
+        database_url_training, database_url_test, request.json[LABEL_NAME]
     )
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}), \
