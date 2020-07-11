@@ -57,12 +57,24 @@ class DataTypeConverter(DataTypeConverterInterface):
 
             values = {}
             if(field_type == self.STRING_TYPE):
-                values[field] = str(document[field])
-            elif(field_type == self.NUMBER_TYPE):
-                values[field] = float(document[field])
+                if(document[field] == str):
+                    continue
+                if(document[field] is None):
+                    values[field] = ""
+                else:
+                    values[field] = str(document[field])
 
-                if(values[field].is_integer()):
-                    values[field] = int(values[field])
+            elif(field_type == self.NUMBER_TYPE):
+                if(document[field] == int or document[field] == float or
+                   document[field] is None):
+                    continue
+                if(document[field] == ""):
+                    values[field] = None
+                else:
+                    values[field] = float(document[field])
+
+                    if(values[field].is_integer()):
+                        values[field] = int(values[field])
 
             self.database_connector.update_one(
                 filename, values, document)
@@ -70,13 +82,16 @@ class DataTypeConverter(DataTypeConverterInterface):
     def file_converter(self, filename, fields_dictionary):
         threads = []
 
-        for field in fields_dictionary:
+        '''for field in fields_dictionary:
             threads.append(
                 self.thread_pool.submit(
                     self.field_converter,
                     filename, field, fields_dictionary[field]))
 
-        wait(threads)
+        wait(threads)'''
+
+        for field in fields_dictionary:
+            self.field_converter(filename, field, fields_dictionary[field])
 
 
 class MongoOperations(DatabaseInterface):
