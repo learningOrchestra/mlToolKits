@@ -70,13 +70,16 @@ class DataTypeConverter(DataTypeConverterInterface):
     def file_converter(self, filename, fields_dictionary):
         threads = []
 
-        for field in fields_dictionary:
+        '''for field in fields_dictionary:
             threads.append(
                 self.thread_pool.submit(
                     self.field_converter,
                     filename, field, fields_dictionary[field]))
 
-        wait(threads)
+        wait(threads)'''
+
+        for field in fields_dictionary:
+            self.field_converter(filename, field, fields_dictionary[field])
 
 
 class MongoOperations(DatabaseInterface):
