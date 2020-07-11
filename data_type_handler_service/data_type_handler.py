@@ -57,12 +57,18 @@ class DataTypeConverter(DataTypeConverterInterface):
 
             values = {}
             if(field_type == self.STRING_TYPE):
-                values[field] = str(document[field])
-            elif(field_type == self.NUMBER_TYPE):
-                values[field] = float(document[field])
+                if(value[field] is None):
+                    values[field] = ""
+                else:
+                    values[field] = str(document[field])
 
+            elif(field_type == self.NUMBER_TYPE):
+                if(values[field] == ""):
+                    values[field] = None
                 if(values[field].is_integer()):
                     values[field] = int(values[field])
+                else:
+                    values[field] = float(document[field])
 
             self.database_connector.update_one(
                 filename, values, document)
