@@ -57,15 +57,15 @@ class DataTypeConverter(DataTypeConverterInterface):
 
             values = {}
             if(field_type == self.STRING_TYPE):
-                if(value[field] is None):
+                if(document[field] is None):
                     values[field] = ""
                 else:
                     values[field] = str(document[field])
 
             elif(field_type == self.NUMBER_TYPE):
-                if(values[field] == ""):
+                if(document[field] == ""):
                     values[field] = None
-                if(values[field].is_integer()):
+                elif(document[field].is_integer()):
                     values[field] = int(values[field])
                 else:
                     values[field] = float(document[field])
