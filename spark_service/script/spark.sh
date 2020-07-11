@@ -6,6 +6,5 @@ fi
 if [ "$SPARK_ROLE" = "slave" ]; then
   $SPARK_HOME/bin/spark-class org.apache.spark.deploy.worker.Worker  \
   spark://$SPARK_MASTER:$SPARK_MASTER_PORT \
-  -p $SPARK_WORKER_PORT \
-  -m 3G
+  -p $SPARK_WORKER_PORT 
 fi
