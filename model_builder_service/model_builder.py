@@ -56,7 +56,6 @@ class SparkModelBuilder(ModelBuilderInterface):
                     os.environ[SPARK_DRIVER_PORT]) \
             .config("spark.driver.host",
                     os.environ[MODEL_BUILDER_HOST_NAME])\
-            .config("spark.driver.memory", "3g") \
             .config('spark.jars.packages',
                     'org.mongodb.spark:mongo-spark' +
                     '-connector_2.11:2.4.2')\
