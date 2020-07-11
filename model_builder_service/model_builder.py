@@ -125,6 +125,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             inputCols=assembler_columns_input,
             outputCol="features")
 
+        assembler.setHandleInvalid("skip")
+
         logistic_regression = LogisticRegression(maxIter=10, labelCol=label)
 
         pipeline = Pipeline(
