@@ -1,21 +1,20 @@
 import requests
 
-cluster_ip = None
+cluster_url = None
 
 
 class Context():
     def __init__(self, ip_from_cluster):
-        global cluster_ip
-        cluster_ip = str(ip_from_cluster)
+        global cluster_url
+        cluster_url = 'http://' + ip_from_cluster
 
 
 class DatabaseApi():
-    DATABASE_API_PORT = 5000
+    DATABASE_API_PORT = "5000"
 
     def __init__(self):
-        global cluster_ip
-        self.url_base = cluster_ip + ':' +
-        str(self.DATABASE_API_PORT) + '/files'
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.DATABASE_API_PORT + '/files'
 
     def read_resume_files(self):
         url = self.url_base
@@ -50,16 +49,16 @@ class DatabaseApi():
 
 
 class Projection():
-    PROJECTION_PORT = 5001
+    PROJECTION_PORT = "5001"
 
     def __init__(self):
-        global cluster_ip
-        self.url_base = cluster_ip + ':' +
-        str(self.PROJECTION_PORT) + '/projections'
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.PROJECTION_PORT + \
+            '/projections'
 
     def create_projection(self, filename, projection_filename, fields):
         request_body_content = {
-            'filename' = filename,
+            'filename': filename,
             'projection_filename': projection_filename,
             'fields': fields
         }
@@ -69,12 +68,12 @@ class Projection():
 
 
 class DataTypeHandler():
-    DATA_TYPE_HANDLER_PORT = 5003
+    DATA_TYPE_HANDLER_PORT = "5003"
 
     def __init__(self):
-        global cluster_ip
-        self.url_base = cluster_ip + ':' +
-        str(self.DATA_TYPE_HANDLER_PORT) + '/type'
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.DATA_TYPE_HANDLER_PORT + \
+            '/type'
 
     def change_file_type(self, filename, fields_dict):
         request_body_content = {
@@ -87,12 +86,11 @@ class DataTypeHandler():
 
 
 class ModelBuilder():
-    MODEL_BUILDER_PORT = 5002
+    MODEL_BUILDER_PORT = '5002'
 
     def __init__(self):
-        global cluster_ip
-        self.url_base = cluster_ip + ':' +
-        str(self.MODEL_BUILDER_PORT) + '/models'
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.MODEL_BUILDER_PORT + '/models'
 
     def build_model(self, training_filename, test_filename, label='label'):
         request_body_content = {
