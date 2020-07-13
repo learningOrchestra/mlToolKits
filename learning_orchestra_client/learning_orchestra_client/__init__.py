@@ -57,7 +57,7 @@ class Projection():
         self.url_base = cluster_ip + ':' +
         str(self.PROJECTION_PORT) + '/projections'
 
-    def make_projection(self, filename, projection_filename, fields):
+    def create_projection(self, filename, projection_filename, fields):
         request_body_content = {
             'filename' = filename,
             'projection_filename': projection_filename,
