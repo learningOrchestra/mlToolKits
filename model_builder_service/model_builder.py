@@ -155,7 +155,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         assembler_columns_input = []
 
         training_string_fields = self.fields_from_dataframe(
-            training_file, True)
+            training_dataframe, True)
 
         for column in training_string_fields:
             tokenizer_output_column_name = column + "_words"
@@ -199,8 +199,8 @@ class SparkModelBuilder(ModelBuilderInterface):
         cross_validator_model = cross_validator.fit(
             training_dataframe_transformed)
 
-        test_file = self.file_processor(database_url_test)
-        prediction = cross_validator_model.transform(test_file)
+        test_dataframe = self.file_processor(database_url_test)
+        prediction = cross_validator_model.transform(test_dataframe)
 
         for row in prediction.collect():
             print(row, flush=True)
