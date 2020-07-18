@@ -93,6 +93,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         return text_fields
 
     def build_model(self, database_url_training, database_url_test, label):
+        '''
         print(self.spark_session.sparkContext.getConf().getAll(), flush=True)
         training_file = self.file_processor(database_url_training)
 
@@ -139,6 +140,64 @@ class SparkModelBuilder(ModelBuilderInterface):
                             evaluator=BinaryClassificationEvaluator(),
                             numFolds=2)
         cross_validator_model = cross_validator.fit(training_file)
+
+        test_file = self.file_processor(database_url_test)
+        prediction = cross_validator_model.transform(test_file)
+
+        for row in prediction.collect():
+            print(row, flush=True)
+        '''
+
+        ##############################
+
+        training_dataframe = self.file_processor(database_url_training)
+
+        assembler_columns_input = []
+
+        training_string_fields = self.fields_from_dataframe(
+            training_file, True)
+
+        for column in training_string_fields:
+            tokenizer_output_column_name = column + "_words"
+            hashing_tf_output_column_name = column + "_features"
+
+            tokenizer = Tokenizer(
+                inputCol=column, outputCol=tokenizer_output_column_name)
+            tokens = tokenizer.transform(training_dataframe)
+
+            hashing_tf = HashingTF(
+                inputCol=tokenizer.getOutputCol(),
+                outputCol=hashing_tf_output_column_name)
+
+            assembler_columns_input.append(hashing_tf.transform(tokens))
+
+        training_number_fields = self.fields_from_dataframe(
+            training_dataframe, False)
+
+        for column in training_number_fields:
+            if(column != label):
+                assembler_columns_input.append(column)
+
+        assembler = VectorAssembler(
+            inputCols=assembler_columns_input,
+            outputCol="features").setHandleInvalid("skip")
+
+        pipeline = Pipeline(stages=[assembler, logistic_regression])
+        # pipeline.fit(training_dataframe)
+
+        training_dataframe_transformed =\
+            pipelineModel.transform(training_dataframe)
+
+        logistic_regression = LogisticRegression(maxIter=10, labelCol=label)
+
+        param_grid = ParamGridBuilder().build()
+        cross_validator = CrossValidator(
+                            estimator=pipeline,
+                            estimatorParamMaps=param_grid,
+                            evaluator=BinaryClassificationEvaluator(),
+                            numFolds=2)
+        cross_validator_model = cross_validator.fit(
+            training_dataframe_transformed)
 
         test_file = self.file_processor(database_url_test)
         prediction = cross_validator_model.transform(test_file)
