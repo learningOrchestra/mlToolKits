@@ -93,8 +93,6 @@ class SparkModelBuilder(ModelBuilderInterface):
         return text_fields
 
     def build_model(self, database_url_training, database_url_test, label):
-        '''
-        print(self.spark_session.sparkContext.getConf().getAll(), flush=True)
         training_file = self.file_processor(database_url_training)
 
         pre_processing_text = list()
@@ -204,6 +202,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         for row in prediction.collect():
             print(row, flush=True)
+'''
 
 
 class MongoOperations(DatabaseInterface):
