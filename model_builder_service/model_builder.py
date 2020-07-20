@@ -183,7 +183,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             outputCol="features").setHandleInvalid("skip")
 
         pipeline = Pipeline(stages=[assembler, logistic_regression])
-        # pipeline.fit(training_dataframe)
+        pipeline_model = pipeline.fit(training_dataframe)
 
         training_dataframe_transformed =\
             pipelineModel.transform(training_dataframe)
@@ -192,7 +192,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         param_grid = ParamGridBuilder().build()
         cross_validator = CrossValidator(
-                            estimator=pipeline,
+                            estimator=pipeline_model,
                             estimatorParamMaps=param_grid,
                             evaluator=BinaryClassificationEvaluator(),
                             numFolds=2)
