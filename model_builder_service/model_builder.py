@@ -94,9 +94,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
-
-        if(label != "label"):
-            training_file.withColumnRenamed(label, "label")
+        training_file = training_file.withColumnRenamed(label, "label")
 
         pre_processing_text = list()
         assembler_columns_input = []
