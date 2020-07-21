@@ -95,6 +95,9 @@ class SparkModelBuilder(ModelBuilderInterface):
     def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
 
+        if(label != "label"):
+            training_file.withColumnRenamed(label, "label")
+
         pre_processing_text = list()
         assembler_columns_input = []
 
@@ -128,8 +131,6 @@ class SparkModelBuilder(ModelBuilderInterface):
         assembler.setHandleInvalid("skip")
 
         logistic_regression = LogisticRegression(maxIter=10)
-        print(label, flush=True)
-        logistic_regression.setLabelCol(label)
 
         pipeline = Pipeline(
             stages=[*pre_processing_text, assembler, logistic_regression])
