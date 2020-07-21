@@ -127,7 +127,9 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         assembler.setHandleInvalid("skip")
 
-        logistic_regression = LogisticRegression(maxIter=10, labelCol=label)
+        logistic_regression = LogisticRegression(maxIter=10)
+        print(label, flush=True)
+        logistic_regression.setLabelCol(label)
 
         pipeline = Pipeline(
             stages=[*pre_processing_text, assembler, logistic_regression])
