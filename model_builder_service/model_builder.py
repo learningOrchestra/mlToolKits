@@ -60,10 +60,10 @@ class SparkModelBuilder(ModelBuilderInterface):
                     'org.mongodb.spark:mongo-spark' +
                     '-connector_2.11:2.4.2')\
             .config("spark.memory.fraction", 0.8) \
-            .config("spark.executor.memory", "2g") \
+            .config("spark.executor.memory", "1g") \
             .config("spark.sql.shuffle.partitions", "800") \
             .config("spark.memory.offHeap.enabled", 'true')\
-            .config("spark.memory.offHeap.size", "2g")\
+            .config("spark.memory.offHeap.size", "1g")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
