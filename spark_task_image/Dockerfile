@@ -10,10 +10,10 @@ RUN add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 RUN apt-get update && \
     apt-get install --no-install-recommends -y adoptopenjdk-8-hotspot 
 
-ENV SPARK_VERSION 2.4.6
+ENV SPARK_VERSION 3.0.0
 ENV SPARK_INSTALL /usr/local
 ENV SPARK_HOME $SPARK_INSTALL/spark
-ENV HADOOP_VERSION 2.7
+ENV HADOOP_VERSION 3.2
 ENV PYSPARK_PYTHON python3
 ENV PYSPARK_DRIVER_PYTHON python3
 
