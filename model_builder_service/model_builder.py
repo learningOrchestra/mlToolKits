@@ -1,4 +1,4 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, functions as sf
 import os
 from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
@@ -146,6 +146,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             print(row, flush=True)
 
         test_file = self.file_processor(database_url_test)
+        test_file = test_file.withColumn("label", sf.lit(0))
         prediction = model.transform(test_file)
 
         for row in prediction.collect():
