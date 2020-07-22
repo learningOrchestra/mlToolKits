@@ -104,6 +104,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         pre_processing_text = list()
         assembler_columns_input = []
 
+        '''
         training_string_fields = self.fields_from_dataframe(
             training_file, True)
 
@@ -119,6 +120,7 @@ class SparkModelBuilder(ModelBuilderInterface):
                             outputCol=hashing_tf_output_column_name)
             pre_processing_text.append(hashing_tf)
             assembler_columns_input.append(hashing_tf_output_column_name)
+        '''
 
         training_number_fields = self.fields_from_dataframe(
             training_file, False)
