@@ -104,7 +104,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         assembler_columns_input = []
 
         testing_df = self.file_processor(database_url_test)
-        testing_df = test_file.withColumn("label", sf.lit(0))
+        testing_df = testing_df.withColumn("label", sf.lit(0))
 
         string_fields = self.fields_from_dataframe(
             training_df, True)
