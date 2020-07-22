@@ -5,7 +5,7 @@ from datetime import datetime
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
-from pyspark.ml.feature import HashingTF, Tokenizer, VectorAssembler
+from pyspark.ml.feature import StringIndexer, Tokenizer, VectorAssembler
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 from pymongo import MongoClient
 
@@ -104,7 +104,6 @@ class SparkModelBuilder(ModelBuilderInterface):
         pre_processing_text = list()
         assembler_columns_input = []
 
-        '''
         training_string_fields = self.fields_from_dataframe(
             training_file, True)
 
@@ -115,12 +114,11 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             hashing_tf_output_column_name = column + "_features"
 
-            hashing_tf = HashingTF(
+            hashing_tf = StringIndexer(
                             inputCol=tokenizer.getOutputCol(),
                             outputCol=hashing_tf_output_column_name)
             pre_processing_text.append(hashing_tf)
             assembler_columns_input.append(hashing_tf_output_column_name)
-        '''
 
         training_number_fields = self.fields_from_dataframe(
             training_file, False)
