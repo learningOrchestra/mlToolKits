@@ -101,12 +101,17 @@ class SparkModelBuilder(ModelBuilderInterface):
         training_file = self.file_processor(database_url_training)
         training_file.setHandleInvalid("skip")
         training_file = training_file.withColumnRenamed(label, "label")
-
         pre_processing_text = list()
         assembler_columns_input = []
 
         training_string_fields = self.fields_from_dataframe(
             training_file, True)
+
+        training_number_fields = self.fields_from_dataframe(
+            training_file, False)
+
+        training_fields = training_string_fields + training_number_fields
+        training_file = training_file.na.drop(subset=training_fields)
 
         for column in training_string_fields:
             # tokenizer = Tokenizer(
