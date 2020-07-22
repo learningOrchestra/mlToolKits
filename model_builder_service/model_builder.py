@@ -142,6 +142,9 @@ class SparkModelBuilder(ModelBuilderInterface):
             stages=[*pre_processing_text, assembler, logistic_regression])
 
         model = regression_pipeline.fit(training_file)
+        training_prediction = model.transform(training_file)
+        for row in training_prediction.collect():
+            print(row, flush=True)
 
         test_file = self.file_processor(database_url_test)
         prediction = model.transform(test_file)
