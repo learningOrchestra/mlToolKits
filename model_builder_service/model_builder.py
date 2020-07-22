@@ -133,20 +133,16 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         assembler.setHandleInvalid("skip")
 
-        logistic_regression = LogisticRegression(maxIter=10)
+        logistic_regression = LogisticRegression(
+            featuresCol='features', maxIter=10)
 
-        pipeline = Pipeline(
+        regression_pipeline = Pipeline(
             stages=[*pre_processing_text, assembler, logistic_regression])
-        param_grid = ParamGridBuilder().build()
-        cross_validator = CrossValidator(
-                            estimator=pipeline,
-                            estimatorParamMaps=param_grid,
-                            evaluator=BinaryClassificationEvaluator(),
-                            numFolds=2)
-        cross_validator_model = cross_validator.fit(training_file)
+
+        model = regression_pipeline.fit(training_file)
 
         test_file = self.file_processor(database_url_test)
-        prediction = cross_validator_model.transform(test_file)
+        prediction = model.transform(test_file)
 
         for row in prediction.collect():
             print(row, flush=True)
