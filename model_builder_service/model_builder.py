@@ -98,18 +98,13 @@ class SparkModelBuilder(ModelBuilderInterface):
         return text_fields
 
     def build_model(self, database_url_training, database_url_test, label):
-        training_file = self.file_processor(database_url_training)
+        training_df = self.file_processor(database_url_training)
+        training_df = training_df.withColumnRenamed(label, "label")
         pre_processing_text = list()
         assembler_columns_input = []
 
         training_string_fields = self.fields_from_dataframe(
-            training_file, True)
-
-        training_number_fields = self.fields_from_dataframe(
-            training_file, False)
-
-        training_fields = training_string_fields + training_number_fields
-        training_file = training_file.na.drop(subset=training_fields)
+            training_df, True)
 
         for column in training_string_fields:
             # tokenizer = Tokenizer(
@@ -120,33 +115,33 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             hashing_tf = StringIndexer(
                             inputCol=column,
-                            outputCol=hashing_tf_output_column_name)
-            pre_processing_text.append(hashing_tf)
+                            outputCol=hashing_tf_output_column_name).fit(training_df)
+
+            training_df = hashing_tf.transform(training_df)
+            # pre_processing_text.append(hashing_tf)
             assembler_columns_input.append(hashing_tf_output_column_name)
 
         training_number_fields = self.fields_from_dataframe(
-            training_file, False)
+            training_df, False)
 
         for column in training_number_fields:
             if(column != label):
                 assembler_columns_input.append(column)
 
-        '''
         assembler = VectorAssembler(
             inputCols=assembler_columns_input,
             outputCol="features")
 
         assembler.setHandleInvalid("skip")
-        '''
-        training_file = training_file.withColumnRenamed(label, "label")
-        logistic_regression = LogisticRegression(
-            featuresCol=assembler_columns_input, maxIter=10)
+        features = assembler.transform(training_df)
+        model = LogisticRegression(
+            featuresCol="features", maxIter=10).fit(features)
 
-        regression_pipeline = Pipeline(
-            stages=[*pre_processing_text, logistic_regression])
+        # regression_pipeline = Pipeline(
+        #    stages=[*pre_processing_text, logistic_regression])
 
-        model = regression_pipeline.fit(training_file)
-        training_prediction = model.transform(training_file)
+        # model = regression_pipeline.fit(training_df)
+        training_prediction = model.transform(training_df)
         for row in training_prediction.collect():
             print(row, flush=True)
 
