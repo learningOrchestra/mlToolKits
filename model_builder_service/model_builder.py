@@ -99,7 +99,6 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
-        training_file.setHandleInvalid("skip")
         pre_processing_text = list()
         assembler_columns_input = []
 
