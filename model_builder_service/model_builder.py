@@ -99,6 +99,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
+        training_file.setHandleInvalid("skip")
         training_file = training_file.withColumnRenamed(label, "label")
 
         pre_processing_text = list()
@@ -108,14 +109,14 @@ class SparkModelBuilder(ModelBuilderInterface):
             training_file, True)
 
         for column in training_string_fields:
-            tokenizer = Tokenizer(
-                inputCol=column, outputCol=(column + "_words"))
-            pre_processing_text.append(tokenizer)
+            # tokenizer = Tokenizer(
+            #    inputCol=column, outputCol=(column + "_words"))
+            # pre_processing_text.append(tokenizer)
 
             hashing_tf_output_column_name = column + "_features"
 
             hashing_tf = StringIndexer(
-                            inputCol=tokenizer.getOutputCol(),
+                            inputCol=column,
                             outputCol=hashing_tf_output_column_name)
             pre_processing_text.append(hashing_tf)
             assembler_columns_input.append(hashing_tf_output_column_name)
@@ -127,17 +128,19 @@ class SparkModelBuilder(ModelBuilderInterface):
             if(column != label):
                 assembler_columns_input.append(column)
 
+        '''
         assembler = VectorAssembler(
             inputCols=assembler_columns_input,
             outputCol="features")
 
         assembler.setHandleInvalid("skip")
+        '''
 
         logistic_regression = LogisticRegression(
-            featuresCol='features', maxIter=10)
+            featuresCol=assembler_columns_input, maxIter=10)
 
         regression_pipeline = Pipeline(
-            stages=[*pre_processing_text, assembler, logistic_regression])
+            stages=[*pre_processing_text, logistic_regression])
 
         model = regression_pipeline.fit(training_file)
         training_prediction = model.transform(training_file)
