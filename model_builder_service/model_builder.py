@@ -100,7 +100,6 @@ class SparkModelBuilder(ModelBuilderInterface):
     def build_model(self, database_url_training, database_url_test, label):
         training_file = self.file_processor(database_url_training)
         training_file.setHandleInvalid("skip")
-        training_file = training_file.withColumnRenamed(label, "label")
         pre_processing_text = list()
         assembler_columns_input = []
 
@@ -140,7 +139,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         assembler.setHandleInvalid("skip")
         '''
-
+        training_file = training_file.withColumnRenamed(label, "label")
         logistic_regression = LogisticRegression(
             featuresCol=assembler_columns_input, maxIter=10)
 
