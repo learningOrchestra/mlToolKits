@@ -3,8 +3,7 @@
 [![status](https://img.shields.io/badge/status-building-yellow.svg)](https://shields.io/)
 [![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 [![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
-[![contributors](https://img.shields.io/github/contributors/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
-[![repo size](https://img.shields.io/github/repo-size/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+
 
 The learningOrchestra is a tool for distributed machine learning processing.
 
@@ -12,13 +11,15 @@ The learningOrchestra is a tool for distributed machine learning processing.
 
 * visualizer - Visualize cluster state, including machines, up microservices, resources, etc
 * images - Private image repository to store images for own projects
-* database_primary - Main database, used to read and write data
-* database_secondary - Database used in downtime database_primary , used only to read
-* database_arbiter - Manage the database replica set, setting database_primary and database_secondary
-* database_api - Service used to download and handling files in database
-* sparkmaster - Manager of spark cluster
-* sparkworker - Worker of spark cluster
+* database primary - Main database, used to read and write data
+* database secondary - Database used in downtime database_primary , used only to read
+* database arbiter - Manage the database replica set, setting database_primary and database_secondary
+* database api - Service used to download and handling files in database
+* spark master - Manager of spark cluster
+* spark worker - Worker of spark cluster
 * projection - Make projections of stored files in database using spark cluster
+* data type handler - Change fields file type between number and text
+* model builder - Create a prediction model from pre-processed files using spark cluster
 
 ## Tools and techniques used in this project
 
@@ -56,6 +57,7 @@ sudo ./run.sh
 If all things is happen good, the learningOrchestra is have been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
 ### Use
-* Visualize cluster state (deployed microservices tasks and cluster's machines) - IP_FROM_CLUSTER:8080
+* Visualize cluster state (deployed microservices tasks and cluster's machines) - IP_FROM_CLUSTER:8000
+* Visualize Spark Cluster state - IP_FROM_CLUSTER:8080
 
 
