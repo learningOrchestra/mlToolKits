@@ -1,34 +1,13 @@
 version: '3'
 
 services:
-    frontend:
-        build: ./frontend_service
-        image: 127.0.0.1:5050/frontend:frontend
-        ports:
-            - "80:8000"
-        depends_on:
-            - database_api
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - frontend
-        environment:
-            - DATABASE_API_HOST=http://database_api
-            - DATABASE_API_PORT=5000
-        tty: true
-
-    database_api:
-        build: ./database_api_service
+    databaseapi:
+        build: ./database_api_image
         image: 127.0.0.1:5050/database_api:database_api
         ports:
             - "5000:5000"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
         deploy:
             replicas: 1
@@ -41,15 +20,14 @@ services:
             - 'database_api:/database_api'
         networks:
             - database
-            - frontend
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary/?replicaSet=replica_set
             - DATABASE_PORT=27017 
 
-    database_primary:
+    databaseprimary:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_primary
+            - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
             - MONGODB_REPLICA_SET_MODE=primary
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_ROOT_PASSWORD=owl45#21
@@ -66,14 +44,14 @@ services:
                 constraints:
                     - "node.role==manager"
 
-    database_secondary:
+    databasesecondary:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
-            - database_primary
+            - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_secondary
+            - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
             - MONGODB_REPLICA_SET_MODE=secondary
-            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
@@ -88,14 +66,14 @@ services:
                 constraints:
                     - "node.role==worker"
 
-    database_arbiter:
+    databasearbiter:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
-         - database_primary
+         - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_arbiter
+            - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
             - MONGODB_REPLICA_SET_MODE=arbiter
-            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
@@ -141,7 +119,7 @@ services:
                     - "node.role==manager"
 
     sparkmaster:
-        build: ./spark_service
+        build: ./spark_image
         image: 127.0.0.1:5050/spark:spark
         ports:
             - 4040:4040
@@ -183,7 +161,7 @@ services:
             - database
 
     projection:
-        build: ./projection_service
+        build: ./projection_image
         image: 127.0.0.1:5050/projection:projection
         ports:
             - "5001:5001"
@@ -191,7 +169,7 @@ services:
         extra_hosts:
             - "projection:0.0.0.0"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
             - sparkmaster
             - sparkworker
@@ -204,17 +182,67 @@ services:
                     - "node.role==worker"
         networks:
             - database
-            - frontend
             - spark
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
+
+    modelbuilder:
+        build: ./model_builder_image
+        image: 127.0.0.1:5050/model_builder:model_builder
+        ports:
+            - "5002:5002"
+            - 41100:41100
+        extra_hosts:
+            - "modelbuilder:0.0.0.0"
+        depends_on:
+            - databaseprimary
+            - images
+            - sparkmaster
+            - sparkworker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - database
+            - spark
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
+
+    datatypehandler:
+        build: ./data_type_handler_image
+        image: 127.0.0.1:5050/data_type_handler:data_type_handler
+        ports:
+            - "5003:5003"
+        depends_on:
+            - databaseprimary
+            - images
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - database
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
             - DATABASE_PORT=27017
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
 networks:
     database:
-    frontend:
     spark:
 
 volumes:
