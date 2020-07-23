@@ -61,6 +61,6 @@ If all things is happen good, the learningOrchestra is have been deployed in you
 * Visualize Spark Cluster state - IP_FROM_CLUSTER:8080
 
 ### Usage
-* [learning_orchestra_client](/learning_orchestra_client) - The python package for leanringOrchestra use. 
+* [learning_orchestra_client](/learning_orchestra_client) - The python package for learningOrchestra use. 
 
 
