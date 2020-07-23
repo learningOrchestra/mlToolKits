@@ -56,23 +56,23 @@ class SparkManager(ProcessorInterface):
         self.database_url_output = database_url_output
 
         self.spark_session = SparkSession \
-                            .builder \
-                            .appName("projection") \
-                            .config("spark.mongodb.input.uri",
-                                    database_url_input) \
-                            .config("spark.mongodb.output.uri",
-                                    database_url_output) \
-                            .config("spark.driver.port",
-                                    os.environ[SPARK_DRIVER_PORT]) \
-                            .config("spark.driver.host",
-                                    os.environ[PROJECTION_HOST_NAME])\
-                            .config('spark.jars.packages',
-                                    'org.mongodb.spark:mongo-spark' +
-                                    '-connector_2.11:2.4.2')\
-                            .master("spark://" +
-                                    os.environ[SPARKMASTER_HOST] +
-                                    ':' + str(os.environ[SPARKMASTER_PORT])) \
-                            .getOrCreate()
+            .builder \
+            .appName("projection") \
+            .config("spark.mongodb.input.uri",
+                    database_url_input) \
+            .config("spark.mongodb.output.uri",
+                    database_url_output) \
+            .config("spark.driver.port",
+                    os.environ[SPARK_DRIVER_PORT]) \
+            .config("spark.driver.host",
+                    os.environ[PROJECTION_HOST_NAME])\
+            .config('spark.jars.packages',
+                    'org.mongodb.spark:mongo-spark' +
+                    '-connector_2.11:2.4.2')\
+            .master("spark://" +
+                    os.environ[SPARKMASTER_HOST] +
+                    ':' + str(os.environ[SPARKMASTER_PORT])) \
+            .getOrCreate()
 
         self.thread_pool = ThreadPoolExecutor()
 

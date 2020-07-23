@@ -212,6 +212,59 @@ services:
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
+    modelbuilder:
+        build: ./model_builder_service
+        image: 127.0.0.1:5050/model_builder:model_builder
+        ports:
+            - "5002:5002"
+            - 41100:41100
+        extra_hosts:
+            - "modelbuilder:0.0.0.0"
+        depends_on:
+            - database_primary
+            - images
+            - sparkmaster
+            - sparkworker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - database
+            - frontend
+            - spark
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
+
+    datatypehandler:
+        build: ./data_type_handler_service
+        image: 127.0.0.1:5050/data_type_handler:data_type_handler
+        ports:
+            - "5003:5003"
+        depends_on:
+            - database_primary
+            - images
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==worker"
+        networks:
+            - database
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
+
 networks:
     database:
     frontend:

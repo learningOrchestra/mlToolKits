@@ -75,6 +75,23 @@ echo "--------------------------------------------------------------------"
 docker push $projection_repository:$projection_tag
 
 
+model_builder_repository=127.0.0.1:5050/model_builder
+model_builder_tag=model_builder
+
+echo "--------------------------------------------------------------------"
+echo "Pushing model_builder service image..."
+echo "--------------------------------------------------------------------"
+docker push $model_builder_repository:$model_builder_tag
+
+
+data_type_handler_repository=127.0.0.1:5050/data_type_handler
+data_type_handler_tag=data_type_handler
+
+echo "--------------------------------------------------------------------"
+echo "Pushing data_type_handler service image..."
+echo "--------------------------------------------------------------------"
+docker push $data_type_handler_repository:$data_type_handler_tag
+
 echo "--------------------------------------------------------------------"
 echo "End."
 echo "--------------------------------------------------------------------"
