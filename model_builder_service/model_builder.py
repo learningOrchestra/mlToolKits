@@ -110,10 +110,6 @@ class SparkModelBuilder(ModelBuilderInterface):
             training_df, True)
 
         for column in string_fields:
-            # tokenizer = Tokenizer(
-            #    inputCol=column, outputCol=(column + "_words"))
-            # pre_processing_text.append(tokenizer)
-
             output_column_name = column + "_features"
 
             indexer = StringIndexer(
@@ -127,7 +123,6 @@ class SparkModelBuilder(ModelBuilderInterface):
             training_df = training_indexer.transform(training_df)
             testing_df = testing_indexer.transform(testing_df)
 
-            # pre_processing_text.append(hashing_tf)
             assembler_columns_input.append(output_column_name)
 
         training_number = self.fields_from_dataframe(
@@ -148,77 +143,10 @@ class SparkModelBuilder(ModelBuilderInterface):
         model = LogisticRegression(
             featuresCol="features", maxIter=10).fit(features_training)
 
-        # regression_pipeline = Pipeline(
-        #    stages=[*pre_processing_text, logistic_regression])
-
-        # model = regression_pipeline.fit(training_df)
-        # training_prediction = model.transform(features_training)
-        # for row in training_prediction.collect():
-        #    print(row, flush=True)
-
         testing_prediction = model.transform(features_testing)
 
         for row in testing_prediction.collect():
             print(row, flush=True)
-        '''
-
-        ##############################
-
-        training_dataframe = self.file_processor(database_url_training)
-
-        assembler_columns_input = []
-
-        training_string_fields = self.fields_from_dataframe(
-            training_dataframe, True)
-
-        for column in training_string_fields:
-            tokenizer_output_column_name = column + "_words"
-            hashing_tf_output_column_name = column + "_features"
-
-            tokenizer = Tokenizer(
-                inputCol=column, outputCol=tokenizer_output_column_name)
-            tokens = tokenizer.transform(training_dataframe)
-
-            hashing_tf = HashingTF(
-                inputCol=tokenizer.getOutputCol(),
-                outputCol=hashing_tf_output_column_name)
-
-            assembler_columns_input.append(hashing_tf.transform(tokens))
-
-        training_number_fields = self.fields_from_dataframe(
-            training_dataframe, False)
-
-        for column in training_number_fields:
-            if(column != label):
-                assembler_columns_input.append(column)
-
-        assembler = VectorAssembler(
-            inputCols=assembler_columns_input,
-            outputCol="features").setHandleInvalid("skip")
-
-        pipeline = Pipeline(stages=[assembler, logistic_regression])
-        pipeline_model = pipeline.fit(training_dataframe)
-
-        training_dataframe_transformed =\
-            pipelineModel.transform(training_dataframe)
-
-        logistic_regression = LogisticRegression(maxIter=10, labelCol=label)
-
-        param_grid = ParamGridBuilder().build()
-        cross_validator = CrossValidator(
-                            estimator=pipeline_model,
-                            estimatorParamMaps=param_grid,
-                            evaluator=BinaryClassificationEvaluator(),
-                            numFolds=2)
-        cross_validator_model = cross_validator.fit(
-            training_dataframe_transformed)
-
-        test_dataframe = self.file_processor(database_url_test)
-        prediction = cross_validator_model.transform(test_dataframe)
-
-        for row in prediction.collect():
-            print(row, flush=True)
-'''
 
 
 class MongoOperations(DatabaseInterface):
