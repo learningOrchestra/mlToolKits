@@ -15,7 +15,7 @@ Return an array of metadata files in database.
 }
 ```
 
-## GET /files/<filename>?skip=number&limit=number&query={}
+## GET /files/<filename\>?skip=number&limit=number&query={}
 Return rows of filename, and paginate in query result
 
 * filename - filename of inserted file
@@ -57,6 +57,6 @@ The inserted json must contained the fields:
 }
 ```
 
-## DELETE /files/<filename>
+## DELETE /files/<filename\>
 Request of type DELETE, informing the value of file's filename field in argument request, deleting the database file, if one exists with that value.
 
