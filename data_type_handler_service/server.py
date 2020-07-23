@@ -1,6 +1,5 @@
 from flask import jsonify, Flask, request
 import os
-from flask_cors import CORS
 from data_type_handler import (
     MongoOperations,
     DataTypeHandlerRequestValidator,
@@ -37,7 +36,6 @@ POST = 'POST'
 DELETE = 'DELETE'
 
 app = Flask(__name__)
-CORS(app)
 
 
 def collection_database_url(database_url, database_name, database_filename,

@@ -1,6 +1,5 @@
 from flask import jsonify, request, Flask
 import os
-from flask_cors import CORS
 from pyspark.sql import SparkSession
 from projection import (
     SparkManager, ProcessorInterface,
@@ -36,7 +35,6 @@ MESSAGE_CREATED_FILE = "created_file"
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
-CORS(app)
 
 
 def collection_database_url(database_url, database_name, database_filename,

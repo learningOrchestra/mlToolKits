@@ -1,7 +1,6 @@
 from flask import jsonify, request, Flask
 import os
 from database import CsvDownloader, DatabaseApi, MongoOperations
-from flask_cors import CORS
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -27,7 +26,6 @@ POST = 'POST'
 DELETE = 'DELETE'
 
 app = Flask(__name__)
-CORS(app)
 
 
 @app.route('/files', methods=[POST])

@@ -1,6 +1,5 @@
 from flask import jsonify, request, Flask
 import os
-from flask_cors import CORS
 from model_builder import (
     SparkModelBuilder,
     MongoOperations,
@@ -32,7 +31,6 @@ LABEL_NAME = "label"
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
-CORS(app)
 
 
 def collection_database_url(database_url, database_name, database_filename,
