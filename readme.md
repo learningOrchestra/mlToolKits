@@ -14,12 +14,12 @@ The learningOrchestra is a tool for distributed machine learning processing.
 * database primary - Main database, used to read and write data
 * database secondary - Database used in downtime database_primary , used only to read
 * database arbiter - Manage the database replica set, setting database_primary and database_secondary
-* database api - Service used to download and handling files in database
+* [database api](/database_api_image) - Service used to download and handling files in database
 * spark master - Manager of spark cluster
 * spark worker - Worker of spark cluster
-* projection - Make projections of stored files in database using spark cluster
-* data type handler - Change fields file type between number and text
-* model builder - Create a prediction model from pre-processed files using spark cluster
+* [projection](/projection_image) - Make projections of stored files in database using spark cluster
+* [data type handler](/data_type_handler_image) - Change fields file type between number and text
+* [model builder](/model_builder_image) - Create a prediction model from pre-processed files using spark cluster
 
 ## Tools and techniques used in this project
 
@@ -56,8 +56,11 @@ sudo ./run.sh
 ```
 If all things is happen good, the learningOrchestra is have been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
-### Use
+### Cluster state
 * Visualize cluster state (deployed microservices tasks and cluster's machines) - IP_FROM_CLUSTER:8000
 * Visualize Spark Cluster state - IP_FROM_CLUSTER:8080
+
+### Usage
+* [learning_orchestra_client](/learning_orchestra_client) - The python package for leanringOrchestra use. 
 
 
