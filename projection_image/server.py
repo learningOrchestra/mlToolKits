@@ -45,7 +45,7 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/projections/<filename>', methods=[POST])
+@app.route('/projections/<parent_filename>', methods=[POST])
 def create_projection(parent_filename):
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
