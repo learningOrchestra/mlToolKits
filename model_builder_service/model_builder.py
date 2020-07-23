@@ -107,7 +107,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         testing_df = testing_df.withColumn("label", sf.lit(0))
 
         string_fields = self.fields_from_dataframe(
-            training_df, True)
+            training_df, is_string=True)
 
         for column in string_fields:
             output_column_name = column + "_features"
@@ -117,7 +117,6 @@ class SparkModelBuilder(ModelBuilderInterface):
                             outputCol=output_column_name)
 
             training_indexer = indexer.fit(training_df)
-
             testing_indexer = indexer.fit(testing_df)
 
             training_df = training_indexer.transform(training_df)
@@ -126,7 +125,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             assembler_columns_input.append(output_column_name)
 
         training_number = self.fields_from_dataframe(
-            training_df, False)
+            training_df, is_string=False)
 
         for column in training_number:
             if(column != label):
