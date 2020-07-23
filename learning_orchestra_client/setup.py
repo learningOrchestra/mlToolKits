@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="Gabriel Ribeiro",
     author_email="gabbriel.rribeiro@gmail.com",
-    description="Learning Orchestra client for python",
+    description="Learning Orchestra client for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com//riibeirogabriel/learningOrchestra",
@@ -18,5 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='==3.8',
+    python_requires='>=3.6',
 )
