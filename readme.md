@@ -16,7 +16,6 @@ The learningOrchestra is a tool for distributed machine learning processing.
 * database_secondary - Database used in downtime database_primary , used only to read
 * database_arbiter - Manage the database replica set, setting database_primary and database_secondary
 * database_api - Service used to download and handling files in database
-* frontend - GUI of learningOrchestra
 * sparkmaster - Manager of spark cluster
 * sparkworker - Worker of spark cluster
 * projection - Make projections of stored files in database using spark cluster
@@ -58,6 +57,5 @@ If all things is happen good, the learningOrchestra is have been deployed in you
 
 ### Use
 * Visualize cluster state (deployed microservices tasks and cluster's machines) - IP_FROM_CLUSTER:8080
-* learningOrchestra GUI - IP_FROM_CLUSTER (PORT 80)
 
 

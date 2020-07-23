@@ -48,15 +48,6 @@ echo "--------------------------------------------------------------------"
 docker push $database_api_repository:$database_api_tag
 
 
-frontend_repository=127.0.0.1:5050/frontend
-frontend_tag=frontend
-
-echo "--------------------------------------------------------------------"
-echo "Pushing frontend service image..."
-echo "--------------------------------------------------------------------"
-docker push $frontend_repository:$frontend_tag
-
-
 spark_repository=127.0.0.1:5050/spark
 spark_tag=spark
 
