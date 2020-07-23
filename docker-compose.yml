@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-    database_api:
-        build: ./database_api_service
+    databaseapi:
+        build: ./database_api_image
         image: 127.0.0.1:5050/database_api:database_api
         ports:
             - "5000:5000"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
         deploy:
             replicas: 1
@@ -21,13 +21,13 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary/?replicaSet=replica_set
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary/?replicaSet=replica_set
             - DATABASE_PORT=27017 
 
-    database_primary:
+    databaseprimary:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_primary
+            - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
             - MONGODB_REPLICA_SET_MODE=primary
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_ROOT_PASSWORD=owl45#21
@@ -44,14 +44,14 @@ services:
                 constraints:
                     - "node.role==manager"
 
-    database_secondary:
+    databasesecondary:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
-            - database_primary
+            - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_secondary
+            - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
             - MONGODB_REPLICA_SET_MODE=secondary
-            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
@@ -66,14 +66,14 @@ services:
                 constraints:
                     - "node.role==worker"
 
-    database_arbiter:
+    databasearbiter:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
         depends_on:
-         - database_primary
+         - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=database_arbiter
+            - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
             - MONGODB_REPLICA_SET_MODE=arbiter
-            - MONGODB_PRIMARY_HOST=database_primary
+            - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
             - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
@@ -119,7 +119,7 @@ services:
                     - "node.role==manager"
 
     sparkmaster:
-        build: ./spark_service
+        build: ./spark_image
         image: 127.0.0.1:5050/spark:spark
         ports:
             - 4040:4040
@@ -161,7 +161,7 @@ services:
             - database
 
     projection:
-        build: ./projection_service
+        build: ./projection_image
         image: 127.0.0.1:5050/projection:projection
         ports:
             - "5001:5001"
@@ -169,7 +169,7 @@ services:
         extra_hosts:
             - "projection:0.0.0.0"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
             - sparkmaster
             - sparkworker
@@ -184,13 +184,13 @@ services:
             - database
             - spark
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
             - DATABASE_PORT=27017
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
     modelbuilder:
-        build: ./model_builder_service
+        build: ./model_builder_image
         image: 127.0.0.1:5050/model_builder:model_builder
         ports:
             - "5002:5002"
@@ -198,7 +198,7 @@ services:
         extra_hosts:
             - "modelbuilder:0.0.0.0"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
             - sparkmaster
             - sparkworker
@@ -213,18 +213,18 @@ services:
             - database
             - spark
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
             - DATABASE_PORT=27017
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
     datatypehandler:
-        build: ./data_type_handler_service
+        build: ./data_type_handler_image
         image: 127.0.0.1:5050/data_type_handler:data_type_handler
         ports:
             - "5003:5003"
         depends_on:
-            - database_primary
+            - databaseprimary
             - images
         deploy:
             replicas: 1
@@ -236,7 +236,7 @@ services:
         networks:
             - database
         environment:
-            - DATABASE_URL=mongodb://root:owl45#21@database_primary,database_secondary
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
             - DATABASE_PORT=27017
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
