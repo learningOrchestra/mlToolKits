@@ -26,7 +26,6 @@ POST = 'POST'
 DELETE = 'DELETE'
 
 MESSAGE_RESULT = "result"
-FILENAME_NAME = "filename"
 PROJECTION_FILENAME_NAME = "projection_filename"
 FIELDS_NAME = "fields"
 
@@ -46,8 +45,8 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/projections', methods=[POST])
-def create_projection():
+@app.route('/projections/<parent_filename>', methods=[POST])
+def create_projection(parent_filename):
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
@@ -66,7 +65,7 @@ def create_projection():
 
     try:
         request_validator.filename_validator(
-            request.json[FILENAME_NAME])
+            parent_filename)
     except Exception as invalid_filename:
         return jsonify(
             {MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),\
@@ -74,7 +73,7 @@ def create_projection():
 
     try:
         request_validator.projection_fields_validator(
-            request.json[FILENAME_NAME], request.json[FIELDS_NAME])
+            parent_filename, request.json[FIELDS_NAME])
     except Exception as invalid_fields:
         return jsonify(
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),\
@@ -83,7 +82,7 @@ def create_projection():
     database_url_input = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
-                            request.json[FILENAME_NAME],
+                            parent_filename,
                             os.environ[DATABASE_REPLICA_SET])
 
     database_url_output = collection_database_url(
@@ -101,7 +100,7 @@ def create_projection():
     projection_fields.append(DOCUMENT_ID)
 
     spark_manager.projection(
-                request.json[FILENAME_NAME],
+                parent_filename,
                 request.json[PROJECTION_FILENAME_NAME],
                 projection_fields)
 

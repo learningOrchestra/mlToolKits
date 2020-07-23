@@ -1,4 +1,5 @@
 import requests
+import json
 
 cluster_url = None
 
@@ -22,13 +23,13 @@ class DatabaseApi():
 
     def read_file(self, filename_key, skip=0, limit=10, query={}):
         request_params = {
-            'filename': filename_key,
             'skip': str(skip),
             'limit': str(limit),
             'query': str(query)
         }
-
-        return requests.get(url=self.url_base, params=request_params).json()
+        read_file_url = self.url_base + '/' + filename_key
+        return requests.get(
+            url=read_file_url, params=request_params).json()
 
     def create_file(self, filename, url):
         request_body_content = {
@@ -40,12 +41,8 @@ class DatabaseApi():
             json()
 
     def delete_file(self, filename):
-        request_body_content = {
-            'filename': filename
-        }
-
-        return requests.delete(url=self.url_base, json=request_body_content)\
-            .json()
+        request_url = self.url_base + '/' + filename
+        return requests.delete(url=request_url).json()
 
 
 class Projection():
@@ -58,12 +55,11 @@ class Projection():
 
     def create_projection(self, filename, projection_filename, fields):
         request_body_content = {
-            'filename': filename,
             'projection_filename': projection_filename,
             'fields': fields
         }
-
-        return requests.post(url=self.url_base, json=request_body_content).\
+        request_url = self.url_base + '/' + filename
+        return requests.post(url=request_url, json=request_body_content).\
             json()
 
 
@@ -73,16 +69,12 @@ class DataTypeHandler():
     def __init__(self):
         global cluster_url
         self.url_base = cluster_url + ':' + self.DATA_TYPE_HANDLER_PORT + \
-            '/type'
+            '/fieldtypes'
 
     def change_file_type(self, filename, fields_dict):
-        request_body_content = {
-            'filename': filename,
-            'fields': fields_dict
-        }
+        url_request = self.url_base + '/' + filename
 
-        return requests.post(url=self.url_base, json=request_body_content).\
-            json()
+        return requests.patch(url=url_request, json=fields_dict).json()
 
 
 class ModelBuilder():
