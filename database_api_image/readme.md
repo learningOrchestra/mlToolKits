@@ -15,12 +15,12 @@ Return an array of metadata files in database.
 }
 ```
 
-## GET /files?filename=filename_key&skip=number&limit=number&query={}
+## GET /files/<filename>?skip=number&limit=number&query={}
 Return rows of filename, and paginate in query result
 
 * filename - filename of inserted file
 * skip - amount lines to skip in csv file
-* limit - limit of returned query result
+* limit - limit of returned query result, max limit setted in 20 rows
 * query - query to find documents, if use method only to paginate, use blank json, as {}
 
 The first row is the metadata file, metadata contain the fields:
@@ -57,10 +57,6 @@ The inserted json must contained the fields:
 }
 ```
 
-## DELETE /files
-Request of type DELETE, informing the value of file's filename field in body request, deleting the database file, if one exists with that value.
-```
-{
-  filename: "key_to_document_identification"
-}
-```
+## DELETE /files/<filename>
+Request of type DELETE, informing the value of file's filename field in argument request, deleting the database file, if one exists with that value.
+

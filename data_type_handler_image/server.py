@@ -29,11 +29,7 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
-FIELDS_NAME = "fields"
-
-GET = 'GET'
-POST = 'POST'
-DELETE = 'DELETE'
+PATCH = "PATCH"
 
 app = Flask(__name__)
 
@@ -47,8 +43,8 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/type', methods=[POST])
-def change_data_type():
+@app.route('/fieldtypes/<filename>', methods=[PATCH])
+def change_data_type(filename):
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
@@ -57,8 +53,7 @@ def change_data_type():
     request_validator = DataTypeHandlerRequestValidator(database)
 
     try:
-        request_validator.filename_validator(
-            request.json[FILENAME_NAME])
+        request_validator.filename_validator(filename)
     except Exception as invalid_filename:
         return jsonify(
             {MESSAGE_RESULT:
@@ -67,7 +62,7 @@ def change_data_type():
 
     try:
         request_validator.fields_validator(
-            request.json[FILENAME_NAME], request.json[FIELDS_NAME])
+            filename, request.json)
     except Exception as invalid_fields:
         return jsonify(
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),\
@@ -75,7 +70,7 @@ def change_data_type():
 
     data_type_converter = DataTypeConverter(database)
     data_type_converter.file_converter(
-        request.json[FILENAME_NAME], request.json[FIELDS_NAME])
+        filename, request.json)
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CHANGED_FILE}), \
         HTTP_STATUS_CODE_SUCESS

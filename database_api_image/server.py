@@ -25,6 +25,8 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 
+PAGINATE_FILE_LIMIT = 20
+
 app = Flask(__name__)
 
 
@@ -56,32 +58,41 @@ def create_file():
         HTTP_STATUS_CODE_SUCESS_CREATED
 
 
+@app.route('/files/<filename>', methods=[GET])
+def read_files(filename):
+    file_downloader_and_saver = CsvDownloader()
+    mongo_operations = MongoOperations()
+    database = DatabaseApi(mongo_operations, file_downloader_and_saver)
+
+    limit = int(request.args.get('limit'))
+    if(limit > PAGINATE_FILE_LIMIT):
+        limit = PAGINATE_FILE_LIMIT
+
+    file_result = database.read_file(
+        filename, request.args.get('skip'),
+        limit, request.args.get('query'))
+
+    return jsonify(
+        {MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS
+
+
 @app.route('/files', methods=[GET])
-def read_files():
+def read_files_descriptor():
     file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    if(request.args):
-        file_result = database.read_file(
-            request.args.get(FILENAME), request.args.get('skip'),
-            request.args.get('limit'), request.args.get('query'))
-
-        return jsonify(
-            {MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS
-
-    else:
-        return jsonify({MESSAGE_RESULT: database.get_files()}),\
-            HTTP_STATUS_CODE_SUCESS
+    return jsonify({MESSAGE_RESULT: database.get_files()}),\
+        HTTP_STATUS_CODE_SUCESS
 
 
-@app.route('/files', methods=[DELETE])
-def delete_file():
+@app.route('/files/<filename>', methods=[DELETE])
+def delete_file(filename):
     file_downloader_and_saver = CsvDownloader()
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    result = database.delete_file(request.json[FILENAME])
+    result = database.delete_file(filename)
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
