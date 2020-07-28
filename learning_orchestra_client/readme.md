@@ -23,44 +23,51 @@ After create a Context object, you will able to usage learningOrchestra microser
 
 ## DatabaseApi
 
-### `read_resume_files()`
+### `read_resume_files(pretty_response=True)`
 
 Read all metadata files in learningOrchestra
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### `read_file(self, filename_key, skip=0, limit=10, query={})`
+### `read_file(self, filename_key, skip=0, limit=10, query={}, pretty_response=True)`
 * filename_ley : filename of file
-* skip: number of rows amount to skip in pagination
-* limit: number of rows to return in pagination (max setted in 20 rows per request)
-* query: query to make in mongo
+* skip: number of rows amount to skip in pagination (default 0)
+* limit: number of rows to return in pagination (default 10)(max setted in 20 rows per request)
+* query: query to make in mongo (default empty query)
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### `create_file(self, filename, url)`
+### `create_file(self, filename, url, pretty_response=True)`
 * filename: filename of file to be created
 * url: url to csv file
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### `delete_file(self, filename)`
+### `delete_file(self, filename, pretty_response=True)`
 * filename: file filename to be deleted
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
 ## Projection
 
-### `create_projection(self, filename, projection_filename, fields)`
+### `create_projection(self, filename, projection_filename, fields, pretty_response=True)`
 
 * filename: filename of file to make projection
 * projection_filename: filename used to create projection
 * field: list with fields to make projection 
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
 ## DataTypeHandler
 
-### `change_file_type(self, filename, fields_dict)`
+### `change_file_type(self, filename, fields_dict, pretty_response=True)`
 * filenbame: filename of file
 * fields_dict: dictionary with "field": "number" or field: "string" keys  
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
 ## ModelBuilder
 
-### `build_model(self, training_filename, test_filename, label='label')`
+### `build_model(self, training_filename, test_filename, label='label', pretty_response=True)`
 
 * training_filename: filename to be used in training
 * test_filename: filename to be used in test
 * label: case of traning filename have a label with other name
+* pretty_response: return indented string to visualization (default True, if False, return dict)
 
 ## Example
 
