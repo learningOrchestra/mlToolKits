@@ -1,7 +1,10 @@
 import requests
 import json
+import time
 
 cluster_url = None
+
+UNKNOW_ERROR_JSON = {'result': "unknow server error"}
 
 
 class Context():
@@ -10,39 +13,108 @@ class Context():
         cluster_url = 'http://' + ip_from_cluster
 
 
+class AsyncronousWait():
+    WAIT_TIME = 3
+    METADATA_INDEX = 0
+
+    def wait(self, filename, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " WAITING " + filename + " FINISH " +
+                  "----------")
+
+        database_api = DatabaseApi()
+
+        while(True):
+            time.sleep(self.WAIT_TIME)
+            response = database_api.read_file(
+                filename, limit=1, pretty_response=False)
+
+            if(len(response["result"]) == 0):
+                continue
+
+            if(response["result"][self.METADATA_INDEX]["finished"]):
+                break
+
+
 class DatabaseApi():
     DATABASE_API_PORT = "5000"
 
     def __init__(self):
         global cluster_url
         self.url_base = cluster_url + ':' + self.DATABASE_API_PORT + '/files'
+        self.asyncronous_wait = AsyncronousWait()
 
-    def read_resume_files(self):
+    def read_resume_files(self, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " READ RESUME FILES " + "----------")
+
         url = self.url_base
-        return requests.get(url).json()
+        response = requests.get(url)
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
 
-    def read_file(self, filename_key, skip=0, limit=10, query={}):
+    def read_file(self, filename, skip=0, limit=10, query={},
+                  pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " READ FILE " + filename + " ----------")
+
         request_params = {
             'skip': str(skip),
             'limit': str(limit),
             'query': str(query)
         }
-        read_file_url = self.url_base + '/' + filename_key
-        return requests.get(
-            url=read_file_url, params=request_params).json()
+        read_file_url = self.url_base + '/' + filename
+        response = requests.get(
+            url=read_file_url, params=request_params)
 
-    def create_file(self, filename, url):
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
+
+    def create_file(self, filename, url, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CREATE FILE " + filename + " ----------")
+
         request_body_content = {
             'filename': filename,
             'url': url
         }
 
-        return requests.post(url=self.url_base, json=request_body_content).\
-            json()
+        response = requests.post(url=self.url_base, json=request_body_content)
 
-    def delete_file(self, filename):
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
+
+    def delete_file(self, filename, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " DELETE FILE " + filename + " ----------")
+
+        self.asyncronous_wait.wait(filename, pretty_response)
+
         request_url = self.url_base + '/' + filename
-        return requests.delete(url=request_url).json()
+        response = requests.delete(url=request_url)
+
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
 
 
 class Projection():
@@ -53,14 +125,30 @@ class Projection():
         self.url_base = cluster_url + ':' + self.PROJECTION_PORT + \
             '/projections'
 
-    def create_projection(self, filename, projection_filename, fields):
+        self.asyncronous_wait = AsyncronousWait()
+
+    def create_projection(self, filename, projection_filename, fields,
+                          pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CREATE " + filename + " PROJECTION IN " +
+                  projection_filename + " ----------")
+
+        self.asyncronous_wait.wait(filename, pretty_response)
+
         request_body_content = {
             'projection_filename': projection_filename,
             'fields': fields
         }
         request_url = self.url_base + '/' + filename
-        return requests.post(url=request_url, json=request_body_content).\
-            json()
+        response = requests.post(url=request_url, json=request_body_content)
+
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
 
 
 class DataTypeHandler():
@@ -70,11 +158,26 @@ class DataTypeHandler():
         global cluster_url
         self.url_base = cluster_url + ':' + self.DATA_TYPE_HANDLER_PORT + \
             '/fieldtypes'
+        self.asyncronous_wait = AsyncronousWait()
 
-    def change_file_type(self, filename, fields_dict):
+    def change_file_type(self, filename, fields_dict, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CHANGE " + filename + " FILE TYPE " +
+                  "----------")
+
+        self.asyncronous_wait.wait(filename, pretty_response)
+
         url_request = self.url_base + '/' + filename
 
-        return requests.patch(url=url_request, json=fields_dict).json()
+        response = requests.patch(url=url_request, json=fields_dict)
+
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
 
 
 class ModelBuilder():
@@ -83,13 +186,29 @@ class ModelBuilder():
     def __init__(self):
         global cluster_url
         self.url_base = cluster_url + ':' + self.MODEL_BUILDER_PORT + '/models'
+        self.asyncronous_wait = AsyncronousWait()
 
-    def build_model(self, training_filename, test_filename, label='label'):
+    def build_model(self, training_filename, test_filename, label='label',
+                    pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " BUILD MODEL WITH " + training_filename +
+                  " AND " + test_filename + " ----------")
+
+        self.asyncronous_wait.wait(training_filename, pretty_response)
+        self.asyncronous_wait.wait(test_filename, pretty_response)
+
         request_body_content = {
             'training_filename': training_filename,
             'test_filename': test_filename,
             'label': label
         }
 
-        return requests.post(url=self.url_base, json=request_body_content).\
-            json()
+        response = requests.post(url=self.url_base, json=request_body_content)
+
+        if(response.status_code >= 500):
+            return UNKNOW_ERROR_JSON
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
