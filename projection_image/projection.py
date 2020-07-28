@@ -104,8 +104,12 @@ class SparkManager(ProcessorInterface):
         metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).save()
 
+        '''
         self.thread_pool.submit(
             self.submit_projection_job_spark,
+            fields, metadata_content, metadata_fields)'''
+
+        self.submit_projection_job_spark(
             fields, metadata_content, metadata_fields)
 
     def submit_projection_job_spark(self, fields, metadata_content,
