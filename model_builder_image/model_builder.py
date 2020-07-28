@@ -64,6 +64,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             .config("spark.sql.shuffle.partitions", "800") \
             .config("spark.memory.offHeap.enabled", 'true')\
             .config("spark.memory.offHeap.size", "1g")\
+            .config("spark.scheduler.mode", "FAIR")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
@@ -146,6 +147,8 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         for row in testing_prediction.collect():
             print(row, flush=True)
+
+        self.spark_session.stop()
 
 
 class MongoOperations(DatabaseInterface):

@@ -69,6 +69,7 @@ class SparkManager(ProcessorInterface):
             .config('spark.jars.packages',
                     'org.mongodb.spark:mongo-spark' +
                     '-connector_2.11:2.4.2')\
+            .config("spark.scheduler.mode", "FAIR")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
@@ -104,12 +105,8 @@ class SparkManager(ProcessorInterface):
         metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).save()
 
-        '''
         self.thread_pool.submit(
             self.submit_projection_job_spark,
-            fields, metadata_content, metadata_fields)'''
-
-        self.submit_projection_job_spark(
             fields, metadata_content, metadata_fields)
 
     def submit_projection_job_spark(self, fields, metadata_content,
@@ -133,6 +130,8 @@ class SparkManager(ProcessorInterface):
 
         new_metadata_dataframe.write.format(
                 self.MONGO_SPARK_SOURCE).mode("append").save()
+
+        self.spark_session.stop()
 
 
 class MongoOperations(DatabaseInterface):
