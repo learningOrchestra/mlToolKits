@@ -69,7 +69,6 @@ class SparkManager(ProcessorInterface):
             .config('spark.jars.packages',
                     'org.mongodb.spark:mongo-spark' +
                     '-connector_2.11:2.4.2')\
-            .config("spark.scheduler.mode", "FAIR")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \

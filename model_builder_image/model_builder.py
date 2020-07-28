@@ -64,7 +64,6 @@ class SparkModelBuilder(ModelBuilderInterface):
             .config("spark.sql.shuffle.partitions", "800") \
             .config("spark.memory.offHeap.enabled", 'true')\
             .config("spark.memory.offHeap.size", "1g")\
-            .config("spark.scheduler.mode", "FAIR")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
