@@ -76,52 +76,41 @@ In below there is script using the package:
 
     from learning_orchestra_client import *
 
-    cluster_ip = "34.95.222.197"
+    cluster_ip = "35.198.5.148"
 
     Context(cluster_ip)
 
     database_api = DatabaseApi()
 
-    print(database_api.read_file("training", skip=20, limit=10))
+    print(database_api.create_file(
+        "titanic_training",
+        "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo"))
+    print(database_api.create_file(
+        "titanic_testing",
+        "https://filebin.net/mguee52ke97k0x9h/titanic_testing.csv?t=ub4nc1rc"))
+
+    print(database_api.read_resume_files())
 
     projection = Projection()
 
     print(projection.create_projection(
-            "training2", "titanic_training_projection",
-            ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
-            'Parch', 'Embarked']))
+        "titanic_training", "titanic_training_projection",
+        ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
+        'Parch', 'Embarked']))
     print(projection.create_projection(
-            "titanic_testing_10", "titanic_testing_projection",
-            ['PassengerId', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch',
-            'Ticket', 'Fare', 'Embarked']))
+        "titanic_testing", "titanic_testing_projection",
+        ['PassengerId', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch',
+        'Ticket', 'Fare', 'Embarked']))
 
-
-    print(database_api.read_resume_files())
-    print(database_api.delete_file("titanic_testing_10"))
-    print(database_api.delete_file("titanic_training_10"))
-    print(database_api.read_resume_files())
-    print(database_api.create_file(
-        "titanic_training_10",
-        "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=bg4b9hfg"))
-    print(database_api.create_file(
-        "titanic_testing_10",
-        "https://filebin.net/mguee52ke97k0x9h/titanic_testing.csv?t=7iojj2d2"))
-    print(database_api.read_file("titanic_training_10"))
-    print(database_api.read_resume_files())
-
-    projection = Projection()
+    print(database_api.delete_file("titanic_training"))
+    print(database_api.delete_file("titanic_testing"))
 
     data_type_handler = DataTypeHandler()
 
     print(data_type_handler.change_file_type(
-        "titanic_training_10", {"Survived": "number"}))
+        "titanic_training_projection", {"Survived": "number"}))
 
     model_builder = ModelBuilder()
 
-
     print(model_builder.build_model(
-        "titanic_training_10", "titanic_testing_10", "Survived"))
-
-    print(database_api.delete_file("titanic_testing_10"))
-
-    print(database_api.read_resume_files())
+        "titanic_training_projection", "titanic_testing_projection", "Survived"))
