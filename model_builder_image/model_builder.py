@@ -78,7 +78,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             file[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID)
 
         metadata_fields = [
-            "_id", "fields", "filename", "finished", "time_created", "url"]
+            "_id", "fields", "filename", "finished", "time_created",
+            "url", "parent_filename"]
         processed_file = file_without_metadata.drop(*metadata_fields)
 
         return processed_file
