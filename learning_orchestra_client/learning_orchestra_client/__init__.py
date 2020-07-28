@@ -4,8 +4,6 @@ import time
 
 cluster_url = None
 
-UNKNOW_ERROR_JSON = {'result': "unknow server error"}
-
 
 class Context():
     def __init__(self, ip_from_cluster):
@@ -36,6 +34,25 @@ class AsyncronousWait():
                 break
 
 
+class ResponseTreat():
+    UNKNOW_ERROR = "unknow server error"
+    HTTP_CREATED = 201
+    HTTP_SUCESS = 200
+    HTTP_ERROR = 500
+
+    def treatment(self, response, pretty_response=True):
+        if(response.status_code != self.HTTP_SUCESS and
+           response.status_code != self.HTTP_CREATED):
+            raise Exception(response.json()["result"])
+        elif(response.status_code >= self.HTTP_ERROR):
+            raise Exception(self.UNKNOW_ERROR)
+        else:
+            if(pretty_response):
+                return json.dumps(response.json(), indent=2)
+            else:
+                return response.json()
+
+
 class DatabaseApi():
     DATABASE_API_PORT = "5000"
 
@@ -50,13 +67,8 @@ class DatabaseApi():
 
         url = self.url_base
         response = requests.get(url)
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+
+        return ResponseTreat().treatment(response, pretty_response)
 
     def read_file(self, filename, skip=0, limit=10, query={},
                   pretty_response=True):
@@ -72,13 +84,7 @@ class DatabaseApi():
         response = requests.get(
             url=read_file_url, params=request_params)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
 
     def create_file(self, filename, url, pretty_response=True):
         if(pretty_response):
@@ -91,13 +97,7 @@ class DatabaseApi():
 
         response = requests.post(url=self.url_base, json=request_body_content)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
 
     def delete_file(self, filename, pretty_response=True):
         if(pretty_response):
@@ -108,13 +108,7 @@ class DatabaseApi():
         request_url = self.url_base + '/' + filename
         response = requests.delete(url=request_url)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
 
 
 class Projection():
@@ -130,8 +124,8 @@ class Projection():
     def create_projection(self, filename, projection_filename, fields,
                           pretty_response=True):
         if(pretty_response):
-            print("\n----------" + " CREATE " + filename + " PROJECTION IN " +
-                  projection_filename + " ----------")
+            print("\n----------" + " CREATE PROJECTION FROM " + filename +
+                  " TO " + projection_filename + " ----------")
 
         self.asyncronous_wait.wait(filename, pretty_response)
 
@@ -142,13 +136,7 @@ class Projection():
         request_url = self.url_base + '/' + filename
         response = requests.post(url=request_url, json=request_body_content)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
 
 
 class DataTypeHandler():
@@ -171,13 +159,7 @@ class DataTypeHandler():
 
         response = requests.patch(url=url_request, json=fields_dict)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
 
 
 class ModelBuilder():
@@ -205,10 +187,4 @@ class ModelBuilder():
 
         response = requests.post(url=self.url_base, json=request_body_content)
 
-        if(response.status_code >= 500):
-            return UNKNOW_ERROR_JSON
-        else:
-            if(pretty_response):
-                return json.dumps(response.json(), indent=2)
-            else:
-                return response.json()
+        return ResponseTreat().treatment(response, pretty_response)
