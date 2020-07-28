@@ -41,11 +41,11 @@ class ResponseTreat():
     HTTP_ERROR = 500
 
     def treatment(self, response, pretty_response=True):
-        if(response.status_code != self.HTTP_SUCESS and
-           response.status_code != self.HTTP_CREATED):
-            raise Exception(response.json()["result"])
-        elif(response.status_code >= self.HTTP_ERROR):
+        if(response.status_code >= self.HTTP_ERROR):
             raise Exception(self.UNKNOW_ERROR)
+        elif(response.status_code != self.HTTP_SUCESS and
+             response.status_code != self.HTTP_CREATED):
+            raise Exception(response.json()["result"])
         else:
             if(pretty_response):
                 return json.dumps(response.json(), indent=2)
