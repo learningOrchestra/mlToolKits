@@ -3,7 +3,8 @@ import os
 from model_preprocessor import (
     SparkModelPreProcessor,
     MongoOperations,
-    ModelPreprocessorRequestValidator)
+    ModelPreprocessorRequestValidator,
+    ModelBuilderDataSender)
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
