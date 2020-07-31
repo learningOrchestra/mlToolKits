@@ -96,6 +96,7 @@ def create_preprocessor_model():
     model_preprocessor.preprocessor(
         database_url_training, database_url_test,
         request.json[PREPROCESSOR_CODE_NAME],
+        request.json[MODEL_CLASSIFICATOR],
         model_builder_sender
     )
 

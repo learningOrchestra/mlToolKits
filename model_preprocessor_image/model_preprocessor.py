@@ -13,8 +13,9 @@ MODEL_PREPROCESSOR_HOST_NAME = "MODEL_PREPROCESSOR_HOST_NAME"
 
 
 class ModelPreprocessorInterface():
-    def preprocessor_model(self, database_url_training,
-                           database_url_test, label):
+    def preprocessor(self, database_url_training, database_url_test,
+                     preprocessor_code, model_classificator,
+                     model_builder_sender):
         pass
 
 
