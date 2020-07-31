@@ -35,14 +35,13 @@ class AsyncronousWait():
 
 
 class ResponseTreat():
-    UNKNOW_ERROR = "unknow server error"
     HTTP_CREATED = 201
     HTTP_SUCESS = 200
     HTTP_ERROR = 500
 
     def treatment(self, response, pretty_response=True):
         if(response.status_code >= self.HTTP_ERROR):
-            raise Exception(self.UNKNOW_ERROR)
+            return response.text
         elif(response.status_code != self.HTTP_SUCESS and
              response.status_code != self.HTTP_CREATED):
             raise Exception(response.json()["result"])
@@ -162,27 +161,29 @@ class DataTypeHandler():
         return ResponseTreat().treatment(response, pretty_response)
 
 
-class ModelBuilder():
-    MODEL_BUILDER_PORT = '5002'
+class Model():
+    MODEL_PREPROCESSOR_PORT = '5004'
 
     def __init__(self):
         global cluster_url
-        self.url_base = cluster_url + ':' + self.MODEL_BUILDER_PORT + '/models'
+        self.url_base = cluster_url + ':' + self.MODEL_PREPROCESSOR_PORT +\
+            '/preprocessors'
         self.asyncronous_wait = AsyncronousWait()
 
-    def build_model(self, training_filename, test_filename, label='label',
-                    pretty_response=True):
+    def create_model(self, training_filename, test_filename, preprocessor_code,
+                     model_classificator, pretty_response=True):
         if(pretty_response):
-            print("\n----------" + " BUILD MODEL WITH " + training_filename +
+            print("\n----------" + " CREATE MODEL WITH " + training_filename +
                   " AND " + test_filename + " ----------")
 
         self.asyncronous_wait.wait(training_filename, pretty_response)
         self.asyncronous_wait.wait(test_filename, pretty_response)
 
         request_body_content = {
-            'training_filename': training_filename,
-            'test_filename': test_filename,
-            'label': label
+            "training_filename": training_filename,
+            "test_filename": test_filename,
+            "preprocessor_code": preprocessor_code,
+            "model_classificator": model_classificator
         }
 
         response = requests.post(url=self.url_base, json=request_body_content)

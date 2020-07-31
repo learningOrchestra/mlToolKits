@@ -112,12 +112,12 @@ class SparkModelPreProcessor(ModelPreprocessorInterface):
 
         exec(preprocessor_code)
 
-        assembler_encoded = jsonpickle.encode(assembler)
+        assembler_dict = assembler.__dict__.copy()
 
         self.spark_session.stop()
 
         model_builder_sender.send_request(
-            assembler_encoded, database_url_training,
+            assembler_dict, database_url_training,
             database_url_test, model_classificator)
 
 
