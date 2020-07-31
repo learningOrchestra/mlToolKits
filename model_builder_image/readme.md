@@ -4,9 +4,10 @@ modelbuilder service provide an api to create models from training and tests fil
 ## POST IP:5002/models
 ```
 {
-    "training_filename": "training filename",
-    "test_filename": "test filename",
-    "label": "label name on fields of training_filename"
+    "encoded_assembler": encoded_assembler_object,
+    "database_url_training": "database url training",
+    "database_url_testing": "database url testing",
+    "model_classificator": model classificator list
 }
 ```
 
