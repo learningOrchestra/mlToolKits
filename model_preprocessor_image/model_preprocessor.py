@@ -1,7 +1,7 @@
-from pyspark.sql import *
+from pyspark.sql import SparkSession
 import os
 from datetime import datetime
-from pyspark.ml import *
+from pyspark.ml.feature import VectorAssembler
 from pymongo import MongoClient
 import jsonpickle
 import requests
