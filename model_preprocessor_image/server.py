@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from .model_preprocessor import (
+from model_preprocessor import (
     SparkModelPreProcessor,
     MongoOperations,
     ModelPreprocessorRequestValidator)

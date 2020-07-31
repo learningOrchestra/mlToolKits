@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from .model_builder import SparkModelBuilder
+from model_builder import SparkModelBuilder
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 
