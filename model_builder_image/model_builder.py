@@ -62,8 +62,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
 
-        assembler = VectorAssembler()
-        assembler.__dict__ = encoded_assembler
+        assembler = encoded_assembler
 
         features_training = assembler.transform(training_df)
         features_testing = assembler.transform(testing_df)

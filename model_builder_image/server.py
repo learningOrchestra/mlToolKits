@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from model_builder import SparkModelBuilder
+import pickle
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 
@@ -25,12 +26,12 @@ app = Flask(__name__)
 @app.route('/models', methods=[POST])
 def create_model():
     model_builder = SparkModelBuilder()
-
+    data = pickle.loads(request.get_data())
     model_builder.build_model(
-        request.json[DATABASE_URL_TRAINING],
-        request.json[DATABASE_URL_TESTING],
-        request.json[ENCODED_ASSEMBLER],
-        request.json[MODEL_CLASSIFICATOR]
+        data[DATABASE_URL_TRAINING],
+        data[DATABASE_URL_TESTING],
+        data[ENCODED_ASSEMBLER],
+        data[MODEL_CLASSIFICATOR]
     )
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}), \

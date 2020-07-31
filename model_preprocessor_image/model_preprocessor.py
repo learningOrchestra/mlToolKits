@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from pyspark.ml.feature import VectorAssembler
 from pymongo import MongoClient
-import jsonpickle
+import pickle
 import requests
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
@@ -112,12 +112,10 @@ class SparkModelPreProcessor(ModelPreprocessorInterface):
 
         exec(preprocessor_code)
 
-        assembler_dict = assembler.__dict__.copy()
-
         self.spark_session.stop()
 
         model_builder_sender.send_request(
-            assembler_dict, database_url_training,
+            assembler, database_url_training,
             database_url_test, model_classificator)
 
 
@@ -171,6 +169,8 @@ class ModelBuilderDataSender(ModelBuilderRequestSenderInterface):
             "model_classificator": model_classificator
         }
 
-        response = requests.post(url=self.url_base, json=body_request)
+        data = pickle.dumps(body_request)
+
+        response = requests.post(url=self.url_base, data=data)
 
         return response.json()
