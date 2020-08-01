@@ -109,7 +109,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
 
-        preprocessing_variables = {}
+        preprocessing_variables = locals()
         exec(preprocessor_code, globals(), preprocessing_variables)
 
         assembler = preprocessing_variables['assembler']
