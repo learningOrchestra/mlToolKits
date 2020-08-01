@@ -111,7 +111,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         assembler = VectorAssembler()
 
-        exec(preprocessor_code)
+        exec(preprocessor_code, globals(), locals())
 
         features_training = assembler.transform(training_df)
         features_testing = assembler.transform(testing_df)
