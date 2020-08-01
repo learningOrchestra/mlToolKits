@@ -109,9 +109,10 @@ class SparkModelBuilder(ModelBuilderInterface):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
 
-        assembler = VectorAssembler()
+        preprocessing_variables = {}
+        exec(preprocessor_code, globals(), preprocessing_variables)
 
-        exec(preprocessor_code, globals(), locals())
+        assembler = preprocessing_variables['assembler']
 
         features_training = assembler.transform(training_df)
         features_testing = assembler.transform(testing_df)
