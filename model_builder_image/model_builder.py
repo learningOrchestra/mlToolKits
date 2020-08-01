@@ -133,9 +133,9 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             classificator.featuresCol = "features"
             classificator.maxIter = 10
-            classificator.fit(features_training)
+            model = classificator.fit(features_training)
 
-            testing_prediction = classificator.transform(features_testing)
+            testing_prediction = model.transform(features_testing)
 
             for row in testing_prediction.collect():
                 print(row, flush=True)
