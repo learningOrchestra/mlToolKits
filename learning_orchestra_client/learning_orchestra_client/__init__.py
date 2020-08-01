@@ -162,12 +162,12 @@ class DataTypeHandler():
 
 
 class Model():
-    MODEL_PREPROCESSOR_PORT = '5004'
+    MODEL_BUILDER_PORT = '5002'
 
     def __init__(self):
         global cluster_url
-        self.url_base = cluster_url + ':' + self.MODEL_PREPROCESSOR_PORT +\
-            '/preprocessors'
+        self.url_base = cluster_url + ':' + self.MODEL_BUILDER_PORT +\
+            '/models'
         self.asyncronous_wait = AsyncronousWait()
 
     def create_model(self, training_filename, test_filename, preprocessor_code,
@@ -183,7 +183,7 @@ class Model():
             "training_filename": training_filename,
             "test_filename": test_filename,
             "preprocessor_code": preprocessor_code,
-            "model_classificator": model_classificator
+            "classificators_list": model_classificator
         }
 
         response = requests.post(url=self.url_base, json=request_body_content)

@@ -90,13 +90,11 @@ def create_model():
                             os.environ[DATABASE_REPLICA_SET])
 
     model_builder = SparkModelBuilder()
-    model_builder_sender = ModelBuilderDataSender()
 
     model_builder.build_model(
         database_url_training, database_url_test,
         request.json[PREPROCESSOR_CODE_NAME],
-        request.json[CLASSIFICATORS_NAME],
-        model_builder_sender
+        request.json[CLASSIFICATORS_NAME]
     )
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}), \
