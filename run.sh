@@ -75,15 +75,6 @@ echo "--------------------------------------------------------------------"
 docker push $model_builder_repository:$model_builder_tag
 
 
-model_preprocessor_repository=127.0.0.1:5050/model_preprocessor
-model_preprocessor_tag=model_preprocessor
-
-echo "--------------------------------------------------------------------"
-echo "Pushing model_preprocessor service image..."
-echo "--------------------------------------------------------------------"
-docker push $model_preprocessor_repository:$model_preprocessor_tag
-
-
 data_type_handler_repository=127.0.0.1:5050/data_type_handler
 data_type_handler_tag=data_type_handler
 

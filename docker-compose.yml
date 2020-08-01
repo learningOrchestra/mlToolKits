@@ -218,35 +218,6 @@ services:
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
-    modelpreprocessor:
-        build: ./model_preprocessor_image
-        image: 127.0.0.1:5050/model_preprocessor:model_preprocessor
-        ports:
-            - "5004:5004"
-            - 41200:41200
-        extra_hosts:
-            - "modelpreprocessor:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - database
-            - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
-
     datatypehandler:
         build: ./data_type_handler_image
         image: 127.0.0.1:5050/data_type_handler:data_type_handler

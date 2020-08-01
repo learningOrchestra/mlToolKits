@@ -1,10 +1,17 @@
 from pyspark.sql import SparkSession
 import os
-from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
-from pyspark.ml.classification import *
 from pyspark.ml.feature import VectorAssembler
-import jsonpickle
+from pymongo import MongoClient
+from concurrent.futures import ThreadPoolExecutor, wait
+from pyspark.ml.classification import (
+    LogisticRegression,
+    DecisionTreeClassifier,
+    RandomForestClassifier,
+    GBTClassifier,
+    NaiveBayes,
+    LinearSVC
+)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -14,7 +21,30 @@ MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 class ModelBuilderInterface():
     def build_model(self, database_url_training, database_url_test,
-                    encoded_assembler, model_classificator_list):
+                    preprocessor_code, classificators_list):
+        pass
+
+
+class DatabaseInterface():
+    def get_filenames(self):
+        pass
+
+    def find_one(self, filename, query):
+        pass
+
+
+class RequestValidatorInterface():
+    MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
+    MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
+    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
+
+    def training_filename_validator(self, training_filename):
+        pass
+
+    def test_filename_validator(self, test_filename):
+        pass
+
+    def model_classificators_validator(self, classificators_list):
         pass
 
 
@@ -43,6 +73,8 @@ class SparkModelBuilder(ModelBuilderInterface):
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
             .getOrCreate()
 
+        self.thread_pool = ThreadPoolExecutor()
+
     def file_processor(self, database_url):
         file = self.spark_session.read.format("mongo").option(
             "uri", database_url).load()
@@ -57,12 +89,29 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         return processed_file
 
+    def fields_from_dataframe(self, dataframe, is_string):
+        text_fields = []
+        first_row = dataframe.first()
+
+        if(is_string):
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) == str):
+                    text_fields.append(column)
+        else:
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) != str):
+                    text_fields.append(column)
+
+        return text_fields
+
     def build_model(self, database_url_training, database_url_test,
-                    encoded_assembler, model_classificator_list):
+                    preprocessor_code, classificators_list):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
 
-        assembler = encoded_assembler
+        assembler = VectorAssembler(outputCol="features")
+
+        exec(preprocessor_code)
 
         features_training = assembler.transform(training_df)
         features_testing = assembler.transform(testing_df)
@@ -76,7 +125,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             "svc": LinearSVC()
         }
 
-        for classificator_name in model_classificator_list:
+        for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
 
             classificator.featuresCol = "features"
@@ -89,3 +138,41 @@ class SparkModelBuilder(ModelBuilderInterface):
                 print(row, flush=True)
 
         self.spark_session.stop()
+
+
+class MongoOperations(DatabaseInterface):
+
+    def __init__(self, database_url, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url, int(database_port))
+        self.database = self.mongo_client[database_name]
+
+    def get_filenames(self):
+        return self.database.list_collection_names()
+
+    def find_one(self, filename, query):
+        file_collection = self.database[filename]
+        return file_collection.find_one(query)
+
+
+class ModelBuilderRequestValidator(RequestValidatorInterface):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
+    def training_filename_validator(self, training_filename):
+        filenames = self.database.get_filenames()
+
+        if(training_filename not in filenames):
+            raise Exception(self.MESSAGE_INVALID_TRAINING_FILENAME)
+
+    def test_filename_validator(self, test_filename):
+        filenames = self.database.get_filenames()
+
+        if(test_filename not in filenames):
+            raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
+
+    def model_classificators_validator(self, classificators_list):
+        classificator_names_list = ["lr", "dt", "rf", "gb", "nb", "svc"]
+        for classificator_name in classificators_list:
+            if(classificator_name not in classificator_names_list):
+                raise Exception(self.MESSAGE_INVALID_CLASSIFICATOR)
