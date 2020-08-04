@@ -146,12 +146,11 @@ class SparkModelBuilder(ModelBuilderInterface):
     def classificator_handler(self, classificator, classificator_name,
                               features_training, features_testing,
                               features_evaluation, prediction_filename):
-        document_id = 0
         prediction_filename_name = prediction_filename + "_prediction"
         metadata_document = {
             "filename": prediction_filename_name,
             "classificator": classificator_name,
-            "_id": document_id
+            "_id": 0
         }
 
         classificator.featuresCol = "features"
@@ -179,9 +178,11 @@ class SparkModelBuilder(ModelBuilderInterface):
         self.database.insert_one_in_file(
                 filename_name, filename_metatada)
 
+        document_id = 1
         for row in predicted_df.collect():
             row_dict = row.asDict()
-            row_dict["_id"] = (document_id + 1)
+            row_dict["_id"] = document_id
+            document_id += 1
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
