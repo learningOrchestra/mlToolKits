@@ -187,7 +187,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             row_dict = row.asDict()
             row_dict["_id"] = document_id
             document_id += 1
-
+            print(row_dict, flush=True)
             self.database.insert_one_in_file(
                 filename_name, row_dict)
 
