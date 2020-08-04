@@ -40,7 +40,7 @@ The preprocessing code must instanciate the variables in bellow, , all intances 
 * features_evaluation (Not Instanciated): Spark Dataframe instance for evaluate trained model accuracy
 * features_testing (Not Instanciated): Spark Dataframe instance for test the model
 
-
+Case you don't want evaluate the model prediction, define features_evaluation as None.
 
 ### Handy methods
 
