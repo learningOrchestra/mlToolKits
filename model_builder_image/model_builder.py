@@ -21,7 +21,8 @@ MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 class ModelBuilderInterface():
     def build_model(self, database_url_training, database_url_test,
-                    preprocessor_code, classificators_list):
+                    preprocessor_code, classificators_list,
+                    prediction_filename):
         pass
 
 
@@ -30,6 +31,9 @@ class DatabaseInterface():
         pass
 
     def find_one(self, filename, query):
+        pass
+
+    def insert_one_in_file(self, filename, json_object):
         pass
 
 
@@ -52,7 +56,9 @@ class SparkModelBuilder(ModelBuilderInterface):
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
-    def __init__(self):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
         self.spark_session = SparkSession \
             .builder \
             .appName("model_builder") \
@@ -108,7 +114,8 @@ class SparkModelBuilder(ModelBuilderInterface):
         return text_fields
 
     def build_model(self, database_url_training, database_url_test,
-                    preprocessor_code, classificators_list):
+                    preprocessor_code, classificators_list,
+                    prediction_filename):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
 
@@ -138,7 +145,15 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def classificator_handler(self, classificator, classificator_name,
                               features_training, features_testing,
-                              features_evaluation):
+                              features_evaluation, prediction_filename):
+        document_id = 0
+        prediction_filename_name = prediction_filename + "_prediction"
+        metadata_document = {
+            "filename": prediction_filename_name,
+            "classificator": classificator_name,
+            "_id": document_id
+        }
+
         classificator.featuresCol = "features"
         classificator.maxIter = 10
         model = classificator.fit(features_training)
@@ -151,15 +166,20 @@ class SparkModelBuilder(ModelBuilderInterface):
                 metricName="accuracy")
 
             model_accuracy = evaluator.evaluate(evaluation_prediction)
-            print("Accuracy of " + classificator_name + " is = " +
-                  str(model_accuracy), flush=True)
-            print("Test Error of " + classificator_name + " = " +
-                  str((1.0 - model_accuracy)), flush=True)
+            metadata_document["accuracy"] = str(model_accuracy)
+            metadata_document["error"] = str((1.0 - model_accuracy))
 
         testing_prediction = model.transform(features_testing)
 
+        self.database.insert_one_in_file(
+                prediction_filename_name, metadata_document)
+
         for row in testing_prediction.collect():
-            print(row, flush=True)
+            row_dict = row.asDict()
+            row_dict["_id"] = (document_id + 1)
+
+            self.database.insert_one_in_file(
+                prediction_filename_name, row_dict)
 
 
 class MongoOperations(DatabaseInterface):
@@ -175,6 +195,10 @@ class MongoOperations(DatabaseInterface):
     def find_one(self, filename, query):
         file_collection = self.database[filename]
         return file_collection.find_one(query)
+
+    def insert_one_in_file(self, filename, json_object):
+        file_collection = self.database[filename]
+        file_collection.insert_one(json_object)
 
 
 class ModelBuilderRequestValidator(RequestValidatorInterface):
