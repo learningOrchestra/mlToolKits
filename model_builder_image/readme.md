@@ -17,7 +17,7 @@ modelbuilder microservice provide an api to create preprocess models from traini
 * "rf": RandomForestClassifier
 * "gb": Gradient-boosted tree classifier
 * "nb": NaiveBayes
-* "svm": Support Vector Machine
+* "svc": Support Vector Machine
 
 to send a request with LogisticRegression and NaiveBayes classificators:
 ```
@@ -31,9 +31,16 @@ to send a request with LogisticRegression and NaiveBayes classificators:
 
 The python preprocessing code must use the environment instances in bellow:
 
-* training_df (Instanciated): Spark Dataframe instance for training filename
+* training_df (Instanciated): Spark Dataframe instance for trainingfilename
 * testing_df  (Instanciated): Spark Dataframe instance for testing filename
-* assembler (Instanciated): Clear Spark VectorAssembler instance for features join , need set inputCols and setHandleInvalid parameters
+
+The preprocessing code must instanciate the variables in bellow, , all intances must be transformed by VectorAssembler:
+
+* features_training (Not Instanciated): Spark Dataframe instance for train the model
+* features_evaluation (Not Instanciated): Spark Dataframe instance for evaluate trained model accuracy
+* features_testing (Not Instanciated): Spark Dataframe instance for test the model
+
+
 
 ### Handy methods
 

@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 from datetime import datetime
-from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
 from pyspark.ml.classification import (
@@ -112,12 +112,9 @@ class SparkModelBuilder(ModelBuilderInterface):
         preprocessing_variables = locals()
         exec(preprocessor_code, globals(), preprocessing_variables)
 
-        assembler = preprocessing_variables['assembler']
-        training_df = preprocessing_variables['training_df']
-        testing_df = preprocessing_variables['testing_df']
-
-        features_training = assembler.transform(training_df)
-        features_testing = assembler.transform(testing_df)
+        features_training = preprocessing_variables['features_training']
+        features_testing = preprocessing_variables['features_testing']
+        features_evaluation = preprocessing_variables['features_evaluation']
 
         classificator_switcher = {
             "lr": LogisticRegression(),
@@ -134,6 +131,19 @@ class SparkModelBuilder(ModelBuilderInterface):
             classificator.featuresCol = "features"
             classificator.maxIter = 10
             model = classificator.fit(features_training)
+
+            if(features_evaluation is not None):
+                evaluation_prediction = model.transform(features_evaluation)
+                evaluator = MulticlassClassificationEvaluator(
+                    labelCol="label",
+                    predictionCol="prediction",
+                    metricName="accuracy")
+
+                model_accuracy = evaluator.evaluate(evaluation_prediction)
+                print("Accuracy of " + classificator_name + " is = " +
+                      str(model_accuracy), flush=True)
+                print("Test Error of " + classificator_name + " = " +
+                      str((1.0 - model_accuracy)), flush=True)
 
             testing_prediction = model.transform(features_testing)
 
