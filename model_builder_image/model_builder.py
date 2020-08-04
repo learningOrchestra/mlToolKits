@@ -139,7 +139,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             classificator = classificator_switcher[classificator_name]
             self.classificator_handler(
                 classificator, classificator_name, features_training,
-                features_testing, features_evaluation)
+                features_testing, features_evaluation, prediction_filename)
 
         self.spark_session.stop()
 
@@ -171,15 +171,20 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         testing_prediction = model.transform(features_testing)
 
-        self.database.insert_one_in_file(
-                prediction_filename_name, metadata_document)
+        self.save_classificator_result(
+            prediction_filename_name, testing_prediction, metadata_document)
 
-        for row in testing_prediction.collect():
+    def save_classificator_result(self, filename_name, predicted_df,
+                                  filename_metatada):
+        self.database.insert_one_in_file(
+                filename_name, filename_metatada)
+
+        for row in predicted_df.collect():
             row_dict = row.asDict()
             row_dict["_id"] = (document_id + 1)
 
             self.database.insert_one_in_file(
-                prediction_filename_name, row_dict)
+                filename_name, row_dict)
 
 
 class MongoOperations(DatabaseInterface):
