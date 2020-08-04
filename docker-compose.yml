@@ -129,6 +129,7 @@ services:
             - 8080:8080
         extra_hosts:
             - "sparkmaster:0.0.0.0"
+            - "sparkmaster:localhost"
         environment:
             - SPARK_ROLE=master
         deploy:
