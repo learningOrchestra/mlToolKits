@@ -187,7 +187,11 @@ class SparkModelBuilder(ModelBuilderInterface):
             row_dict = row.asDict()
             row_dict["_id"] = document_id
             document_id += 1
-            print(row_dict, flush=True)
+
+            del row_dict["features"]
+            del row_dict["rawPrediction"]
+            del row_dict["probability"]
+
             self.database.insert_one_in_file(
                 filename_name, row_dict)
 
