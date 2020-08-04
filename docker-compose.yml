@@ -26,6 +26,8 @@ services:
 
     databaseprimary:
         image: 'bitnami/mongodb:3.6.17-ol-7-r26'
+        ports:
+            - "27017:27017"
         environment:
             - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
             - MONGODB_REPLICA_SET_MODE=primary
