@@ -138,11 +138,19 @@ class SparkModelBuilder(ModelBuilderInterface):
             "svc": LinearSVC()
         }
 
+        classificator_threads = []
+
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
-            self.classificator_handler(
-                classificator, classificator_name, features_training,
-                features_testing, features_evaluation, prediction_filename)
+
+            classificator_threads.append(
+                self.thread_pool.submit(
+                    self.classificator_handler,
+                    classificator, classificator_name,
+                    features_training, features_testing,
+                    features_evaluation, prediction_filename))
+
+        wait(classificator_threads)
 
         self.spark_session.stop()
 
