@@ -178,7 +178,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def save_classificator_result(self, filename_name, predicted_df,
                                   filename_metatada):
-        self.delete_file(filename_name)
+        self.database.delete_file(filename_name)
         self.database.insert_one_in_file(
                 filename_name, filename_metatada)
 
