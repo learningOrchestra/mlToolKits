@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 from datetime import datetime
+import time
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -166,8 +167,13 @@ class SparkModelBuilder(ModelBuilderInterface):
         }
 
         classificator.featuresCol = "features"
-        classificator.maxIter = 10
+
+        start_fit_model_time = time.time()
         model = classificator.fit(features_training)
+        end_fit_model_time = time.time()
+
+        fit_time = end_fit_model_time - start_fit_model_time
+        metadata_document["fit_time"] = fit_time
 
         if(features_evaluation is not None):
             evaluation_prediction = model.transform(features_evaluation)
