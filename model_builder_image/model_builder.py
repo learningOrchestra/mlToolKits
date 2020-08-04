@@ -149,7 +149,8 @@ class SparkModelBuilder(ModelBuilderInterface):
     def classificator_handler(self, classificator, classificator_name,
                               features_training, features_testing,
                               features_evaluation, prediction_filename):
-        prediction_filename_name = prediction_filename + "_prediction"
+        prediction_filename_name = prediction_filename + "_prediction_" +\
+            classificator_name
         metadata_document = {
             "filename": prediction_filename_name,
             "classificator": classificator_name,
