@@ -129,13 +129,14 @@ class SparkModelBuilder(ModelBuilderInterface):
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
             self.classificator_handler(
-                classificator, features_training, features_testing,
-                features_evaluation)
+                classificator, classificator_name, features_training,
+                features_testing, features_evaluation)
 
         self.spark_session.stop()
 
-    def classificator_handler(self, classificator, features_training,
-                              features_testing, features_evaluation):
+    def classificator_handler(self, classificator, classificator_name,
+                              features_training, features_testing,
+                              features_evaluation):
         classificator.featuresCol = "features"
         classificator.maxIter = 10
         model = classificator.fit(features_training)
