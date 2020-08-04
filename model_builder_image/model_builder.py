@@ -69,6 +69,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             .config("spark.memory.offHeap.enabled", 'true')\
             .config("spark.memory.offHeap.size", "1g")\
             .config("spark.scheduler.mode", "FAIR")\
+            .config("spark.scheduler.allocation.file", "./fairscheduler.xml")\
+            .setLocalProperty("spark.scheduler.pool", "model_builder")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
