@@ -36,6 +36,9 @@ class DatabaseInterface():
     def insert_one_in_file(self, filename, json_object):
         pass
 
+    def delete_file(self, filename):
+        pass
+
 
 class RequestValidatorInterface():
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
@@ -175,6 +178,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
     def save_classificator_result(self, filename_name, predicted_df,
                                   filename_metatada):
+        self.delete_file(filename_name)
         self.database.insert_one_in_file(
                 filename_name, filename_metatada)
 
@@ -205,6 +209,10 @@ class MongoOperations(DatabaseInterface):
     def insert_one_in_file(self, filename, json_object):
         file_collection = self.database[filename]
         file_collection.insert_one(json_object)
+
+    def delete_file(self, filename):
+        file_collection = self.database[filename]
+        file_collection.drop()
 
 
 class ModelBuilderRequestValidator(RequestValidatorInterface):
