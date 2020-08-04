@@ -127,8 +127,6 @@ services:
             - 4040:4040
             - 7077:7077
             - 8080:8080
-        extra_hosts:
-            - "0.0.0.0:localhost"
         environment:
             - SPARK_ROLE=master
         deploy:
