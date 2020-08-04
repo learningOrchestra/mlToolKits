@@ -68,6 +68,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             .config("spark.sql.shuffle.partitions", "800") \
             .config("spark.memory.offHeap.enabled", 'true')\
             .config("spark.memory.offHeap.size", "1g")\
+            .config("spark.scheduler.mode", "FAIR")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
@@ -127,30 +128,35 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
-
-            classificator.featuresCol = "features"
-            classificator.maxIter = 10
-            model = classificator.fit(features_training)
-
-            if(features_evaluation is not None):
-                evaluation_prediction = model.transform(features_evaluation)
-                evaluator = MulticlassClassificationEvaluator(
-                    labelCol="label",
-                    predictionCol="prediction",
-                    metricName="accuracy")
-
-                model_accuracy = evaluator.evaluate(evaluation_prediction)
-                print("Accuracy of " + classificator_name + " is = " +
-                      str(model_accuracy), flush=True)
-                print("Test Error of " + classificator_name + " = " +
-                      str((1.0 - model_accuracy)), flush=True)
-
-            testing_prediction = model.transform(features_testing)
-
-            for row in testing_prediction.collect():
-                print(row, flush=True)
+            self.classificator_handler(
+                classificator, features_training, features_testing,
+                features_evaluation)
 
         self.spark_session.stop()
+
+    def classificator_handler(self, classificator, features_training,
+                              features_testing, features_evaluation):
+        classificator.featuresCol = "features"
+        classificator.maxIter = 10
+        model = classificator.fit(features_training)
+
+        if(features_evaluation is not None):
+            evaluation_prediction = model.transform(features_evaluation)
+            evaluator = MulticlassClassificationEvaluator(
+                labelCol="label",
+                predictionCol="prediction",
+                metricName="accuracy")
+
+            model_accuracy = evaluator.evaluate(evaluation_prediction)
+            print("Accuracy of " + classificator_name + " is = " +
+                  str(model_accuracy), flush=True)
+            print("Test Error of " + classificator_name + " = " +
+                  str((1.0 - model_accuracy)), flush=True)
+
+        testing_prediction = model.transform(features_testing)
+
+        for row in testing_prediction.collect():
+            print(row, flush=True)
 
 
 class MongoOperations(DatabaseInterface):
