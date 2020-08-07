@@ -34,13 +34,13 @@ If all things happen good, the learningOrchestra have been deployed in your swar
 
 ### Usage
 #### Python package
-* [learning_orchestra_client](/learning_orchestra_client) - The python package for learningOrchestra use
+* [learning_orchestra_client docs](/learning_orchestra_client) - The python package for learningOrchestra use
 
 #### microservices REST API
-* [database api](/database_api_image) - Service used to download and handling files in database
-* [projection](/projection_image) - Make projections of stored files in database using spark cluster
-* [data type handler](/data_type_handler_image) - Change fields file type between number and text
-* [model builder](/model_builder_image) - Create a prediction model from preprocessed files using spark cluster
+* [database api docs](/database_api_image) - Microservice used to download and handling files in database
+* [projection docs ](/projection_image) - Make projections of stored files in database using spark cluster
+* [data type handler docs](/data_type_handler_image) - Change fields file type between number and text
+* [model builder docs](/model_builder_image) - Create a prediction model from preprocessed files using spark cluster
 
 #### database GUI
 * [NoSQLBooster](https://nosqlbooster.com) - MongoDB GUI to make several database tasks, as files visualization, querys, projections and files extraction to formats as csv and json
