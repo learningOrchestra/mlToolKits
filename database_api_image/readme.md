@@ -5,7 +5,7 @@ The database system has 4 services, the database_primary, database_secondary and
 # database_api service
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 
-## GET /files
+## GET IP:5000/files
 Return an array of metadata files in database.
 ```
 {
@@ -15,7 +15,7 @@ Return an array of metadata files in database.
 }
 ```
 
-## GET /files/<filename\>?skip=number&limit=number&query={}
+## GET IP:5000/files/<filename\>?skip=number&limit=number&query={}
 Return rows of filename, and paginate in query result
 
 * filename - filename of inserted file
@@ -47,7 +47,7 @@ If metadata file belong to preprocessed filename, there are the fields:
 	"time_created": "creation time of file"
 }
 ```
-## POST /files
+## POST IP:5000/files
 Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
 The inserted json must contained the fields: 
 ```
@@ -57,6 +57,6 @@ The inserted json must contained the fields:
 }
 ```
 
-## DELETE /files/<filename\>
+## DELETE IP:5000/files/<filename\>
 Request of type DELETE, informing the value of file's filename field in argument request, deleting the database file, if one exists with that value.
 
