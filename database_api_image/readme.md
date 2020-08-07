@@ -3,7 +3,7 @@
 The database system has 4 services, the database_primary, database_secondary and database_arbiter, which uses an bitnami image of mongodb on DockerHub to host the database, this services work to database replication, in case of database_primary service fall, the database_secondary service will respond all read operations, the database_arbiter service will setting replication in database_primary and database_secondary services. There is a database API service (database_api), where it is created a level of abstraction through a REST API to use the database.
 
 # GUI tool to handle database files
-There is GUI tools to handle database files, as example, the [NoSQLBooster](https://nosqlbooster.com/) can interact with mongoDB used in database, and make several tasks, as projections, files extraction and download to formats as csv, json, you also can navigate in all inserted files in easy way and visualize each row from determined file, to use this tool, connect with the url cluster_ip:27017 and use the user root with password owl45#21.
+There is GUI tools to handle database files, as example, the NoSQLBooster \footnote{https://nosqlbooster.com} can interact with mongoDB used in database, and make several tasks which are limited in learning\_orchestra\_client package, as projections, schema visualization, files extraction and download to formats as csv, json, you also can navigate in all inserted files in easy way and visualize each row from determined file, to use this tool, connect with the url cluster\_ip:27017 and use the user root with password owl45#21.
 
 # database_api service
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
