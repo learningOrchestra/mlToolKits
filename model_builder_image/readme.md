@@ -1,5 +1,5 @@
 # modelbuilder microservice
-modelbuilder microservice provide an api to create preprocess models from training and tests files inserted in database service, generating a preprocessed files, sending the resulted files to modelbuilder microservice.
+modelbuilder microservice provide a REST API to create several model predictions using your own preprocessing code using a defined set of classificators. 
 
 ## POST IP:5002/models
 ```
@@ -10,7 +10,7 @@ modelbuilder microservice provide an api to create preprocess models from traini
     "classificators_list": String list of classificators to be used
 }
 ```
-### Classificators
+### classificators_list
 
 * "lr": LogisticRegression
 * "dt": DecisionTreeClassifier
@@ -29,11 +29,12 @@ to send a request with LogisticRegression and NaiveBayes classificators:
 ### Handy methods
 
 `self.fields_from_dataframe(self, dataframe, is_string)`
+This method return string or number fields as string list from a dataframe
 
 * dataframe: dataframe instance
 * is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
-### preprocessing_code environment
+### preprocessor_code environment
 
 The python3 preprocessing code must use the environment instances in bellow:
 
