@@ -26,8 +26,8 @@ DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 TRAINING_FILENAME = "training_filename"
 TEST_FILENAME = "test_filename"
-LABEL_NAME = "label"
-
+PREPROCESSOR_CODE_NAME = "preprocessor_code"
+CLASSIFICATORS_NAME = "classificators_list"
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
@@ -69,11 +69,12 @@ def create_model():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     try:
-        request_validator.field_validator(
-            request.json[TRAINING_FILENAME], request.json[LABEL_NAME])
-    except Exception as invalid_label:
+        request_validator.model_classificators_validator(
+            request.json[CLASSIFICATORS_NAME])
+    except Exception as invalid_classificator_name:
         return jsonify(
-            {MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),\
+            {MESSAGE_RESULT:
+                invalid_classificator_name.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     database_url_training = collection_database_url(
@@ -88,10 +89,13 @@ def create_model():
                             request.json[TEST_FILENAME],
                             os.environ[DATABASE_REPLICA_SET])
 
-    model_constructor = SparkModelBuilder()
+    model_builder = SparkModelBuilder(database)
 
-    model_constructor.build_model(
-        database_url_training, database_url_test, request.json[LABEL_NAME]
+    model_builder.build_model(
+        database_url_training, database_url_test,
+        request.json[PREPROCESSOR_CODE_NAME],
+        request.json[CLASSIFICATORS_NAME],
+        request.json[TEST_FILENAME]
     )
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}), \

@@ -1,13 +1,18 @@
-from pyspark.sql import SparkSession, functions as sf
+from pyspark.sql import SparkSession
 import os
-from concurrent.futures import ThreadPoolExecutor, wait
 from datetime import datetime
-from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression
-from pyspark.ml.evaluation import BinaryClassificationEvaluator
-from pyspark.ml.feature import StringIndexer, Tokenizer, VectorAssembler
-from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+import time
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
+from concurrent.futures import ThreadPoolExecutor, wait
+from pyspark.ml.classification import (
+    LogisticRegression,
+    DecisionTreeClassifier,
+    RandomForestClassifier,
+    GBTClassifier,
+    NaiveBayes,
+    LinearSVC
+)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -16,7 +21,9 @@ MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 
 class ModelBuilderInterface():
-    def build_model(self, database_url_training, database_url_test, label):
+    def build_model(self, database_url_training, database_url_test,
+                    preprocessor_code, classificators_list,
+                    prediction_filename):
         pass
 
 
@@ -27,12 +34,17 @@ class DatabaseInterface():
     def find_one(self, filename, query):
         pass
 
+    def insert_one_in_file(self, filename, json_object):
+        pass
+
+    def delete_file(self, filename):
+        pass
+
 
 class RequestValidatorInterface():
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
     MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
-    MESSAGE_MISSING_LABEL = "missing_label"
-    MESSAGE_INVALID_LABEL = "invalid_label"
+    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
 
     def training_filename_validator(self, training_filename):
         pass
@@ -40,7 +52,7 @@ class RequestValidatorInterface():
     def test_filename_validator(self, test_filename):
         pass
 
-    def field_validator(self, filename, file_field):
+    def model_classificators_validator(self, classificators_list):
         pass
 
 
@@ -48,7 +60,9 @@ class SparkModelBuilder(ModelBuilderInterface):
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
-    def __init__(self):
+    def __init__(self, database_connector):
+        self.database = database_connector
+
         self.spark_session = SparkSession \
             .builder \
             .appName("model_builder") \
@@ -64,10 +78,15 @@ class SparkModelBuilder(ModelBuilderInterface):
             .config("spark.sql.shuffle.partitions", "800") \
             .config("spark.memory.offHeap.enabled", 'true')\
             .config("spark.memory.offHeap.size", "1g")\
+            .config("spark.scheduler.mode", "FAIR")\
+            .config("spark.scheduler.pool", "model_builder")\
+            .config("spark.scheduler.allocation.file", "./fairscheduler.xml")\
             .master("spark://" +
                     os.environ[SPARKMASTER_HOST] +
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
             .getOrCreate()
+
+        self.thread_pool = ThreadPoolExecutor()
 
     def file_processor(self, database_url):
         file = self.spark_session.read.format("mongo").option(
@@ -98,57 +117,98 @@ class SparkModelBuilder(ModelBuilderInterface):
 
         return text_fields
 
-    def build_model(self, database_url_training, database_url_test, label):
+    def build_model(self, database_url_training, database_url_test,
+                    preprocessor_code, classificators_list,
+                    prediction_filename):
         training_df = self.file_processor(database_url_training)
-        training_df = training_df.withColumnRenamed(label, "label")
-        pre_processing_text = list()
-        assembler_columns_input = []
-
         testing_df = self.file_processor(database_url_test)
-        testing_df = testing_df.withColumn("label", sf.lit(0))
 
-        string_fields = self.fields_from_dataframe(
-            training_df, is_string=True)
+        preprocessing_variables = locals()
+        exec(preprocessor_code, globals(), preprocessing_variables)
 
-        for column in string_fields:
-            output_column_name = column + "_features"
+        features_training = preprocessing_variables['features_training']
+        features_testing = preprocessing_variables['features_testing']
+        features_evaluation = preprocessing_variables['features_evaluation']
 
-            indexer = StringIndexer(
-                            inputCol=column,
-                            outputCol=output_column_name)
+        classificator_switcher = {
+            "lr": LogisticRegression(),
+            "dt": DecisionTreeClassifier(),
+            "rf": RandomForestClassifier(),
+            "gb": GBTClassifier(),
+            "nb": NaiveBayes(),
+            "svc": LinearSVC()
+        }
 
-            training_indexer = indexer.fit(training_df)
-            testing_indexer = indexer.fit(testing_df)
+        classificator_threads = []
 
-            training_df = training_indexer.transform(training_df)
-            testing_df = testing_indexer.transform(testing_df)
+        for classificator_name in classificators_list:
+            classificator = classificator_switcher[classificator_name]
 
-            assembler_columns_input.append(output_column_name)
+            classificator_threads.append(
+                self.thread_pool.submit(
+                    self.classificator_handler,
+                    classificator, classificator_name,
+                    features_training, features_testing,
+                    features_evaluation, prediction_filename))
 
-        training_number = self.fields_from_dataframe(
-            training_df, is_string=False)
+        wait(classificator_threads)
 
-        for column in training_number:
-            if(column != label):
-                assembler_columns_input.append(column)
+        self.spark_session.stop()
 
-        assembler = VectorAssembler(
-            inputCols=assembler_columns_input,
-            outputCol="features")
+    def classificator_handler(self, classificator, classificator_name,
+                              features_training, features_testing,
+                              features_evaluation, prediction_filename):
+        prediction_filename_name = prediction_filename + "_prediction_" +\
+            classificator_name
+        metadata_document = {
+            "filename": prediction_filename_name,
+            "classificator": classificator_name,
+            "_id": 0
+        }
 
-        assembler.setHandleInvalid("skip")
-        features_training = assembler.transform(training_df)
-        features_testing = assembler.transform(testing_df)
+        classificator.featuresCol = "features"
 
-        model = LogisticRegression(
-            featuresCol="features", maxIter=10).fit(features_training)
+        start_fit_model_time = time.time()
+        model = classificator.fit(features_training)
+        end_fit_model_time = time.time()
+
+        fit_time = end_fit_model_time - start_fit_model_time
+        metadata_document["fit_time"] = fit_time
+
+        if(features_evaluation is not None):
+            evaluation_prediction = model.transform(features_evaluation)
+            evaluator = MulticlassClassificationEvaluator(
+                labelCol="label",
+                predictionCol="prediction",
+                metricName="accuracy")
+
+            model_accuracy = evaluator.evaluate(evaluation_prediction)
+            metadata_document["accuracy"] = str(model_accuracy)
+            metadata_document["error"] = str((1.0 - model_accuracy))
 
         testing_prediction = model.transform(features_testing)
 
-        for row in testing_prediction.collect():
-            print(row, flush=True)
+        self.save_classificator_result(
+            prediction_filename_name, testing_prediction, metadata_document)
 
-        self.spark_session.stop()
+    def save_classificator_result(self, filename_name, predicted_df,
+                                  filename_metatada):
+        self.database.delete_file(filename_name)
+        self.database.insert_one_in_file(
+                filename_name, filename_metatada)
+
+        document_id = 1
+        for row in predicted_df.collect():
+            row_dict = row.asDict()
+            row_dict["_id"] = document_id
+            document_id += 1
+
+            del row_dict["features"]
+            del row_dict["rawPrediction"]
+            del row_dict["probability"]
+
+            self.database.insert_one_in_file(
+                filename_name, row_dict)
 
 
 class MongoOperations(DatabaseInterface):
@@ -164,6 +224,14 @@ class MongoOperations(DatabaseInterface):
     def find_one(self, filename, query):
         file_collection = self.database[filename]
         return file_collection.find_one(query)
+
+    def insert_one_in_file(self, filename, json_object):
+        file_collection = self.database[filename]
+        file_collection.insert_one(json_object)
+
+    def delete_file(self, filename):
+        file_collection = self.database[filename]
+        file_collection.drop()
 
 
 class ModelBuilderRequestValidator(RequestValidatorInterface):
@@ -182,14 +250,8 @@ class ModelBuilderRequestValidator(RequestValidatorInterface):
         if(test_filename not in filenames):
             raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
 
-    def field_validator(self, filename, file_field):
-        if not file_field:
-            raise Exception(self.MESSAGE_MISSING_LABEL)
-
-        filename_metadata_query = {"filename": filename}
-
-        filename_metadata = self.database.find_one(
-            filename, filename_metadata_query)
-
-        if file_field not in filename_metadata["fields"]:
-            raise Exception(self.MESSAGE_INVALID_LABEL)
+    def model_classificators_validator(self, classificators_list):
+        classificator_names_list = ["lr", "dt", "rf", "gb", "nb", "svc"]
+        for classificator_name in classificators_list:
+            if(classificator_name not in classificator_names_list):
+                raise Exception(self.MESSAGE_INVALID_CLASSIFICATOR)
