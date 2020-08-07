@@ -34,7 +34,7 @@ If all things is happen good, the learningOrchestra is have been deployed in you
 #### Python package
 * [learning_orchestra_client](/learning_orchestra_client) - The python package for learningOrchestra use
 
-#### microservices REST API request
+#### microservices REST API
 * [database api](/database_api_image) - Service used to download and handling files in database
 * [projection](/projection_image) - Make projections of stored files in database using spark cluster
 * [data type handler](/data_type_handler_image) - Change fields file type between number and text
