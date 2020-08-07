@@ -6,12 +6,61 @@ The database system has 4 services, the database_primary, database_secondary and
 Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
 
 ## GET IP:5000/files
-Return an array of metadata files in database.
+Return an array of metadata files in database, each file inserted in database contains a metadata file.
+
+Downloaded files:
 ```
 {
-	"filename": "key_to_document_identification",
-	"finished": true,
-	"url": "http://sitetojson.file/path/to/csv"
+    "fields": [
+        "PassengerId",
+        "Survived",
+        "Pclass",
+        "Name",
+        "Sex",
+        "Age",
+        "SibSp",
+        "Parch",
+        "Ticket",
+        "Fare",
+        "Cabin",
+        "Embarked"
+    ],
+    "filename": "titanic_training",
+    "finished": true,
+    "time_created": "2020-07-28T22:16:10-00:00",
+    "url": "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo"
+}
+```
+Preprocessed files:
+```
+{
+            "fields": [
+                "PassengerId",
+                "Survived",
+                "Pclass",
+                "Name",
+                "Sex",
+                "Age",
+                "SibSp",
+                "Parch",
+                "Embarked"
+            ],
+            "filename": "titanic_training_projection",
+            "finished": false,
+            "parent_filename": "titanic_training",
+            "time_created": "2020-07-28T12:01:44-00:00"
+        }
+```
+
+Classificator prediction files:
+
+```
+{
+    "accuracy": "1.0",
+    "classificator": "gb",
+    "error": "0.0",
+    "filename": "titanic_testing_900_prediction_gb",
+    "fit_time": 69.43671989440918
 }
 ```
 
@@ -23,30 +72,8 @@ Return rows of filename, and paginate in query result
 * limit - limit of returned query result, max limit setted in 20 rows
 * query - query to find documents, if use method only to paginate, use blank json, as {}
 
-The first row is the metadata file, metadata contain the fields:
-```
-{
+The first row is always the metadata file
 
-	"_id": 0,
-	"filename": "key_to_document_identification",
-	"finished": true or false,
-	"url": "http://sitetojson.file/path/to/csv",
-	"time_created": "creation time of file"   
-}
-```
-
-If metadata file belong to preprocessed filename, there are the fields:
-
-```
-{
-
-	"_id": 0,
-	"filename": "key_to_document_identification",
-	"finished": true or false,
-	"parent_filename": "filename used to preprocessing",
-	"time_created": "creation time of file"
-}
-```
 ## POST IP:5000/files
 Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
 The inserted json must contained the fields: 
