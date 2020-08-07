@@ -1,8 +1,8 @@
-# data_type_handler service
-Service used to change data type from added file between number and string
+# Data Type Handler microservice
+Microservice used to change data type from stored file between number and string
 
 # PATCH IP:5003/fieldtypes/<filename\>
-The request use filename as id in request argument and fields in request body, fields is an array whith all fields from file to be changed, using number or string descriptor in each Key:Value to describe the new value of altered field of filename.
+The request use filename as id in argument and fields in body, fields are an array whith all fields from file to be changed, using number or string descriptor in each Key:Value to describe the new value of altered field of file.
 
 ```
 {

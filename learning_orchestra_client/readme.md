@@ -1,7 +1,8 @@
 # Learning Orchestra Client
-This python package is created to usage with Learning Orchestra microservices
+This python package is created to usage the LearningOrchestra funcionalities
 
 ## Installation
+Ensure which you have the python3 installed in your machine and run:
 pip install learning_orchestra_cliet
 
 ## Documentation
@@ -19,7 +20,7 @@ cluster_ip = "34.95.222.197"
 Context(cluster_ip)
 `
 
-After create a Context object, you will able to usage learningOrchestra microservices.
+After create a Context object, you will able to usage learningOrchestra, each learningOrchestra funcionalite is contained in your own class, therefore, to use a specific funcionalite, after you instanciate and configure Context class, you need instanciate and call the method class of interest, in below, there are all class and each class methods, also have an example of workflow using this package in a python code.
 
 ## DatabaseApi
 
@@ -106,9 +107,9 @@ Case you don't want evaluate the model prediction, define features_evaluation as
 * dataframe: dataframe instance
 * is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
-## Example
+## learning_orchestra_client usage example
 
-In below there is script using the package:
+In below there is a python script using the package:
 
 
     from learning_orchestra_client import *

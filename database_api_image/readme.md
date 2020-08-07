@@ -1,12 +1,9 @@
-# database
+# Database API microservice
 
-The database system has 4 services, the database_primary, database_secondary and database_arbiter, which uses an bitnami image of mongodb on DockerHub to host the database, this services work to database replication, in case of database_primary service fall, the database_secondary service will respond all read operations, the database_arbiter service will setting replication in database_primary and database_secondary services. There is a database API service (database_api), where it is created a level of abstraction through a REST API to use the database.
+The database API microservice create a level of abstraction through an REST API to use the database, datasets are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file from POST request.
 
-# GUI tool to handle database files
-There are GUI tools to handle database files, as example, the [NoSQLBooster](https://nosqlbooster.com) can interact with mongoDB used in database, and make several tasks which are limited in learning\_orchestra\_client package, as projections, schema visualization, files extraction and download to formats as csv, json, you also can navigate in all inserted files in easy way and visualize each row from determined file, to use this tool, connect with the url cluster\_ip:27017 and use the user root with password owl45#21.
-
-# database_api service
-Documents are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file.
+## GUI tool to handle database files
+There are GUI tools to handle database files, as example, the [NoSQLBooster](https://nosqlbooster.com) can interact with mongoDB used in database, and make several tasks which are limited in learning\_orchestra\_client package, as  schema visualization and files extraction and download to formats as csv, json, you also can navigate in all inserted files in easy way and visualize each row from determined file, to use this tool, connect with the url cluster\_ip:27017 and use the user root with password owl45#21.
 
 ## GET IP:5000/files
 Return an array of metadata files in database, each file inserted in database contains a metadata file.
@@ -89,8 +86,8 @@ Return rows of filename, and paginate in query result
 The first row is always the metadata file
 
 ## POST IP:5000/files
-Insert a csv into the database via path /add using the POST method, json must be contained in the body of the http request.
-The inserted json must contained the fields: 
+Insert a csv into the database using the POST method, json must be contained in the body of the http request.
+The inserted json must has the fields: 
 ```
 {
   filename: "key_to_document_identification",
@@ -99,5 +96,5 @@ The inserted json must contained the fields:
 ```
 
 ## DELETE IP:5000/files/<filename\>
-Request of type DELETE, informing the value of file's filename field in argument request, deleting the database file, if one exists with that value.
+Request of type DELETE, informing the value of filename field of a inserted file in argument request, deleting the database file, if one exist with that value.
 
