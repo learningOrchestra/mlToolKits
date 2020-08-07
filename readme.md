@@ -1,4 +1,4 @@
-# learningOrchestra: a machine learning resource tool 
+# learningOrchestra: a distributed machine learning processing tool 
 
 [![status](https://img.shields.io/badge/status-building-yellow.svg)](https://shields.io/)
 [![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
