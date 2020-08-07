@@ -4,7 +4,7 @@
 [![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 [![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 
-The learningOrchestra is a software for distributed machine learning processing using deployed microservices in a cluster, with learningOrchestra, is possible load a csv file from a URL using the [database api](/database_api_image) microservice, this csv file is converted to json file to be stored in mongoDB, with this json file, also is possible make preprocessing tasks using preprocessing microservices as [projection](/projection_image) and [data type handler](/data_type_handler_image).
+The learningOrchestra is a software for distributed machine learning processing using microservices in a cluster, is possible load a csv file from a URL using the [database api](/database_api_image) microservice, this csv file is converted to json file to be stored in mongoDB, also is possible make preprocessing tasks using preprocessing microservices as [projection](/projection_image) and [data type handler](/data_type_handler_image).
 
 The main feature of learningOrchestra is make model predictions with different classificators simultaneously using the stored file with [model builder](/model_builder_image) microservice, you can compare the differents classificators result, as time to fit and prediction accuracy. The fact of the user usage your own preprocessing code allow the creation of highly customized model predictons to a specific dataset, increasing the accuracy and results, the sky is the limit! :rocket: :rocket:
 
