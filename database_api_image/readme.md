@@ -31,6 +31,12 @@ Downloaded files:
     "url": "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo"
 }
 ```
+* fields - column names from inserted file
+* filename - name to file identification
+* finished - flag used to indicate if asyncronous processing from file downloader is finished
+* time_created - creation time of file
+* url - url used to file download
+
 Preprocessed files:
 ```
 {
@@ -51,6 +57,7 @@ Preprocessed files:
             "time_created": "2020-07-28T12:01:44-00:00"
         }
 ```
+* parent_filename - file filename used to make preprocessing operation
 
 Classificator prediction files:
 
@@ -63,6 +70,10 @@ Classificator prediction files:
     "fit_time": 69.43671989440918
 }
 ```
+* accuracy - accuracy rate from model prediction
+* classificator - initials from used classificator
+* error - error rate from model prediction
+* fit_time - time from model fit using training dataset
 
 ## GET IP:5000/files/<filename\>?skip=number&limit=number&query={}
 Return rows of filename, and paginate in query result
