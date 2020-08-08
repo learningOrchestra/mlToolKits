@@ -8,7 +8,7 @@ There are GUI tools to handle database files, as example, the [NoSQLBooster](htt
 ## GET IP:5000/files
 Return an array of metadata files in database, each file inserted in database contains a metadata file.
 
-Downloaded files:
+### Downloaded files:
 ```json
 {
     "fields": [
@@ -37,7 +37,7 @@ Downloaded files:
 * time_created - creation time of file
 * url - url used to file download
 
-Preprocessed files:
+### Preprocessed files:
 ```json
 {
     "fields": [
@@ -59,7 +59,7 @@ Preprocessed files:
 ```
 * parent_filename - file filename used to make preprocessing operation
 
-Classificator prediction files:
+### Classificator prediction files:
 
 ```json
 {
