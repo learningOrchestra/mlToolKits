@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "learningOrschestra: a machine learning resource orchestrator"
+echo "learningOrschestra: a distributed machine learning resource tool"
 echo "--------------------------------------------------------------------"
-echo "Buiding own images service..."
+echo "Buiding the learningOrschestra microservice images..."
 echo "--------------------------------------------------------------------"
 
 docker build --tag spark_task ./spark_task_image
@@ -11,7 +11,7 @@ docker push 127.0.0.1:5050/spark_task
 docker-compose build
 
 echo "--------------------------------------------------------------------"
-echo "Adding the image service in docker daemon security exception..."
+echo "Adding the image microservice in docker daemon security exception..."
 echo "--------------------------------------------------------------------"
 
 echo '{
@@ -26,62 +26,57 @@ echo "--------------------------------------------------------------------"
 service docker restart
 
 echo "--------------------------------------------------------------------"
-echo "Deploying learningOrchestra in swarm..."
+echo "Deploying learningOrchestra in swarm cluster..."
 echo "--------------------------------------------------------------------"
 
-docker stack deploy --compose-file=docker-compose.yml service
+docker stack deploy --compose-file=docker-compose.yml microservice
 
 echo "--------------------------------------------------------------------"
-echo "Pushing the own service images in local repository..."
+echo "Pushing the microservice images in local repository..."
 echo "--------------------------------------------------------------------"
 
 sleep 30
 
 
 database_api_repository=127.0.0.1:5050/database_api
-database_api_tag=database_api
 
 
 echo "--------------------------------------------------------------------"
-echo "Pushing database_api service image..."
+echo "Pushing databaseapi microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $database_api_repository:$database_api_tag
+docker push $database_api_repository
 
 
 spark_repository=127.0.0.1:5050/spark
-spark_tag=spark
 
 echo "--------------------------------------------------------------------"
-echo "Pushing spark service image..."
+echo "Pushing spark microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $spark_repository:$spark_tag
+docker push $spark_repository
 
 
 projection_repository=127.0.0.1:5050/projection
-projection_tag=projection
 
 echo "--------------------------------------------------------------------"
-echo "Pushing projection service image..."
+echo "Pushing projection microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $projection_repository:$projection_tag
+docker push $projection_repository
 
 
 model_builder_repository=127.0.0.1:5050/model_builder
-model_builder_tag=model_builder
 
 echo "--------------------------------------------------------------------"
-echo "Pushing model_builder service image..."
+echo "Pushing modelbuilder microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $model_builder_repository:$model_builder_tag
+docker push $model_builder_repository
 
 
 data_type_handler_repository=127.0.0.1:5050/data_type_handler
-data_type_handler_tag=data_type_handler
 
 echo "--------------------------------------------------------------------"
-echo "Pushing data_type_handler service image..."
+echo "Pushing datatypehandler microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $data_type_handler_repository:$data_type_handler_tag
+docker push $data_type_handler_repository
 
 echo "--------------------------------------------------------------------"
 echo "End."
