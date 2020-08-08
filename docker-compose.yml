@@ -3,7 +3,7 @@ version: '3'
 services:
     databaseapi:
         build: ./database_api_image
-        image: 127.0.0.1:5050/database_api:database_api
+        image: 127.0.0.1:5050/database_api
         ports:
             - "5000:5000"
         depends_on:
@@ -122,7 +122,7 @@ services:
 
     sparkmaster:
         build: ./spark_image
-        image: 127.0.0.1:5050/spark:spark
+        image: 127.0.0.1:5050/spark
         ports:
             - 4040:4040
             - 7077:7077
@@ -141,7 +141,7 @@ services:
             - database
 
     sparkworker:
-        image: 127.0.0.1:5050/spark:spark
+        image: 127.0.0.1:5050/spark
         entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
         ports:
             - 8081:8081
@@ -164,7 +164,7 @@ services:
 
     projection:
         build: ./projection_image
-        image: 127.0.0.1:5050/projection:projection
+        image: 127.0.0.1:5050/projection
         ports:
             - "5001:5001"
             - 41000:41000
@@ -193,7 +193,7 @@ services:
 
     modelbuilder:
         build: ./model_builder_image
-        image: 127.0.0.1:5050/model_builder:model_builder
+        image: 127.0.0.1:5050/model_builder
         ports:
             - "5002:5002"
             - 41100:41100
@@ -222,7 +222,7 @@ services:
 
     datatypehandler:
         build: ./data_type_handler_image
-        image: 127.0.0.1:5050/data_type_handler:data_type_handler
+        image: 127.0.0.1:5050/data_type_handler
         ports:
             - "5003:5003"
         depends_on:
