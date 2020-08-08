@@ -4,11 +4,13 @@
 [![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 [![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 
-The learningOrchestra is a software for distributed machine learning processing using microservices in a cluster, is possible load a csv file from a URL using the [database api](/database_api_image) microservice, this csv file is converted to json file to be stored in mongoDB, also is possible make preprocessing tasks using preprocessing microservices as [projection](/projection_image) and [data type handler](/data_type_handler_image).
+## What is learningOrchestra?
 
-The main feature of learningOrchestra is make model predictions with different classificators simultaneously using the stored file with [model builder](/model_builder_image) microservice, you can compare the differents classificators result, as time to fit and prediction accuracy. The fact of the user usage your own preprocessing code allow the creation of highly customized model predictons to a specific dataset, increasing the accuracy and results, the sky is the limit! :rocket: :rocket:
+The learningOrchestra is a software for distributed machine learning processing using microservices in a cluster, is possible load a csv file from a URL using the [database api](/database_api_image) microservice, this csv file is converted to json file to be stored in MongoDB, also is possible make preprocessing tasks using microservices as [projection](/projection_image) and [data type handler](/data_type_handler_image).
 
-[Model builder](/model_builder_image) microservice use a spark cluster to make preprocessing and predictions using distributed processing, to make the learningOrchestra use more easy, also there is the  [learning_orchestra_client](/learning_orchestra_client) python package, this package provide to an user all learningOchestra functionalities in coding way,  you can export and analyse the results using a GUI interface to mongoDB, as [NoSQLBooster](https://nosqlbooster.com), more details in below and in each microservice and package documentation.
+The main feature of learningOrchestra is make prediction models with different classificators simultaneously using stored and preprocessed datasets with [model builder](/model_builder_image) microservice, this microservice use a spark cluster to make prediction models using distributed processing. You can compare the differents classificators result as time to fit and prediction accuracy, the fact of the user usage your own preprocessing code allow the creation of highly customized model predictons to a specific dataset, increasing the accuracy and results, the sky is the limit! :rocket: :rocket:
+
+To turn the learningOrchestra use more easy, there is the  [learning_orchestra_client](/learning_orchestra_client) python package, this package provide to an user all learningOrchestra functionalities in coding way, to improve your user experience you can export and analyse the results using a GUI of MongoDB as [NoSQLBooster](https://nosqlbooster.com), also there is an example of usage of learningOrchestra in [learning_orchestra_client docs](/learning_orchestra_client) with the [titanic challenge dataset](https://www.kaggle.com/c/titanic), each microservice and python package have the own documentation with examples of use, more details in below.
 
 ## Documentation
 
@@ -43,4 +45,4 @@ If all things happen good, the learningOrchestra has been deployed in your swarm
 * [model builder docs](/model_builder_image) - Create a prediction model from preprocessed files using spark cluster
 
 #### database GUI
-* [NoSQLBooster](https://nosqlbooster.com) - MongoDB GUI to make several database tasks, as files visualization, querys, projections and files extraction to formats as csv and json
+* [NoSQLBooster](https://nosqlbooster.com) - MongoDB GUI to make several database tasks, as files visualization, querys, projections and files extraction to formats as csv and json, read the [database api docs](/database_api_image) to learn how configure this tool.
