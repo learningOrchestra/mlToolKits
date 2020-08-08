@@ -1,6 +1,6 @@
 # Database API microservice
 
-The database API microservice create a level of abstraction through an REST API to use the database, datasets are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file from POST request.
+The Database API microservice create a level of abstraction through an REST API to use the database, datasets are downloaded in csv and handled in json format, the primary key for each document is the filename field contained in the sent json file from POST request.
 
 ## GUI tool to handle database files
 There are GUI tools to handle database files, as example, the [NoSQLBooster](https://nosqlbooster.com) can interact with mongoDB used in database, and make several tasks which are limited in learning\_orchestra\_client package, as  schema visualization and files extraction and download to formats as csv, json, you also can navigate in all inserted files in easy way and visualize each row from determined file, to use this tool, connect with the url cluster\_ip:27017 and use the user root with password owl45#21.
@@ -9,7 +9,7 @@ There are GUI tools to handle database files, as example, the [NoSQLBooster](htt
 Return an array of metadata files in database, each file inserted in database contains a metadata file.
 
 Downloaded files:
-```
+```json
 {
     "fields": [
         "PassengerId",
@@ -38,30 +38,30 @@ Downloaded files:
 * url - url used to file download
 
 Preprocessed files:
-```
+```json
 {
-            "fields": [
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",
-                "SibSp",
-                "Parch",
-                "Embarked"
-            ],
-            "filename": "titanic_training_projection",
-            "finished": false,
-            "parent_filename": "titanic_training",
-            "time_created": "2020-07-28T12:01:44-00:00"
-        }
+    "fields": [
+        "PassengerId",
+        "Survived",
+        "Pclass",
+        "Name",
+        "Sex",
+        "Age",
+        "SibSp",
+        "Parch",
+        "Embarked"
+    ],
+    "filename": "titanic_training_projection",
+    "finished": false,
+    "parent_filename": "titanic_training",
+    "time_created": "2020-07-28T12:01:44-00:00"
+}
 ```
 * parent_filename - file filename used to make preprocessing operation
 
 Classificator prediction files:
 
-```
+```json
 {
     "accuracy": "1.0",
     "classificator": "gb",
@@ -88,10 +88,10 @@ The first row is always the metadata file
 ## POST IP:5000/files
 Insert a csv into the database using the POST method, json must be contained in the body of the http request.
 The inserted json must has the fields: 
-```
+```json
 {
-  filename: "key_to_document_identification",
-  url: "http://sitetojson.file/path/to/csv"
+    filename: "key_to_document_identification",
+    url: "http://sitetojson.file/path/to/csv"
 }
 ```
 
