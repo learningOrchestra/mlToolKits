@@ -116,111 +116,111 @@ self.fields_from_dataframe(self, dataframe, is_string)
 In below there is a python script using the package:
 
 ```python
-    from learning_orchestra_client import *
+from learning_orchestra_client import *
 
-    cluster_ip = "34.95.187.26"
+cluster_ip = "34.95.187.26"
 
-    Context(cluster_ip)
+Context(cluster_ip)
 
-    database_api = DatabaseApi()
+database_api = DatabaseApi()
 
-    print(database_api.create_file(
-        "titanic_training",
-        "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo"))
-    print(database_api.create_file(
-        "titanic_testing",
-        "https://filebin.net/mguee52ke97k0x9h/titanic_testing.csv?t=ub4nc1rc"))
+print(database_api.create_file(
+    "titanic_training",
+    "https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo"))
+print(database_api.create_file(
+    "titanic_testing",
+    "https://filebin.net/mguee52ke97k0x9h/titanic_testing.csv?t=ub4nc1rc"))
 
-    print(database_api.read_resume_files())
+print(database_api.read_resume_files())
 
-    data_type_handler = DataTypeHandler()
+data_type_handler = DataTypeHandler()
 
-    print(data_type_handler.change_file_type(
-        "titanic_training",
-        {
-            "Age": "number",
-            "Fare": "number",
-            "Parch": "number",
-            "PassengerId": "number",
-            "Pclass": "number",
-            "SibSp": "number",
-            "Survived": "number"
-        }))
+print(data_type_handler.change_file_type(
+    "titanic_training",
+    {
+        "Age": "number",
+        "Fare": "number",
+        "Parch": "number",
+        "PassengerId": "number",
+        "Pclass": "number",
+        "SibSp": "number",
+        "Survived": "number"
+    }))
 
-    print(data_type_handler.change_file_type(
-        "titanic_testing",
-        {
-            "Age": "number",
-            "Fare": "number",
-            "Parch": "number",
-            "PassengerId": "number",
-            "Pclass": "number",
-            "SibSp": "number"
-        }))
+print(data_type_handler.change_file_type(
+    "titanic_testing",
+    {
+        "Age": "number",
+        "Fare": "number",
+        "Parch": "number",
+        "PassengerId": "number",
+        "Pclass": "number",
+        "SibSp": "number"
+    }))
 
-    preprocessing_code = '''
-    from pyspark.ml import Pipeline
-    from pyspark.sql import functions as sf
-    from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
-    from pyspark.ml.feature import VectorAssembler, StringIndexer, QuantileDiscretizer
+preprocessing_code = '''
+from pyspark.ml import Pipeline
+from pyspark.sql import functions as sf
+from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
+from pyspark.ml.feature import VectorAssembler, StringIndexer, QuantileDiscretizer
 
-    training_df = training_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
-    training_df = training_df.withColumnRenamed('Survived', 'label')
-    training_df = training_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
-                ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
+training_df = training_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
+training_df = training_df.withColumnRenamed('Survived', 'label')
+training_df = training_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
+            ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
 
-    testing_df = testing_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
-    testing_df = testing_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
-                ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
+testing_df = testing_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
+testing_df = testing_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
+            ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
 
-    testing_df = testing_df.withColumn('label', sf.lit(0))
+testing_df = testing_df.withColumn('label', sf.lit(0))
 
-    training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Miss") & (training_df["Age"].isNull()), 22).otherwise(training_df["Age"]))
-    training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Other") & (training_df["Age"].isNull()), 46).otherwise(training_df["Age"]))
-    training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Master") & (training_df["Age"].isNull()), 5).otherwise(training_df["Age"]))
-    training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mr") & (training_df["Age"].isNull()), 33).otherwise(training_df["Age"]))
-    training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mrs") & (training_df["Age"].isNull()), 36).otherwise(training_df["Age"]))
+training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Miss") & (training_df["Age"].isNull()), 22).otherwise(training_df["Age"]))
+training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Other") & (training_df["Age"].isNull()), 46).otherwise(training_df["Age"]))
+training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Master") & (training_df["Age"].isNull()), 5).otherwise(training_df["Age"]))
+training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mr") & (training_df["Age"].isNull()), 33).otherwise(training_df["Age"]))
+training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mrs") & (training_df["Age"].isNull()), 36).otherwise(training_df["Age"]))
 
-    testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Miss") & (testing_df["Age"].isNull()), 22).otherwise(testing_df["Age"]))
-    testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Other") & (testing_df["Age"].isNull()), 46).otherwise(testing_df["Age"]))
-    testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Master") & (testing_df["Age"].isNull()), 5).otherwise(testing_df["Age"]))
-    testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mr") & (testing_df["Age"].isNull()), 33).otherwise(testing_df["Age"]))
-    testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mrs") & (testing_df["Age"].isNull()), 36).otherwise(testing_df["Age"]))
-
-
-    training_df = training_df.na.fill({"Embarked" : 'S'})
-    training_df = training_df.drop("Cabin")
-    training_df = training_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
-    training_df = training_df.withColumn('Alone',lit(0))
-    training_df = training_df.withColumn("Alone",when(training_df["Family_Size"] == 0, 1).otherwise(training_df["Alone"]))
-
-    testing_df = testing_df.na.fill({"Embarked" : 'S'})
-    testing_df = testing_df.drop("Cabin")
-    testing_df = testing_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
-    testing_df = testing_df.withColumn('Alone',lit(0))
-    testing_df = testing_df.withColumn("Alone",when(testing_df["Family_Size"] == 0, 1).otherwise(testing_df["Alone"]))
-
-    for column in ["Sex","Embarked","Initial"]:
-        training_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(training_df).transform(training_df)
-        testing_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(testing_df).transform(testing_df)
+testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Miss") & (testing_df["Age"].isNull()), 22).otherwise(testing_df["Age"]))
+testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Other") & (testing_df["Age"].isNull()), 46).otherwise(testing_df["Age"]))
+testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Master") & (testing_df["Age"].isNull()), 5).otherwise(testing_df["Age"]))
+testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mr") & (testing_df["Age"].isNull()), 33).otherwise(testing_df["Age"]))
+testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mrs") & (testing_df["Age"].isNull()), 36).otherwise(testing_df["Age"]))
 
 
-    training_df = training_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
+training_df = training_df.na.fill({"Embarked" : 'S'})
+training_df = training_df.drop("Cabin")
+training_df = training_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
+training_df = training_df.withColumn('Alone',lit(0))
+training_df = training_df.withColumn("Alone",when(training_df["Family_Size"] == 0, 1).otherwise(training_df["Alone"]))
 
-    testing_df = testing_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
+testing_df = testing_df.na.fill({"Embarked" : 'S'})
+testing_df = testing_df.drop("Cabin")
+testing_df = testing_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
+testing_df = testing_df.withColumn('Alone',lit(0))
+testing_df = testing_df.withColumn("Alone",when(testing_df["Family_Size"] == 0, 1).otherwise(testing_df["Alone"]))
 
-    assembler = VectorAssembler(inputCols=training_df.columns[1:],outputCol="features")
-    assembler.setHandleInvalid('skip')
+for column in ["Sex","Embarked","Initial"]:
+    training_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(training_df).transform(training_df)
+    testing_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(testing_df).transform(testing_df)
 
-    features_training = assembler.transform(training_df)
-    (features_training, features_evaluation) = features_training.randomSplit([0.1, 0.9], seed=11)
-    # features_evaluation = None
-    features_testing = assembler.transform(testing_df)
-    '''
 
-    model_builder = Model()
+training_df = training_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
 
-    print(model_builder.create_model(
-        "titanic_training", "titanic_testing", preprocessing_code,
-        ["lr", "dt", "gb", "rf", "nb", "svc"]))
+testing_df = testing_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
+
+assembler = VectorAssembler(inputCols=training_df.columns[1:],outputCol="features")
+assembler.setHandleInvalid('skip')
+
+features_training = assembler.transform(training_df)
+(features_training, features_evaluation) = features_training.randomSplit([0.1, 0.9], seed=11)
+# features_evaluation = None
+features_testing = assembler.transform(testing_df)
+'''
+
+model_builder = Model()
+
+print(model_builder.create_model(
+    "titanic_training", "titanic_testing", preprocessing_code,
+    ["lr", "dt", "gb", "rf", "nb", "svc"]))
 ```
