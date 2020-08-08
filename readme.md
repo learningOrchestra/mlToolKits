@@ -22,11 +22,11 @@ The main feature of learningOrchestra is make model predictions with different c
 
 ### Deploy
 
-Ensure wich you location path is in project root (./learningOrchestra), in sequence, run the command bellow in manager instance to build and configure the learningOrchestra in your cluster:
+Ensure wich you location path is in project root (./learningOrchestra), in sequence, run the command bellow in manager instance of swarm cluster to deploy the learningOrchestra:
 ```
 sudo ./run.sh
 ```
-If all things happen good, the learningOrchestra have been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
+If all things happen good, the learningOrchestra has been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
 ### learningOrchestra state
 * Visualize cluster state (deployed microservices and cluster's machines) - IP_FROM_CLUSTER:8000
