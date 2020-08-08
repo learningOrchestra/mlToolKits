@@ -90,8 +90,8 @@ Insert a csv into the database using the POST method, json must be contained in 
 The inserted json must has the fields: 
 ```json
 {
-    filename: "key_to_document_identification",
-    url: "http://sitetojson.file/path/to/csv"
+    "filename": "key_to_document_identification",
+    "url": "http://sitetojson.file/path/to/csv"
 }
 ```
 
