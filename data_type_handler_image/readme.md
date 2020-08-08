@@ -6,7 +6,7 @@ The request use filename as id in argument and fields in body, fields are an arr
 
 ```json
 {
-    "field1": "number"
+    "field1": "number",
     "field2": "string"
 }
 ```
