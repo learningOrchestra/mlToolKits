@@ -11,16 +11,16 @@ pip install learning_orchestra_cliet
 
 After downloading the package, import all classes:
 
-`
+```python
 from learning_orchestra_client import *
-`
+```
 
 create a Context object passing a ip from your cluster in constructor parameter:
 
-`
+```python
 cluster_ip = "34.95.222.197"
 Context(cluster_ip)
-`
+```
 
 After create a Context object, you will able to usage learningOrchestra, each learningOrchestra funcionalite is contained in your own class, therefore, to use a specific funcionalite, after you instanciate and configure Context class, you need instanciate and call the method class of interest, in below, there are all class and each class methods, also have an example of workflow using this package in a python code.
 
@@ -84,12 +84,13 @@ Read all metadata files in learningOrchestra
 
 to send a request with LogisticRegression and NaiveBayes classificators:
 
-`create_model(training_filename, test_filename, preprocessor_code, ["lr", nb"])`
-
+```python
+create_model(training_filename, test_filename, preprocessor_code, ["lr", nb"])
+```
 
 ##### preprocessor_code environment
 
-The python3 preprocessing code must use the environment instances in bellow:
+The python 3 preprocessing code must use the environment instances in bellow:
 
 * training_df (Instanciated): Spark Dataframe instance for trainingfilename
 * testing_df  (Instanciated): Spark Dataframe instance for testing filename
@@ -104,8 +105,9 @@ Case you don't want evaluate the model prediction, define features_evaluation as
 
 ##### Handy methods
 
-`self.fields_from_dataframe(self, dataframe, is_string)`
-
+```python
+self.fields_from_dataframe(self, dataframe, is_string)
+```
 * dataframe: dataframe instance
 * is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
