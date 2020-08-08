@@ -4,7 +4,7 @@ Projection microservice provide an api to make a projection from file inserted i
 ## POST IP:5001/projections/<filename>
 ```json
 {
-    projection_filename : "filename_to_save_projection",
-    fields : ["list", "of", "fields"]
+    "projection_filename" : "filename_to_save_projection",
+    "fields" : ["list", "of", "fields"]
 }
 ```
