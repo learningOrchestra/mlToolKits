@@ -9,4 +9,4 @@
 * [model builder](learningOrchestra/model_builder) - Create a prediction model from preprocessed files using spark cluster
 
 ## database GUI
-* [NoSQLBooster](https://nosqlbooster.com) - MongoDB GUI to make several database tasks, as files visualization, querys, projections and files extraction to formats as csv and json, read the [database api docs](/database_api) to learn how configure this tool.
+* [NoSQLBooster](https://nosqlbooster.com) - MongoDB GUI to make several database tasks, as files visualization, querys, projections and files extraction to formats as csv and json, read the [database api docs](learningOrchestra/database_api) to learn how configure this tool.
