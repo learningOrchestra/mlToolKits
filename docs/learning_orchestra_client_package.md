@@ -1,17 +1,16 @@
-# Learning Orchestra Client
-This python package is created to usage the LearningOrchestra funcionalities
+# learningOrchestra client package
 
 ## Installation
-Ensure which you have the python 3 installed in your machine and run:\
-`
+Ensure which you have the python 3 installed in your machine and run:
+```
 pip install learning_orchestra_cliet
-`
+```
 
 ## Documentation
 
 After downloading the package, import all classes:
 
-```python
+``` python
 from learning_orchestra_client import *
 ```
 
@@ -24,9 +23,9 @@ Context(cluster_ip)
 
 After create a Context object, you will able to usage learningOrchestra, each learningOrchestra funcionalite is contained in your own class, therefore, to use a specific funcionalite, after you instanciate and configure Context class, you need instanciate and call the method class of interest, in below, there are all class and each class methods, also have an example of workflow using this package in a python code.
 
-### DatabaseApi
+## DatabaseApi
 
-#### read_resume_files
+### read_resume_files
 
 ``` python
 read_resume_files(pretty_response=True)
@@ -35,7 +34,7 @@ read_resume_files(pretty_response=True)
 Read all metadata files in learningOrchestra
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-#### read_file
+### read_file
 
 ``` python
 read_file(self, filename_key, skip=0, limit=10, query={}, pretty_response=True)
@@ -47,7 +46,7 @@ read_file(self, filename_key, skip=0, limit=10, query={}, pretty_response=True)
 * query: query to make in mongo (default empty query)
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-#### create_file
+### create_file
 
 ``` python
 create_file(self, filename, url, pretty_response=True)
@@ -57,7 +56,7 @@ create_file(self, filename, url, pretty_response=True)
 * url: url to csv file
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-#### delete_file
+### delete_file
 
 ``` python
 delete_file(self, filename, pretty_response=True)
@@ -66,9 +65,9 @@ delete_file(self, filename, pretty_response=True)
 * filename: file filename to be deleted
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### Projection
+## Projection
 
-#### create_projection
+### create_projection
 
 ``` python
 create_projection(self, filename, projection_filename, fields, pretty_response=True)
@@ -79,9 +78,9 @@ create_projection(self, filename, projection_filename, fields, pretty_response=T
 * field: list with fields to make projection 
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### DataTypeHandler
+## DataTypeHandler
 
-#### change_file_type
+### change_file_type
 
 ``` python
 change_file_type(self, filename, fields_dict, pretty_response=True)
@@ -91,9 +90,9 @@ change_file_type(self, filename, fields_dict, pretty_response=True)
 * fields_dict: dictionary with "field": "number" or field: "string" keys  
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-### ModelBuilder
+## ModelBuilder
 
-#### create_model
+### create_model
 
 ``` python
 create_model(self, training_filename, test_filename, preprocessor_code, model_classificator, pretty_response=True)
@@ -105,7 +104,7 @@ create_model(self, training_filename, test_filename, preprocessor_code, model_cl
 * model_classificator: list of initial from classificators to be used in model
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
-##### model_classificator
+#### model_classificator
 
 * "lr": LogisticRegression
 * "dt": DecisionTreeClassifier
@@ -120,7 +119,7 @@ to send a request with LogisticRegression and NaiveBayes classificators:
 create_model(training_filename, test_filename, preprocessor_code, ["lr", nb"])
 ```
 
-##### preprocessor_code environment
+#### preprocessor_code environment
 
 The python 3 preprocessing code must use the environment instances in bellow:
 
@@ -140,14 +139,15 @@ Case you don't want evaluate the model prediction, define features_evaluation as
 ``` python
 self.fields_from_dataframe(self, dataframe, is_string)
 ```
+
 * dataframe: dataframe instance
 * is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
-### learning_orchestra_client usage example
+## learning_orchestra_client usage example
 
 In below there is a python script using the package:
 
-```python
+``` python
 from learning_orchestra_client import *
 
 cluster_ip = "34.95.187.26"

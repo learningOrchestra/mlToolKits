@@ -1,0 +1,38 @@
+site_name: learningOrchestra
+nav:
+    - Home:
+        - Whats is?: index.md
+    - Documentation:
+        - Install: install.md
+        - Usage: usage.md
+        - learningOrchestra Package:
+            - Python Package: learning_orchestra_client_package.md
+        - Microservices REST API:
+            - Database API: "database_api.md"
+            - Projection: "projection.md"
+            - Data Type Handler: "data_type_handler.md"
+            - Model Builder: "model_builder.md"
+
+theme:
+    name: 'material'
+    features:
+        - instant
+        - search.highlight
+    plugins:
+        - search
+    markdown_extensions:
+        - pymdownx.emoji:
+            emoji_index: !!python/name:materialx.emoji.twemoji
+            emoji_generator: !!python/name:materialx.emoji.to_svg
+
+markdown_extensions:
+    - pymdownx.highlight
+    - pymdownx.superfences
+    - pymdownx.tabbed
+
+repo_url: https://github.com/riibeirogabriel/learningOrchestra
+
+extra:
+    social:
+      - icon: fontawesome/solid/paper-plane
+        link: mailto:<gabbriel.rribeiro@gmail.com>
