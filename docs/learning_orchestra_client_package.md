@@ -1,10 +1,12 @@
-# Installation
+# learningOrchestra client package
+
+## Installation
 Ensure which you have the python 3 installed in your machine and run:
 ```
 pip install learning_orchestra_cliet
 ```
 
-# Documentation
+## Documentation
 
 After downloading the package, import all classes:
 
@@ -137,6 +139,7 @@ Case you don't want evaluate the model prediction, define features_evaluation as
 ``` python
 self.fields_from_dataframe(self, dataframe, is_string)
 ```
+
 * dataframe: dataframe instance
 * is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 

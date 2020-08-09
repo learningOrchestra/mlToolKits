@@ -28,6 +28,7 @@ theme:
 markdown_extensions:
     - pymdownx.highlight
     - pymdownx.superfences
+    - pymdownx.tabbed
 
 repo_url: https://github.com/riibeirogabriel/learningOrchestra
 
