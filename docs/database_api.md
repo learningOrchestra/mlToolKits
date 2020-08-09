@@ -10,7 +10,7 @@ There are GUI tools to handle database files, as example, the [NoSQLBooster](htt
 
 Return an array of metadata files in database, each file inserted in database contains a metadata file.
 
-### Downloaded files metadata
+### Downloaded files metadata 
 ```json
 {
     "fields": [
@@ -107,3 +107,4 @@ The inserted json must has the fields:
 `DELETE IP:5000/files/<filename>`
 
 Request of type DELETE, informing the value of filename field of a inserted file in argument request, deleting the database file, if one exist with that value.
+

@@ -56,7 +56,8 @@ The preprocessing code must instanciate the variables in bellow, , all intances 
 Case you don't want evaluate the model prediction, define features_evaluation as None.
 
 #### preprocessor_code example
-```python
+
+``` python
 from pyspark.ml import Pipeline
 from pyspark.sql import functions as sf
 from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
@@ -114,4 +115,4 @@ features_training = assembler.transform(training_df)
 (features_training, features_evaluation) = features_training.randomSplit([0.1, 0.9], seed=11)
 # features_evaluation = None
 features_testing = assembler.transform(testing_df)
- ```
+```

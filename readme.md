@@ -31,6 +31,8 @@ sudo ./run.sh
 If all things happen good, the learningOrchestra has been deployed in your swarm cluster, congrulations! :clap: :heart_eyes:
 
 ### learningOrchestra state
+There are two web pages for cluster state visualization:
+
 * Visualize cluster state (deployed microservices and cluster's machines) - IP_FROM_CLUSTER:8000
 * Visualize spark cluster state - IP_FROM_CLUSTER:8080
 
