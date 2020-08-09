@@ -30,15 +30,6 @@ to send a request with LogisticRegression and NaiveBayes classificators:
     "classificators_list": ["lr", "nb"]
 }
 ```
-### Handy methods
-
-```python
-self.fields_from_dataframe(self, dataframe, is_string)
-```
-This method return string or number fields as string list from a dataframe
-
-* dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
 ### preprocessor_code environment
 
@@ -54,6 +45,16 @@ The preprocessing code must instanciate the variables in bellow, , all intances 
 * features_testing (Not Instanciated): Spark Dataframe instance for test the model
 
 Case you don't want evaluate the model prediction, define features_evaluation as None.
+
+#### Handy methods
+
+```python
+self.fields_from_dataframe(self, dataframe, is_string)
+```
+This method return string or number fields as string list from a dataframe
+
+* dataframe: dataframe instance
+* is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
 
 #### preprocessor_code example
 
