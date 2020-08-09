@@ -1,0 +1,753 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.3">
+    
+    
+      
+        <title>Python Package - learningOrchestra</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.947af8d5.min.css">
+      
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#installation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="learningOrchestra" class="md-header-nav__button md-logo" aria-label="learningOrchestra">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            learningOrchestra
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Python Package
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/riibeirogabriel/learningOrchestra/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="learningOrchestra" class="md-nav__button md-logo" aria-label="learningOrchestra">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    learningOrchestra
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/riibeirogabriel/learningOrchestra/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-1" type="checkbox" id="nav-1">
+    
+    <label class="md-nav__link" for="nav-1">
+      Home
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Home" data-md-level="1">
+      <label class="md-nav__title" for="nav-1">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Home
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Whats is?" class="md-nav__link">
+      Whats is?
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Documentation
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Documentation" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../install/" title="Install" class="md-nav__link">
+      Install
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../usage/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+    
+    <label class="md-nav__link" for="nav-2-3">
+      learningOrchestra Package
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="learningOrchestra Package" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        learningOrchestra Package
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Python Package" class="md-nav__link md-nav__link--active">
+      Python Package
+    </a>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+    
+    <label class="md-nav__link" for="nav-2-4">
+      Microservices REST API
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Microservices REST API" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Microservices REST API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../database_api/" title="Database API" class="md-nav__link">
+      Database API
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../projection/" title="Projection" class="md-nav__link">
+      Projection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../data_type_handler/" title="Data Type Handler" class="md-nav__link">
+      Data Type Handler
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../model_builder/" title="Model Builder" class="md-nav__link">
+      Model Builder
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/riibeirogabriel/learningOrchestra/edit/master/docs/learning_orchestra_client_package.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="installation">Installation</h1>
+<p>Ensure which you have the python 3 installed in your machine and run:
+<div class="highlight"><pre><span></span><code>pip install learning_orchestra_cliet
+</code></pre></div></p>
+<h1 id="documentation">Documentation</h1>
+<p>After downloading the package, import all classes:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">learning_orchestra_client</span> <span class="kn">import</span> <span class="o">*</span>
+</code></pre></div>
+
+<p>create a Context object passing a ip from your cluster in constructor parameter:</p>
+<div class="highlight"><pre><span></span><code><span class="n">cluster_ip</span> <span class="o">=</span> <span class="s2">&quot;34.95.222.197&quot;</span>
+<span class="n">Context</span><span class="p">(</span><span class="n">cluster_ip</span><span class="p">)</span>
+</code></pre></div>
+
+<p>After create a Context object, you will able to usage learningOrchestra, each learningOrchestra funcionalite is contained in your own class, therefore, to use a specific funcionalite, after you instanciate and configure Context class, you need instanciate and call the method class of interest, in below, there are all class and each class methods, also have an example of workflow using this package in a python code.</p>
+<h2 id="databaseapi">DatabaseApi</h2>
+<h3 id="read_resume_files">read_resume_files</h3>
+<div class="highlight"><pre><span></span><code><span class="n">read_resume_files</span><span class="p">(</span><span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Read all metadata files in learningOrchestra
+* pretty_response: return indented string to visualization (default True, if False, return dict)</p>
+<h3 id="read_file">read_file</h3>
+<div class="highlight"><pre><span></span><code><span class="n">read_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename_key</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="p">{},</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>filename_ley : filename of file</li>
+<li>skip: number of rows amount to skip in pagination (default 0)</li>
+<li>limit: number of rows to return in pagination (default 10)(max setted in 20 rows per request)</li>
+<li>query: query to make in mongo (default empty query)</li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h3 id="create_file">create_file</h3>
+<div class="highlight"><pre><span></span><code><span class="n">create_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>filename: filename of file to be created</li>
+<li>url: url to csv file</li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h3 id="delete_file">delete_file</h3>
+<div class="highlight"><pre><span></span><code><span class="n">delete_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>filename: file filename to be deleted</li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h2 id="projection">Projection</h2>
+<h3 id="create_projection">create_projection</h3>
+<div class="highlight"><pre><span></span><code><span class="n">create_projection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">projection_filename</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>filename: filename of file to make projection</li>
+<li>projection_filename: filename used to create projection</li>
+<li>field: list with fields to make projection </li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h2 id="datatypehandler">DataTypeHandler</h2>
+<h3 id="change_file_type">change_file_type</h3>
+<div class="highlight"><pre><span></span><code><span class="n">change_file_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fields_dict</span><span class="p">,</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>filename: filename of file</li>
+<li>fields_dict: dictionary with "field": "number" or field: "string" keys  </li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h2 id="modelbuilder">ModelBuilder</h2>
+<h3 id="create_model">create_model</h3>
+<div class="highlight"><pre><span></span><code><span class="n">create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_filename</span><span class="p">,</span> <span class="n">test_filename</span><span class="p">,</span> <span class="n">preprocessor_code</span><span class="p">,</span> <span class="n">model_classificator</span><span class="p">,</span> <span class="n">pretty_response</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>training_filename: filename to be used in training</li>
+<li>test_filename: filename to be used in test</li>
+<li>preprocessor_code: python3 code for pyspark preprocessing model</li>
+<li>model_classificator: list of initial from classificators to be used in model</li>
+<li>pretty_response: return indented string to visualization (default True, if False, return dict)</li>
+</ul>
+<h4 id="model_classificator">model_classificator</h4>
+<ul>
+<li>"lr": LogisticRegression</li>
+<li>"dt": DecisionTreeClassifier</li>
+<li>"rf": RandomForestClassifier</li>
+<li>"gb": Gradient-boosted tree classifier</li>
+<li>"nb": NaiveBayes</li>
+<li>"svc": Support Vector Machine</li>
+</ul>
+<p>to send a request with LogisticRegression and NaiveBayes classificators:</p>
+<div class="highlight"><pre><span></span><code><span class="n">create_model</span><span class="p">(</span><span class="n">training_filename</span><span class="p">,</span> <span class="n">test_filename</span><span class="p">,</span> <span class="n">preprocessor_code</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">,</span> <span class="n">nb</span><span class="s2">&quot;])</span>
+</code></pre></div>
+
+<h4 id="preprocessor_code-environment">preprocessor_code environment</h4>
+<p>The python 3 preprocessing code must use the environment instances in bellow:</p>
+<ul>
+<li>training_df (Instanciated): Spark Dataframe instance for trainingfilename</li>
+<li>testing_df  (Instanciated): Spark Dataframe instance for testing filename</li>
+</ul>
+<p>The preprocessing code must instanciate the variables in bellow, , all intances must be transformed by pyspark VectorAssembler:</p>
+<ul>
+<li>features_training (Not Instanciated): Spark Dataframe instance for train the model</li>
+<li>features_evaluation (Not Instanciated): Spark Dataframe instance for evaluate trained model accuracy</li>
+<li>features_testing (Not Instanciated): Spark Dataframe instance for test the model</li>
+</ul>
+<p>Case you don't want evaluate the model prediction, define features_evaluation as None.</p>
+<h4 id="handy-methods">Handy methods</h4>
+<p><div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">fields_from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">is_string</span><span class="p">)</span>
+</code></pre></div>
+* dataframe: dataframe instance
+* is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.</p>
+<h2 id="learning_orchestra_client-usage-example">learning_orchestra_client usage example</h2>
+<p>In below there is a python script using the package:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">learning_orchestra_client</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">cluster_ip</span> <span class="o">=</span> <span class="s2">&quot;34.95.187.26&quot;</span>
+
+<span class="n">Context</span><span class="p">(</span><span class="n">cluster_ip</span><span class="p">)</span>
+
+<span class="n">database_api</span> <span class="o">=</span> <span class="n">DatabaseApi</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">database_api</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span>
+    <span class="s2">&quot;titanic_training&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://filebin.net/rpfdy8clm5984a4c/titanic_training.csv?t=gcnjz1yo&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">database_api</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span>
+    <span class="s2">&quot;titanic_testing&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://filebin.net/mguee52ke97k0x9h/titanic_testing.csv?t=ub4nc1rc&quot;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">database_api</span><span class="o">.</span><span class="n">read_resume_files</span><span class="p">())</span>
+
+<span class="n">data_type_handler</span> <span class="o">=</span> <span class="n">DataTypeHandler</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data_type_handler</span><span class="o">.</span><span class="n">change_file_type</span><span class="p">(</span>
+    <span class="s2">&quot;titanic_training&quot;</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Age&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fare&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Parch&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PassengerId&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pclass&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SibSp&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Survived&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span>
+    <span class="p">}))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data_type_handler</span><span class="o">.</span><span class="n">change_file_type</span><span class="p">(</span>
+    <span class="s2">&quot;titanic_testing&quot;</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Age&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fare&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Parch&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PassengerId&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Pclass&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;SibSp&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span>
+    <span class="p">}))</span>
+
+<span class="n">preprocessing_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">from pyspark.ml import Pipeline</span>
+<span class="s1">from pyspark.sql import functions as sf</span>
+<span class="s1">from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit</span>
+<span class="s1">from pyspark.ml.feature import VectorAssembler, StringIndexer, QuantileDiscretizer</span>
+
+<span class="s1">training_df = training_df.withColumn(&quot;Initial&quot;,regexp_extract(col(&quot;Name&quot;),&quot;([A-Za-z]+)\.&quot;,1))</span>
+<span class="s1">training_df = training_df.withColumnRenamed(&#39;Survived&#39;, &#39;label&#39;)</span>
+<span class="s1">training_df = training_df.replace([&#39;Mlle&#39;,&#39;Mme&#39;, &#39;Ms&#39;, &#39;Dr&#39;,&#39;Major&#39;,&#39;Lady&#39;,&#39;Countess&#39;,&#39;Jonkheer&#39;,&#39;Col&#39;,&#39;Rev&#39;,&#39;Capt&#39;,&#39;Sir&#39;,&#39;Don&#39;],</span>
+<span class="s1">            [&#39;Miss&#39;,&#39;Miss&#39;,&#39;Miss&#39;,&#39;Mr&#39;,&#39;Mr&#39;,  &#39;Mrs&#39;,  &#39;Mrs&#39;,  &#39;Other&#39;,  &#39;Other&#39;,&#39;Other&#39;,&#39;Mr&#39;,&#39;Mr&#39;,&#39;Mr&#39;])</span>
+
+<span class="s1">testing_df = testing_df.withColumn(&quot;Initial&quot;,regexp_extract(col(&quot;Name&quot;),&quot;([A-Za-z]+)\.&quot;,1))</span>
+<span class="s1">testing_df = testing_df.replace([&#39;Mlle&#39;,&#39;Mme&#39;, &#39;Ms&#39;, &#39;Dr&#39;,&#39;Major&#39;,&#39;Lady&#39;,&#39;Countess&#39;,&#39;Jonkheer&#39;,&#39;Col&#39;,&#39;Rev&#39;,&#39;Capt&#39;,&#39;Sir&#39;,&#39;Don&#39;],</span>
+<span class="s1">            [&#39;Miss&#39;,&#39;Miss&#39;,&#39;Miss&#39;,&#39;Mr&#39;,&#39;Mr&#39;,  &#39;Mrs&#39;,  &#39;Mrs&#39;,  &#39;Other&#39;,  &#39;Other&#39;,&#39;Other&#39;,&#39;Mr&#39;,&#39;Mr&#39;,&#39;Mr&#39;])</span>
+
+<span class="s1">testing_df = testing_df.withColumn(&#39;label&#39;, sf.lit(0))</span>
+
+<span class="s1">training_df = training_df.withColumn(&quot;Age&quot;,when((training_df[&quot;Initial&quot;] == &quot;Miss&quot;) &amp; (training_df[&quot;Age&quot;].isNull()), 22).otherwise(training_df[&quot;Age&quot;]))</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Age&quot;,when((training_df[&quot;Initial&quot;] == &quot;Other&quot;) &amp; (training_df[&quot;Age&quot;].isNull()), 46).otherwise(training_df[&quot;Age&quot;]))</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Age&quot;,when((training_df[&quot;Initial&quot;] == &quot;Master&quot;) &amp; (training_df[&quot;Age&quot;].isNull()), 5).otherwise(training_df[&quot;Age&quot;]))</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Age&quot;,when((training_df[&quot;Initial&quot;] == &quot;Mr&quot;) &amp; (training_df[&quot;Age&quot;].isNull()), 33).otherwise(training_df[&quot;Age&quot;]))</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Age&quot;,when((training_df[&quot;Initial&quot;] == &quot;Mrs&quot;) &amp; (training_df[&quot;Age&quot;].isNull()), 36).otherwise(training_df[&quot;Age&quot;]))</span>
+
+<span class="s1">testing_df = testing_df.withColumn(&quot;Age&quot;,when((testing_df[&quot;Initial&quot;] == &quot;Miss&quot;) &amp; (testing_df[&quot;Age&quot;].isNull()), 22).otherwise(testing_df[&quot;Age&quot;]))</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Age&quot;,when((testing_df[&quot;Initial&quot;] == &quot;Other&quot;) &amp; (testing_df[&quot;Age&quot;].isNull()), 46).otherwise(testing_df[&quot;Age&quot;]))</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Age&quot;,when((testing_df[&quot;Initial&quot;] == &quot;Master&quot;) &amp; (testing_df[&quot;Age&quot;].isNull()), 5).otherwise(testing_df[&quot;Age&quot;]))</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Age&quot;,when((testing_df[&quot;Initial&quot;] == &quot;Mr&quot;) &amp; (testing_df[&quot;Age&quot;].isNull()), 33).otherwise(testing_df[&quot;Age&quot;]))</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Age&quot;,when((testing_df[&quot;Initial&quot;] == &quot;Mrs&quot;) &amp; (testing_df[&quot;Age&quot;].isNull()), 36).otherwise(testing_df[&quot;Age&quot;]))</span>
+
+
+<span class="s1">training_df = training_df.na.fill({&quot;Embarked&quot; : &#39;S&#39;})</span>
+<span class="s1">training_df = training_df.drop(&quot;Cabin&quot;)</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Family_Size&quot;,col(&#39;SibSp&#39;)+col(&#39;Parch&#39;))</span>
+<span class="s1">training_df = training_df.withColumn(&#39;Alone&#39;,lit(0))</span>
+<span class="s1">training_df = training_df.withColumn(&quot;Alone&quot;,when(training_df[&quot;Family_Size&quot;] == 0, 1).otherwise(training_df[&quot;Alone&quot;]))</span>
+
+<span class="s1">testing_df = testing_df.na.fill({&quot;Embarked&quot; : &#39;S&#39;})</span>
+<span class="s1">testing_df = testing_df.drop(&quot;Cabin&quot;)</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Family_Size&quot;,col(&#39;SibSp&#39;)+col(&#39;Parch&#39;))</span>
+<span class="s1">testing_df = testing_df.withColumn(&#39;Alone&#39;,lit(0))</span>
+<span class="s1">testing_df = testing_df.withColumn(&quot;Alone&quot;,when(testing_df[&quot;Family_Size&quot;] == 0, 1).otherwise(testing_df[&quot;Alone&quot;]))</span>
+
+<span class="s1">for column in [&quot;Sex&quot;,&quot;Embarked&quot;,&quot;Initial&quot;]:</span>
+<span class="s1">    training_df = StringIndexer(inputCol=column, outputCol=column+&quot;_index&quot;).fit(training_df).transform(training_df)</span>
+<span class="s1">    testing_df = StringIndexer(inputCol=column, outputCol=column+&quot;_index&quot;).fit(testing_df).transform(testing_df)</span>
+
+
+<span class="s1">training_df = training_df.drop(&quot;Name&quot;,&quot;Ticket&quot;,&quot;Cabin&quot;,&quot;Embarked&quot;,&quot;Sex&quot;,&quot;Initial&quot;)</span>
+
+<span class="s1">testing_df = testing_df.drop(&quot;Name&quot;,&quot;Ticket&quot;,&quot;Cabin&quot;,&quot;Embarked&quot;,&quot;Sex&quot;,&quot;Initial&quot;)</span>
+
+<span class="s1">assembler = VectorAssembler(inputCols=training_df.columns[1:],outputCol=&quot;features&quot;)</span>
+<span class="s1">assembler.setHandleInvalid(&#39;skip&#39;)</span>
+
+<span class="s1">features_training = assembler.transform(training_df)</span>
+<span class="s1">(features_training, features_evaluation) = features_training.randomSplit([0.1, 0.9], seed=11)</span>
+<span class="s1"># features_evaluation = None</span>
+<span class="s1">features_testing = assembler.transform(testing_df)</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="n">model_builder</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">model_builder</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span>
+    <span class="s2">&quot;titanic_training&quot;</span><span class="p">,</span> <span class="s2">&quot;titanic_testing&quot;</span><span class="p">,</span> <span class="n">preprocessing_code</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">,</span> <span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="s2">&quot;gb&quot;</span><span class="p">,</span> <span class="s2">&quot;rf&quot;</span><span class="p">,</span> <span class="s2">&quot;nb&quot;</span><span class="p">,</span> <span class="s2">&quot;svc&quot;</span><span class="p">]))</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../usage/" title="Usage" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Usage
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../database_api/" title="Database API" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Database API
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+      <a href="mailto:<gabbriel.rribeiro@gmail.com>" target="_blank" rel="noopener" title="" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.c3dc8c49.min.js"></script>
+      <script src="../assets/javascripts/bundle.f9edbbd5.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: ["instant", "search.highlight"],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.8e2cddea.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
