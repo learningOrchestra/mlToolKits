@@ -134,7 +134,7 @@ The preprocessing code must instanciate the variables in bellow, , all intances 
 
 Case you don't want evaluate the model prediction, define features_evaluation as None.
 
-#### Handy methods
+##### Handy methods
 
 ``` python
 self.fields_from_dataframe(self, dataframe, is_string)
