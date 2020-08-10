@@ -116,7 +116,7 @@ create_model(self, training_filename, test_filename, preprocessor_code, model_cl
 to send a request with LogisticRegression and NaiveBayes classificators:
 
 ```python
-create_model(training_filename, test_filename, preprocessor_code, ["lr", nb"])
+create_model(training_filename, test_filename, preprocessor_code, ["lr", "nb"])
 ```
 
 #### preprocessor_code environment
