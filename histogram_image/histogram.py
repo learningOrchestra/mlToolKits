@@ -28,10 +28,10 @@ class RequestValidatorInterface():
     def filename_validator(self, filename):
         pass
 
-    def filename_validator(self, projection_filename):
+    def histogram_filename_validator(self, histogram_filename):
         pass
 
-    def fields_validator(self, filename, projection_fields):
+    def fields_validator(self, filename, fields):
         pass
 
 

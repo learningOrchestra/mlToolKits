@@ -45,7 +45,7 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/histograms', methods=[PATCH])
+@app.route('/histograms', methods=[POST])
 def create_histogram():
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
@@ -55,7 +55,7 @@ def create_histogram():
     request_validator = HistogramRequestValidator(database)
 
     try:
-        request_validator.projection_filename_validator(
+        request_validator.histogram_filename_validator(
             request.json[HISTOGRAM_FILENAME_NAME])
     except Exception as invalid_histogram_filename:
         return jsonify(
