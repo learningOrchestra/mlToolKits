@@ -64,8 +64,10 @@ class Histogram(HistogramInterface):
         document_id = 1
 
         for field in fields:
+            field_accumulator = "$" + field
+            print(field_accumulator, flush=True)
             pipeline = [{
-                "$group": {"expression": "$" + field, "count": {"$sum": 1}}}]
+                "$group": {"_id": field_accumulator, "count": {"$sum": 1}}}]
 
             field_result = {
                 field: self.database_connector.aggregate(
