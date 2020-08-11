@@ -78,6 +78,15 @@ echo "Pushing datatypehandler microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $data_type_handler_repository
 
+
+histogram_repository=127.0.0.1:5050/histogram
+
+echo "--------------------------------------------------------------------"
+echo "Pushing histogram microservice image..."
+echo "--------------------------------------------------------------------"
+docker push $histogram_repository
+
+
 echo "--------------------------------------------------------------------"
 echo "End."
 echo "--------------------------------------------------------------------"

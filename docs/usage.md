@@ -6,6 +6,7 @@
 * [database api](https://riibeirogabriel.github.io/learningOrchestra/database_api) - Microservice used to download and handling files in database
 * [projection](https://riibeirogabriel.github.io/learningOrchestra/projection) - Make projections of stored files in database using spark cluster
 * [data type handler](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler) - Change fields file type between number and text
+* [histogram](https://riibeirogabriel.github.io/learningOrchestra/histogram) - Make histograms of stored files in database
 * [model builder](https://riibeirogabriel.github.io/learningOrchestra/model_builder) - Create a prediction model from preprocessed files using spark cluster
 
 ## database GUI

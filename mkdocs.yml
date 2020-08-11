@@ -11,8 +11,8 @@ nav:
             - Database API: "database_api.md"
             - Projection: "projection.md"
             - Data Type Handler: "data_type_handler.md"
+            - Histogram: "histogram.md"
             - Model Builder: "model_builder.md"
-
 theme:
     name: 'material'
     features:
