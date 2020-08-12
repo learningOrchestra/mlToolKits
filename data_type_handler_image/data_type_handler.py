@@ -43,7 +43,6 @@ class DataTypeConverter(DataTypeConverterInterface):
 
     def __init__(self, database_connector):
         self.database_connector = database_connector
-        self.thread_pool = ThreadPoolExecutor()
 
     def field_converter(self, filename, field, field_type):
         query = {}
