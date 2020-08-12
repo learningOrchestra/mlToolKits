@@ -1,8 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from pyspark.sql import SparkSession
 from projection import (
-    SparkManager, ProcessorInterface,
+    SparkManager,
     MongoOperations,
     ProjectionRequestValidator)
 

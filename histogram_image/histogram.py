@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from concurrent.futures import ThreadPoolExecutor, wait
 
 
 class DatabaseInterface():

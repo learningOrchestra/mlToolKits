@@ -1,14 +1,12 @@
 import os
-from pymongo import MongoClient, errors, ASCENDING, DESCENDING
+from pymongo import MongoClient, errors, ASCENDING
 from bson.json_util import dumps
 import requests
 from contextlib import closing
 import csv
 import json
 import codecs
-import threading
-from concurrent.futures import ThreadPoolExecutor, wait
-import time
+from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 from datetime import datetime
 import pytz
@@ -27,7 +25,7 @@ class DatabaseApi:
 
     def add_file(self, url, filename):
         try:
-            file_storage = self.file_manager_object.storage_file(
+            self.file_manager_object.storage_file(
                 filename, url, self.database_object)
 
         except requests.exceptions.RequestException:
@@ -55,8 +53,6 @@ class DatabaseApi:
 
     def get_files(self):
         result = []
-        skip_result = 0
-        limit_result = 0
 
         for file in self.database_object.get_filenames():
 

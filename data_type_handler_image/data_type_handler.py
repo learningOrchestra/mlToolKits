@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from concurrent.futures import ThreadPoolExecutor, wait
 
 
 class DatabaseInterface():
@@ -24,9 +23,6 @@ class RequestValidatorInterface():
     NUMBER_TYPE = "number"
 
     def filename_validator(self, filename):
-        pass
-
-    def filename_validator(self, projection_filename):
         pass
 
     def fields_validator(self, filename, projection_fields):
@@ -80,15 +76,6 @@ class DataTypeConverter(DataTypeConverterInterface):
                 filename, values, document)
 
     def file_converter(self, filename, fields_dictionary):
-        threads = []
-
-        '''for field in fields_dictionary:
-            threads.append(
-                self.thread_pool.submit(
-                    self.field_converter,
-                    filename, field, fields_dictionary[field]))
-
-        wait(threads)'''
 
         for field in fields_dictionary:
             self.field_converter(filename, field, fields_dictionary[field])

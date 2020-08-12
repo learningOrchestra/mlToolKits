@@ -1,6 +1,5 @@
 from pyspark.sql import SparkSession
 import os
-from datetime import datetime
 import time
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
