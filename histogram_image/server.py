@@ -15,7 +15,6 @@ HISTOGRAM_PORT = "HISTOGRAM_PORT"
 
 MESSAGE_RESULT = "result"
 
-FILENAME_NAME = "filename"
 FIELDS_NAME = "fields"
 HISTOGRAM_FILENAME_NAME = "histogram_filename"
 
@@ -45,8 +44,8 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/histograms', methods=[POST])
-def create_histogram():
+@app.route('/histograms/<parent_filename>', methods=[POST])
+def create_histogram(parent_filename):
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
         os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
@@ -64,7 +63,7 @@ def create_histogram():
             HTTP_STATUS_CODE_CONFLICT
 
     try:
-        request_validator.filename_validator(request.json[FILENAME_NAME])
+        request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return jsonify(
             {MESSAGE_RESULT:
@@ -73,7 +72,7 @@ def create_histogram():
 
     try:
         request_validator.fields_validator(
-            request.json[FILENAME_NAME], request.json[FIELDS_NAME])
+            parent_filename, request.json[FIELDS_NAME])
     except Exception as invalid_fields:
         return jsonify(
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),\
@@ -81,7 +80,7 @@ def create_histogram():
 
     histogram = Histogram(database)
     histogram.create_histogram(
-        request.json[FILENAME_NAME],
+        parent_filename,
         request.json[HISTOGRAM_FILENAME_NAME],
         request.json[FIELDS_NAME])
 
