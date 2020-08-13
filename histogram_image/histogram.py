@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from concurrent.futures import ThreadPoolExecutor, wait
 
 
 class DatabaseInterface():
@@ -47,7 +46,6 @@ class Histogram(HistogramInterface):
 
     def __init__(self, database_connector):
         self.database_connector = database_connector
-        self.thread_pool = ThreadPoolExecutor()
 
     def create_histogram(self, filename, histogram_filename, fields):
         metadata_histogram_filename = {

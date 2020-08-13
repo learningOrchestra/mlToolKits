@@ -111,7 +111,6 @@ create_model(self, training_filename, test_filename, preprocessor_code, model_cl
 * "rf": RandomForestClassifier
 * "gb": Gradient-boosted tree classifier
 * "nb": NaiveBayes
-* "svc": Support Vector Machine
 
 to send a request with LogisticRegression and NaiveBayes classificators:
 
@@ -254,5 +253,5 @@ model_builder = Model()
 
 print(model_builder.create_model(
     "titanic_training", "titanic_testing", preprocessing_code,
-    ["lr", "dt", "gb", "rf", "nb", "svc"]))
+    ["lr", "dt", "gb", "rf", "nb"))
 ```

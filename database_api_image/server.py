@@ -92,7 +92,7 @@ def delete_file(filename):
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    result = database.delete_file(filename)
+    database.delete_file(filename)
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\

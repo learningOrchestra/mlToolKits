@@ -2,12 +2,7 @@ from pyspark.sql import SparkSession
 import os
 from datetime import datetime
 import pytz
-from pyspark.sql import functions as F
 from pymongo import MongoClient
-from pyspark.sql.types import (
-    StringType, StructField,
-    StructType, BooleanType,
-    IntegerType)
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
