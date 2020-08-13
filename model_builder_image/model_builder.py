@@ -9,8 +9,7 @@ from pyspark.ml.classification import (
     DecisionTreeClassifier,
     RandomForestClassifier,
     GBTClassifier,
-    NaiveBayes,
-    LinearSVC
+    NaiveBayes
 )
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
@@ -134,8 +133,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             "dt": DecisionTreeClassifier(),
             "rf": RandomForestClassifier(),
             "gb": GBTClassifier(),
-            "nb": NaiveBayes(),
-            "svc": LinearSVC()
+            "nb": NaiveBayes()
         }
 
         classificator_threads = []
@@ -250,7 +248,7 @@ class ModelBuilderRequestValidator(RequestValidatorInterface):
             raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
 
     def model_classificators_validator(self, classificators_list):
-        classificator_names_list = ["lr", "dt", "rf", "gb", "nb", "svc"]
+        classificator_names_list = ["lr", "dt", "rf", "gb", "nb"]
         for classificator_name in classificators_list:
             if(classificator_name not in classificator_names_list):
                 raise Exception(self.MESSAGE_INVALID_CLASSIFICATOR)

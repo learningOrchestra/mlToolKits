@@ -111,7 +111,6 @@ create_model(self, training_filename, test_filename, preprocessor_code, model_cl
 * "rf": RandomForestClassifier
 * "gb": Gradient-boosted tree classifier
 * "nb": NaiveBayes
-* "svc": Support Vector Machine
 
 to send a request with LogisticRegression and NaiveBayes classificators:
 

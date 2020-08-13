@@ -19,7 +19,6 @@ Model Builder microservice provide a REST API to create several model prediction
 * "rf": RandomForestClassifier
 * "gb": Gradient-boosted tree classifier
 * "nb": NaiveBayes
-* "svc": Support Vector Machine
 
 to send a request with LogisticRegression and NaiveBayes classificators:
 ```json
