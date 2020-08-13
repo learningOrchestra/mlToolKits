@@ -253,5 +253,5 @@ model_builder = Model()
 
 print(model_builder.create_model(
     "titanic_training", "titanic_testing", preprocessing_code,
-    ["lr", "dt", "gb", "rf", "nb", "svc"]))
+    ["lr", "dt", "gb", "rf", "nb"))
 ```
