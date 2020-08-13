@@ -59,60 +59,94 @@ This method return string or number fields as string list from a dataframe
 
 ``` python
 from pyspark.ml import Pipeline
-from pyspark.sql import functions as sf
-from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
-from pyspark.ml.feature import VectorAssembler, StringIndexer, QuantileDiscretizer
+from pyspark.sql.functions import (
+    mean, col, split,
+    regexp_extract, when, lit)
 
-training_df = training_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
+from pyspark.ml.feature import (
+    VectorAssembler,
+    StringIndexer
+)
+
+TRAINING_DF_INDEX = 0
+TESTING_DF_INDEX = 1
+
 training_df = training_df.withColumnRenamed('Survived', 'label')
-training_df = training_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
-            ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
+testing_df = testing_df.withColumn('label', lit(0))
+datasets_list = [training_df, testing_df]
 
-testing_df = testing_df.withColumn("Initial",regexp_extract(col("Name"),"([A-Za-z]+)\.",1))
-testing_df = testing_df.replace(['Mlle','Mme', 'Ms', 'Dr','Major','Lady','Countess','Jonkheer','Col','Rev','Capt','Sir','Don'],
-            ['Miss','Miss','Miss','Mr','Mr',  'Mrs',  'Mrs',  'Other',  'Other','Other','Mr','Mr','Mr'])
-
-testing_df = testing_df.withColumn('label', sf.lit(0))
-
-training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Miss") & (training_df["Age"].isNull()), 22).otherwise(training_df["Age"]))
-training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Other") & (training_df["Age"].isNull()), 46).otherwise(training_df["Age"]))
-training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Master") & (training_df["Age"].isNull()), 5).otherwise(training_df["Age"]))
-training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mr") & (training_df["Age"].isNull()), 33).otherwise(training_df["Age"]))
-training_df = training_df.withColumn("Age",when((training_df["Initial"] == "Mrs") & (training_df["Age"].isNull()), 36).otherwise(training_df["Age"]))
-
-testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Miss") & (testing_df["Age"].isNull()), 22).otherwise(testing_df["Age"]))
-testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Other") & (testing_df["Age"].isNull()), 46).otherwise(testing_df["Age"]))
-testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Master") & (testing_df["Age"].isNull()), 5).otherwise(testing_df["Age"]))
-testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mr") & (testing_df["Age"].isNull()), 33).otherwise(testing_df["Age"]))
-testing_df = testing_df.withColumn("Age",when((testing_df["Initial"] == "Mrs") & (testing_df["Age"].isNull()), 36).otherwise(testing_df["Age"]))
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.withColumn(
+        "Initial",
+        regexp_extract(col("Name"), "([A-Za-z]+)\.", 1))
+    datasets_list[index] = dataset
 
 
-training_df = training_df.na.fill({"Embarked" : 'S'})
-training_df = training_df.drop("Cabin")
-training_df = training_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
-training_df = training_df.withColumn('Alone',lit(0))
-training_df = training_df.withColumn("Alone",when(training_df["Family_Size"] == 0, 1).otherwise(training_df["Alone"]))
-
-testing_df = testing_df.na.fill({"Embarked" : 'S'})
-testing_df = testing_df.drop("Cabin")
-testing_df = testing_df.withColumn("Family_Size",col('SibSp')+col('Parch'))
-testing_df = testing_df.withColumn('Alone',lit(0))
-testing_df = testing_df.withColumn("Alone",when(testing_df["Family_Size"] == 0, 1).otherwise(testing_df["Alone"]))
-
-for column in ["Sex","Embarked","Initial"]:
-    training_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(training_df).transform(training_df)
-    testing_df = StringIndexer(inputCol=column, outputCol=column+"_index").fit(testing_df).transform(testing_df)
+misspelled_initials = ['Mlle', 'Mme', 'Ms', 'Dr', 'Major', 'Lady', 'Countess',
+                       'Jonkheer', 'Col', 'Rev', 'Capt', 'Sir', 'Don']
+correct_initials = ['Miss', 'Miss', 'Miss', 'Mr', 'Mr', 'Mrs', 'Mrs',
+                    'Other', 'Other', 'Other', 'Mr', 'Mr', 'Mr']
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.replace(misspelled_initials, correct_initials)
+    datasets_list[index] = dataset
 
 
-training_df = training_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
+initials_age = {"Miss": 22,
+                "Other": 46,
+                "Master": 5,
+                "Mr": 33,
+                "Mrs": 36}
+for index, dataset in enumerate(datasets_list):
+    for initial, initial_age in initials_age.items():
+        dataset = dataset.withColumn(
+            "Age",
+            when((dataset["Initial"] == initial) &
+                 (dataset["Age"].isNull()), initial_age).otherwise(
+                    dataset["Age"]))
+        datasets_list[index] = dataset
 
-testing_df = testing_df.drop("Name","Ticket","Cabin","Embarked","Sex","Initial")
 
-assembler = VectorAssembler(inputCols=training_df.columns[1:],outputCol="features")
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.na.fill({"Embarked": 'S'})
+    datasets_list[index] = dataset
+
+
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.withColumn("Family_Size", col('SibSp')+col('Parch'))
+    dataset = dataset.withColumn('Alone', lit(0))
+    dataset = dataset.withColumn(
+        "Alone",
+        when(dataset["Family_Size"] == 0, 1).otherwise(dataset["Alone"]))
+    datasets_list[index] = dataset
+
+
+text_fields = ["Sex", "Embarked", "Initial"]
+for column in text_fields:
+    for index, dataset in enumerate(datasets_list):
+        dataset = StringIndexer(
+            inputCol=column, outputCol=column+"_index").\
+                fit(dataset).\
+                transform(dataset)
+        datasets_list[index] = dataset
+
+
+non_required_columns = ["Name", "Ticket", "Cabin",
+                        "Embarked", "Sex", "Initial"]
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.drop(*non_required_columns)
+    datasets_list[index] = dataset
+
+
+training_df = datasets_list[TRAINING_DF_INDEX]
+testing_df = datasets_list[TESTING_DF_INDEX]
+
+assembler = VectorAssembler(
+    inputCols=training_df.columns[1:],
+    outputCol="features")
 assembler.setHandleInvalid('skip')
 
 features_training = assembler.transform(training_df)
-(features_training, features_evaluation) = features_training.randomSplit([0.1, 0.9], seed=11)
-# features_evaluation = None
+(features_training, features_evaluation) =\
+    features_training.randomSplit([0.1, 0.9], seed=11)
 features_testing = assembler.transform(testing_df)
 ```
