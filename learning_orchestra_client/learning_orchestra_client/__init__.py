@@ -138,6 +138,34 @@ class Projection():
         return ResponseTreat().treatment(response, pretty_response)
 
 
+class Histogram():
+    HISTOGRAM_PORT = "5004"
+
+    def __init__(self):
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.HISTOGRAM_PORT + \
+            '/histograms'
+
+        self.asyncronous_wait = AsyncronousWait()
+
+    def create_histogram(self, filename, histogram_filename, fields,
+                         pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CREATE HISTOGRAM FROM " + filename +
+                  " TO " + histogram_filename + " ----------")
+
+        self.asyncronous_wait.wait(filename, pretty_response)
+
+        request_body_content = {
+            'histogram_filename': histogram_filename,
+            'fields': fields
+        }
+        request_url = self.url_base + '/' + filename
+        response = requests.post(url=request_url, json=request_body_content)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+
 class DataTypeHandler():
     DATA_TYPE_HANDLER_PORT = "5003"
 

@@ -90,6 +90,17 @@ change_file_type(self, filename, fields_dict, pretty_response=True)
 * fields_dict: dictionary with "field": "number" or field: "string" keys  
 * pretty_response: return indented string to visualization (default True, if False, return dict)
 
+##Histogram
+### create_histogram
+```python    
+def create_histogram(self, filename, histogram_filename, fields, pretty_response=True)
+```
+
+* filename: filename of file to make histogram
+* histogram_filename: filename used to create histogram
+* fields: list with fields to make histogram 
+* pretty_response: return indented string to visualization (default True, if False, return dict)
+
 ## ModelBuilder
 
 ### create_model

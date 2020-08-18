@@ -8,3 +8,4 @@ learning_orchestra_client/learning_orchestra_client/__pycache__/__init__.cpython
 .gitignore
 .idea
 site
+/learning_orchestra_client/example.py
