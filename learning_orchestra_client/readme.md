@@ -175,30 +175,38 @@ print(database_api.create_file(
 
 print(database_api.read_resume_files())
 
+
+projection = Projection()
+non_required_columns = ["Name", "Ticket", "Cabin",
+                        "Embarked", "Sex", "Initial"]
+print(projection.create("titanic_training",
+                        "titanic_training_projection",
+                        non_required_columns))
+print(projection.create("titanic_testing",
+                        "titanic_testing_projection",
+                        non_required_columns))
+
+
 data_type_handler = DataTypeHandler()
+type_fields = {
+    "Age": "number",
+    "Fare": "number",
+    "Parch": "number",
+    "PassengerId": "number",
+    "Pclass": "number",
+    "SibSp": "number"
+}
 
 print(data_type_handler.change_file_type(
-    "titanic_training",
-    {
-        "Age": "number",
-        "Fare": "number",
-        "Parch": "number",
-        "PassengerId": "number",
-        "Pclass": "number",
-        "SibSp": "number",
-        "Survived": "number"
-    }))
+    "titanic_testing_projection",
+    type_fields))
+
+type_fields["Survived"] = "number"
 
 print(data_type_handler.change_file_type(
-    "titanic_testing",
-    {
-        "Age": "number",
-        "Fare": "number",
-        "Parch": "number",
-        "PassengerId": "number",
-        "Pclass": "number",
-        "SibSp": "number"
-    }))
+    "titanic_training_projection",
+    type_fields))
+
 
 preprocessing_code = '''
 from pyspark.ml import Pipeline
@@ -273,13 +281,6 @@ for column in text_fields:
         datasets_list[index] = dataset
 
 
-non_required_columns = ["Name", "Ticket", "Cabin",
-                        "Embarked", "Sex", "Initial"]
-for index, dataset in enumerate(datasets_list):
-    dataset = dataset.drop(*non_required_columns)
-    datasets_list[index] = dataset
-
-
 training_df = datasets_list[TRAINING_DF_INDEX]
 testing_df = datasets_list[TESTING_DF_INDEX]
 
@@ -297,6 +298,8 @@ features_testing = assembler.transform(testing_df)
 model_builder = Model()
 
 print(model_builder.create_model(
-    "titanic_training", "titanic_testing", preprocessing_code,
+    "titanic_training_projection",
+    "titanic_testing_projection",
+    preprocessing_code,
     ["lr", "dt", "gb", "rf", "nb"]))
 ```
