@@ -1,4 +1,4 @@
-from flask import jsonify, request, Flask
+from flask import jsonify, request, Flask, send_file
 import os
 from tsne import (
     TsneGenerator,
@@ -97,6 +97,12 @@ def get_images():
     return jsonify(
         {MESSAGE_RESULT: images}),\
         HTTP_STATUS_CODE_SUCESS
+
+
+@app.route('/tsne/<filename>', methods=[GET])
+def get_image(tsne_filename):
+    filename = tsne_filename + '.png'
+    return send_file(filename, mimetype='image/png')
 
 
 @app.route('/tsne/<filename>', methods=[DELETE])
