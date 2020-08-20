@@ -93,7 +93,7 @@ def create_tsne(parent_filename):
 
 @app.route('/tsne', methods=[GET])
 def get_images():
-    images = os.listdir('.')
+    images = os.listdir('/images')
     return jsonify(
         {MESSAGE_RESULT: images}),\
         HTTP_STATUS_CODE_SUCESS
@@ -101,13 +101,13 @@ def get_images():
 
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(tsne_filename):
-    filename = tsne_filename + '.png'
+    filename = "/images/" + tsne_filename + '.png'
     return send_file(filename, mimetype='image/png')
 
 
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(tsne_filename):
-    os.remove(tsne_filename + ".png")
+    os.remove("/images/" + tsne_filename + '.png')
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
         HTTP_STATUS_CODE_SUCESS

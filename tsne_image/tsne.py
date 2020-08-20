@@ -72,7 +72,7 @@ class TsneGenerator(TsneInterface):
         embedded_array = TSNE().fit_transform(treated_array)
 
         sns_plot = sns.pairplot(embedded_array, size=2.5)
-        sns_plot.savefig(tsne_filename + ".png")
+        sns_plot.savefig("/images/" + tsne_filename + '.png')
 
 
 class MongoOperations(DatabaseInterface):
