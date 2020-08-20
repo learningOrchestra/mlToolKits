@@ -65,7 +65,7 @@ class TsneGenerator(TsneInterface):
         dataframe = dataframe.filter(
             dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
 
-        dataframe = dataframe.fillna("None")
+        dataframe = dataframe.dropna()
         pandas_dataframe = dataframe.toPandas()
         data_array = OneHotEncoder().fit_transform(pandas_dataframe).toarray()
 
