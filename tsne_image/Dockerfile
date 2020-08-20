@@ -1,7 +1,7 @@
 FROM spark_task
 
-WORKDIR /
-COPY . /
+WORKDIR /usr/src/tsne
+COPY . /usr/src/tsne
 
 RUN pip install -r requirements.txt
 
@@ -12,4 +12,5 @@ ENV SPARKMASTER_HOST "sparkmaster"
 ENV SPARKMASTER_PORT 7077
 ENV SPARK_DRIVER_PORT 41200
 
+WORKDIR /images
 CMD ["python", "server.py"]
