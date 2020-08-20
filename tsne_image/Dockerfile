@@ -1,5 +1,8 @@
 FROM spark_task
 
+WORKDIR /
+COPY . /
+
 RUN pip install -r requirements.txt
 
 ENV TSNE_HOST_NAME "tsne"
