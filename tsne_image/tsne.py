@@ -3,7 +3,7 @@ import os
 from pymongo import MongoClient
 import numpy as np
 from sklearn.manifold import TSNE
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 import seaborn as sns
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
@@ -66,14 +66,35 @@ class TsneGenerator(TsneInterface):
             dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
 
         dataframe = dataframe.dropna()
-        pandas_dataframe = dataframe.toPandas()
-        data_array = OneHotEncoder().fit_transform(pandas_dataframe).toarray()
+        string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
-        treated_array = np.array(data_array)
+        label_enconder = LabelEncoder()
+        for field in string_fields:
+            dataframe[field] = label_enconder.fit_transform(dataframe[field])
+
+        # pandas_dataframe = dataframe.toPandas()
+        # data_array = OneHotEncoder().fit_transform(pandas_dataframe).toarray()
+
+        treated_array = np.array(dataframe.toPandas())
         embedded_array = TSNE().fit_transform(treated_array)
 
         sns_plot = sns.pairplot(embedded_array, size=2.5)
         sns_plot.savefig("/images/" + tsne_filename + '.png')
+
+    def fields_from_dataframe(self, dataframe, is_string):
+        text_fields = []
+        first_row = dataframe.first()
+
+        if(is_string):
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) == str):
+                    text_fields.append(column)
+        else:
+            for column in dataframe.schema.names:
+                if(type(first_row[column]) != str):
+                    text_fields.append(column)
+
+        return text_fields
 
 
 class MongoOperations(DatabaseInterface):
