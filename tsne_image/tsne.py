@@ -12,7 +12,7 @@ SPARKMASTER_PORT = "SPARKMASTER_PORT"
 SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 TSNE_HOST_NAME = "TSNE_HOST_NAME"
 IMAGES_PATH = "IMAGES_PATH"
-
+IMAGE_FORMAT = ".png"
 
 class DatabaseInterface():
     def find_one(self, filename, query):
@@ -50,7 +50,6 @@ class TsneGenerator(TsneInterface):
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     DOCUMENT_ID = "_id"
     METADATA_FILE_ID = 0
-    IMAGE_FORMAT = ".png"
     IMAGE_SIZE = 3
 
     def __init__(self, database_url_input):
@@ -89,7 +88,7 @@ class TsneGenerator(TsneInterface):
         embedded_array = pandas.DataFrame(embedded_array)
 
         image_path = os.environ[IMAGES_PATH] +\
-            "/" + tsne_filename + self.IMAGE_FORMAT
+            "/" + tsne_filename + IMAGE_FORMAT
 
         if label_name is not None:
             embedded_array[label_name] = encoded_dataframe[label_name]
@@ -159,13 +158,13 @@ class TsneRequestValidator(RequestValidatorInterface):
 
     def tsne_filename_existence_validator(self, tsne_filename):
         images = os.listdir(os.environ[IMAGES_PATH])
-        image_name = tsne_filename + self.IMAGE_FORMAT
+        image_name = tsne_filename + IMAGE_FORMAT
         if image_name in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def no_tsne_filename_existence_validator(self, tsne_filename):
         images = os.listdir(os.environ[IMAGES_PATH])
-        image_name = tsne_filename + self.IMAGE_FORMAT
+        image_name = tsne_filename + IMAGE_FORMAT
 
         if image_name not in images:
             raise Exception(self.MESSAGE_NOT_FOUND)
