@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 import seaborn as sns
+import pandas
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -66,13 +67,14 @@ class TsneGenerator(TsneInterface):
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
         label_enconder = LabelEncoder()
+        encoded_dataframe = dataframe.toPandas()
         for field in string_fields:
-            dataframe[field] = label_enconder.fit_transform(dataframe.select(field).collect())
+            encoded_dataframe[field] = label_enconder.fit_transform(encoded_dataframe[field])
 
         # pandas_dataframe = dataframe.toPandas()
         # data_array = OneHotEncoder().fit_transform(pandas_dataframe).toarray()
 
-        treated_array = np.array(dataframe.toPandas())
+        treated_array = np.array(encoded_dataframe)
         embedded_array = TSNE().fit_transform(treated_array)
 
         sns_plot = sns.pairplot(embedded_array, size=2.5)
