@@ -40,8 +40,6 @@ database = MongoOperations(
     os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
     os.environ[DATABASE_NAME])
 
-request_validator = TsneRequestValidator(database)
-
 
 def collection_database_url(database_url, database_name, database_filename,
                             database_replica_set):
@@ -54,6 +52,9 @@ def collection_database_url(database_url, database_name, database_filename,
 
 @app.route('/tsne/<parent_filename>', methods=[POST])
 def create_tsne(parent_filename):
+    global database
+    request_validator = TsneRequestValidator(database)
+
     try:
         request_validator.tsne_filename_existence_validator(
             request.json[TSNE_FILENAME_NAME])
@@ -108,6 +109,9 @@ def get_images():
 
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(filename):
+    global database
+    request_validator = TsneRequestValidator(database)
+
     try:
         request_validator.no_tsne_filename_existence_validator(
             filename)
@@ -116,11 +120,15 @@ def get_image(filename):
             {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
+    image_path = "/images/" + filename + ".png"
     return send_file(image_path, mimetype='image/png')
 
 
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(filename):
+    global database
+    request_validator = TsneRequestValidator(database)
+
     try:
         request_validator.no_tsne_filename_existence_validator(
             filename)
@@ -129,6 +137,7 @@ def delete_image(filename):
             {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
+    image_path = "/images/" + filename + ".png"
     os.remove(image_path)
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
