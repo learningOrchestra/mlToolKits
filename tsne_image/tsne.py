@@ -147,7 +147,7 @@ class TsneRequestValidator(RequestValidatorInterface):
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def tsne_filename_existence_validator(self, tsne_filename):
-        images = os.listdir('./images')
+        images = os.listdir('/images')
         if (tsne_filename + ".png") in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
