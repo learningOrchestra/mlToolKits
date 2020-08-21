@@ -60,10 +60,7 @@ class TsneGenerator(TsneInterface):
             .getOrCreate()
 
     def create_image(self, filename, tsne_filename):
-        dataframe = self.spark_session.read.format(
-                self.MONGO_SPARK_SOURCE).load()
-        dataframe = dataframe.filter(
-            dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
+        dataframe = self.file_processor()
 
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
@@ -80,6 +77,20 @@ class TsneGenerator(TsneInterface):
 
         sns_plot = sns.pairplot(embedded_array, size=2.5)
         sns_plot.savefig("/images/" + tsne_filename + '.png')
+
+    def file_processor(self):
+        file = self.spark_session.read.format(
+                self.MONGO_SPARK_SOURCE).load()
+
+        file_without_metadata = file.filter(
+            file[self.DOCUMENT_ID] != self.METADATA_FILE_ID)
+
+        metadata_fields = [
+            "_id", "fields", "filename", "finished", "time_created",
+            "url", "parent_filename"]
+        processed_file = file_without_metadata.drop(*metadata_fields)
+
+        return processed_file
 
     def fields_from_dataframe(self, dataframe, is_string):
         text_fields = []
