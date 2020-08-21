@@ -18,6 +18,8 @@ DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
+FULL_DATABASE_URL = os.environ[DATABASE_URL] + '/?replicaSet=' +\
+        os.environ[DATABASE_REPLICA_SET]
 
 GET = 'GET'
 POST = 'POST'
@@ -35,11 +37,6 @@ FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
 
-database = MongoOperations(
-    os.environ[DATABASE_URL] + '/?replicaSet=' +
-    os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
-    os.environ[DATABASE_NAME])
-
 
 def collection_database_url(database_url, database_name, database_filename,
                             database_replica_set):
@@ -52,7 +49,9 @@ def collection_database_url(database_url, database_name, database_filename,
 
 @app.route('/tsne/<parent_filename>', methods=[POST])
 def create_tsne(parent_filename):
-    global database
+    database = MongoOperations(
+        FULL_DATABASE_URL, os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
     request_validator = TsneRequestValidator(database)
 
     try:
@@ -109,7 +108,9 @@ def get_images():
 
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(filename):
-    global database
+    database = MongoOperations(
+        FULL_DATABASE_URL, os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
     request_validator = TsneRequestValidator(database)
 
     try:
@@ -126,7 +127,9 @@ def get_image(filename):
 
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(filename):
-    global database
+    database = MongoOperations(
+        FULL_DATABASE_URL, os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
     request_validator = TsneRequestValidator(database)
 
     try:
