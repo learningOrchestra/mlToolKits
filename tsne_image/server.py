@@ -14,6 +14,8 @@ HTTP_STATUS_CODE_NOT_FOUND = 404
 TSNE_HOST_IP = "TSNE_HOST_IP"
 TSNE_HOST_PORT = "TSNE_HOST_PORT"
 
+IMAGES_PATH = "IMAGES_PATH"
+
 DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
@@ -100,7 +102,7 @@ def create_tsne(parent_filename):
 
 @app.route('/tsne', methods=[GET])
 def get_images():
-    images = os.listdir('/images')
+    images = os.listdir(os.environ[IMAGES_PATH])
     return jsonify(
         {MESSAGE_RESULT: images}),\
         HTTP_STATUS_CODE_SUCESS
@@ -121,7 +123,7 @@ def get_image(filename):
             {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
-    image_path = "/images/" + filename + ".png"
+    image_path = os.environ[IMAGES_PATH] + "/" + filename + ".png"
     return send_file(image_path, mimetype='image/png')
 
 
@@ -140,7 +142,7 @@ def delete_image(filename):
             {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
-    image_path = "/images/" + filename + ".png"
+    image_path = os.environ[IMAGES_PATH] + "/" + filename + ".png"
     os.remove(image_path)
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\

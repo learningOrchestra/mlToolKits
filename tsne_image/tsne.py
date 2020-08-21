@@ -11,6 +11,7 @@ SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
 SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 TSNE_HOST_NAME = "TSNE_HOST_NAME"
+IMAGES_PATH = "IMAGES_PATH"
 
 
 class DatabaseInterface():
@@ -83,13 +84,15 @@ class TsneGenerator(TsneInterface):
         embedded_array = TSNE().fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
 
+        image_path = os.environ[IMAGES_PATH] + "/" + tsne_filename + ".png"
+
         if label_name is not None:
             embedded_array['Survived'] = encoded_dataframe['Survived']
             sns_plot = sns.pairplot(embedded_array, size=3, hue="Survived")
-            sns_plot.savefig("/images/" + tsne_filename + '.png')
+            sns_plot.savefig(image_path)
         else:
             sns_plot = sns.pairplot(embedded_array, size=3)
-            sns_plot.savefig("/images/" + tsne_filename + '.png')
+            sns_plot.savefig(image_path)
 
     def file_processor(self):
         file = self.spark_session.read.format(
@@ -147,12 +150,12 @@ class TsneRequestValidator(RequestValidatorInterface):
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def tsne_filename_existence_validator(self, tsne_filename):
-        images = os.listdir('/images')
+        images = os.listdir(os.environ[IMAGES_PATH])
         if (tsne_filename + ".png") in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def no_tsne_filename_existence_validator(self, tsne_filename):
-        images = os.listdir('/images')
+        images = os.listdir(os.environ[IMAGES_PATH])
         image_name = tsne_filename + '.png'
 
         if image_name not in images:
