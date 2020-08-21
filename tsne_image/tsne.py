@@ -14,6 +14,7 @@ TSNE_HOST_NAME = "TSNE_HOST_NAME"
 IMAGES_PATH = "IMAGES_PATH"
 IMAGE_FORMAT = ".png"
 
+
 class DatabaseInterface():
     def find_one(self, filename, query):
         pass
