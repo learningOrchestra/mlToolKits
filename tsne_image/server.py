@@ -15,6 +15,7 @@ TSNE_HOST_IP = "TSNE_HOST_IP"
 TSNE_HOST_PORT = "TSNE_HOST_PORT"
 
 IMAGES_PATH = "IMAGES_PATH"
+IMAGE_FROMAT =".png"
 
 DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
@@ -120,10 +121,13 @@ def get_image(filename):
             filename)
     except Exception as invalid_tsne_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_FOUND
+            {MESSAGE_RESULT:
+             invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
+                HTTP_STATUS_CODE_NOT_FOUND
 
-    image_path = os.environ[IMAGES_PATH] + "/" + filename + ".png"
+    image_path = os.environ[IMAGES_PATH] + "/" +\
+        filename + IMAGE_FROMAT
+
     return send_file(image_path, mimetype='image/png')
 
 
@@ -139,11 +143,14 @@ def delete_image(filename):
             filename)
     except Exception as invalid_tsne_filename:
         return jsonify(
-            {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_FOUND
+            {MESSAGE_RESULT:
+             invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
+                HTTP_STATUS_CODE_NOT_FOUND
 
-    image_path = os.environ[IMAGES_PATH] + "/" + filename + ".png"
+    image_path = os.environ[IMAGES_PATH] + "/" +\
+        filename + IMAGE_FROMAT
     os.remove(image_path)
+
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
         HTTP_STATUS_CODE_SUCESS
