@@ -73,7 +73,9 @@ class TsneGenerator(TsneInterface):
 
         treated_array = np.array(encoded_dataframe)
         embedded_array = TSNE().fit_transform(treated_array)
-        sns_plot = sns.pairplot(pandas.DataFrame(embedded_array), size=2.5, hue="Survived")
+        embedded_array = pandas.Dataframe(embedded_array)
+        embedded_array['Survived'] = dataframe['Survived']
+        sns_plot = sns.pairplot(embedded_array, size=2.5, hue="Survived")
         sns_plot.savefig("/images/" + tsne_filename + '.png')
 
     def file_processor(self):
