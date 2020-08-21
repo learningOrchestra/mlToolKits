@@ -30,6 +30,7 @@ class RequestValidatorInterface():
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
     MESSAGE_INVALID_LABEL = "invalid_field"
+    MESSAGE_NOT_FOUND = "file_not_found"
 
     def parent_filename_validator(self, filename):
         pass
@@ -38,6 +39,9 @@ class RequestValidatorInterface():
         pass
 
     def filename_label_validator(self, filename, label):
+        pass
+
+    def tsne_no_filename_existence_validator(self, tsne_filename):
         pass
 
 
@@ -142,10 +146,17 @@ class TsneRequestValidator(RequestValidatorInterface):
         if(filename not in filenames):
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
-    def tsne_filename_validator(self, tsne_filename):
-        images = os.listdir('.')
+    def tsne_filename_existence_validator(self, tsne_filename):
+        images = os.listdir('./images')
         if (tsne_filename + ".png") in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
+
+    def tsne_no_filename_existence_validator(self, tsne_filename):
+        images = os.listdir('/images')
+        image_name = tsne_filename + '.png'
+
+        if image_name not in images:
+            raise Exception(self.MESSAGE_NOT_FOUND)
 
     def filename_label_validator(self, filename, label):
         if label is None:

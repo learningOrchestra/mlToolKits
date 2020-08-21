@@ -35,6 +35,13 @@ FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
 
+database = MongoOperations(
+    os.environ[DATABASE_URL] + '/?replicaSet=' +
+    os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
+    os.environ[DATABASE_NAME])
+
+request_validator = TsneRequestValidator(database)
+
 
 def collection_database_url(database_url, database_name, database_filename,
                             database_replica_set):
@@ -47,15 +54,8 @@ def collection_database_url(database_url, database_name, database_filename,
 
 @app.route('/tsne/<parent_filename>', methods=[POST])
 def create_tsne(parent_filename):
-    database = MongoOperations(
-        os.environ[DATABASE_URL] + '/?replicaSet=' +
-        os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
-    request_validator = TsneRequestValidator(database)
-
     try:
-        request_validator.tsne_filename_validator(
+        request_validator.tsne_filename_existence_validator(
             request.json[TSNE_FILENAME_NAME])
     except Exception as invalid_tsne_filename:
         return jsonify(
@@ -108,13 +108,12 @@ def get_images():
 
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(filename):
-    images = os.listdir('/images')
-    image_name = filename + '.png'
-    image_path = "/images/" + image_name
-
-    if image_name not in images:
+    try:
+        request_validator.tsne_no_filename_existence_validator(
+            filename)
+    except Exception as invalid_tsne_filename:
         return jsonify(
-            {MESSAGE_RESULT: MESSAGE_NOT_FOUND}), \
+            {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
     return send_file(image_path, mimetype='image/png')
@@ -122,13 +121,12 @@ def get_image(filename):
 
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(filename):
-    images = os.listdir('/images')
-    image_name = filename + '.png'
-    image_path = "/images/" + image_name
-
-    if image_name not in images:
+    try:
+        request_validator.tsne_no_filename_existence_validator(
+            filename)
+    except Exception as invalid_tsne_filename:
         return jsonify(
-            {MESSAGE_RESULT: MESSAGE_NOT_FOUND}), \
+            {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_FOUND
 
     os.remove(image_path)
