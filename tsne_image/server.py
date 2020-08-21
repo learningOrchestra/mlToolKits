@@ -100,14 +100,14 @@ def get_images():
 
 
 @app.route('/tsne/<filename>', methods=[GET])
-def get_image(tsne_filename):
-    filename = "/images/" + tsne_filename + '.png'
-    return send_file(filename, mimetype='image/png')
+def get_image(filename):
+    image_path = "/images/" + filename + '.png'
+    return send_file(image_path, mimetype='image/png')
 
 
 @app.route('/tsne/<filename>', methods=[DELETE])
-def delete_image(tsne_filename):
-    os.remove("/images/" + tsne_filename + '.png')
+def delete_image(filename):
+    os.remove("/images/" + filename + '.png')
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
         HTTP_STATUS_CODE_SUCESS
