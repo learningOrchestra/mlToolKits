@@ -28,10 +28,11 @@ DELETE = 'DELETE'
 
 MESSAGE_RESULT = "result"
 TSNE_FILENAME_NAME = "tsne_filename"
-FIELDS_NAME = "fields"
+LABEL_NAME = "label_name"
 
 MESSAGE_CREATED_FILE = "created_file"
 MESSAGE_DELETED_FILE = "deleted_file"
+MESSAGE_NOT_FOUND = "not_found_file"
 
 FIRST_ARGUMENT = 0
 
@@ -73,6 +74,14 @@ def create_tsne(parent_filename):
             {MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),\
             HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
+    try:
+        request_validator.filename_label_validator(
+            parent_filename, request.json[LABEL_NAME])
+    except Exception as invalid_label:
+        return jsonify(
+            {MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),\
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
     database_url_input = collection_database_url(
                             os.environ[DATABASE_URL],
                             os.environ[DATABASE_NAME],
@@ -84,6 +93,7 @@ def create_tsne(parent_filename):
 
     tsne_generator.create_image(
         parent_filename,
+        request.json[LABEL_NAME],
         request.json[TSNE_FILENAME_NAME])
 
     return jsonify(
@@ -101,13 +111,30 @@ def get_images():
 
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(filename):
-    image_path = "/images/" + filename + '.png'
+    images = os.listdir('/images')
+    image_name = filename + '.png'
+    image_path = "/images/" + image_name
+
+    if image_name not in images:
+        return jsonify(
+            {MESSAGE_RESULT: MESSAGE_NOT_FOUND}), \
+               HTTP_STATUS_CODE_NOT_FOUND
+
     return send_file(image_path, mimetype='image/png')
 
 
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(filename):
-    os.remove("/images/" + filename + '.png')
+    images = os.listdir('/images')
+    image_name = filename + '.png'
+    image_path = "/images/" + image_name
+
+    if image_name not in images:
+        return jsonify(
+            {MESSAGE_RESULT: MESSAGE_NOT_FOUND}), \
+               HTTP_STATUS_CODE_NOT_FOUND
+
+    os.remove(image_path)
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
         HTTP_STATUS_CODE_SUCESS

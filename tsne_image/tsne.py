@@ -22,18 +22,22 @@ class DatabaseInterface():
 
 
 class TsneInterface():
-    def create_image(self, filename, tsne_filename):
+    def create_image(self, filename, label_name, tsne_filename):
         pass
 
 
 class RequestValidatorInterface():
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_INVALID_LABEL = "invalid_field"
 
     def parent_filename_validator(self, filename):
         pass
 
     def tsne_filename_validator(self, tsne_filename):
+        pass
+
+    def filename_label_validator(self, filename, label):
         pass
 
 
@@ -60,7 +64,7 @@ class TsneGenerator(TsneInterface):
                     ':' + str(os.environ[SPARKMASTER_PORT])) \
             .getOrCreate()
 
-    def create_image(self, filename, tsne_filename):
+    def create_image(self, filename, label_name, tsne_filename):
         dataframe = self.file_processor()
 
         dataframe = dataframe.dropna()
@@ -74,9 +78,14 @@ class TsneGenerator(TsneInterface):
         treated_array = np.array(encoded_dataframe)
         embedded_array = TSNE().fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
-        embedded_array['Survived'] = encoded_dataframe['Survived']
-        sns_plot = sns.pairplot(embedded_array, size=2.5, hue="Survived")
-        sns_plot.savefig("/images/" + tsne_filename + '.png')
+
+        if label_name is not None:
+            embedded_array['Survived'] = encoded_dataframe['Survived']
+            sns_plot = sns.pairplot(embedded_array, size=3, hue="Survived")
+            sns_plot.savefig("/images/" + tsne_filename + '.png')
+        else:
+            sns_plot = sns.pairplot(embedded_array, size=3)
+            sns_plot.savefig("/images/" + tsne_filename + '.png')
 
     def file_processor(self):
         file = self.spark_session.read.format(
@@ -138,3 +147,11 @@ class TsneRequestValidator(RequestValidatorInterface):
         if (tsne_filename + ".png") in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
+    def filename_label_validator(self, filename, label):
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = self.database.find_one(
+            filename, filename_metadata_query)
+
+        if label not in filename_metadata["fields"]:
+            raise Exception(self.MESSAGE_INVALID_LABEL)
