@@ -19,9 +19,6 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
-DOCUMENT_ID = '_id'
-METADATA_DOCUMENT_ID = 0
-
 GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
@@ -138,6 +135,7 @@ def delete_image(filename):
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}),\
         HTTP_STATUS_CODE_SUCESS
+
 
 if __name__ == "__main__":
     app.run(host=os.environ[TSNE_HOST_IP],

@@ -148,6 +148,9 @@ class TsneRequestValidator(RequestValidatorInterface):
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def filename_label_validator(self, filename, label):
+        if label is None:
+            return
+
         filename_metadata_query = {"filename": filename}
 
         filename_metadata = self.database.find_one(
