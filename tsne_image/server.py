@@ -109,7 +109,7 @@ def get_images():
 @app.route('/tsne/<filename>', methods=[GET])
 def get_image(filename):
     try:
-        request_validator.tsne_no_filename_existence_validator(
+        request_validator.no_tsne_filename_existence_validator(
             filename)
     except Exception as invalid_tsne_filename:
         return jsonify(
@@ -122,7 +122,7 @@ def get_image(filename):
 @app.route('/tsne/<filename>', methods=[DELETE])
 def delete_image(filename):
     try:
-        request_validator.tsne_no_filename_existence_validator(
+        request_validator.no_tsne_filename_existence_validator(
             filename)
     except Exception as invalid_tsne_filename:
         return jsonify(

@@ -41,7 +41,7 @@ class RequestValidatorInterface():
     def filename_label_validator(self, filename, label):
         pass
 
-    def tsne_no_filename_existence_validator(self, tsne_filename):
+    def no_tsne_filename_existence_validator(self, tsne_filename):
         pass
 
 
