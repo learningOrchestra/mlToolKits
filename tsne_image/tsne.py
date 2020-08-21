@@ -67,7 +67,7 @@ class TsneGenerator(TsneInterface):
 
         label_enconder = LabelEncoder()
         for field in string_fields:
-            dataframe[field] = label_enconder.fit_transform(dataframe[field])
+            dataframe[field] = label_enconder.fit_transform(dataframe.select(field).collect())
 
         # pandas_dataframe = dataframe.toPandas()
         # data_array = OneHotEncoder().fit_transform(pandas_dataframe).toarray()
