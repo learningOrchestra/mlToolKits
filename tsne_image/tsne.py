@@ -35,7 +35,7 @@ class RequestValidatorInterface():
     def parent_filename_validator(self, filename):
         pass
 
-    def tsne_filename_validator(self, tsne_filename):
+    def tsne_filename_existence_validator(self, tsne_filename):
         pass
 
     def filename_label_validator(self, filename, label):
@@ -151,7 +151,7 @@ class TsneRequestValidator(RequestValidatorInterface):
         if (tsne_filename + ".png") in images:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
-    def tsne_no_filename_existence_validator(self, tsne_filename):
+    def no_tsne_filename_existence_validator(self, tsne_filename):
         images = os.listdir('/images')
         image_name = tsne_filename + '.png'
 
