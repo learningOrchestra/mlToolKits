@@ -103,7 +103,7 @@ change_file_type(filename, fields_dict, pretty_response=True)
 * pretty_response: return indented string to visualization 
 (default True, if False, return dict)
 
-##Histogram
+## Histogram
 ### create_histogram
 ```python
 create_histogram(filename, histogram_filename, fields, 
@@ -116,7 +116,7 @@ create_histogram(filename, histogram_filename, fields,
 * pretty_response: return indented string to visualization 
 (default True, if False, return dict)
 
-##Tsne
+## Tsne
 ### create_image_plot
 ```python
 create_image_plot(tsne_filename, parent_filename,
