@@ -15,7 +15,7 @@ TSNE_HOST_IP = "TSNE_HOST_IP"
 TSNE_HOST_PORT = "TSNE_HOST_PORT"
 
 IMAGES_PATH = "IMAGES_PATH"
-IMAGE_FROMAT =".png"
+IMAGE_FORMAT = ".png"
 
 DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
@@ -126,7 +126,7 @@ def get_image(filename):
                 HTTP_STATUS_CODE_NOT_FOUND
 
     image_path = os.environ[IMAGES_PATH] + "/" +\
-        filename + IMAGE_FROMAT
+        filename + IMAGE_FORMAT
 
     return send_file(image_path, mimetype='image/png')
 
@@ -148,7 +148,7 @@ def delete_image(filename):
                 HTTP_STATUS_CODE_NOT_FOUND
 
     image_path = os.environ[IMAGES_PATH] + "/" +\
-        filename + IMAGE_FROMAT
+        filename + IMAGE_FORMAT
     os.remove(image_path)
 
     return jsonify(

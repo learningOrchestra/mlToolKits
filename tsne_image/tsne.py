@@ -3,7 +3,7 @@ import os
 from pymongo import MongoClient
 import numpy as np
 from sklearn.manifold import TSNE
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import LabelEncoder
 import seaborn as sns
 import pandas
 
