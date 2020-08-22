@@ -155,7 +155,8 @@ self.fields_from_dataframe(self, dataframe, is_string)
 
 ## learning_orchestra_client usage example
 
-In below there is a python script using the package:
+In below there is a python script using the package with 
+[titanic challengue datasets](https://www.kaggle.com/c/titanic/overview):
 
 ``` python
 from learning_orchestra_client import *
