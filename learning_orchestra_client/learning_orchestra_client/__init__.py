@@ -166,6 +166,34 @@ class Histogram():
         return ResponseTreat().treatment(response, pretty_response)
 
 
+class Tsne():
+    TSNE_PORT = "5005"
+
+    def __init__(self):
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.TSNE_PORT + \
+            '/tsne'
+
+        self.asyncronous_wait = AsyncronousWait()
+
+    def create_image_plot(self, tsne_filename, parent_filename,
+                          label_name=None, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CREATE TSNE IMAGE PLOT FROM " +
+                  parent_filename + " TO " + tsne_filename + " ----------")
+
+        self.asyncronous_wait.wait(parent_filename, pretty_response)
+
+        request_body_content = {
+            'tsne_filename': tsne_filename,
+            'label_name': label_name
+        }
+        request_url = self.url_base + '/' + parent_filename
+        response = requests.post(url=request_url, json=request_body_content)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+
 class DataTypeHandler():
     DATA_TYPE_HANDLER_PORT = "5003"
 
