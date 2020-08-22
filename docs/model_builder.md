@@ -34,20 +34,20 @@ to send a request with LogisticRegression and NaiveBayes classificators:
 
 ### preprocessor_code environment
 
-The python3 preprocessing code must use the environment instances in bellow:
+The python 3 preprocessing code must use the environment instances in bellow:
 
-* training_df (Instanciated): Spark Dataframe instance for trainingfilename
-* testing_df  (Instanciated): Spark Dataframe instance for testing filename
+* training_df (Instantiated): Spark Dataframe instance for training filename
+* testing_df  (Instantiated): Spark Dataframe instance for testing filename
 
-The preprocessing code must instanciate the variables in bellow, , all intances
- must be transformed by pyspark VectorAssembler:
+The preprocessing code must instantiate the variables in bellow, all 
+instances must be transformed by pyspark VectorAssembler:
 
-* features_training (Not Instanciated): Spark Dataframe instance for train the 
-model
-* features_evaluation (Not Instanciated): Spark Dataframe instance for 
+* features_training (Not Instantiated): Spark Dataframe instance for train 
+the model
+* features_evaluation (Not Instantiated): Spark Dataframe instance for 
 evaluate trained model accuracy
-* features_testing (Not Instanciated): Spark Dataframe instance for test the 
-model
+* features_testing (Not Instantiated): Spark Dataframe instance for test 
+the model
 
 Case you don't want evaluate the model prediction, define features_evaluation 
 as None.
@@ -60,13 +60,14 @@ self.fields_from_dataframe(self, dataframe, is_string)
 This method return string or number fields as string list from a dataframe.
 
 * dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
+* is_string: Boolean parameter, if True, the method return the string 
+dataframe fields, otherwise, return the numbers dataframe fields.
 
 #### preprocessor_code example
 This example use the 
 [titanic challengue datasets](https://www.kaggle.com/c/titanic/overview).
 
-``` python
+```python
 from pyspark.ml import Pipeline
 from pyspark.sql.functions import (
     mean, col, split,

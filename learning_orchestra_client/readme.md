@@ -10,110 +10,141 @@ pip install learning_orchestra_cliet
 
 After downloading the package, import all classes:
 
-``` python
+```python
 from learning_orchestra_client import *
 ```
 
-create a Context object passing a ip from your cluster in constructor parameter:
+create a Context object passing a ip from your cluster in constructor 
+parameter:
 
 ```python
 cluster_ip = "34.95.222.197"
 Context(cluster_ip)
 ```
 
-After create a Context object, you will able to usage learningOrchestra, each learningOrchestra funcionalite is contained in your own class, therefore, to use a specific funcionalite, after you instanciate and configure Context class, you need instanciate and call the method class of interest, in below, there are all class and each class methods, also have an example of workflow using this package in a python code.
+After create a Context object, you will able to usage learningOrchestra, each 
+learningOrchestra functionality is contained in your own class, therefore, to 
+use a specific functionality, after you instantiate and configure Context 
+class, you need instantiate and call the method class of interest, in below, 
+there are all class and each class methods, also have an example of workflow 
+using this package in a python code.
 
 ## DatabaseApi
 
 ### read_resume_files
 
-``` python
+```python
 read_resume_files(pretty_response=True)
 ```
 
 Read all metadata files in learningOrchestra
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ### read_file
 
-``` python
-read_file(self, filename_key, skip=0, limit=10, query={}, pretty_response=True)
+```python
+read_file(filename_key, skip=0, limit=10, query={}, pretty_response=True)
 ```
 
 * filename_ley : filename of file
 * skip: number of rows amount to skip in pagination (default 0)
-* limit: number of rows to return in pagination (default 10)(max setted in 20 rows per request)
+* limit: number of rows to return in pagination (default 10)
+(max setted in 20 rows per request)
 * query: query to make in mongo (default empty query)
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ### create_file
 
-``` python
-create_file(self, filename, url, pretty_response=True)
+```python
+create_file(filename, url, pretty_response=True)
 ```
 
 * filename: filename of file to be created
 * url: url to csv file
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ### delete_file
 
-``` python
-delete_file(self, filename, pretty_response=True)
+```python
+delete_file(filename, pretty_response=True)
 ```
 
 * filename: file filename to be deleted
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ## Projection
 
 ### create_projection
 
-``` python
-create_projection(self, filename, projection_filename, fields, pretty_response=True)
+```python
+create_projection(filename, projection_filename, fields, pretty_response=True)
 ```
 
 * filename: filename of file to make projection
 * projection_filename: filename used to create projection
 * fields: list with fields to make projection 
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ## DataTypeHandler
 
 ### change_file_type
 
-``` python
-change_file_type(self, filename, fields_dict, pretty_response=True)
+```python
+change_file_type(filename, fields_dict, pretty_response=True)
 ```
 
 * filename: filename of file
 * fields_dict: dictionary with "field": "number" or field: "string" keys  
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ##Histogram
 ### create_histogram
-```python    
-def create_histogram(self, filename, histogram_filename, fields, pretty_response=True)
+```python
+create_histogram(filename, histogram_filename, fields, 
+                 pretty_response=True)
 ```
 
 * filename: filename of file to make histogram
 * histogram_filename: filename used to create histogram
 * fields: list with fields to make histogram 
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
+
+##Tsne
+### create_image_plot
+```python
+create_image_plot(tsne_filename, parent_filename,
+                  label_name=None, pretty_response=True)
+```
+
+* parent_filename: filename of file to make histogram
+* tsne_filename: filename used to create image plot
+* label_name: label name to dataset with labeled tuples (default None, to 
+datasets without labeled tuples) 
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 ## ModelBuilder
 
 ### create_model
 
-``` python
-create_model(self, training_filename, test_filename, preprocessor_code, model_classificator, pretty_response=True)
+```python
+create_model(training_filename, test_filename, preprocessor_code, 
+             model_classificator, pretty_response=True)
 ```
 
 * training_filename: filename to be used in training
 * test_filename: filename to be used in test
 * preprocessor_code: python3 code for pyspark preprocessing model
 * model_classificator: list of initial from classificators to be used in model
-* pretty_response: return indented string to visualization (default True, if False, return dict)
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
 
 #### model_classificator
 
@@ -133,32 +164,38 @@ create_model(training_filename, test_filename, preprocessor_code, ["lr", "nb"])
 
 The python 3 preprocessing code must use the environment instances in bellow:
 
-* training_df (Instanciated): Spark Dataframe instance for trainingfilename
-* testing_df  (Instanciated): Spark Dataframe instance for testing filename
+* training_df (Instantiated): Spark Dataframe instance for training filename
+* testing_df  (Instantiated): Spark Dataframe instance for testing filename
 
-The preprocessing code must instanciate the variables in bellow, , all intances must be transformed by pyspark VectorAssembler:
+The preprocessing code must instantiate the variables in bellow, all 
+instances must be transformed by pyspark VectorAssembler:
 
-* features_training (Not Instanciated): Spark Dataframe instance for train the model
-* features_evaluation (Not Instanciated): Spark Dataframe instance for evaluate trained model accuracy
-* features_testing (Not Instanciated): Spark Dataframe instance for test the model
+* features_training (Not Instantiated): Spark Dataframe instance for train 
+the model
+* features_evaluation (Not Instantiated): Spark Dataframe instance for 
+evaluate trained model accuracy
+* features_testing (Not Instantiated): Spark Dataframe instance for test 
+the model
 
-Case you don't want evaluate the model prediction, define features_evaluation as None.
+Case you don't want evaluate the model prediction, define features_evaluation 
+as None.
 
 ##### Handy methods
 
-``` python
-self.fields_from_dataframe(self, dataframe, is_string)
+```python
+self.fields_from_dataframe(dataframe, is_string)
 ```
 
 * dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method return the string dataframe fields, otherwise, return the numbers dataframe fields.
+* is_string: Boolean parameter, if True, the method return the string 
+dataframe fields, otherwise, return the numbers dataframe fields.
 
 ## learning_orchestra_client usage example
 
 In below there is a python script using the package with 
 [titanic challengue datasets](https://www.kaggle.com/c/titanic/overview):
 
-``` python
+```python
 from learning_orchestra_client import *
 
 cluster_ip = "34.95.187.26"
