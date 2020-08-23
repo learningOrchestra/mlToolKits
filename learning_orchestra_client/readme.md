@@ -130,6 +130,46 @@ datasets without labeled tuples)
 * pretty_response: return indented string to visualization 
 (default True, if False, return dict)
 
+## Pca
+### create_image_plot
+```python
+create_image_plot(tsne_filename, parent_filename,
+                  label_name=None, pretty_response=True)
+```
+
+* parent_filename: filename of file to make histogram
+* pca_filename: filename used to create image plot
+* label_name: label name to dataset with labeled tuples (default None, to 
+datasets without labeled tuples) 
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
+
+### read_image_plot_filenames
+```python
+read_image_plot_filenames(pretty_response=True)
+```
+
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
+
+### read_image_plot
+```python
+read_image_plot(pca_filename, pretty_response=True)
+```
+
+* pca_filename: filename of a created image plot
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
+
+### delete_image_plot
+```python
+delete_image_plot(pca_filename, pretty_response=True)
+```
+
+* pca_filename: filename of a created image plot
+* pretty_response: return indented string to visualization 
+(default True, if False, return dict)
+
 ## ModelBuilder
 
 ### create_model

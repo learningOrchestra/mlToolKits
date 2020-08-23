@@ -12,7 +12,9 @@ Change fields file type between number and text
 * [histogram](https://riibeirogabriel.github.io/learningOrchestra/histogram) - 
 Make histograms of stored files in database
 * [t-SNE](https://riibeirogabriel.github.io/learningOrchestra/t_sne) - 
-Make t-SNE image plot of stored files in database
+Make a t-SNE image plot of stored files in database
+* [PCA](https://riibeirogabriel.github.io/learningOrchestra/pca) - 
+Make a PCA image plot of stored files in database
 * [model builder](https://riibeirogabriel.github.io/learningOrchestra/model_builder) - 
 Create a prediction model from preprocessed files using spark cluster
 

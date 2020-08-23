@@ -13,6 +13,7 @@ nav:
             - Data Type Handler: "data_type_handler.md"
             - Histogram: "histogram.md"
             - t-SNE: "t_sne.md"
+            - PCA: "pca.md"
             - Model Builder: "model_builder.md"
 theme:
     name: 'material'
