@@ -50,7 +50,7 @@ def collection_database_url(database_url, database_name, database_filename,
         "&authSource=admin"
 
 
-@app.route('/tsne/<parent_filename>', methods=[POST])
+@app.route('/images/<parent_filename>', methods=[POST])
 def create_tsne(parent_filename):
     database = MongoOperations(
         FULL_DATABASE_URL, os.environ[DATABASE_PORT],
@@ -101,7 +101,7 @@ def create_tsne(parent_filename):
         HTTP_STATUS_CODE_SUCESS_CREATED
 
 
-@app.route('/tsne', methods=[GET])
+@app.route('/images', methods=[GET])
 def get_images():
     images = os.listdir(os.environ[IMAGES_PATH])
     return jsonify(
@@ -109,7 +109,7 @@ def get_images():
         HTTP_STATUS_CODE_SUCESS
 
 
-@app.route('/tsne/<filename>', methods=[GET])
+@app.route('/images/<filename>', methods=[GET])
 def get_image(filename):
     database = MongoOperations(
         FULL_DATABASE_URL, os.environ[DATABASE_PORT],
@@ -131,7 +131,7 @@ def get_image(filename):
     return send_file(image_path, mimetype='image/png')
 
 
-@app.route('/tsne/<filename>', methods=[DELETE])
+@app.route('/images/<filename>', methods=[DELETE])
 def delete_image(filename):
     database = MongoOperations(
         FULL_DATABASE_URL, os.environ[DATABASE_PORT],
