@@ -85,7 +85,7 @@ class PcaGenerator(PcaInterface):
                 encoded_dataframe[field])
 
         treated_array = np.array(encoded_dataframe)
-        embedded_array = PCA().fit_transform(treated_array)
+        embedded_array = PCA(n_components=2).fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
 
         image_path = os.environ[IMAGES_PATH] +\
