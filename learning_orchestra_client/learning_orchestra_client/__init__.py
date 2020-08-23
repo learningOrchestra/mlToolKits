@@ -193,6 +193,61 @@ class Tsne():
 
         return ResponseTreat().treatment(response, pretty_response)
 
+class Pca():
+    PCA_PORT = "5006"
+
+    def __init__(self):
+        global cluster_url
+        self.url_base = cluster_url + ':' + self.PCA_PORT + \
+            '/images'
+
+        self.asyncronous_wait = AsyncronousWait()
+
+    def create_image_plot(self, pca_filename, parent_filename,
+                          label_name=None, pretty_response=True):
+        if(pretty_response):
+            print("\n----------" + " CREATE PCA IMAGE PLOT FROM " +
+                  parent_filename + " TO " + pca_filename + " ----------")
+
+        self.asyncronous_wait.wait(parent_filename, pretty_response)
+
+        request_body_content = {
+            'pca_filename': pca_filename,
+            'label_name': label_name
+        }
+        request_url = self.url_base + '/' + parent_filename
+        response = requests.post(url=request_url, json=request_body_content)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+    def delete_image_plot(self, pca_filename, pretty_response=True):
+        if (pretty_response):
+            print("\n----------" + " DELETE " + pca_filename +
+                  " PCA IMAGE PLOT " + "----------")
+
+        request_url = self.url_base + '/' + pca_filename
+        response = requests.delete(url=request_url)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+    def read_image_plot_filenames(self, pretty_response=True):
+        if (pretty_response):
+            print("\n---------- READE IMAGE PLOT FILENAMES " +
+                  " ----------")
+
+        request_url = self.url_base
+        response = requests.get(url=request_url)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+    def read_image_plot(self, pca_filename, pretty_response=True):
+        if (pretty_response):
+            print("\n----------" + " READ " + pca_filename +
+                  " PCA IMAGE PLOT " + "----------")
+
+        request_url = self.url_base + '/' + pca_filename
+        return request_url
+
 
 class DataTypeHandler():
     DATA_TYPE_HANDLER_PORT = "5003"
