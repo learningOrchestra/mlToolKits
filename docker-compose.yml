@@ -297,6 +297,37 @@ services:
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
 
+    pca:
+        build: ./pca_image
+        image: 127.0.0.1:5050/pca
+        ports:
+            - "5006:5006"
+            - 41300:41300
+        extra_hosts:
+            - "pca:0.0.0.0"
+        depends_on:
+            - databaseprimary
+            - images
+            - sparkmaster
+            - sparkworker
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            placement:
+                constraints:
+                    - "node.role==manager"
+        volumes:
+            - 'pca:/images'
+        networks:
+            - database
+            - spark
+        environment:
+            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
+            - DATABASE_PORT=27017
+            - DATABASE_REPLICA_SET=replica_set
+            - DATABASE_NAME=database
+
 networks:
     database:
     spark:
@@ -306,3 +337,4 @@ volumes:
     database:
     database_api:
     tsne:
+    pca:
