@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 import os
 from pymongo import MongoClient
 import numpy as np
-from sklearn.manifold import PCA
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 import seaborn as sns
 import pandas
