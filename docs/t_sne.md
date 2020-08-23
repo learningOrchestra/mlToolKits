@@ -12,13 +12,13 @@ probability, more information about this algorithm in
 
 ## Create an image plot
 
-`POST CLUSTER_IP:5005/tsne/<parent_filename>`
+`POST CLUSTER_IP:5005/images/<parent_filename>`
 
 The request use a parent_filename as a dataset inserted filename, the body 
 contains the json fields:
 ```json
 {
-    "tsne_filename": "image_filename",
+    "tsne_filename": "image_plot_filename",
     "label_name": "dataset_label_column"
 }
 ```
@@ -27,23 +27,23 @@ has labeled tuples, case of the dataset used doesn't contain labeled tuples,
 define the value as null type in json:
 ```json
 {
-    "tsne_filename": "image_filename",
+    "tsne_filename": "image_plot_filename",
     "label_name": null
 }
 ```
 ## Delete an image plot
 
-`DELETE CLUSTER_IP:5005/tsne/<key_to_image_identification>`
+`DELETE CLUSTER_IP:5005/images/<image_plot_filename>`
 
 ## Read the filenames of the created images
 
-`GET CLUSTER_IP:5005/tsne`
+`GET CLUSTER_IP:5005/images`
 
 This request return a list with all created images plot filenames.
  
 ## Read an image plot
 
-`GET CLUSTER_IP:5005/tsne/<image_plot_filename>`
+`GET CLUSTER_IP:5005/images/<image_plot_filename>`
 
 This request return return the image plot of filename.
 
@@ -51,7 +51,7 @@ This request return return the image plot of filename.
 This examples use the 
 [titanic challengue datasets](https://www.kaggle.com/c/titanic/overview).
 #### Titanic Train dataset
-![](./titanic_train_tsne.png)
+![](./tsne_titanic_train.png)
 
 #### Titanic Test dataset
-![](./titanic_test_tsne.png)
+![](./tsne_titanic_test.png)

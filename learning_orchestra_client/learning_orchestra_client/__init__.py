@@ -172,14 +172,14 @@ class Tsne():
     def __init__(self):
         global cluster_url
         self.url_base = cluster_url + ':' + self.TSNE_PORT + \
-            '/tsne'
+            '/images'
 
         self.asyncronous_wait = AsyncronousWait()
 
     def create_image_plot(self, tsne_filename, parent_filename,
                           label_name=None, pretty_response=True):
         if(pretty_response):
-            print("\n----------" + " CREATE TSNE IMAGE PLOT FROM " +
+            print("\n----------" + " CREATE t-SNE IMAGE PLOT FROM " +
                   parent_filename + " TO " + tsne_filename + " ----------")
 
         self.asyncronous_wait.wait(parent_filename, pretty_response)
@@ -192,6 +192,35 @@ class Tsne():
         response = requests.post(url=request_url, json=request_body_content)
 
         return ResponseTreat().treatment(response, pretty_response)
+
+    def delete_image_plot(self, tsne_filename, pretty_response=True):
+        if (pretty_response):
+            print("\n----------" + " DELETE " + tsne_filename +
+                  "  t-SNE IMAGE PLOT " + "----------")
+
+        request_url = self.url_base + '/' + tsne_filename
+        response = requests.delete(url=request_url)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+    def read_image_plot_filenames(self, pretty_response=True):
+        if (pretty_response):
+            print("\n---------- READE IMAGE PLOT FILENAMES " +
+                  " ----------")
+
+        request_url = self.url_base
+        response = requests.get(url=request_url)
+
+        return ResponseTreat().treatment(response, pretty_response)
+
+    def read_image_plot(self, tsne_filename, pretty_response=True):
+        if (pretty_response):
+            print("\n----------" + " READ " + tsne_filename +
+                  " t-SNE IMAGE PLOT " + "----------")
+
+        request_url = self.url_base + '/' + tsne_filename
+        return request_url
+
 
 class Pca():
     PCA_PORT = "5006"
