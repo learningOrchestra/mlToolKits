@@ -173,15 +173,23 @@ class SparkModelBuilder(ModelBuilderInterface):
         metadata_document["fit_time"] = fit_time
 
         if(features_evaluation is not None):
+
             evaluation_prediction = model.transform(features_evaluation)
-            evaluator = MulticlassClassificationEvaluator(
+
+            evaluator_f1 = MulticlassClassificationEvaluator(
+                labelCol="label",
+                predictionCol="prediction")
+
+            evaluator_acc = MulticlassClassificationEvaluator(
                 labelCol="label",
                 predictionCol="prediction",
                 metricName="accuracy")
 
-            model_accuracy = evaluator.evaluate(evaluation_prediction)
+            model_f1 = evaluator_f1.evaluate(evaluation_prediction)
+            model_accuracy = evaluator_acc.evaluate(evaluation_prediction)
+
+            metadata_document["f1"] = str(model_f1)
             metadata_document["accuracy"] = str(model_accuracy)
-            metadata_document["error"] = str((1.0 - model_accuracy))
 
         testing_prediction = model.transform(features_testing)
 
