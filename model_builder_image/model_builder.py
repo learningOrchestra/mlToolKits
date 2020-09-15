@@ -215,7 +215,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
-            # del row_dict["probability"]
+            del row_dict["probability"]
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
