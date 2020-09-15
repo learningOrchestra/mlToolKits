@@ -224,7 +224,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             print(row_dict["probability"], flush=True)
             print("--------------", flush=True)
 
-            # del row_dict["features"]
+            del row_dict["features"]
             # del row_dict["rawPrediction"]
             # del row_dict["probability"]
 
