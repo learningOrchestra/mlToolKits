@@ -218,6 +218,12 @@ class SparkModelBuilder(ModelBuilderInterface):
             row_dict["_id"] = document_id
             document_id += 1
 
+            print("--------------", flush=True)
+            print(row_dict["features"], flush=True)
+            print(row_dict["rawPrediction"], flush= True)
+            print(row_dict["probability"], flush=True)
+            print("--------------", flush=True)
+
             del row_dict["features"]
             del row_dict["rawPrediction"]
             del row_dict["probability"]
