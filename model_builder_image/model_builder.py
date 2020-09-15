@@ -188,7 +188,7 @@ class SparkModelBuilder(ModelBuilderInterface):
                 predictionCol="prediction",
                 metricName="f1")
 
-            evaluator_acc = MulticlassClassificationEvaluator(
+            evaluator_accuracy = MulticlassClassificationEvaluator(
                 labelCol="label",
                 predictionCol="prediction",
                 metricName="accuracy")
@@ -197,9 +197,9 @@ class SparkModelBuilder(ModelBuilderInterface):
             evaluation_prediction.select("label", "prediction").show()
 
             model_f1 = evaluator_f1.evaluate(evaluation_prediction)
-            model_accuracy = evaluator_acc.evaluate(evaluation_prediction)
+            model_accuracy = evaluator_accuracy.evaluate(evaluation_prediction)
 
-            metadata_document["f1"] = str(model_f1)
+            metadata_document["F1"] = str(model_f1)
             metadata_document["accuracy"] = str(model_accuracy)
 
         testing_prediction = model.transform(features_testing)
@@ -227,7 +227,7 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
-            del row_dict["probability"]
+            # del row_dict["probability"]
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
