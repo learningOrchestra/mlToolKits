@@ -128,10 +128,7 @@ class SparkModelBuilder(ModelBuilderInterface):
         features_testing = preprocessing_variables['features_testing']
         features_evaluation = preprocessing_variables['features_evaluation']
 
-        features_evaluation.show()
-        features_evaluation.select("label").show()
-
-        print(features_evaluation, flush=True)
+        features_evaluation.select("label", "PassengerId").show()
 
         classificator_switcher = {
             "lr": LogisticRegression(),
@@ -146,14 +143,19 @@ class SparkModelBuilder(ModelBuilderInterface):
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
 
-            classificator_threads.append(
+            '''classificator_threads.append(
                 self.thread_pool.submit(
                     self.classificator_handler,
                     classificator, classificator_name,
                     features_training, features_testing,
-                    features_evaluation, prediction_filename))
+                    features_evaluation, prediction_filename))'''
 
-        wait(classificator_threads)
+            self.classificator_handler(
+                classificator, classificator_name,
+                features_training, features_testing,
+                features_evaluation, prediction_filename)
+
+        # wait(classificator_threads)
 
         self.spark_session.stop()
 
@@ -189,6 +191,9 @@ class SparkModelBuilder(ModelBuilderInterface):
                 labelCol="label",
                 predictionCol="prediction",
                 metricName="accuracy")
+
+            print(classificator_name, flush=True)
+            evaluation_prediction.select("label", "prediction").show()
 
             model_f1 = evaluator_f1.evaluate(evaluation_prediction)
             model_accuracy = evaluator_acc.evaluate(evaluation_prediction)
