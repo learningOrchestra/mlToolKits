@@ -185,7 +185,8 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             evaluator_f1 = MulticlassClassificationEvaluator(
                 labelCol="label",
-                predictionCol="prediction")
+                predictionCol="prediction",
+                metricName="f1")
 
             evaluator_acc = MulticlassClassificationEvaluator(
                 labelCol="label",
@@ -225,8 +226,8 @@ class SparkModelBuilder(ModelBuilderInterface):
             print("--------------", flush=True)
 
             del row_dict["features"]
-            # del row_dict["rawPrediction"]
-            # del row_dict["probability"]
+            del row_dict["rawPrediction"]
+            del row_dict["probability"]
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
