@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 import time
+import numpy as np
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -227,6 +228,8 @@ class SparkModelBuilder(ModelBuilderInterface):
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
+            row_dict["probability"] = \
+                row_dict["probability"].toArray().tolist()
             # del row_dict["probability"]
 
             self.database.insert_one_in_file(
