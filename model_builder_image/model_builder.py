@@ -129,6 +129,8 @@ class SparkModelBuilder(ModelBuilderInterface):
         features_evaluation = preprocessing_variables['features_evaluation']
 
         features_evaluation.show()
+        features_evaluation["label"].show()
+
         print(features_evaluation, flush=True)
 
         classificator_switcher = {
