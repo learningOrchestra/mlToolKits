@@ -129,8 +129,6 @@ class SparkModelBuilder(ModelBuilderInterface):
         features_testing = preprocessing_variables['features_testing']
         features_evaluation = preprocessing_variables['features_evaluation']
 
-        features_evaluation.select("label", "PassengerId").show()
-
         classificator_switcher = {
             "lr": LogisticRegression(),
             "dt": DecisionTreeClassifier(),
@@ -144,19 +142,14 @@ class SparkModelBuilder(ModelBuilderInterface):
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
 
-            '''classificator_threads.append(
+            classificator_threads.append(
                 self.thread_pool.submit(
                     self.classificator_handler,
                     classificator, classificator_name,
                     features_training, features_testing,
-                    features_evaluation, prediction_filename))'''
+                    features_evaluation, prediction_filename))
 
-            self.classificator_handler(
-                classificator, classificator_name,
-                features_training, features_testing,
-                features_evaluation, prediction_filename)
-
-        # wait(classificator_threads)
+        wait(classificator_threads)
 
         self.spark_session.stop()
 
@@ -218,19 +211,13 @@ class SparkModelBuilder(ModelBuilderInterface):
         for row in predicted_df.collect():
             row_dict = row.asDict()
             row_dict["_id"] = document_id
-            document_id += 1
+            row_dict["probability"] = \
+                row_dict["probability"].toArray().tolist()
 
-            print("--------------", flush=True)
-            print(row_dict["features"], flush=True)
-            print(row_dict["rawPrediction"], flush= True)
-            print(row_dict["probability"], flush=True)
-            print("--------------", flush=True)
+            document_id += 1
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
-            row_dict["probability"] = \
-                row_dict["probability"].toArray().tolist()
-            # del row_dict["probability"]
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
