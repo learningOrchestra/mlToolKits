@@ -86,6 +86,7 @@ downloader is finished
     "fit_time": 41.870062828063965
 }
 ```
+
 * F1 - F1 Score from model accuracy
 * accuracy - accuracy rate from model prediction
 * classificator - initials from used classificator
