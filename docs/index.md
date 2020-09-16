@@ -2,9 +2,12 @@
 
 ## learningOrchestra
 
-The learningOrchestra is a software for distributed machine learning processing 
-using microservices in a cluster, is possible load a dataset in csv format from 
-an URL using the 
+The goal of this work is to develop a tool, named Learning Orchestra, to reduce
+a bit more the existing gap in facilitate and streamline the data scientist 
+iterative process composed of gather data, clean/prepare those data, 
+build models, validate their predictions and deploy the results.
+The learningOrchestra use microservices in a cluster, is possible load a 
+dataset in csv format from an URL using the 
 [database api](https://riibeirogabriel.github.io/learningOrchestra/database_api) 
 microservice, this csv file is converted to json file to be stored in MongoDB, 
 also is possible perform several preprocessing and analytical tasks using 
