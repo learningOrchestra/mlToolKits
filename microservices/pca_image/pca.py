@@ -87,7 +87,7 @@ class PcaGenerator(PcaInterface):
         treated_array = np.array(encoded_dataframe)
         embedded_array = PCA(n_components=2).fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
-
+        print(embedded_array, flush=True)
         image_path = os.environ[IMAGES_PATH] +\
             "/" + pca_filename + IMAGE_FORMAT
 
