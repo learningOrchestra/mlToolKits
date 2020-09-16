@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 import time
+import numpy as np
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -173,15 +174,27 @@ class SparkModelBuilder(ModelBuilderInterface):
         metadata_document["fit_time"] = fit_time
 
         if(features_evaluation is not None):
+
             evaluation_prediction = model.transform(features_evaluation)
-            evaluator = MulticlassClassificationEvaluator(
+
+            evaluator_f1 = MulticlassClassificationEvaluator(
+                labelCol="label",
+                predictionCol="prediction",
+                metricName="f1")
+
+            evaluator_accuracy = MulticlassClassificationEvaluator(
                 labelCol="label",
                 predictionCol="prediction",
                 metricName="accuracy")
 
-            model_accuracy = evaluator.evaluate(evaluation_prediction)
+            print(classificator_name, flush=True)
+            evaluation_prediction.select("label", "prediction").show()
+
+            model_f1 = evaluator_f1.evaluate(evaluation_prediction)
+            model_accuracy = evaluator_accuracy.evaluate(evaluation_prediction)
+
+            metadata_document["F1"] = str(model_f1)
             metadata_document["accuracy"] = str(model_accuracy)
-            metadata_document["error"] = str((1.0 - model_accuracy))
 
         testing_prediction = model.transform(features_testing)
 
@@ -198,11 +211,13 @@ class SparkModelBuilder(ModelBuilderInterface):
         for row in predicted_df.collect():
             row_dict = row.asDict()
             row_dict["_id"] = document_id
+            row_dict["probability"] = \
+                row_dict["probability"].toArray().tolist()
+
             document_id += 1
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
-            del row_dict["probability"]
 
             self.database.insert_one_in_file(
                 filename_name, row_dict)
