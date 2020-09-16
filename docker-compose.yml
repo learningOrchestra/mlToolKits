@@ -2,7 +2,7 @@ version: '3'
 
 services:
     databaseapi:
-        build: ./database_api_image
+        build: microservices/database_api_image
         image: 127.0.0.1:5050/database_api
         ports:
             - "5000:5000"
@@ -111,7 +111,7 @@ services:
         volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
-        - "8000:8080"
+        - "80:8080"
         deploy:
             replicas: 1
             restart_policy:
@@ -121,7 +121,7 @@ services:
                     - "node.role==manager"
 
     sparkmaster:
-        build: ./spark_image
+        build: microservices/spark_image
         image: 127.0.0.1:5050/spark
         ports:
             - 4040:4040
@@ -163,7 +163,7 @@ services:
             - database
 
     projection:
-        build: ./projection_image
+        build: microservices/projection_image
         image: 127.0.0.1:5050/projection
         ports:
             - "5001:5001"
@@ -192,7 +192,7 @@ services:
             - DATABASE_NAME=database
 
     modelbuilder:
-        build: ./model_builder_image
+        build: microservices/model_builder_image
         image: 127.0.0.1:5050/model_builder
         ports:
             - "5002:5002"
@@ -221,7 +221,7 @@ services:
             - DATABASE_NAME=database
 
     datatypehandler:
-        build: ./data_type_handler_image
+        build: microservices/data_type_handler_image
         image: 127.0.0.1:5050/data_type_handler
         ports:
             - "5003:5003"
@@ -244,7 +244,7 @@ services:
             - DATABASE_NAME=database
     
     histogram:
-        build: ./histogram_image
+        build: microservices/histogram_image
         image: 127.0.0.1:5050/histogram
         ports:
             - "5004:5004"
@@ -267,7 +267,7 @@ services:
             - DATABASE_NAME=database
 
     tsne:
-        build: ./tsne_image
+        build: microservices/tsne_image
         image: 127.0.0.1:5050/tsne
         ports:
             - "5005:5005"
@@ -298,7 +298,7 @@ services:
             - DATABASE_NAME=database
 
     pca:
-        build: ./pca_image
+        build: microservices/pca_image
         image: 127.0.0.1:5050/pca
         ports:
             - "5006:5006"
