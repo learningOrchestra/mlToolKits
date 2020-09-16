@@ -79,14 +79,14 @@ downloader is finished
 
 ```json
 {
-    "accuracy": "1.0",
-    "classificator": "gb",
-    "error": "0.0",
-    "filename": "titanic_testing_900_prediction_gb",
-    "fit_time": 69.43671989440918
+    "F1": "0.7030995388400528",
+    "accuracy": "0.7034883720930233",
+    "classificator": "nb",
+    "filename": "titanic_testing_new_prediction_nb",
+    "fit_time": 41.870062828063965
 }
 ```
-
+* F1 - F1 Score from model accuracy
 * accuracy - accuracy rate from model prediction
 * classificator - initials from used classificator
 * error - error rate from model prediction

@@ -2,7 +2,7 @@
 
 ## learningOrchestra
 
-The goal of this work is to develop a tool, named Learning Orchestra, to reduce
+The goal of this work is to develop a tool, named learningOrchestra, to reduce
 a bit more the existing gap in facilitate and streamline the data scientist 
 iterative process composed of gather data, clean/prepare those data, 
 build models, validate their predictions and deploy the results.
