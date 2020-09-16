@@ -30,6 +30,6 @@ swarm cluster, congrulations! 🥳 👏👏
 There are two web pages for cluster state visualization:
 
 * Visualize cluster state (deployed microservices and cluster's machines) - 
-CLUSTER_IP:8000
+CLUSTER_IP:80
 * Visualize spark cluster state - CLUSTER_IP:8080
 

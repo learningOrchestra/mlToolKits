@@ -5,7 +5,7 @@ echo "--------------------------------------------------------------------"
 echo "Buiding the learningOrschestra microservice images..."
 echo "--------------------------------------------------------------------"
 
-docker build --tag spark_task ./spark_task_image
+docker build --tag spark_task .microservices/spark_task_image
 docker push 127.0.0.1:5050/spark_task
 
 docker-compose build
