@@ -93,11 +93,11 @@ class PcaGenerator(PcaInterface):
 
         if label_name is not None:
             embedded_array[label_name] = encoded_dataframe[label_name]
-            sns_plot = sns.pairplot(
+            sns_plot = sns.scatterplot(
                 embedded_array, size=self.IMAGE_SIZE, hue=label_name)
             sns_plot.savefig(image_path)
         else:
-            sns_plot = sns.pairplot(
+            sns_plot = sns.scatterplot(
                 embedded_array, size=self.IMAGE_SIZE)
             sns_plot.savefig(image_path)
 
