@@ -87,6 +87,7 @@ class TsneGenerator(TsneInterface):
         treated_array = np.array(encoded_dataframe)
         embedded_array = TSNE().fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
+        print(embedded_array, flush=True)
 
         image_path = os.environ[IMAGES_PATH] +\
             "/" + tsne_filename + IMAGE_FORMAT
@@ -102,7 +103,7 @@ class TsneGenerator(TsneInterface):
             print("not label", flush=True)
 
             sns_plot = sns.scatterplot(x=0, y=1,
-                data=embedded_array, size=self.IMAGE_SIZE)
+                data=embedded_array, size=self.IMAGE_SIZE, hue=None)
             sns_plot.get_figure().savefig(image_path)
 
     def file_processor(self):
