@@ -98,10 +98,9 @@ class PcaGenerator(PcaInterface):
                 data=embedded_array, size=self.IMAGE_SIZE, hue=label_name)
             sns_plot.get_figure().savefig(image_path)
         else:
-            sns_plot = sns.scatterplot(
+            sns_plot = sns.scatterplot(x="0", y="1",
                 data=embedded_array, size=self.IMAGE_SIZE)
             sns_plot.get_figure().savefig(image_path)
-            sns_plot.savefig(image_path)
 
     def file_processor(self):
         file = self.spark_session.read.format(
