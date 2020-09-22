@@ -97,13 +97,15 @@ class TsneGenerator(TsneInterface):
             embedded_array[label_name] = encoded_dataframe[label_name]
 
             sns_plot = sns.scatterplot(x=0, y=1,
-                data=embedded_array, size=self.IMAGE_SIZE, hue=label_name)
+                data=embedded_array, size=self.IMAGE_SIZE,
+                hue=label_name, legend="brief")
             sns_plot.get_figure().savefig(image_path)
         else:
             print("not label", flush=True)
 
             sns_plot = sns.scatterplot(x=0, y=1,
-                data=embedded_array, size=self.IMAGE_SIZE, hue=None)
+                data=embedded_array, size=self.IMAGE_SIZE,
+                hue=None, legend="full")
             sns_plot.get_figure().savefig(image_path)
 
     def file_processor(self):
