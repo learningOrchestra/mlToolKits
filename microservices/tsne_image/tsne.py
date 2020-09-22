@@ -51,7 +51,6 @@ class TsneGenerator(TsneInterface):
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     DOCUMENT_ID = "_id"
     METADATA_FILE_ID = 0
-    IMAGE_SIZE = 3
 
     def __init__(self, database_url_input):
         self.spark_session = SparkSession \
@@ -87,27 +86,17 @@ class TsneGenerator(TsneInterface):
         treated_array = np.array(encoded_dataframe)
         embedded_array = TSNE().fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
-        print(embedded_array, flush=True)
-
         image_path = os.environ[IMAGES_PATH] +\
             "/" + tsne_filename + IMAGE_FORMAT
 
         if label_name is not None:
-            print("label", flush=True)
             embedded_array[label_name] = encoded_dataframe[label_name]
-
             sns_plot = sns.scatterplot(
-                x=0, y=1,
-                data=embedded_array,
-                hue=label_name)
+                x=0, y=1, data=embedded_array, hue=label_name)
             sns_plot.get_figure().savefig(image_path)
         else:
-            print("not label", flush=True)
-
             sns_plot = sns.scatterplot(
-                x=0, y=1,
-                data=embedded_array,
-                )
+                x=0, y=1, data=embedded_array,)
             sns_plot.get_figure().savefig(image_path)
 
     def file_processor(self):
