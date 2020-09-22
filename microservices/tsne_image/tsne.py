@@ -98,7 +98,7 @@ class TsneGenerator(TsneInterface):
 
             sns_plot = sns.scatterplot(
                 x=0, y=1,
-                data=embedded_array, size=self.IMAGE_SIZE,
+                data=embedded_array,
                 hue=label_name)
             sns_plot.get_figure().savefig(image_path)
         else:
@@ -106,7 +106,7 @@ class TsneGenerator(TsneInterface):
 
             sns_plot = sns.scatterplot(
                 x=0, y=1,
-                data=embedded_array, size=self.IMAGE_SIZE,
+                data=embedded_array,
                 )
             sns_plot.get_figure().savefig(image_path)
 
