@@ -47,7 +47,7 @@ To improve your user experience, you can export and analyse the results using a 
 [NoSQLBooster](https://nosqlbooster.com).
 
 We also built a
-[demo of learningOrchestra](https://riibeirogabriel.github.io/learningOrchestra/learning_orchestra_client_package/#learning_orchestra_client-usage-example) 
+[demo of learningOrchestra](https://pypi.org/project/learning-orchestra-client/) (in *learning_orchestra_client usage example* section)
 with the [Titanic challenge dataset](https://www.kaggle.com/c/titanic).
 
 The [learningOrchestra documentation](https://riibeirogabriel.github.io/learningOrchestra) has more details on how to install and use it. We also provided documentation and examples for each microservice and Python package.
