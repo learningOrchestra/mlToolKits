@@ -30,7 +30,7 @@ docker service scale microservice_sparkworker=NUMBER_OF_INSTANCES
 ```
 The NUMBER_OF_INSTANCES is the amount of spark microservice instance which you 
 desire to be created in your cluster, this number must be choosed according
-whit your cluster resources and the your task resources requirements.
+whith your cluster resources and the your task resources requirements.
 
 ## Database GUI
 * [NoSQLBooster](https://nosqlbooster.com) - 
