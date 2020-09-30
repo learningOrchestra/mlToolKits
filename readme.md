@@ -51,5 +51,3 @@ We also built a
 with the [Titanic challenge dataset](https://www.kaggle.com/c/titanic).
 
 The [learningOrchestra documentation](https://riibeirogabriel.github.io/learningOrchestra) has more details on how to install and use it. We also provided documentation and examples for each microservice and Python package.
-
-<meta name="google-site-verification" content="iKWKS8WEJnp1WouINID-xMz6LuHVWhGr7zqXEJoAjls" />
