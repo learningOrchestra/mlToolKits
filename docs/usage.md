@@ -2,7 +2,7 @@
 ## Python package
 * [learningOrchestra Client](https://riibeirogabriel.github.io/learningOrchestra/learning_orchestra_client_package) - The python package for learningOrchestra use
 
-## microservices REST API
+## Microservices REST API
 * [database api](https://riibeirogabriel.github.io/learningOrchestra/database_api) - 
 Microservice used to download and handling files in database
 * [projection](https://riibeirogabriel.github.io/learningOrchestra/projection) - 
@@ -18,7 +18,7 @@ Make a PCA image plot of stored files in database
 * [model builder](https://riibeirogabriel.github.io/learningOrchestra/model_builder) - 
 Create a prediction model from preprocessed files using spark cluster
 
-## Spark Microservice
+## Spark microservice
 The projection, t-SNE, PCA and model builder microservices use the spark 
 microservice to make your works, by default, this microservice has one instance, 
 in case of you data processing require more computing processing, you can 
@@ -32,7 +32,7 @@ The NUMBER_OF_INSTANCES is the amount of spark microservice instance which you
 desire to be created in your cluster, this number must be choosed according
 whit your cluster resources and the your task resources requirements.
 
-## database GUI
+## Database GUI
 * [NoSQLBooster](https://nosqlbooster.com) - 
 MongoDB GUI makes several database tasks, as files visualization, querys, 
 projections and files extraction to formats as csv and json, read the 
