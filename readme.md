@@ -17,7 +17,7 @@ facilitate and streamline the data science iterative process of:
 
 ## Architecture
 
-![architecture](./docs/architecture.png)
+<img src="./docs/architecture.png" width="80%">
 
 The architecture of learningOrchestra is a collection of microservices deployed
 in a cluster.
