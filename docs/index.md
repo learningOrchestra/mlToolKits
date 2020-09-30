@@ -1,40 +1,59 @@
-# What is? 
+# learningOrchestra: a distributed machine learning processing tool 
 
-## learningOrchestra
+[![status](https://img.shields.io/badge/build-passing-brightgreen)](https://shields.io/)
+[![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+[![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
 
-The goal of this work is to develop a tool, named learningOrchestra, to reduce
-a bit more the existing gap in facilitate and streamline the data scientist 
-iterative process composed of gather data, clean/prepare those data, 
-build models, validate their predictions and deploy the results.
-The learningOrchestra use microservices in a cluster, is possible load a 
-dataset in csv format from an URL using the 
-[database api](https://riibeirogabriel.github.io/learningOrchestra/database_api) 
-microservice, this csv file is converted to json file to be stored in MongoDB, 
-also is possible perform several preprocessing and analytical tasks using 
-[this microservices](https://riibeirogabriel.github.io/learningOrchestra/usage).
+## Objective
 
-The main feature of learningOrchestra is make prediction models with different 
-classificators simultaneously using stored and preprocessed datasets with 
-[model builder](https://riibeirogabriel.github.io/learningOrchestra/model_builder) 
-microservice, this microservice use a spark cluster to make prediction models 
-using distributed processing. You can compare the different classificators 
-result as time to fit and prediction accuracy, the fact of the user usage your 
-own preprocessing code allow the creation of highly customized model 
-predictions to a specific dataset, increasing the accuracy and results, 
-the sky is the limit! 🚀🚀
+The goal of this work is to develop a tool, named *learningOrchestra*, to
+facilitate and streamline the data science iterative process of:
 
-To turn the learningOrchestra use more easy, there is the 
-[learning_orchestra_client](https://riibeirogabriel.github.io/learningOrchestra/learning_orchestra_client_package) 
-python package, this package provide to an user all learningOrchestra 
-functionalities in coding way, to improve your user experience you can export 
-and analyse the results using a GUI of MongoDB as 
-[NoSQLBooster](https://nosqlbooster.com), also there is an 
-[example of usage of learningOrchestra](https://riibeirogabriel.github.io/learningOrchestra/learning_orchestra_client_package/#learning_orchestra_client-usage-example) 
-with the [titanic challenge dataset](https://www.kaggle.com/c/titanic), each 
-microservice and python package has the own documentation with examples of 
-use, more details in below.
+* Gathering data;
+* Cleaning/preparing the datasets;
+* Building models;
+* Validating their predictions; and
+* Deploying the results.
 
 ## Architecture
 
+The architecture of learningOrchestra is a collection of microservices deployed
+in a cluster.
+
 ![architecture](./architecture.png)
+
+A dataset (in CSV format) can be loaded from an URL using the
+[Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api) 
+microservice, which converts the dataset to JSON and later stores it in MongoDB.
+
+It is also possible to perform several preprocessing and analytical tasks using 
+learningOrchestra's [collection of microservices](https://riibeirogabriel.github.io/learningOrchestra/usage).
+
+With learningOrchestra, you can build prediction models with different 
+classificators simultaneously using stored and preprocessed datasets with the
+*Model Builder* microservice. This microservice uses a [Spark](https://spark.apache.org/)
+cluster to make prediction models using distributed processing. You can compare the different 
+classification results over time to fit and increase prediction accuracy.
+
+By providing their own preprocessing code, users can create highly customized model predictions
+against a specific dataset, increasing model prediction accuracy.
+With that in mind, the possibilities are endless! 🚀
+
+
+## Getting Started
+
+To make using learningOrchestra more accessible, we provide the 
+`learning_orchestra_client` Python package. This package provides developers with all of 
+learningOrchestra's functionalities in a Python API.
+
+To improve your user experience, you can export and analyse the results using a MongoDB GUI, such as 
+[NoSQLBooster](https://nosqlbooster.com).
+
+We also built a
+[demo of learningOrchestra](https://pypi.org/project/learning-orchestra-client/) (in *learning_orchestra_client usage example* section)
+with the [Titanic challenge dataset](https://www.kaggle.com/c/titanic).
+
+This documentation has more details on how to install and use it. We also provided documentation and examples for each microservice and Python package.
+
+
 

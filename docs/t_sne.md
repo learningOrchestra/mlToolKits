@@ -14,7 +14,7 @@ probability, more information about this algorithm in
 
 `POST CLUSTER_IP:5005/images/<parent_filename>`
 
-The request use a parent_filename as a dataset inserted filename, the body 
+The request uses a parent_filename as a dataset inserted filename, the body 
 contains the json fields:
 ```json
 {

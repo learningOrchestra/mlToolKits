@@ -1,14 +1,14 @@
 # Database API microservice
 
-The Database API microservice create a level of abstraction through an REST 
-API to use the database, datasets are downloaded in csv and handled in json 
+The Database API microservice creates a level of abstraction through an REST 
+API to use the MongoDB, dataset are downloaded in csv and handled in json 
 format, the primary key for each document is the filename field contained in 
 the sent json file from POST request.
 
 ## GUI tool to handle database files
 There are GUI tools to handle database files, as example, the 
 [NoSQLBooster](https://nosqlbooster.com) can interact with mongoDB used in 
-database, and make several tasks which are limited in 
+database, and makes several tasks which are limited in 
 learning\_orchestra\_client package, as schema visualization and files 
 extraction and download to formats as csv, json, you also can navigate in all 
 inserted files in easy way and visualize each row from determined file, to use 
@@ -47,7 +47,7 @@ contains a metadata file.
 
 * fields - column names from inserted file
 * filename - name to file identification
-* finished - flag used to indicate if asyncronous processing from file 
+* finished - flag used to indicate if asynchronous processing from file 
 downloader is finished
 * time_created - creation time of file
 * url - url used to file download
@@ -73,7 +73,8 @@ downloader is finished
 }
 ```
 
-* parent_filename - file filename used to make preprocessing operation
+* parent_filename - file filename used to make a preprocess task, deriving
+this filename.
 
 ### Classificator prediction files metadata
 
@@ -113,7 +114,7 @@ The first row is always the metadata file.
 
 Insert a csv into the database using the POST method, json must be contained 
 in the body of the http request.
-The inserted json must has the fields: 
+The inserted json musts has the fields: 
 ```json
 {
     "filename": "key_to_document_identification",

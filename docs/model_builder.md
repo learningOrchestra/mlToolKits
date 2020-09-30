@@ -1,5 +1,5 @@
 # Model builder microservice
-Model Builder microservice provide a REST API to create several model 
+Model Builder microservice provides a REST API to create several model 
 predictions using your own preprocessing code using a defined set of 
 classificators. 
 
@@ -39,7 +39,7 @@ The python 3 preprocessing code must use the environment instances in bellow:
 * training_df (Instantiated): Spark Dataframe instance for training filename
 * testing_df  (Instantiated): Spark Dataframe instance for testing filename
 
-The preprocessing code must instantiate the variables in bellow, all 
+The preprocessing code must instantiates the variables in bellow, all 
 instances must be transformed by pyspark VectorAssembler:
 
 * features_training (Not Instantiated): Spark Dataframe instance for train 
@@ -57,14 +57,14 @@ as None.
 ```python
 self.fields_from_dataframe(self, dataframe, is_string)
 ```
-This method return string or number fields as string list from a dataframe.
+This method returns string or number fields as string list from a dataframe.
 
 * dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method return the string 
-dataframe fields, otherwise, return the numbers dataframe fields.
+* is_string: Boolean parameter, if True, the method returns the string 
+dataframe fields, otherwise, returns the numbers dataframe fields.
 
 #### preprocessor_code example
-This example use the 
+This example uses the 
 [titanic challengue datasets](https://www.kaggle.com/c/titanic/overview).
 
 ```python
