@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-class DatabaseInterface():
+class DatabaseInterface:
     def find(self, filename, query):
         pass
 
@@ -15,7 +15,7 @@ class DatabaseInterface():
         pass
 
 
-class RequestValidatorInterface():
+class RequestValidatorInterface:
     MESSAGE_INVALID_FIELDS = "invalid_fields"
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_MISSING_FIELDS = "missing_fields"
@@ -29,7 +29,7 @@ class RequestValidatorInterface():
         pass
 
 
-class DataTypeConverterInterface():
+class DataTypeConverterInterface:
     STRING_TYPE = "string"
     NUMBER_TYPE = "number"
 
@@ -47,32 +47,34 @@ class DataTypeConverter(DataTypeConverterInterface):
     def field_converter(self, filename, field, field_type):
         query = {}
         for document in self.database_connector.find(filename, query):
-            if(document[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID):
+            if document[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID:
                 continue
 
             values = {}
-            if(field_type == self.STRING_TYPE):
-                if(document[field] == str):
+            if field_type == self.STRING_TYPE:
+                if document[field] == str:
                     continue
-                if(document[field] is None):
+                if document[field] is None:
                     values[field] = ""
                 else:
                     values[field] = str(document[field])
 
-            elif(field_type == self.NUMBER_TYPE):
-                if(document[field] == int or document[field] == float or
-                   document[field] is None):
+            elif field_type == self.NUMBER_TYPE:
+                if (
+                    document[field] == int
+                    or document[field] == float
+                    or document[field] is None
+                ):
                     continue
-                if(document[field] == ""):
+                if document[field] == "":
                     values[field] = None
                 else:
                     values[field] = float(document[field])
 
-                    if(values[field].is_integer()):
+                    if values[field].is_integer():
                         values[field] = int(values[field])
 
-            self.database_connector.update_one(
-                filename, values, document)
+            self.database_connector.update_one(filename, values, document)
 
     def file_converter(self, filename, fields_dictionary):
 
@@ -82,9 +84,7 @@ class DataTypeConverter(DataTypeConverterInterface):
 
 class MongoOperations(DatabaseInterface):
     def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(
-            database_url,
-            int(database_port))
+        self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):
@@ -111,7 +111,7 @@ class DataTypeHandlerRequestValidator(RequestValidatorInterface):
     def filename_validator(self, filename):
         filenames = self.database.get_filenames()
 
-        if(filename not in filenames):
+        if filename not in filenames:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def fields_validator(self, filename, fields):
@@ -120,13 +120,11 @@ class DataTypeHandlerRequestValidator(RequestValidatorInterface):
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(
-            filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename, filename_metadata_query)
 
         for field in fields:
             if field not in filename_metadata["fields"]:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)
 
-            if(fields[field] != self.NUMBER_TYPE and
-               fields[field] != self.STRING_TYPE):
+            if fields[field] != self.NUMBER_TYPE and fields[field] != self.STRING_TYPE:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)

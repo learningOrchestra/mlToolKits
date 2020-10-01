@@ -25,8 +25,7 @@ class DatabaseApi:
 
     def add_file(self, url, filename):
         try:
-            self.file_manager_object.storage_file(
-                filename, url, self.database_object)
+            self.file_manager_object.storage_file(filename, url, self.database_object)
 
         except requests.exceptions.RequestException:
             raise Exception(self.MESSAGE_INVALID_URL)
@@ -42,8 +41,8 @@ class DatabaseApi:
         limit = int(limit)
 
         for file in self.database_object.find_in_file(
-                                                      filename, query_object,
-                                                      skip, limit):
+            filename, query_object, skip, limit
+        ):
             result.append(json.loads(dumps(file)))
 
         return result
@@ -55,17 +54,16 @@ class DatabaseApi:
         result = []
 
         for file in self.database_object.get_filenames():
-
             metadata_file = self.database_object.find_one_in_file(
-                file, {ROW_ID: METADATA_ROW_ID})
-
+                file, {ROW_ID: METADATA_ROW_ID}
+            )
             metadata_file.pop(ROW_ID)
             result.append(metadata_file)
 
         return result
 
 
-class DatabaseInterface():
+class DatabaseInterface:
     def connection(self, filename):
         pass
 
@@ -88,7 +86,7 @@ class DatabaseInterface():
         pass
 
 
-class CsvManagerInterface():
+class CsvManagerInterface:
     def storage_file(self, filename, url, database_connection):
         pass
 
@@ -99,8 +97,8 @@ class MongoOperations(DatabaseInterface):
 
     def __init__(self):
         self.mongo_client = MongoClient(
-            os.environ[self.DATABASE_URL],
-            int(os.environ[self.DATABASE_PORT]))
+            os.environ[self.DATABASE_URL], int(os.environ[self.DATABASE_PORT])
+        )
         self.database = self.mongo_client.database
 
     def connection(self, filename):
@@ -108,8 +106,9 @@ class MongoOperations(DatabaseInterface):
 
     def find_in_file(self, filename, query, skip=0, limit=1):
         file_collection = self.database[filename]
-        return file_collection.find(query).sort(
-            ROW_ID, ASCENDING).skip(skip).limit(limit)
+        return (
+            file_collection.find(query).sort(ROW_ID, ASCENDING).skip(skip).limit(limit)
+        )
 
     def delete_file(self, filename):
         file_collection = self.database[filename]
@@ -138,96 +137,80 @@ class CsvDownloader(CsvManagerInterface):
     file_headers = None
 
     def __init__(self):
-        self.thread_pool = ThreadPoolExecutor(
-            max_workers=self.MAX_NUMBER_THREADS)
+        self.thread_pool = ThreadPoolExecutor(max_workers=self.MAX_NUMBER_THREADS)
         self.download_tratament_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.tratament_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
     def download_file(self, url):
         with closing(requests.get(url, stream=True)) as r:
-
             reader = csv.reader(
-                codecs.iterdecode(r.iter_lines(), encoding='utf-8'),
-                delimiter=',', quotechar='"')
+                codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
+                delimiter=",",
+                quotechar='"',
+            )
             self.file_headers = next(reader)
-
             for row in reader:
                 self.download_tratament_queue.put(row)
-
         self.download_tratament_queue.put(self.FINISHED)
 
     def tratament_file(self):
         row_count = 1
-
-        while(True):
+        while True:
             downloaded_row = self.download_tratament_queue.get()
-
-            if(downloaded_row == self.FINISHED):
+            if downloaded_row == self.FINISHED:
                 break
-
-            json_object = {self.file_headers[index]: downloaded_row[index]
-                           for index
-                           in range(len(self.file_headers))}
-
+            json_object = {
+                self.file_headers[index]: downloaded_row[index]
+                for index in range(len(self.file_headers))
+            }
             json_object[ROW_ID] = row_count
-
             self.tratament_save_queue.put(json_object)
             row_count += 1
-
         self.tratament_save_queue.put(self.FINISHED)
 
     def save_file(self, database_connection, filename):
-        while(True):
+        while True:
             json_object = self.tratament_save_queue.get()
-
-            if(json_object == self.FINISHED):
+            if json_object == self.FINISHED:
                 break
-
             database_connection.insert_one_in_file(filename, json_object)
-
         database_connection.update_one_in_file(
             filename,
-            {ROW_ID: METADATA_ROW_ID}, {
-                '$set': {
-                    self.FINISHED: True,
-                    'fields': self.file_headers
-                }})
+            {ROW_ID: METADATA_ROW_ID},
+            {"$set": {self.FINISHED: True, "fields": self.file_headers}},
+        )
 
     def validate_csv_url(self, url):
         with closing(requests.get(url, stream=True)) as r:
-
             reader = csv.reader(
-                codecs.iterdecode(r.iter_lines(), encoding='utf-8'),
-                delimiter=',', quotechar='"')
-
+                codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
+                delimiter=",",
+                quotechar='"',
+            )
             first_line = next(reader)
-
-            first_symbol_html = '<'
-            first_symbol_json = '{'
-
-            if(first_line[0][0] == first_symbol_html or
-               first_line[0][0] == first_symbol_json):
+            first_symbol_html = "<"
+            first_symbol_json = "{"
+            if (
+                first_line[0][0] == first_symbol_html
+                or first_line[0][0] == first_symbol_json
+            ):
                 raise requests.exceptions.RequestException
 
     def storage_file(self, filename, url, database_connection):
         self.validate_csv_url(url)
 
-        timezone_london = pytz.timezone('Etc/Greenwich')
+        timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
         metadata_file = {
-            'filename': filename,
-            'url': url,
-            'time_created': london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+            "filename": filename,
+            "url": url,
+            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False,
-            'fields': "processing"
+            "fields": "processing",
         }
         database_connection.insert_one_in_file(filename, metadata_file)
-
         self.thread_pool.submit(self.download_file, url)
-
         self.thread_pool.submit(self.tratament_file)
-
-        self.thread_pool.submit(
-            self.save_file, database_connection, filename)
+        self.thread_pool.submit(self.save_file, database_connection, filename)
