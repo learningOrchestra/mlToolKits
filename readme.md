@@ -30,6 +30,30 @@
 
 Ex: In Google Cloud Platform each of the VMs must allow both http and https traffic.
 
+## Deployment
+
+In the manager Docker swarm machine, clone the repo using:
+
+```
+git clone https://github.com/riibeirogabriel/learningOrchestra.git
+```
+
+Navigate into the `learningOrchestra` directory and run:
+
+```
+cd learningOrchestra
+sudo ./run.sh
+```
+
+That's it! learningOrchestra has been deployed in your swarm cluster!
+
+## Cluster State
+
+`CLUSTER_IP:80` - To visualize cluster state(deployed microservices and cluster's machines).
+`CLUSTER_IP:8080` - To visualize spark cluster state.
+
+*\** `CLUSTER_IP` *is the external IP of a machine in your cluster.*
+
 ## Architecture
                                                                     
 The architecture of learningOrchestra is a collection of microservices deployed in a cluster.
