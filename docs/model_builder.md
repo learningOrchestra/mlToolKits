@@ -82,11 +82,18 @@ for index, dataset in enumerate(datasets_list):
         regexp_extract(col("Name"), "([A-Za-z]+)\.", 1))
     datasets_list[index] = dataset
 
-
-misspelled_initials = ['Mlle', 'Mme', 'Ms', 'Dr', 'Major', 'Lady', 'Countess',
-                       'Jonkheer', 'Col', 'Rev', 'Capt', 'Sir', 'Don']
-correct_initials = ['Miss', 'Miss', 'Miss', 'Mr', 'Mr', 'Mrs', 'Mrs',
-                    'Other', 'Other', 'Other', 'Mr', 'Mr', 'Mr']
+misspelled_initials = [
+    'Mlle', 'Mme', 'Ms', 'Dr',
+    'Major', 'Lady', 'Countess',
+    'Jonkheer', 'Col', 'Rev',
+    'Capt', 'Sir', 'Don'
+]
+correct_initials = [
+    'Miss', 'Miss', 'Miss', 'Mr',
+    'Mr', 'Mrs', 'Mrs',
+    'Other', 'Other', 'Other',
+    'Mr', 'Mr', 'Mr'
+]
 for index, dataset in enumerate(datasets_list):
     dataset = dataset.replace(misspelled_initials, correct_initials)
     datasets_list[index] = dataset
@@ -131,8 +138,7 @@ for column in text_fields:
         datasets_list[index] = dataset
 
 
-non_required_columns = ["Name", "Ticket", "Cabin",
-                        "Embarked", "Sex", "Initial"]
+non_required_columns = ["Name", "Embarked", "Sex", "Initial"]
 for index, dataset in enumerate(datasets_list):
     dataset = dataset.drop(*non_required_columns)
     datasets_list[index] = dataset
@@ -142,12 +148,12 @@ training_df = datasets_list[TRAINING_DF_INDEX]
 testing_df = datasets_list[TESTING_DF_INDEX]
 
 assembler = VectorAssembler(
-    inputCols=training_df.columns[1:],
+    inputCols=training_df.columns[:],
     outputCol="features")
 assembler.setHandleInvalid('skip')
 
 features_training = assembler.transform(training_df)
 (features_training, features_evaluation) =\
-    features_training.randomSplit([0.1, 0.9], seed=11)
+    features_training.randomSplit([0.8, 0.2], seed=33)
 features_testing = assembler.transform(testing_df)
 ```
