@@ -1,8 +1,9 @@
-# learningOrchestra: a distributed machine learning processing tool 
-
-[![status](https://img.shields.io/badge/build-passing-brightgreen)](https://shields.io/)
-[![tag](https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
-[![last commit](https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra)](https://github.com/riibeirogabriel/learningOrchestra/tags)
+<p align="center">
+    <img src="./learning-orchestra.png">
+    <img src="https://img.shields.io/badge/build-passing-brightgreen" href="https://shields.io/" alt="build-passing">
+    <img src="https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="tag">
+    <img src="https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="last-commit">
+</p>
 
 ## Objective
 
