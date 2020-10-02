@@ -5,14 +5,15 @@
     <img src="https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="last-commit">
 </p>
 
-## Objective
+# learningOrchestra
 
-The goal of this work is to develop a tool, named *learningOrchestra*, to facilitate and streamline the data science iterative process of:
-* Gathering data;
-* Cleaning/preparing the datasets;
-* Building models;
-* Validating their predictions; and
-* Deploying the results.
+**learningOrchestra** facilitates and streamlines iterative processes in a Data Science project pipeline like:
+
+* Data Gathering
+* Data Cleaning
+* Model Building
+* Validating the Model
+* Presenting the Results
 
 ## Architecture
                                                                     
