@@ -64,7 +64,7 @@ That's it! learningOrchestra has been deployed in your swarm cluster!
 
 # Usage
 
-learningOrchestra can be used with the [Microservices REST API]() or with the `learning-orchestra-client` [Python package](https://pypi.org/project/learning-orchestra-client/).
+learningOrchestra can be used with the [Microservices REST API](#microservices-rest-apis) or with the `learning-orchestra-client` [Python package](https://pypi.org/project/learning-orchestra-client/).
 
 ## Microservices REST APIs
 
