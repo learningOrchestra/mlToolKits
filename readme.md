@@ -98,7 +98,7 @@ To do this, with learningOrchestra already deployed, run the following in the ma
 ## Database GUI
 
 NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats. 
-It can be util to accomplish some these taks with your processed dataset or get your prediction results.
+It can be util to accomplish some these tasks with your processed dataset or get your prediction results.
 
 Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
 
