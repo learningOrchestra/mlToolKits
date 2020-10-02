@@ -14,12 +14,7 @@ The goal of this work is to develop a tool, named *learningOrchestra*, to facili
 * Deploying the results.
 
 ## Architecture
-
-
-<p align="center" width="100%">
-  <img src="./docs/architecture.png" width="70%">
-</p>
-                                                                       
+                                                                    
 The architecture of learningOrchestra is a collection of microservices deployed in a cluster.
 
 A dataset (in CSV format) can be loaded from an URL using the [Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api) microservice, which converts the dataset to JSON and later stores it in MongoDB.
