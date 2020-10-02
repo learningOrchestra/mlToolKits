@@ -17,8 +17,8 @@
 
 With learningOrchestra, you can:
 
-* Load a dataset from an URL (in CSV format).
-* Accomplish several pre-processing tasks with this dataset.
+* load a dataset from an URL (in CSV format).
+* accomplish several pre-processing tasks with datasets.
 * create highly customised model predictions against a specific dataset by providing their own pre-processing code.
 * build prediction models with different classifiers simultaneously using a spark cluster transparently.
 
@@ -37,7 +37,7 @@ And so much more! Check the [usage section](#usage) for more.
 
 *If in case, you have firewalls or other traffic-blockers, add learningOrchestra as an exception.*
 
-Ex: In Google Cloud Platform each of the VMs must allow both `allow_http` and `allow_https` traffic rules.
+Ex: In Google Cloud Platform each of the VMs must allow both http and https traffic.
 
 ## Deployment
 
