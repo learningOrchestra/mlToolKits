@@ -62,7 +62,7 @@ learningOrchestra can be used with the [Microservices REST API]() or with the `l
 
 [Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api)- Download and handle files in a database.
 
-[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored files in a database using spark cluster.
+[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored files in a database using Spark cluster.
 
 [Data type API](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler)- Change file type between number and text.
 
@@ -72,26 +72,24 @@ learningOrchestra can be used with the [Microservices REST API]() or with the `l
 
 [PCA API](https://riibeirogabriel.github.io/learningOrchestra/pca)- Make a PCA image plot of stored files in database.
 
-[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed files using spark cluster.
+[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed files using Spark cluster.
 
-## Architecture
-                                                                    
-The architecture of learningOrchestra is a collection of microservices deployed in a cluster.
+### Spark Microservices
 
-A dataset (in CSV format) can be loaded from an URL using the [Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api) microservice, which converts the dataset to JSON and later stores it in MongoDB.
+The Projection, t-SNE, PCA and Model builder microservices uses the Spark microservice to work.
 
-It is also possible to perform several preprocessing and analytical tasks using learningOrchestra's [collection of microservices](https://riibeirogabriel.github.io/learningOrchestra/usage).
+By default, this microservice has only one instance. In case your data processing requires more computing power, you can scale this microservice.
 
-With learningOrchestra, you can build prediction models with different classifiers simultaneously using stored and preprocessed datasets with the *Model Builder* microservice. This microservice uses a [Spark](https://spark.apache.org/) cluster to make prediction models using distributed processing. You can compare the different classification results over time to fit and increase prediction accuracy.
+To do this, with learningOrchestra already deployed, run the following in the master machine of your Docker swarm cluster:
 
-By providing their own preprocessing code, users can create highly customized model predictions against a specific dataset, increasing model prediction accuracy. With that in mind, the possibilities are endless! 🚀
+`docker service scale microservice_sparkworker=NUMBER_OF_INSTANCES`
 
-## Getting Started
+*\** `NUMBER_OF_INSTANCES` *is the number of Spark microservice instances which you require. Choose it according to your cluster resources and your resource requirements.*
 
-To make using learningOrchestra more accessible, we provide the `learning_orchestra_client` Python package. This package provides developers with all of learningOrchestra's functionalities in a Python API.
+## Database GUI
 
-To improve user experience, a user can export and analyse the results using a MongoDB GUI, such as [NoSQLBooster](https://nosqlbooster.com).
+NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats.
 
-We also built a [demo](https://pypi.org/project/learning-orchestra-client/) of learningOrchestra (in *learning_orchestra_client usage example* section) with the [Titanic challenge dataset](https://www.kaggle.com/c/titanic).
+Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
 
-The learningOrchestra [documentation](https://riibeirogabriel.github.io/learningOrchestra) has a more detailed guide on how to install and use it. We also provide documentation and examples for each microservice and Python package.
+See the [full docs](https://riibeirogabriel.github.io/learningOrchestra/usage/) for detailed usage instructions.
