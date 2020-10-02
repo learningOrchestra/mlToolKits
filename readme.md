@@ -69,19 +69,19 @@ learningOrchestra can be used with the [Microservices REST API](#microservices-r
 
 ## Microservices REST APIs
 
-[Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api)- Download and handle files in a database.
+[Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api)- Download and handle datasets in a database.
 
-[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored files in a database using Spark cluster.
+[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored datasets using Spark cluster.
 
-[Data type API](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler)- Change file type between number and text.
+[Data type API](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler)- Change dataset fields type between number and text.
 
-[Histogram API](https://riibeirogabriel.github.io/learningOrchestra/histogram)- Make histograms of stored files in a database.
+[Histogram API](https://riibeirogabriel.github.io/learningOrchestra/histogram)- Make histograms of stored datasets.
 
-[t-SNE API](https://riibeirogabriel.github.io/learningOrchestra/t_sne)- Make a t-SNE image plot of stored files in database.
+[t-SNE API](https://riibeirogabriel.github.io/learningOrchestra/t_sne)- Make a t-SNE image plot of stored datasets.
 
-[PCA API](https://riibeirogabriel.github.io/learningOrchestra/pca)- Make a PCA image plot of stored files in database.
+[PCA API](https://riibeirogabriel.github.io/learningOrchestra/pca)- Make a PCA image plot of stored datasets.
 
-[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed files using Spark cluster.
+[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed datasets using Spark cluster.
 
 ### Spark Microservices
 
