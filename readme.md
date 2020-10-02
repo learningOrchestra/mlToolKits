@@ -54,6 +54,26 @@ That's it! learningOrchestra has been deployed in your swarm cluster!
 
 *\** `CLUSTER_IP` *is the external IP of a machine in your cluster.*
 
+# Usage
+
+learningOrchestra can be used with the [Microservices REST API]() or with the `learning-orchestra-client` [Python package](https://pypi.org/project/learning-orchestra-client/).
+
+## Microservices REST APIs
+
+[Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api)- Download and handle files in a database.
+
+[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored files in a database using spark cluster.
+
+[Data type API](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler)- Change file type between number and text.
+
+[Histogram API](https://riibeirogabriel.github.io/learningOrchestra/histogram)- Make histograms of stored files in a database.
+
+[t-SNE API](https://riibeirogabriel.github.io/learningOrchestra/t_sne)- Make a t-SNE image plot of stored files in database.
+
+[PCA API](https://riibeirogabriel.github.io/learningOrchestra/pca)- Make a PCA image plot of stored files in database.
+
+[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed files using spark cluster.
+
 ## Architecture
                                                                     
 The architecture of learningOrchestra is a collection of microservices deployed in a cluster.
