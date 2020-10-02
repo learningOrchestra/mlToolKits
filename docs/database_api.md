@@ -82,7 +82,7 @@ Returns an array of metadata files from the database, where each file contains a
 * `F1` - F1 Score from model accuracy
 * `accuracy` - Accuracy rate from model prediction
 * `classificator` - Initials from used classificator
-* `error` - Error rate from the model prediction
+* `filename` - Name of the file 
 * `fit_time` - Time taken for the model to be fit during training
 
 ## List file content
