@@ -1,7 +1,5 @@
-# Model builder microservice
-Model Builder microservice provides a REST API to create several model 
-predictions using your own preprocessing code using a defined set of 
-classificators. 
+# Model Builder Microservice
+Model Builder microservice provides a REST API to create several model predictions using your own preprocessing code using a defined set of classifiers. 
 
 ## Create prediction model
 `POST CLUSTER_IP:5002/models`
@@ -14,15 +12,15 @@ classificators.
     "classificators_list": "String list of classificators to be used"
 }
 ```
-### classificators_list
+### List of Classifiers
 
-* "lr": LogisticRegression
-* "dt": DecisionTreeClassifier
-* "rf": RandomForestClassifier
-* "gb": Gradient-boosted tree classifier
-* "nb": NaiveBayes
+* `lr`: LogisticRegression
+* `dt`: DecisionTreeClassifier
+* `rf`: RandomForestClassifier
+* `gb`: Gradient-boosted tree classifier
+* `nb`: NaiveBayes
 
-to send a request with LogisticRegression and NaiveBayes classificators:
+To send a request with LogisticRegression and NaiveBayes Classifiers:
 ```json
 {
     "training_filename": "training filename",
@@ -36,36 +34,29 @@ to send a request with LogisticRegression and NaiveBayes classificators:
 
 The python 3 preprocessing code must use the environment instances in bellow:
 
-* training_df (Instantiated): Spark Dataframe instance for training filename
-* testing_df  (Instantiated): Spark Dataframe instance for testing filename
+* `training_df` (Instantiated): Spark Dataframe instance training filename
+* `testing_df`  (Instantiated): Spark Dataframe instance testing filename
 
-The preprocessing code must instantiates the variables in bellow, all 
-instances must be transformed by pyspark VectorAssembler:
+The preprocessing code must instantiate the variables in below, all instances must be transformed by pyspark VectorAssembler:
 
-* features_training (Not Instantiated): Spark Dataframe instance for train 
-the model
-* features_evaluation (Not Instantiated): Spark Dataframe instance for 
-evaluate trained model accuracy
-* features_testing (Not Instantiated): Spark Dataframe instance for test 
-the model
+* `features_training` (Not Instantiated): Spark Dataframe instance for train the model
+* `features_evaluation` (Not Instantiated): Spark Dataframe instance for evaluating trained model accuracy
+* `features_testing` (Not Instantiated): Spark Dataframe instance for testing the model
 
-Case you don't want evaluate the model prediction, define features_evaluation 
-as None.
+In case you don't want to evaluate the model, set `features_evaluation` as `None`.
 
 #### Handy methods
 
 ```python
 self.fields_from_dataframe(self, dataframe, is_string)
 ```
-This method returns string or number fields as string list from a dataframe.
+This method returns string or number fields as a string list from a DataFrame.
 
-* dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method returns the string 
-dataframe fields, otherwise, returns the numbers dataframe fields.
+* `dataframe`: DataFrame instance
+* `is_string`: Boolean parameter, if `True`, the method returns the string DataFrame fields, otherwise, returns the numbers DataFrame fields.
 
-#### preprocessor_code example
-This example uses the 
-[titanic challengue datasets](https://www.kaggle.com/c/titanic/overview).
+#### preprocessor_code Example
+This example uses the [titanic challengue datasets](https://www.kaggle.com/c/titanic/overview).
 
 ```python
 from pyspark.ml import Pipeline
