@@ -15,6 +15,14 @@
 * Validating the Model
 * Presenting the Results
 
+With learningOrchestra, you can:
+
+* use the Database API to load dataset(CSV), convert it to JSON and store in MongoDB.
+* build prediction models with different classifiers simultaneously with Model builder API.
+* create highly customised model predictions against a specific dataset by providing their own pre-processing code.
+
+And so much more! Check the [usage section](#usage) for more.
+
 # Installation
 
 ## Requirements
