@@ -17,9 +17,10 @@
 
 With learningOrchestra, you can:
 
-* use the Database API to load dataset(CSV), convert it to JSON and store in MongoDB.
-* build prediction models with different classifiers simultaneously with Model builder API.
+* Load a dataset from an URL (in CSV format).
+* Accomplish several pre-processing tasks with this dataset.
 * create highly customised model predictions against a specific dataset by providing their own pre-processing code.
+* build prediction models with different classifiers simultaneously using a spark cluster transparently.
 
 And so much more! Check the [usage section](#usage) for more.
 
@@ -36,7 +37,7 @@ And so much more! Check the [usage section](#usage) for more.
 
 *If in case, you have firewalls or other traffic-blockers, add learningOrchestra as an exception.*
 
-Ex: In Google Cloud Platform each of the VMs must allow both http and https traffic.
+Ex: In Google Cloud Platform each of the VMs must allow both `allow_http` and `allow_https` traffic rules.
 
 ## Deployment
 
@@ -57,7 +58,7 @@ That's it! learningOrchestra has been deployed in your swarm cluster!
 
 ## Cluster State
 
-`CLUSTER_IP:80` - To visualize cluster state(deployed microservices and cluster's machines).
+`CLUSTER_IP:80` - To visualize cluster state (deployed microservices and cluster's machines).
 `CLUSTER_IP:8080` - To visualize spark cluster state.
 
 *\** `CLUSTER_IP` *is the external IP of a machine in your cluster.*
@@ -88,7 +89,7 @@ The Projection, t-SNE, PCA and Model builder microservices uses the Spark micros
 
 By default, this microservice has only one instance. In case your data processing requires more computing power, you can scale this microservice.
 
-To do this, with learningOrchestra already deployed, run the following in the master machine of your Docker swarm cluster:
+To do this, with learningOrchestra already deployed, run the following in the manager machine of your Docker swarm cluster:
 
 `docker service scale microservice_sparkworker=NUMBER_OF_INSTANCES`
 
@@ -96,7 +97,8 @@ To do this, with learningOrchestra already deployed, run the following in the ma
 
 ## Database GUI
 
-NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats.
+NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats. 
+It can be util to accomplish some these taks with your processed dataset or get your prediction results.
 
 Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
 
