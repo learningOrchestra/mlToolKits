@@ -24,7 +24,7 @@ A dataset (in CSV format) can be loaded from an URL using the[Database API](http
 
 It is also possible to perform several preprocessing and analytical tasks using learningOrchestra's [collection of microservices](https://riibeirogabriel.github.io/learningOrchestra/usage).
 
-With learningOrchestra, you can build prediction models with different classifiers simultaneously using stored and preprocessed datasets with the *Model Builder* microservice. This microservice uses a [Spark](https://spark.apache.org/) cluster to make rediction models using distributed processing. You can compare the different classification results over time to fit and increase prediction accuracy.
+With learningOrchestra, you can build prediction models with different classifiers simultaneously using stored and preprocessed datasets with the *Model Builder* microservice. This microservice uses a [Spark](https://spark.apache.org/) cluster to make prediction models using distributed processing. You can compare the different classification results over time to fit and increase prediction accuracy.
 
 By providing their own preprocessing code, users can create highly customized model predictions against a specific dataset, increasing model prediction accuracy. With that in mind, the possibilities are endless! 🚀
 

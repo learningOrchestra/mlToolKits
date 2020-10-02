@@ -6,7 +6,7 @@
 
 ## Objective
 
-The goal of this work is to develop a tool, named *learningOrchestra*, to facilitate and streamline the data science iterative rocess of:
+The goal of this work is to develop a tool, named *learningOrchestra*, to facilitate and streamline the data science iterative process of:
 * Gathering data;
 * Cleaning/preparing the datasets;
 * Building models;
