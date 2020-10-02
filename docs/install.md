@@ -10,7 +10,7 @@
 
 ## Deploy
 
-Ensure that you are located in the project root `./learningOrchestra` and run the command below in `sudo` mode in your swarm cluster to deploy the learningOrchestra:
+In your manager docker swarm machine, ensure that you are located in the project root `./learningOrchestra` and run the command below in `sudo` mode to deploy the learningOrchestra:
 ```
 sudo ./run.sh
 ```
