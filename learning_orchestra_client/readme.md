@@ -14,7 +14,7 @@ After downloading the package, import all classes:
 from learning_orchestra_client import *
 ```
 
-create a Context object passing a ip from your cluster in constructor 
+Create a Context object passing a ip from your cluster in constructor 
 parameter:
 
 ```python
@@ -36,24 +36,22 @@ using this package in a python code.
 ```python
 read_resume_files(pretty_response=True)
 ```
-
-Read all metadata files in learningOrchestra
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### read_file
 
 ```python
-read_file(filename_key, skip=0, limit=10, query={}, pretty_response=True)
+read_file(filename, skip=0, limit=10, query={}, pretty_response=True)
 ```
 
-* filename_ley : filename of file
-* skip: number of rows amount to skip in pagination (default 0)
-* limit: number of rows to return in pagination (default 10)
-(max setted in 20 rows per request)
-* query: query to make in mongo (default empty query)
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename` : filename of file
+* `skip`: number of rows amount to skip in pagination (default `0`)
+* `limit`: number of rows to return in pagination (default `10`)
+(max setted in `20` rows per request)
+* `query`: query to make in mongo (default empty query)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### create_file
 
@@ -61,10 +59,10 @@ read_file(filename_key, skip=0, limit=10, query={}, pretty_response=True)
 create_file(filename, url, pretty_response=True)
 ```
 
-* filename: filename of file to be created
-* url: url to csv file
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename`: filename of file to be created
+* `url`: url to csv file
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### delete_file
 
@@ -72,9 +70,9 @@ create_file(filename, url, pretty_response=True)
 delete_file(filename, pretty_response=True)
 ```
 
-* filename: file filename to be deleted
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename`: file filename to be deleted
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## Projection
 
@@ -84,11 +82,11 @@ delete_file(filename, pretty_response=True)
 create_projection(filename, projection_filename, fields, pretty_response=True)
 ```
 
-* filename: filename of file to make projection
-* projection_filename: filename used to create projection
-* fields: list with fields to make projection 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename`: filename of file to make projection
+* `projection_filename`: filename used to create projection
+* `fields`: list with fields to make projection 
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## DataTypeHandler
 
@@ -98,10 +96,10 @@ create_projection(filename, projection_filename, fields, pretty_response=True)
 change_file_type(filename, fields_dict, pretty_response=True)
 ```
 
-* filename: filename of file
-* fields_dict: dictionary with "field": "number" or field: "string" keys  
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename`: filename of file
+* `fields_dict`: dictionary with `field`:`number` or `field`:`string` keys  
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## Histogram
 ### create_histogram
@@ -110,11 +108,11 @@ create_histogram(filename, histogram_filename, fields,
                  pretty_response=True)
 ```
 
-* filename: filename of file to make histogram
-* histogram_filename: filename used to create histogram
-* fields: list with fields to make histogram 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `filename`: filename of file to make histogram
+* `histogram_filename`: filename used to create histogram
+* `fields`: list with fields to make histogram 
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## Tsne
 ### create_image_plot
@@ -123,20 +121,20 @@ create_image_plot(tsne_filename, parent_filename,
                   label_name=None, pretty_response=True)
 ```
 
-* parent_filename: filename of file to make histogram
-* tsne_filename: filename used to create image plot
-* label_name: label name to dataset with labeled tuples (default None, to 
+* `parent_filename`: filename of file to make histogram
+* `tsne_filename`: filename used to create image plot
+* `label_name`: label name to dataset with labeled tuples (default `None`, to 
 datasets without labeled tuples) 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### read_image_plot_filenames
 ```python
 read_image_plot_filenames(pretty_response=True)
 ```
 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### read_image_plot
 ```python
@@ -144,17 +142,17 @@ read_image_plot(tsne_filename, pretty_response=True)
 ```
 
 * tsne_filename: filename of a created image plot
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### delete_image_plot
 ```python
 delete_image_plot(tsne_filename, pretty_response=True)
 ```
 
-* tsne_filename: filename of a created image plot
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `tsne_filename`: filename of a created image plot
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## Pca
 ### create_image_plot
@@ -163,38 +161,38 @@ create_image_plot(tsne_filename, parent_filename,
                   label_name=None, pretty_response=True)
 ```
 
-* parent_filename: filename of file to make histogram
-* pca_filename: filename used to create image plot
-* label_name: label name to dataset with labeled tuples (default None, to 
+* `parent_filename`: filename of file to make histogram
+* `pca_filename`: filename used to create image plot
+* `label_name`: label name to dataset with labeled tuples (default `None`, to 
 datasets without labeled tuples) 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### read_image_plot_filenames
 ```python
 read_image_plot_filenames(pretty_response=True)
 ```
 
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### read_image_plot
 ```python
 read_image_plot(pca_filename, pretty_response=True)
 ```
 
-* pca_filename: filename of a created image plot
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pca_filename`: filename of a created image plot
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ### delete_image_plot
 ```python
 delete_image_plot(pca_filename, pretty_response=True)
 ```
 
-* pca_filename: filename of a created image plot
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `pca_filename`: filename of a created image plot
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 ## ModelBuilder
 
@@ -205,22 +203,22 @@ create_model(training_filename, test_filename, preprocessor_code,
              model_classificator, pretty_response=True)
 ```
 
-* training_filename: filename to be used in training
-* test_filename: filename to be used in test
-* preprocessor_code: python3 code for pyspark preprocessing model
-* model_classificator: list of initial from classificators to be used in model
-* pretty_response: return indented string to visualization 
-(default True, if False, return dict)
+* `training_filename`: filename to be used in training
+* `test_filename`: filename to be used in test
+* `preprocessor_code`: python3 code for pyspark preprocessing model
+* `model_classificator`: list of initial from classificators to be used in model
+* `pretty_response`: return indented string to visualization 
+(default `True`, if `False`, return dict)
 
 #### model_classificator
 
-* "lr": LogisticRegression
-* "dt": DecisionTreeClassifier
-* "rf": RandomForestClassifier
-* "gb": Gradient-boosted tree classifier
-* "nb": NaiveBayes
+* `lr`: LogisticRegression
+* `dt`: DecisionTreeClassifier
+* `rf`: RandomForestClassifier
+* `gb`: Gradient-boosted tree classifier
+* `nb`: NaiveBayes
 
-to send a request with LogisticRegression and NaiveBayes classificators:
+to send a request with LogisticRegression and NaiveBayes Classifiers:
 
 ```python
 create_model(training_filename, test_filename, preprocessor_code, ["lr", "nb"])
@@ -230,21 +228,16 @@ create_model(training_filename, test_filename, preprocessor_code, ["lr", "nb"])
 
 The python 3 preprocessing code must use the environment instances in bellow:
 
-* training_df (Instantiated): Spark Dataframe instance for training filename
-* testing_df  (Instantiated): Spark Dataframe instance for testing filename
+* `training_df` (Instantiated): Spark Dataframe instance training filename
+* `testing_df`  (Instantiated): Spark Dataframe instance testing filename
 
-The preprocessing code must instantiate the variables in bellow, all 
-instances must be transformed by pyspark VectorAssembler:
+The preprocessing code must instantiate the variables in below, all instances must be transformed by pyspark VectorAssembler:
 
-* features_training (Not Instantiated): Spark Dataframe instance for train 
-the model
-* features_evaluation (Not Instantiated): Spark Dataframe instance for 
-evaluate trained model accuracy
-* features_testing (Not Instantiated): Spark Dataframe instance for test 
-the model
+* `features_training` (Not Instantiated): Spark Dataframe instance for train the model
+* `features_evaluation` (Not Instantiated): Spark Dataframe instance for evaluating trained model accuracy
+* `features_testing` (Not Instantiated): Spark Dataframe instance for testing the model
 
-Case you don't want evaluate the model prediction, define features_evaluation 
-as None.
+In case you don't want to evaluate the model, set `features_evaluation` as `None`.
 
 ##### Handy methods
 
@@ -252,9 +245,10 @@ as None.
 self.fields_from_dataframe(dataframe, is_string)
 ```
 
-* dataframe: dataframe instance
-* is_string: Boolean parameter, if True, the method return the string 
-dataframe fields, otherwise, return the numbers dataframe fields.
+This method returns string or number fields as a string list from a DataFrame.
+
+* `dataframe`: DataFrame instance
+* `is_string`: Boolean parameter, if `True`, the method returns the string DataFrame fields, otherwise, returns the numbers DataFrame fields.
 
 ## learning_orchestra_client usage example
 
@@ -336,11 +330,18 @@ for index, dataset in enumerate(datasets_list):
         regexp_extract(col("Name"), "([A-Za-z]+)\.", 1))
     datasets_list[index] = dataset
 
-
-misspelled_initials = ['Mlle', 'Mme', 'Ms', 'Dr', 'Major', 'Lady', 'Countess',
-                       'Jonkheer', 'Col', 'Rev', 'Capt', 'Sir', 'Don']
-correct_initials = ['Miss', 'Miss', 'Miss', 'Mr', 'Mr', 'Mrs', 'Mrs',
-                    'Other', 'Other', 'Other', 'Mr', 'Mr', 'Mr']
+misspelled_initials = [
+    'Mlle', 'Mme', 'Ms', 'Dr',
+    'Major', 'Lady', 'Countess',
+    'Jonkheer', 'Col', 'Rev',
+    'Capt', 'Sir', 'Don'
+]
+correct_initials = [
+    'Miss', 'Miss', 'Miss', 'Mr',
+    'Mr', 'Mrs', 'Mrs',
+    'Other', 'Other', 'Other',
+    'Mr', 'Mr', 'Mr'
+]
 for index, dataset in enumerate(datasets_list):
     dataset = dataset.replace(misspelled_initials, correct_initials)
     datasets_list[index] = dataset
@@ -385,17 +386,23 @@ for column in text_fields:
         datasets_list[index] = dataset
 
 
+non_required_columns = ["Name", "Embarked", "Sex", "Initial"]
+for index, dataset in enumerate(datasets_list):
+    dataset = dataset.drop(*non_required_columns)
+    datasets_list[index] = dataset
+
+
 training_df = datasets_list[TRAINING_DF_INDEX]
 testing_df = datasets_list[TESTING_DF_INDEX]
 
 assembler = VectorAssembler(
-    inputCols=training_df.columns[1:],
+    inputCols=training_df.columns[:],
     outputCol="features")
 assembler.setHandleInvalid('skip')
 
 features_training = assembler.transform(training_df)
 (features_training, features_evaluation) =\
-    features_training.randomSplit([0.1, 0.9], seed=11)
+    features_training.randomSplit([0.8, 0.2], seed=33)
 features_testing = assembler.transform(testing_df)
 '''
 
