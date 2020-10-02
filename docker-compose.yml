@@ -120,25 +120,6 @@ services:
                 constraints:
                     - "node.role==manager"
 
-    sparkmaster:
-        build: microservices/spark_image
-        image: 127.0.0.1:5050/spark
-        ports:
-            - 4040:4040
-            - 7077:7077
-            - 8080:8080
-        environment:
-            - SPARK_ROLE=master
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - spark
-            - database
 
     sparkworker:
         image: 127.0.0.1:5050/spark
@@ -162,34 +143,6 @@ services:
             - spark
             - database
 
-    projection:
-        build: microservices/projection_image
-        image: 127.0.0.1:5050/projection
-        ports:
-            - "5001:5001"
-            - 41000:41000
-        extra_hosts:
-            - "projection:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - database
-            - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
 
     modelbuilder:
         build: microservices/model_builder_image
@@ -243,59 +196,9 @@ services:
             - DATABASE_REPLICA_SET=replica_set
             - DATABASE_NAME=database
     
-    histogram:
-        build: microservices/histogram_image
-        image: 127.0.0.1:5050/histogram
-        ports:
-            - "5004:5004"
-        depends_on:
-            - databaseprimary
-            - images
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
-        networks:
-            - database
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
 
-    tsne:
-        build: microservices/tsne_image
-        image: 127.0.0.1:5050/tsne
-        ports:
-            - "5005:5005"
-            - 41200:41200
-        extra_hosts:
-            - "tsne:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
-        volumes:
-            - 'tsne:/images'
-        networks:
-            - database
-            - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+
+
 
     pca:
         build: microservices/pca_image
@@ -336,5 +239,4 @@ volumes:
     images:
     database:
     database_api:
-    tsne:
     pca:
