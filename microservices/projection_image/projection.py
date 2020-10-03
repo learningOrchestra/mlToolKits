@@ -10,36 +10,7 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
-class DatabaseInterface:
-    def find_one(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-
-class ProcessorInterface:
-    def projection(self, filename, projection_filename, fields):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-
-    def filename_validator(self, filename):
-        pass
-
-    def projection_filename_validator(self, projection_filename):
-        pass
-
-    def projection_fields_validator(self, filename, projection_fields):
-        pass
-
-
-class SparkManager(ProcessorInterface):
+class SparkManager:
     FINISHED = "finished"
     DOCUMENT_ID = "_id"
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
@@ -125,7 +96,7 @@ class SparkManager(ProcessorInterface):
         self.spark_session.stop()
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -138,7 +109,12 @@ class MongoOperations(DatabaseInterface):
         return self.database.list_collection_names()
 
 
-class ProjectionRequestValidator(RequestValidatorInterface):
+class ProjectionRequestValidator:
+    MESSAGE_INVALID_FIELDS = "invalid_fields"
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_MISSING_FIELDS = "missing_fields"
+
     def __init__(self, database_connector):
         self.database = database_connector
 

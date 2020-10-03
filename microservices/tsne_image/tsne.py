@@ -15,39 +15,7 @@ IMAGES_PATH = "IMAGES_PATH"
 IMAGE_FORMAT = ".png"
 
 
-class DatabaseInterface:
-    def find_one(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-
-class TsneInterface:
-    def create_image(self, filename, label_name, tsne_filename):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_INVALID_LABEL = "invalid_field"
-    MESSAGE_NOT_FOUND = "file_not_found"
-
-    def parent_filename_validator(self, filename):
-        pass
-
-    def tsne_filename_existence_validator(self, tsne_filename):
-        pass
-
-    def filename_label_validator(self, filename, label):
-        pass
-
-    def no_tsne_filename_existence_validator(self, tsne_filename):
-        pass
-
-
-class TsneGenerator(TsneInterface):
+class TsneGenerator:
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     DOCUMENT_ID = "_id"
     METADATA_FILE_ID = 0
@@ -138,7 +106,7 @@ class TsneGenerator(TsneInterface):
         return text_fields
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -151,7 +119,12 @@ class MongoOperations(DatabaseInterface):
         return self.database.list_collection_names()
 
 
-class TsneRequestValidator(RequestValidatorInterface):
+class TsneRequestValidator:
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_INVALID_LABEL = "invalid_field"
+    MESSAGE_NOT_FOUND = "file_not_found"
+
     def __init__(self, database_connector):
         self.database = database_connector
 
