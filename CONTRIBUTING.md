@@ -28,7 +28,7 @@ When creating an issue for a bug or other undefined/unwanted behaviour remember 
 Remember to describe what feature or fix you're implementing in the Pull Request window.
 In the Pull Request window remember to include a quick summary of what the committed code does and how it is an improvement. 
 
-After the Pull Request the repository owner will review your request.\
+After the Pull Request has been submitted, the repository owner will review your request.\
 Be patient, if they require you to make changes to your request, do so.
 
 ## Standards
