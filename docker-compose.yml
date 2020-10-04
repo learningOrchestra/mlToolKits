@@ -17,7 +17,7 @@ x-deploy-worker: &default-deploy-worker
         constraints:
             - "node.role==worker"
 
-x-class-env: &default-class-env
+x-service-database-env: &default-service-database-env
     - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
     - DATABASE_PORT=27017
     - DATABASE_REPLICA_SET=replica_set
@@ -156,7 +156,7 @@ services:
         networks:
             - database
             - spark
-        environment: *default-class-env
+        environment: *default-service-database-env
 
     modelbuilder:
         build: microservices/model_builder_image
@@ -175,7 +175,7 @@ services:
         networks:
             - database
             - spark
-        environment: *default-class-env
+        environment: *default-service-database-env
 
     datatypehandler:
         build: microservices/data_type_handler_image
@@ -188,7 +188,7 @@ services:
         deploy: *default-deploy-worker
         networks:
             - database
-        environment: *default-class-env
+        environment: *default-service-database-env
 
     histogram:
         build: microservices/histogram_image
@@ -201,7 +201,7 @@ services:
         deploy: *default-deploy-worker
         networks:
             - database
-        environment: *default-class-env
+        environment: *default-service-database-env
 
     tsne:
         build: microservices/tsne_image
@@ -222,7 +222,7 @@ services:
         networks:
             - database
             - spark
-        environment: *default-class-env
+        environment: *default-service-database-env
 
     pca:
         build: microservices/pca_image
@@ -243,7 +243,7 @@ services:
         networks:
             - database
             - spark
-        environment: *default-class-env
+        environment: *default-service-database-env
 
 networks:
     database:
