@@ -15,39 +15,7 @@ IMAGES_PATH = "IMAGES_PATH"
 IMAGE_FORMAT = ".png"
 
 
-class DatabaseInterface:
-    def find_one(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-
-class PcaInterface:
-    def create_image(self, filename, label_name, pca_filename):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_INVALID_LABEL = "invalid_field"
-    MESSAGE_NOT_FOUND = "file_not_found"
-
-    def parent_filename_validator(self, filename):
-        pass
-
-    def pca_filename_existence_validator(self, pca_filename):
-        pass
-
-    def filename_label_validator(self, filename, label):
-        pass
-
-    def no_pca_filename_existence_validator(self, pca_filename):
-        pass
-
-
-class PcaGenerator(PcaInterface):
+class PcaGenerator:
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     DOCUMENT_ID = "_id"
     METADATA_FILE_ID = 0
@@ -134,7 +102,7 @@ class PcaGenerator(PcaInterface):
         return text_fields
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -147,7 +115,12 @@ class MongoOperations(DatabaseInterface):
         return self.database.list_collection_names()
 
 
-class PcaRequestValidator(RequestValidatorInterface):
+class PcaRequestValidator:
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_INVALID_LABEL = "invalid_field"
+    MESSAGE_NOT_FOUND = "file_not_found"
+
     def __init__(self, database_connector):
         self.database = database_connector
 

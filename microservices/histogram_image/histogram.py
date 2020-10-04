@@ -1,45 +1,7 @@
 from pymongo import MongoClient
 
 
-class DatabaseInterface:
-    def find(self, filename, query):
-        pass
-
-    def find_one(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-    def insert_one_in_file(self, filename, json_object):
-        pass
-
-    def update_one(self, filename, new_value, query):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-    MESSAGE_DUPLICATE_FILE = "duplicated_filename"
-
-    def filename_validator(self, filename):
-        pass
-
-    def histogram_filename_validator(self, histogram_filename):
-        pass
-
-    def fields_validator(self, filename, fields):
-        pass
-
-
-class HistogramInterface:
-    def create_histogram(self, filename, histogram_filename, fields):
-        pass
-
-
-class Histogram(HistogramInterface):
+class Histogram:
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
@@ -74,7 +36,7 @@ class Histogram(HistogramInterface):
             self.database_connector.insert_one_in_file(histogram_filename, field_result)
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -104,7 +66,12 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class HistogramRequestValidator(RequestValidatorInterface):
+class HistogramRequestValidator:
+    MESSAGE_INVALID_FIELDS = "invalid_fields"
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_MISSING_FIELDS = "missing_fields"
+    MESSAGE_DUPLICATE_FILE = "duplicated_filename"
+
     def __init__(self, database_connector):
         self.database = database_connector
 

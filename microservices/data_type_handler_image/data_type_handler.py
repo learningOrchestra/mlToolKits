@@ -1,45 +1,11 @@
 from pymongo import MongoClient
 
 
-class DatabaseInterface:
-    def find(self, filename, query):
-        pass
-
-    def find_one(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-    def update_one(self, filename, new_value, query):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-    STRING_TYPE = "string"
-    NUMBER_TYPE = "number"
-
-    def filename_validator(self, filename):
-        pass
-
-    def fields_validator(self, filename, projection_fields):
-        pass
-
-
-class DataTypeConverterInterface:
-    STRING_TYPE = "string"
-    NUMBER_TYPE = "number"
-
-    def file_converter(self, filename, fields_dictionary):
-        pass
-
-
-class DataTypeConverter(DataTypeConverterInterface):
+class DataTypeConverter:
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
+    STRING_TYPE = "string"
+    NUMBER_TYPE = "number"
 
     def __init__(self, database_connector):
         self.database_connector = database_connector
@@ -82,7 +48,7 @@ class DataTypeConverter(DataTypeConverterInterface):
             self.field_converter(filename, field, fields_dictionary[field])
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -104,7 +70,13 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class DataTypeHandlerRequestValidator(RequestValidatorInterface):
+class DataTypeHandlerRequestValidator:
+    MESSAGE_INVALID_FIELDS = "invalid_fields"
+    MESSAGE_INVALID_FILENAME = "invalid_filename"
+    MESSAGE_MISSING_FIELDS = "missing_fields"
+    STRING_TYPE = "string"
+    NUMBER_TYPE = "number"
+
     def __init__(self, database_connector):
         self.database = database_connector
 

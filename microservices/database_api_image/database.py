@@ -63,35 +63,7 @@ class DatabaseApi:
         return result
 
 
-class DatabaseInterface:
-    def connection(self, filename):
-        pass
-
-    def find_in_file(self, filename, query, skip, limit):
-        pass
-
-    def delete_file(self, filename):
-        pass
-
-    def find_one_in_file(self, filename, query):
-        pass
-
-    def get_filenames(self):
-        pass
-
-    def insert_one_in_file(self, filename, json_object):
-        pass
-
-    def update_one_in_file(self, filename, new_value, query):
-        pass
-
-
-class CsvManagerInterface:
-    def storage_file(self, filename, url, database_connection):
-        pass
-
-
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     DATABASE_URL = "DATABASE_URL"
     DATABASE_PORT = "DATABASE_PORT"
 
@@ -130,7 +102,7 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class CsvDownloader(CsvManagerInterface):
+class CsvDownloader:
     MAX_QUEUE_SIZE = 1000
     MAX_NUMBER_THREADS = 3
     FINISHED = "finished"

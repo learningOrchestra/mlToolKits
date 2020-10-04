@@ -18,48 +18,7 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 
-class ModelBuilderInterface:
-    def build_model(
-        self,
-        database_url_training,
-        database_url_test,
-        preprocessor_code,
-        classificators_list,
-        prediction_filename,
-    ):
-        pass
-
-
-class DatabaseInterface:
-    def get_filenames(self):
-        pass
-
-    def find_one(self, filename, query):
-        pass
-
-    def insert_one_in_file(self, filename, json_object):
-        pass
-
-    def delete_file(self, filename):
-        pass
-
-
-class RequestValidatorInterface:
-    MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
-    MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
-    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
-
-    def training_filename_validator(self, training_filename):
-        pass
-
-    def test_filename_validator(self, test_filename):
-        pass
-
-    def model_classificators_validator(self, classificators_list):
-        pass
-
-
-class SparkModelBuilder(ModelBuilderInterface):
+class SparkModelBuilder:
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
@@ -247,7 +206,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             self.database.insert_one_in_file(filename_name, row_dict)
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations:
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -268,7 +227,11 @@ class MongoOperations(DatabaseInterface):
         file_collection.drop()
 
 
-class ModelBuilderRequestValidator(RequestValidatorInterface):
+class ModelBuilderRequestValidator:
+    MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
+    MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
+    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
+
     def __init__(self, database_connector):
         self.database = database_connector
 
