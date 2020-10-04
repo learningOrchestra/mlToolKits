@@ -42,7 +42,7 @@ learningOrchestra is designed for data scientists from both engineering and acad
 - [About learningOrchestra](#about-learningorchestra)
 	- [Research background](#research-background)
 	- [Future steps](#future-steps)
-	- [Contributors](#contributors)
+	- [Contributors :sparkles:](#contributors-sparkles)
 - [Frequently Asked Questions](#frequently-asked-questions)
 	- [On using learningOrchestra](#on-using-learningorchestra)
 	- [On the languages and frameworks used by learningOrchestra](#on-the-languages-and-frameworks-used-by-learningorchestra)
@@ -53,7 +53,6 @@ learningOrchestra is designed for data scientists from both engineering and acad
 - [Microservices REST APIs](#microservices-rest-apis)
 	- [Spark Microservices](#spark-microservices)
 - [Database GUI](#database-gui)
-- [Contributors ✨](#contributors-)
 
 <!-- /TOC -->
 
@@ -102,13 +101,36 @@ learningOrchestra provides two options to access its features: a microservice RE
 
 ### Future steps
 
-### Contributors
+### Contributors :sparkles:
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="http://www.linkedin.com/in/riibeirogabriel/"><img src="https://avatars0.githubusercontent.com/u/33736256?v=4" width="100px;" alt=""/><br /><sub><b>Gabriel Ribeiro</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=riibeirogabriel" title="Code">💻</a> <a href="#infra-riibeirogabriel" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#projectManagement-riibeirogabriel" title="Project Management">📆</a> <a href="#maintenance-riibeirogabriel" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="http://navendu.me"><img src="https://avatars1.githubusercontent.com/u/49474499?v=4" width="100px;" alt=""/><br /><sub><b>Navendu Pottekkat</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=navendu-pottekkat" title="Documentation">📖</a> <a href="#design-navendu-pottekkat" title="Design">🎨</a> <a href="#ideas-navendu-pottekkat" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/hiperbolt"><img src="https://avatars2.githubusercontent.com/u/14186706?v=4" width="100px;" alt=""/><br /><sub><b>hiperbolt</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=hiperbolt" title="Code">💻</a> <a href="#ideas-hiperbolt" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ## Frequently Asked Questions
 
-###### What is this website linked to the repo?
+###### Where can I find the documentation?
+
+###### What is the website linked to the repo?
 
 ###### Who is doing this?
+
+###### Do you get money from learningOrchestra? How do you fund the project?
 
 ### On using learningOrchestra
 
@@ -125,11 +147,17 @@ Please use the [**Issues** page]() of this repo. Check out the [Contributing](##
 
 ###### I have a single computer, can I still use learningOrchestra?
 
+###### What happens if learningOrchestra is killed while using a microservice?
+
+###### What happens if my instances loose the connection to each other?
+
 ### On the languages and frameworks used by learningOrchestra
 
 ###### Method X is very useful and should be included, why is it not there?
 
 ### On contributing to learningOrchestra
+
+##### I want to contribute, where do I start?
 
 ##### I'm not a developer, can I contribute?
 
@@ -233,24 +261,3 @@ It can be util to accomplish some these tasks with your processed dataset or get
 Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
 
 See the [full docs](https://riibeirogabriel.github.io/learningOrchestra/usage/) for detailed usage instructions.
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="http://www.linkedin.com/in/riibeirogabriel/"><img src="https://avatars0.githubusercontent.com/u/33736256?v=4" width="100px;" alt=""/><br /><sub><b>Gabriel Ribeiro</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=riibeirogabriel" title="Code">💻</a> <a href="#infra-riibeirogabriel" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#projectManagement-riibeirogabriel" title="Project Management">📆</a> <a href="#maintenance-riibeirogabriel" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="http://navendu.me"><img src="https://avatars1.githubusercontent.com/u/49474499?v=4" width="100px;" alt=""/><br /><sub><b>Navendu Pottekkat</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=navendu-pottekkat" title="Documentation">📖</a> <a href="#design-navendu-pottekkat" title="Design">🎨</a> <a href="#ideas-navendu-pottekkat" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/hiperbolt"><img src="https://avatars2.githubusercontent.com/u/14186706?v=4" width="100px;" alt=""/><br /><sub><b>hiperbolt</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=hiperbolt" title="Code">💻</a> <a href="#ideas-hiperbolt" title="Ideas, Planning, & Feedback">🤔</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
