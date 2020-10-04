@@ -4,9 +4,18 @@ x-deploy: &default-deploy
     replicas: 1
     restart_policy:
         condition: on-failure
+
+x-deploy-manager: &default-deploy-manager
+    <<: *default-deploy
     placement:
         constraints:
             - "node.role==manager"
+
+x-deploy-worker: &default-deploy-worker
+    <<: *default-deploy
+    placement:
+        constraints:
+            - "node.role==worker"
 
 x-class-env: &default-class-env
     - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
@@ -23,7 +32,7 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         volumes:
             - "database_api:/database_api"
         networks:
@@ -46,7 +55,7 @@ services:
             - "database:/bitnami"
         networks:
             - database
-        deploy: *default-deploy
+        deploy: *default-deploy-manager
 
     databasesecondary:
         image: "bitnami/mongodb:3.6.17-ol-7-r26"
@@ -63,7 +72,7 @@ services:
 
         networks:
             - database
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
 
     databasearbiter:
         image: "bitnami/mongodb:3.6.17-ol-7-r26"
@@ -80,13 +89,13 @@ services:
 
         networks:
             - database
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
 
     images:
         image: registry:2.7.1
         ports:
             - "5050:5000"
-        deploy: *default-deploy
+        deploy: *default-deploy-manager
         networks:
             - database
         volumes:
@@ -98,7 +107,7 @@ services:
             - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
             - "80:8080"
-        deploy: *default-deploy
+        deploy: *default-deploy-manager
 
     sparkmaster:
         build: microservices/spark_image
@@ -109,7 +118,7 @@ services:
             - "8080:8080"
         environment:
             - SPARK_ROLE=master
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - spark
             - database
@@ -125,7 +134,7 @@ services:
         environment:
             - SPARK_MASTER=sparkmaster
             - SPARK_ROLE=slave
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - spark
             - database
@@ -143,7 +152,7 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - database
             - spark
@@ -162,7 +171,7 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - database
             - spark
@@ -176,7 +185,7 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - database
         environment: *default-class-env
@@ -189,7 +198,7 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy: *default-deploy
+        deploy: *default-deploy-worker
         networks:
             - database
         environment: *default-class-env
@@ -207,7 +216,7 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy: *default-deploy
+        deploy: *default-deploy-manager
         volumes:
             - "tsne:/images"
         networks:
@@ -228,7 +237,7 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy: *default-deploy
+        deploy: *default-deploy-manager
         volumes:
             - "pca:/images"
         networks:
