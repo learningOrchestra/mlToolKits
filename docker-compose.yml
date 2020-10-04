@@ -1,4 +1,27 @@
-version: '3'
+version: "3.8"
+
+x-deploy: &default-deploy
+    replicas: 1
+    restart_policy:
+        condition: on-failure
+
+x-deploy-manager: &default-deploy-manager
+    <<: *default-deploy
+    placement:
+        constraints:
+            - "node.role==manager"
+
+x-deploy-worker: &default-deploy-worker
+    <<: *default-deploy
+    placement:
+        constraints:
+            - "node.role==worker"
+
+x-service-database-env: &default-service-database-env
+    - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
+    - DATABASE_PORT=27017
+    - DATABASE_REPLICA_SET=replica_set
+    - DATABASE_NAME=database
 
 services:
     databaseapi:
@@ -9,133 +32,93 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         volumes:
-            - 'database_api:/database_api'
+            - "database_api:/database_api"
         networks:
             - database
         environment:
             - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary/?replicaSet=replica_set
-            - DATABASE_PORT=27017 
+            - DATABASE_PORT=27017
 
     databaseprimary:
-        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
+        image: "bitnami/mongodb:3.6.17-ol-7-r26"
         ports:
             - "27017:27017"
         environment:
+            - MONGODB_ROOT_PASSWORD=owl45#21
             - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
             - MONGODB_REPLICA_SET_MODE=primary
             - MONGODB_REPLICA_SET_KEY=replicasetkey
-            - MONGODB_ROOT_PASSWORD=owl45#21
-            - MONGODB_REPLICA_SET_NAME=replica_set    
+            - MONGODB_REPLICA_SET_NAME=replica_set
         volumes:
-            - 'database:/bitnami'
+            - "database:/bitnami"
         networks:
             - database
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
+        deploy: *default-deploy-manager
 
     databasesecondary:
-        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
+        image: "bitnami/mongodb:3.6.17-ol-7-r26"
         depends_on:
             - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
-            - MONGODB_REPLICA_SET_MODE=secondary
             - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+            - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
             - MONGODB_REPLICA_SET_NAME=replica_set
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
+            - MONGODB_REPLICA_SET_MODE=secondary
+
         networks:
             - database
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
 
     databasearbiter:
-        image: 'bitnami/mongodb:3.6.17-ol-7-r26'
+        image: "bitnami/mongodb:3.6.17-ol-7-r26"
         depends_on:
-         - databaseprimary
+            - databaseprimary
         environment:
-            - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
-            - MONGODB_REPLICA_SET_MODE=arbiter
             - MONGODB_PRIMARY_HOST=databaseprimary
             - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+            - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
+            - MONGODB_REPLICA_SET_KEY=replicasetkey
             - MONGODB_REPLICA_SET_NAME=replica_set
+            - MONGODB_REPLICA_SET_MODE=arbiter
+
         networks:
             - database
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
 
     images:
         image: registry:2.7.1
         ports:
             - "5050:5000"
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
+        deploy: *default-deploy-manager
         networks:
             - database
         volumes:
-            - images:/var/lib/registry
+            - "images:/var/lib/registry"
 
     visualizer:
         image: dockersamples/visualizer:latest
         volumes:
-        - "/var/run/docker.sock:/var/run/docker.sock"
+            - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
-        - "80:8080"
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
+            - "80:8080"
+        deploy: *default-deploy-manager
 
     sparkmaster:
         build: microservices/spark_image
         image: 127.0.0.1:5050/spark
         ports:
-            - 4040:4040
-            - 7077:7077
-            - 8080:8080
+            - "4040:4040"
+            - "7077:7077"
+            - "8080:8080"
         environment:
             - SPARK_ROLE=master
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - spark
             - database
@@ -144,20 +127,14 @@ services:
         image: 127.0.0.1:5050/spark
         entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
         ports:
-            - 8081:8081
-            - 41352:41352
+            - "8081:8081"
+            - "41352:41352"
         links:
             - sparkmaster
         environment:
             - SPARK_MASTER=sparkmaster
             - SPARK_ROLE=slave
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - spark
             - database
@@ -167,7 +144,7 @@ services:
         image: 127.0.0.1:5050/projection
         ports:
             - "5001:5001"
-            - 41000:41000
+            - "41000:41000"
         extra_hosts:
             - "projection:0.0.0.0"
         depends_on:
@@ -175,28 +152,18 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - database
             - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+        environment: *default-service-database-env
 
     modelbuilder:
         build: microservices/model_builder_image
         image: 127.0.0.1:5050/model_builder
         ports:
             - "5002:5002"
-            - 41100:41100
+            - "41100:41100"
         extra_hosts:
             - "modelbuilder:0.0.0.0"
         depends_on:
@@ -204,21 +171,11 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - database
             - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+        environment: *default-service-database-env
 
     datatypehandler:
         build: microservices/data_type_handler_image
@@ -228,21 +185,11 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - database
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
-    
+        environment: *default-service-database-env
+
     histogram:
         build: microservices/histogram_image
         image: 127.0.0.1:5050/histogram
@@ -251,27 +198,17 @@ services:
         depends_on:
             - databaseprimary
             - images
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==worker"
+        deploy: *default-deploy-worker
         networks:
             - database
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+        environment: *default-service-database-env
 
     tsne:
         build: microservices/tsne_image
         image: 127.0.0.1:5050/tsne
         ports:
             - "5005:5005"
-            - 41200:41200
+            - "41200:41200"
         extra_hosts:
             - "tsne:0.0.0.0"
         depends_on:
@@ -279,30 +216,20 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
+        deploy: *default-deploy-manager
         volumes:
-            - 'tsne:/images'
+            - "tsne:/images"
         networks:
             - database
             - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+        environment: *default-service-database-env
 
     pca:
         build: microservices/pca_image
         image: 127.0.0.1:5050/pca
         ports:
             - "5006:5006"
-            - 41300:41300
+            - "41300:41300"
         extra_hosts:
             - "pca:0.0.0.0"
         depends_on:
@@ -310,23 +237,13 @@ services:
             - images
             - sparkmaster
             - sparkworker
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-            placement:
-                constraints:
-                    - "node.role==manager"
+        deploy: *default-deploy-manager
         volumes:
-            - 'pca:/images'
+            - "pca:/images"
         networks:
             - database
             - spark
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-            - DATABASE_PORT=27017
-            - DATABASE_REPLICA_SET=replica_set
-            - DATABASE_NAME=database
+        environment: *default-service-database-env
 
 networks:
     database:
