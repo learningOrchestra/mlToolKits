@@ -1,3 +1,5 @@
+**Wondering how to combine your various library and infrastructure needs for your latest data mining project? Just pick the bricks to build your pipeline and learningOrchestra will take care of the rest.**
+
 <p align="center">
     <img src="./learning-orchestra.png">
     <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" href="https://shields.io/" alt="build-passing">
@@ -7,6 +9,53 @@
 </p>
 
 # learningOrchestra
+
+## Introduction
+
+### Context
+
+Nowadays, **data science relies on a wide range of computer science skills**, from data management to algorithm design, from code optimization to cloud infrastructures. Data scientists are expected to have expertise in these diverse fields, especially when working in small teams or for academia.
+
+This situation can constitute a barrier to the actual extraction of new knowledge from collected data, which is why the last two decades have seen more efforts to facilitate and streamline the development of data mining workflows. The tools created can be sorted into two categories: **high-level** tools facilitate the building of **automatic data processing pipelines** (e.g. :question:) while **low-level** ones support the setup of appropriate physical and virtual infrastructure (e.g. :question:).
+
+However, this landscape is still missing a tool that **encompasses all steps and needs of a typical data science project**. This is where learningOrchestra comes in.
+
+### The learningOrchestra system
+
+learningOrchestra aims to facilitate the development of complex data mining workflows by **seamlessly interfacing different data science tools and services**. From a single interoperable Application Programming Interface (API), users can **design their analytical pipelines and deploy them in an environment with the appropriate capabilities**.
+
+learningOrchestra is designed for data scientists from both engineering and academia backgrounds, so that they can **focus on the discovery of new knowledge** in their data rather than library or maintenance issues.
+
+<!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Introduction](#introduction)
+	- [Context](#context)
+	- [The learningOrchestra system](#the-learningorchestra-system)
+- [Quick-start](#quick-start)
+- [Installation instructions](#installation-instructions)
+- [Usage instructions](#usage-instructions)
+- [About learningOrchestra](#about-learningorchestra)
+- [Requirements](#requirements)
+- [Deployment](#deployment)
+- [Cluster State](#cluster-state)
+- [Microservices REST APIs](#microservices-rest-apis)
+	- [Spark Microservices](#spark-microservices)
+- [Database GUI](#database-gui)
+- [Contributors ✨](#contributors-)
+
+<!-- /TOC -->
+
+## Quick-start
+
+## Installation instructions
+
+## Usage instructions
+
+## About learningOrchestra
+
+
+
+
 
 **learningOrchestra** facilitates and streamlines iterative processes in a Data Science project pipeline like:
 
@@ -98,7 +147,7 @@ To do this, with learningOrchestra already deployed, run the following in the ma
 
 ## Database GUI
 
-NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats. 
+NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats.
 It can be util to accomplish some these tasks with your processed dataset or get your prediction results.
 
 Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
