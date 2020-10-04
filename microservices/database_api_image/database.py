@@ -63,7 +63,7 @@ class DatabaseApi:
         return result
 
 
-class DatabaseInterface:
+class Database:
     def connection(self, filename):
         pass
 
@@ -86,12 +86,12 @@ class DatabaseInterface:
         pass
 
 
-class CsvManagerInterface:
+class CsvManager:
     def storage_file(self, filename, url, database_connection):
         pass
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations(Database):
     DATABASE_URL = "DATABASE_URL"
     DATABASE_PORT = "DATABASE_PORT"
 
@@ -130,7 +130,7 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class CsvDownloader(CsvManagerInterface):
+class CsvDownloader(CsvManager):
     MAX_QUEUE_SIZE = 1000
     MAX_NUMBER_THREADS = 3
     FINISHED = "finished"

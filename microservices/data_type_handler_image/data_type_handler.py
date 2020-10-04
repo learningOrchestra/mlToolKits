@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-class DatabaseInterface:
+class Database:
     def find(self, filename, query):
         pass
 
@@ -15,7 +15,7 @@ class DatabaseInterface:
         pass
 
 
-class RequestValidatorInterface:
+class RequestValidator:
     MESSAGE_INVALID_FIELDS = "invalid_fields"
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_MISSING_FIELDS = "missing_fields"
@@ -29,7 +29,7 @@ class RequestValidatorInterface:
         pass
 
 
-class DataTypeConverterInterface:
+class DataTypeConverter:
     STRING_TYPE = "string"
     NUMBER_TYPE = "number"
 
@@ -37,7 +37,7 @@ class DataTypeConverterInterface:
         pass
 
 
-class DataTypeConverter(DataTypeConverterInterface):
+class DataTypeConverter(DataTypeConverter):
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
@@ -82,7 +82,7 @@ class DataTypeConverter(DataTypeConverterInterface):
             self.field_converter(filename, field, fields_dictionary[field])
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations(Database):
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -104,7 +104,7 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class DataTypeHandlerRequestValidator(RequestValidatorInterface):
+class DataTypeHandlerRequestValidator(RequestValidator):
     def __init__(self, database_connector):
         self.database = database_connector
 

@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-class DatabaseInterface:
+class Database:
     def find(self, filename, query):
         pass
 
@@ -18,7 +18,7 @@ class DatabaseInterface:
         pass
 
 
-class RequestValidatorInterface:
+class RequestValidator:
     MESSAGE_INVALID_FIELDS = "invalid_fields"
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_MISSING_FIELDS = "missing_fields"
@@ -34,12 +34,12 @@ class RequestValidatorInterface:
         pass
 
 
-class HistogramInterface:
+class Histogram:
     def create_histogram(self, filename, histogram_filename, fields):
         pass
 
 
-class Histogram(HistogramInterface):
+class Histogram(Histogram):
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
@@ -74,7 +74,7 @@ class Histogram(HistogramInterface):
             self.database_connector.insert_one_in_file(histogram_filename, field_result)
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations(Database):
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -104,7 +104,7 @@ class MongoOperations(DatabaseInterface):
         return file_collection.find_one(query)
 
 
-class HistogramRequestValidator(RequestValidatorInterface):
+class HistogramRequestValidator(RequestValidator):
     def __init__(self, database_connector):
         self.database = database_connector
 

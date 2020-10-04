@@ -18,7 +18,7 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
 
 
-class ModelBuilderInterface:
+class ModelBuilder:
     def build_model(
         self,
         database_url_training,
@@ -30,7 +30,7 @@ class ModelBuilderInterface:
         pass
 
 
-class DatabaseInterface:
+class Database:
     def get_filenames(self):
         pass
 
@@ -44,7 +44,7 @@ class DatabaseInterface:
         pass
 
 
-class RequestValidatorInterface:
+class RequestValidator:
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
     MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
     MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
@@ -59,7 +59,7 @@ class RequestValidatorInterface:
         pass
 
 
-class SparkModelBuilder(ModelBuilderInterface):
+class SparkModelBuilder(ModelBuilder):
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
@@ -247,7 +247,7 @@ class SparkModelBuilder(ModelBuilderInterface):
             self.database.insert_one_in_file(filename_name, row_dict)
 
 
-class MongoOperations(DatabaseInterface):
+class MongoOperations(Database):
     def __init__(self, database_url, database_port, database_name):
         self.mongo_client = MongoClient(database_url, int(database_port))
         self.database = self.mongo_client[database_name]
@@ -268,7 +268,7 @@ class MongoOperations(DatabaseInterface):
         file_collection.drop()
 
 
-class ModelBuilderRequestValidator(RequestValidatorInterface):
+class ModelBuilderRequestValidator(RequestValidator):
     def __init__(self, database_connector):
         self.database = database_connector
 
