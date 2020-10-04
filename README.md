@@ -32,10 +32,21 @@ learningOrchestra is designed for data scientists from both engineering and acad
 	- [Context](#context)
 	- [The learningOrchestra system](#the-learningorchestra-system)
 - [Quick-start](#quick-start)
-- [Installation instructions](#installation-instructions)
-- [Usage instructions](#usage-instructions)
+- [How do I install learningOrchestra?](#how-do-i-install-learningorchestra)
+	- [Setting up your cluster](#setting-up-your-cluster)
+	- [Deploy learningOrchestra](#deploy-learningorchestra)
+- [How do I use learningOrchestra?](#how-do-i-use-learningorchestra)
+	- [Using the microservices REST API](#using-the-microservices-rest-api)
+	- [Using the Python package](#using-the-python-package)
+	- [Check cluster status](#check-cluster-status)
 - [About learningOrchestra](#about-learningorchestra)
+	- [Research background](#research-background)
+	- [Future steps](#future-steps)
+	- [Contributors](#contributors)
 - [Frequently Asked Questions](#frequently-asked-questions)
+	- [On using learningOrchestra](#on-using-learningorchestra)
+	- [On the languages and frameworks used by learningOrchestra](#on-the-languages-and-frameworks-used-by-learningorchestra)
+	- [On contributing to learningOrchestra](#on-contributing-to-learningorchestra)
 - [Requirements](#requirements)
 - [Deployment](#deployment)
 - [Cluster State](#cluster-state)
@@ -69,13 +80,58 @@ Context(cluster_ip)
 ```
 - Each microservice is wrapped into a class. Check the [package documentation](https://learningorchestra.github.io/learningOrchestra-docs/python-apis/) for a list of available functions and parameters.
 
-## Installation instructions
+## How do I install learningOrchestra?
 
-## Usage instructions
+### Setting up your cluster
+
+### Deploy learningOrchestra
+
+## How do I use learningOrchestra?
+
+learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
+
+### Using the microservices REST API
+
+### Using the Python package
+
+### Check cluster status
 
 ## About learningOrchestra
 
+### Research background
+
+### Future steps
+
+### Contributors
+
 ## Frequently Asked Questions
+
+###### What is this website linked to the repo?
+
+###### Who is doing this?
+
+### On using learningOrchestra
+
+###### I have a question/a feature request/some feedback, how do I contact you?
+Please use the [**Issues** page]() of this repo. Check out the [Contributing](##Contributing) section for more details.
+
+###### Can I copy your code for my project?
+
+###### How do I cite learningOrchestra in my paper?
+
+###### Where can I find data?
+
+###### My computer runs on Windows/OSX, can I still use learningOrchestra?
+
+###### I have a single computer, can I still use learningOrchestra?
+
+### On the languages and frameworks used by learningOrchestra
+
+###### Method X is very useful and should be included, why is it not there?
+
+### On contributing to learningOrchestra
+
+##### I'm not a developer, can I contribute?
 
 
 
