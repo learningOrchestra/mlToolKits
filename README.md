@@ -35,6 +35,7 @@ learningOrchestra is designed for data scientists from both engineering and acad
 - [Installation instructions](#installation-instructions)
 - [Usage instructions](#usage-instructions)
 - [About learningOrchestra](#about-learningorchestra)
+- [Frequently Asked Questions](#frequently-asked-questions)
 - [Requirements](#requirements)
 - [Deployment](#deployment)
 - [Cluster State](#cluster-state)
@@ -47,11 +48,34 @@ learningOrchestra is designed for data scientists from both engineering and acad
 
 ## Quick-start
 
+Installation instructions:
+1. learningOrchestra runs on Linux hosts. Install [Docker Engine](https://docs.docker.com/engine/install/) on all instances of your cluster. Configure your cluster in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/). Install [Docker Compose](https://docs.docker.com/compose/install/) on your manager instance.
+2. Clone repo on your manager instance. `https://github.com/learningOrchestra/learningOrchestra.git`
+3. `cd learningOrchestra`
+4. Deploy with `sudo ./run.sh`
+
+learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
+
+Microservice REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available microservices](https://learningorchestra.github.io/learningOrchestra-docs/usage/#microservices-rest-apis) for requests details.
+
+Python package:
+- Python3 package
+- Install with `pip install learning-orchestra-client`
+- Start your scripts by import the package and providing the IP address of one of the instances of your cluster:
+```
+from learning_orchestra_client import *
+cluster_ip = "xx.xx.xxx.xxx"
+Context(cluster_ip)
+```
+- Each microservice is wrapped into a class. Check the [package documentation](https://learningorchestra.github.io/learningOrchestra-docs/python-apis/) for a list of available functions and parameters.
+
 ## Installation instructions
 
 ## Usage instructions
 
 ## About learningOrchestra
+
+## Frequently Asked Questions
 
 
 
