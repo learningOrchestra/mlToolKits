@@ -81,9 +81,32 @@ Context(cluster_ip)
 
 ## How do I install learningOrchestra?
 
+:bell: This documentation assumes that the users are familiar with a number of advanced computer science concepts. We have tried to link to learning resources to support beginners, as well as introduce some of the concepts in the [FAQ](#frequently-asked-questions). But if something is still not clear, don't hesitate to [ask for help](#on-using-learningOrchestra).
+
 ### Setting up your cluster
 
+learningOrchestra operates from a [cluster](#what-is-a-cluster?) of Docker [containers](#what-is-a-container?).
+
+All your hosts must operate under Linux distributions and have [Docker Engine](https://docs.docker.com/engine/install/) installed.
+
+Configure your cluster in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/). Install [Docker Compose](https://docs.docker.com/compose/install/) on your manager instance.
+
+You are ready to deploy! :tada:
+
 ### Deploy learningOrchestra
+
+Clone this repository on your manager instance.
+- Using HTTP protocol, `git clone https://github.com/learningOrchestra/learningOrchestra.git`
+- Using SSH protocol, `git clone git@github.com:learningOrchestra/learningOrchestra.git`
+- Using GitHub CLI, `gh repo clone learningOrchestra/learningOrchestra`
+
+Move to the root of the directory, `cd learningOrchestra`.
+
+Deploy with `sudo ./run.sh`. The deploy process should take a dozen minutes.
+
+##### Interrupt learningOrchestra
+
+Run `docker stack rm microservice`.
 
 ## How do I use learningOrchestra?
 
@@ -151,7 +174,13 @@ Please use the [**Issues** page]() of this repo. Check out the [Contributing](##
 
 ###### What happens if my instances loose the connection to each other?
 
+###### How do I interrupt learningOrchestra?
+
 ### On the languages and frameworks used by learningOrchestra
+
+###### What is a container?
+
+###### What is a cluster?
 
 ###### Method X is very useful and should be included, why is it not there?
 
