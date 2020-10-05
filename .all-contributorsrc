@@ -37,6 +37,16 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "joubertlima",
+      "name": "Joubert de Castro Lima",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1683241?v=4",
+      "profile": "http://www.hpclab.net.br",
+      "contributions": [
+        "ideas",
+        "projectManagement"
+      ]
     }
   ],
   "contributorsPerLine": 7,
