@@ -69,7 +69,7 @@ learningOrchestra provides two options to access its features: a microservice RE
 Microservice REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available microservices](https://learningorchestra.github.io/learningOrchestra-docs/usage/#microservices-rest-apis) for requests details.
 
 Python package:
-- Python3 package
+- Python 3 package
 - Install with `pip install learning-orchestra-client`
 - Start your scripts by import the package and providing the IP address of one of the instances of your cluster:
 ```
@@ -110,13 +110,43 @@ Run `docker stack rm microservice`.
 
 ## How do I use learningOrchestra?
 
+learningOrchestra is organised into interoperable [microservices](#what-are-microservices?). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **evaluate machine learning models** and **visualize data and results**.
+
+The following microservices are available in the current version:
+- Database API- Gather data
+- Projection API- Visualize data and results (I'm assuming we're talking about mapping data points into display points?)
+- Data type API- Clean data
+- Histogram API- Visualize data and results
+- t-SNE API- Train machine learning models + Visualize data and results
+- PCA API- Train machine learning models + Visualize data and results
+- Model builder API- Train machine learning models
+
 learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
 
 ### Using the microservices REST API
 
+We recommand using a **GUI REST API** caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Of course, regular `curl` commands from the terminal remain a possibility.
+
+The details for each microservice are available in the [documentation](https://learningorchestra.github.io/learningOrchestra-docs/usage/#microservices-rest-apis).
+
 ### Using the Python package
 
+**learning-orchestra-client** is a Python 3 package available through the Python Package Index. Install it with `pip install learning-orchestra-client`.
+
+All your scripts must import the package and create a link to the cluster by providing the IP address to an instance of your cluster. Preface your scripts with the following code:
+```
+from learning_orchestra_client import *
+cluster_ip = "xx.xx.xxx.xxx"
+Context(cluster_ip)
+```
+
+Check the [package documentation](https://learningorchestra.github.io/learningOrchestra-docs/python-apis/) for a list of available functions and parameters, or the [package repository](https://github.com/learningOrchestra/learningOrchestra-python-client) for an example use case.
+
 ### Check cluster status
+
+To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:80` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
+
+The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
 ## About learningOrchestra
 
@@ -185,6 +215,11 @@ Please use the [**Issues** page]() of this repo. Check out the [Contributing](##
 
 ###### What is a cluster?
 
+###### What are microservices?
+
+Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are. Highly maintainable and testable. Loosely coupled. Independently deployable. Organized around business capabilities. Owned by small team.
+[an overview of microservice architecture](https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9)
+
 ###### Method X is very useful and should be included, why is it not there?
 
 ### On contributing to learningOrchestra
@@ -192,104 +227,3 @@ Please use the [**Issues** page]() of this repo. Check out the [Contributing](##
 ##### I want to contribute, where do I start?
 
 ##### I'm not a developer, can I contribute?
-
-
-
-
-
-**learningOrchestra** facilitates and streamlines iterative processes in a Data Science project pipeline like:
-
-* Data Gathering
-* Data Cleaning
-* Model Building
-* Validating the Model
-* Presenting the Results
-
-With learningOrchestra, you can:
-
-* load a dataset from an URL (in CSV format).
-* accomplish several pre-processing tasks with datasets.
-* create highly customised model predictions against a specific dataset by providing their own pre-processing code.
-* build prediction models with different classifiers simultaneously using a spark cluster transparently.
-
-And so much more! Check the [usage section](#usage) for more.
-
-# Installation
-
-## Requirements
-
-* Linux hosts
-* [Docker Engine](https://docs.docker.com/engine/install/) must be installed in all instances of your cluster
-* Cluster configured in swarm mode, check [creating a swarm](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/)
-* [Docker Compose](https://docs.docker.com/compose/install/) must be installed in the manager instance of your cluster
-
-*Ensure that your cluster environment does not block any traffic such as firewall rules in your network or in your hosts.*
-
-*If in case, you have firewalls or other traffic-blockers, add learningOrchestra as an exception.*
-
-Ex: In Google Cloud Platform each of the VMs must allow both http and https traffic.
-
-## Deployment
-
-In the manager Docker swarm machine, clone the repo using:
-
-```
-git clone https://github.com/learningOrchestra/learningOrchestra.git
-```
-
-Navigate into the `learningOrchestra` directory and run:
-
-```
-cd learningOrchestra
-sudo ./run.sh
-```
-
-That's it! learningOrchestra has been deployed in your swarm cluster!
-
-## Cluster State
-
-`CLUSTER_IP:80` - To visualize cluster state (deployed microservices and cluster's machines).
-`CLUSTER_IP:8080` - To visualize spark cluster state.
-
-*\** `CLUSTER_IP` *is the external IP of a machine in your cluster.*
-
-# Usage
-
-learningOrchestra can be used with the [Microservices REST API](#microservices-rest-apis) or with the `learning-orchestra-client` [Python package](https://pypi.org/project/learning-orchestra-client/).
-
-## Microservices REST APIs
-
-[Database API](https://learningorchestra.github.io/learningOrchestra-docs/database-api)- Download and handle datasets in a database.
-
-[Projection API](https://learningorchestra.github.io/learningOrchestra-docs/projection-api)- Make projections of stored datasets using Spark cluster.
-
-[Data type API](https://learningorchestra.github.io/learningOrchestra-docs/datatype-api)- Change dataset fields type between number and text.
-
-[Histogram API](https://learningorchestra.github.io/learningOrchestra-docs/histogram-api)- Make histograms of stored datasets.
-
-[t-SNE API](https://learningorchestra.github.io/learningOrchestra-docs/t-sne-api)- Make a t-SNE image plot of stored datasets.
-
-[PCA API](https://learningorchestra.github.io/learningOrchestra-docs/pca-api)- Make a PCA image plot of stored datasets.
-
-[Model builder API](https://learningorchestra.github.io/learningOrchestra-docs/modelbuilder-api)- Create a prediction model from pre-processed datasets using Spark cluster.
-
-### Spark Microservices
-
-The Projection, t-SNE, PCA and Model builder microservices uses the Spark microservice to work.
-
-By default, this microservice has only one instance. In case your data processing requires more computing power, you can scale this microservice.
-
-To do this, with learningOrchestra already deployed, run the following in the manager machine of your Docker swarm cluster:
-
-`docker service scale microservice_sparkworker=NUMBER_OF_INSTANCES`
-
-*\** `NUMBER_OF_INSTANCES` *is the number of Spark microservice instances which you require. Choose it according to your cluster resources and your resource requirements.*
-
-## Database GUI
-
-NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats.
-It can be util to accomplish some these tasks with your processed dataset or get your prediction results.
-
-Read the [Database API docs](https://learningorchestra.github.io/learningOrchestra-docs/database-api) for more info on configuring this tool.
-
-See the [full docs](https://riibeirogabriel.github.io/learningOrchestra/usage/) for detailed usage instructions.
