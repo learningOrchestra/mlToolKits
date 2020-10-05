@@ -182,38 +182,68 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ###### Where can I find the documentation?
 
+Find the user documentation [here](https://learningorchestra.github.io/learningOrchestra-docs).
+
 ###### What is the website linked to the repo?
+
+The repo is linked to the user documentation.
 
 ###### Who is doing this?
 
+See the [contributors list](#contributors).
+
 ###### Do you get money from learningOrchestra? How do you fund the project?
+
+:question:
 
 ### On using learningOrchestra
 
 ###### I have a question/a feature request/some feedback, how do I contact you?
-Please use the [**Issues** page]() of this repo. Check out the [Contributing](##Contributing) section for more details.
+Please use the [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) of this repo.
 
 ###### Can I copy your code for my project?
 
+This project is distributed under the open source [GPL-3 license](https://github.com/learningOrchestra/learningOrchestra/blob/master/LICENSE).
+
+You can copy, modify and distribute the code in the repository as long as you understand the license limitations (no liability, no warranty) and respect the license conditions (license and copyright notice, state changes, disclose source, same license.)
+
 ###### How do I cite learningOrchestra in my paper?
+
+:question:
 
 ###### Where can I find data?
 
+[Kaggle](https://www.kaggle.com/) is a good data source for beginners.
+
 ###### My computer runs on Windows/OSX, can I still use learningOrchestra?
+
+:question:
 
 ###### I have a single computer, can I still use learningOrchestra?
 
+Theoretically, you can, if your machine has 12 Gb of RAM, a quad-core processor and 100 Gb of disk. However, your single machine won't be able to cope with the computing demanding for a real-life sized dataset.
+
 ###### What happens if learningOrchestra is killed while using a microservice?
+
+:question:
 
 ###### What happens if my instances loose the connection to each other?
 
+:question:
+
 ###### How do I interrupt learningOrchestra?
+
+Run `docker stack rm microservice`.
 
 ### On the languages and frameworks used by learningOrchestra
 
 ###### What is a container?
 
+Containers are a software that package code and everything needed to run this code together, so that the code can be run simply in any environment. They also isolate the code from the rest of the machine. They are [often compared to shipping containers](https://www.ctl.io/developers/blog/post/docker-and-shipping-containers-a-useful-but-imperfect-analogy).
+
 ###### What is a cluster?
+
+A computer cluster is a set of loosely or tightly connected computers that work together so that, in many respects, they can be viewed as a single system. (From [Wikipedia](https://en.wikipedia.org/wiki/Computer_cluster))
 
 ###### What are microservices?
 
@@ -222,8 +252,16 @@ Microservices - also known as the microservice architecture - is an architectura
 
 ###### Method X is very useful and should be included, why is it not there?
 
+:question:
+
 ### On contributing to learningOrchestra
 
 ##### I want to contribute, where do I start?
 
+The [contributing guide](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md) is a good place to start.
+
+If you are new to open source, consider giving the resources of [FirstTimersOnly](https://www.firsttimersonly.com/) a look.
+
 ##### I'm not a developer, can I contribute?
+
+:question:
