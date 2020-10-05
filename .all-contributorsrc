@@ -37,6 +37,35 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "joubertlima",
+      "name": "Joubert de Castro Lima",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1683241?v=4",
+      "profile": "http://www.hpclab.net.br",
+      "contributions": [
+        "ideas",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "lauromoraes",
+      "name": "Lauro Moraes",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/312025?v=4",
+      "profile": "https://github.com/lauromoraes",
+      "contributions": [
+        "ideas",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "LaChapeliere",
+      "name": "LaChapeliere",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7062546?v=4",
+      "profile": "https://github.com/LaChapeliere",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

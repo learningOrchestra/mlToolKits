@@ -5,7 +5,7 @@
     <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" href="https://shields.io/" alt="build-passing">
     <img src="https://img.shields.io/github/v/tag/riibeirogabriel/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="tag">
     <img src="https://img.shields.io/github/last-commit/riibeirogabriel/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="last-commit">
-    <img src="https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square" href="#contributors-" alt="All Contributors">
+    <img src="https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square" href="#contributors-" alt="All Contributors">
 </p>
 
 # learningOrchestra
@@ -231,7 +231,7 @@ Ex: In Google Cloud Platform each of the VMs must allow both http and https traf
 In the manager Docker swarm machine, clone the repo using:
 
 ```
-git clone https://github.com/riibeirogabriel/learningOrchestra.git
+git clone https://github.com/learningOrchestra/learningOrchestra.git
 ```
 
 Navigate into the `learningOrchestra` directory and run:
@@ -256,19 +256,19 @@ learningOrchestra can be used with the [Microservices REST API](#microservices-r
 
 ## Microservices REST APIs
 
-[Database API](https://riibeirogabriel.github.io/learningOrchestra/database_api)- Download and handle datasets in a database.
+[Database API](https://learningorchestra.github.io/learningOrchestra-docs/database-api)- Download and handle datasets in a database.
 
-[Projection API](https://riibeirogabriel.github.io/learningOrchestra/projection)- Make projections of stored datasets using Spark cluster.
+[Projection API](https://learningorchestra.github.io/learningOrchestra-docs/projection-api)- Make projections of stored datasets using Spark cluster.
 
-[Data type API](https://riibeirogabriel.github.io/learningOrchestra/data_type_handler)- Change dataset fields type between number and text.
+[Data type API](https://learningorchestra.github.io/learningOrchestra-docs/datatype-api)- Change dataset fields type between number and text.
 
-[Histogram API](https://riibeirogabriel.github.io/learningOrchestra/histogram)- Make histograms of stored datasets.
+[Histogram API](https://learningorchestra.github.io/learningOrchestra-docs/histogram-api)- Make histograms of stored datasets.
 
-[t-SNE API](https://riibeirogabriel.github.io/learningOrchestra/t_sne)- Make a t-SNE image plot of stored datasets.
+[t-SNE API](https://learningorchestra.github.io/learningOrchestra-docs/t-sne-api)- Make a t-SNE image plot of stored datasets.
 
-[PCA API](https://riibeirogabriel.github.io/learningOrchestra/pca)- Make a PCA image plot of stored datasets.
+[PCA API](https://learningorchestra.github.io/learningOrchestra-docs/pca-api)- Make a PCA image plot of stored datasets.
 
-[Model builder API](https://riibeirogabriel.github.io/learningOrchestra/model_builder)- Create a prediction model from pre-processed datasets using Spark cluster.
+[Model builder API](https://learningorchestra.github.io/learningOrchestra-docs/modelbuilder-api)- Create a prediction model from pre-processed datasets using Spark cluster.
 
 ### Spark Microservices
 
@@ -287,6 +287,6 @@ To do this, with learningOrchestra already deployed, run the following in the ma
 NoSQLBooster- MongoDB GUI performs several database tasks such as file visualization, queries, projections and file extraction to CSV and JSON formats.
 It can be util to accomplish some these tasks with your processed dataset or get your prediction results.
 
-Read the [Database API docs](https://riibeirogabriel.github.io/learningOrchestra/database_api) for more info on configuring this tool.
+Read the [Database API docs](https://learningorchestra.github.io/learningOrchestra-docs/database-api) for more info on configuring this tool.
 
 See the [full docs](https://riibeirogabriel.github.io/learningOrchestra/usage/) for detailed usage instructions.
