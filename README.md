@@ -209,7 +209,7 @@ The repo is linked to the user documentation.
 
 ###### Who is doing this?
 
-See the [contributors list](#contributors).
+See the [contributors list](#contributors-sparkles).
 
 ###### Do you get money from learningOrchestra? How do you fund the project?
 
@@ -270,8 +270,9 @@ A computer cluster is a set of loosely or tightly connected computers that work 
 
 ###### What are microservices?
 
-Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are. Highly maintainable and testable. Loosely coupled. Independently deployable. Organized around business capabilities. Owned by small team.
-[an overview of microservice architecture](https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9)
+Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are: highly maintainable and testable, loosely coupled, independently deployable, organized around business capabilities, owned by small team.
+
+[An overview of microservice architecture](https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9)
 
 ###### Method X is very useful and should be included, why is it not there?
 
