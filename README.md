@@ -16,10 +16,10 @@
 
 Nowadays, **data science relies on a wide range of computer science skills**, from data management to algorithm design, from code optimization to cloud infrastructures. Data scientists are expected to have expertise in these diverse fields, especially when working in small teams or for academia.
 
-This situation can constitute a barrier to the actual extraction of new knowledge from collected data, 
-which is why the last two decades have seen more efforts to facilitate and streamline the development of 
-data mining workflows. The tools created can be sorted into two categories: **high-level** tools facilitate 
-the building of **automatic data processing pipelines** (e.g. [Weka](https://www.cs.waikato.ac.nz/ml/weka/)) 
+This situation can constitute a barrier to the actual extraction of new knowledge from collected data,
+which is why the last two decades have seen more efforts to facilitate and streamline the development of
+data mining workflows. The tools created can be sorted into two categories: **high-level** tools facilitate
+the building of **automatic data processing pipelines** (e.g. [Weka](https://www.cs.waikato.ac.nz/ml/weka/))
 while **low-level** ones support the setup of appropriate physical and virtual infrastructure (e.g. [Spark](https://spark.apache.org/)).
 
 However, this landscape is still missing a tool that **encompasses all steps and needs of a typical data science project**. This is where learningOrchestra comes in.
@@ -89,7 +89,7 @@ Context(cluster_ip)
 
 ### Setting up your cluster
 
-learningOrchestra operates from a [cluster](#what-is-a-cluster?) of Docker [containers](#what-is-a-container?).
+learningOrchestra operates from a [cluster](#what-is-a-cluster) of Docker [containers](#what-is-a-container).
 
 All your hosts must operate under Linux distributions and have [Docker Engine](https://docs.docker.com/engine/install/) installed.
 
@@ -114,7 +114,7 @@ Run `docker stack rm microservice`.
 
 ## How do I use learningOrchestra?
 
-learningOrchestra is organised into interoperable [microservices](#what-are-microservices?). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **evaluate machine learning models** and **visualize data and results**.
+learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
 The following microservices are available in the current version:
 - Database API- Gather data
@@ -125,7 +125,7 @@ The following microservices are available in the current version:
 - PCA API- Train machine learning models + Visualize data and results
 - Model builder API- Train machine learning models
 
-learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
+The microservices can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
 
 ### Using the microservices REST API
 
@@ -156,34 +156,25 @@ The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
 ### Research background
 
-The [first monograph](https://drive.google.com/file/d/1ZDrTR58pBuobpgwB_AOOFTlfmZEY6uQS/view) (under construction ) 
+The [first monograph](https://drive.google.com/file/d/1ZDrTR58pBuobpgwB_AOOFTlfmZEY6uQS/view) (under construction)
 
 ### Future steps
 
-* Increase the catalog of pre-processing microservice options (clustering,
+* Increase the catalog of analysis microservice options (clustering,
 sampling, hierarchy and so forth) and the number of existing ML players (Tensorflow,
 WEKA and others).
-
 * Implement the Load Model step.
-
 * Decouple the training and the validation steps to enable different pipe
 compositions. Include deep learning option in these steps.
-
 * Implement the tuning step.
-
 * Implement the production step for learning alternatives with feedbacks.
-
 * Conclude the Observer step using Kafka solution.
-
 * Refactor the REST API to insert or remove tags for a better semantic
 representation.
-
 * Write other ML pipelines and workflows using larger datasets and from
 different knowledge domains.
-
 * Build a new set of experiments.
-
-* Conclude the monograph.
+* Write a final version of the monograph.
 
 ### Contributors :sparkles:
 
@@ -248,9 +239,9 @@ In discussion.
 
 ###### My computer runs on Windows/OSX, can I still use learningOrchestra?
 
-Yes, the microservices APIs are interoperable comunicatting with JSON, 
-then you can use a request client like postman or insomnia and use the microservices, the provided python client
-package can run in any computer with python installed.
+You can use the microservices that run on a cluster where learningOrchestra is deployed, but not deploy learningOrchestra.
+
+To use the microservices, through the REST APIs and a request client or through the Python client package, refer to the [usage instructions](#how-do-i-use-learningorchestra) above.
 
 ###### I have a single computer, can I still use learningOrchestra?
 
@@ -258,13 +249,13 @@ Theoretically, you can, if your machine has 12 Gb of RAM, a quad-core processor 
 
 ###### What happens if learningOrchestra is killed while using a microservice?
 
-Depends on situation, case is a cluster fail, if there are some processing in microservices, you can lose your
-task, and also corrupt the database systems depending on the fail, but case a cluster fail with no processing, 
-the learningOrchestra automatically will reboot the affected microservices and try deploy again.
+If your cluster fails while a microservice is processing data, the task may be lost. Some fails might corrupt the database systems.
+
+If no processing was in progress when your cluster fails, the learningOrchestra will automatically re-deploy and reboot the affected microservices.
 
 ###### What happens if my instances loose the connection to each other?
 
-If the connection between cluster instances shutdown, learningOrchestra will try deploy the microservices deployed in loosed instances in active instances at cluster.
+If the connection between cluster instances is shutdown, learningOrchestra will try to re-deploy the microservices from the lost instances on the remaining active instances of the cluster.
 
 ###### How do I interrupt learningOrchestra?
 
@@ -287,7 +278,9 @@ Microservices - also known as the microservice architecture - is an architectura
 
 ###### Method X is very useful and should be included, why is it not there?
 
-Sorry, we try set the most handy methods/process, but we have a limited team, but you can suggest a new feature creating an issue in [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues).
+learningOrchestra is still in development. We try to prioritize the most handy methods/process, but we have a limited team.
+
+You can suggest new features by creating an issue in [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues). We also welcome [new contributors](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
 
 ### On contributing to learningOrchestra
 
@@ -299,4 +292,4 @@ If you are new to open source, consider giving the resources of [FirstTimersOnly
 
 ##### I'm not a developer, can I contribute?
 
-There are some ways to help us, you can improve the docs suggesting and implementing improvements and you also can help spread the learningOrchestra project to reach more users.
+Yes. Currently, we need help improving the documentation and spreading the word about the learningOrchestra project. Check our [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) for open tasks.
