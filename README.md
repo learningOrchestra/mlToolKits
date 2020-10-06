@@ -114,16 +114,13 @@ Run `docker stack rm microservice`.
 
 ## How do I use learningOrchestra?
 
-learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **evaluate machine learning models** and **visualize data and results**.
+learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
-The following microservices are available in the current version:
-- Database API- Gather data
-- Projection API- Visualize data and results (I'm assuming we're talking about mapping data points into display points?)
-- Data type API- Clean data
-- Histogram API- Visualize data and results
-- t-SNE API- Train machine learning models + Visualize data and results
-- PCA API- Train machine learning models + Visualize data and results
-- Model builder API- Train machine learning models
+The current version of learningOrchestra offers 7 microservices:
+- The **Database API is the central microservice**. It holds all the data, including the analysis results.
+- The **Data type API is a preprocessing microservice** dedicated to changing the type of data fields.
+- The **Projection, Histogram, t-SNE and PCA APIs are data exploration microservices**. They transform the map the data into new representation spaces so it can be visualized. They can be used on the raw data as well as on the intermediate and final results of the analysis pipeline.
+- The **Model builder API is the main analysis microservice**. It includes some preprocessing features and machine learning features to train models, evaluate models and predict information using trained models.
 
 The microservices can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
 
