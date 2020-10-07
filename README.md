@@ -70,7 +70,7 @@ Installation instructions:
 
 learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
 
-Microservice REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available microservices](https://learningorchestra.github.io/learningOrchestra-docs/usage/#microservices-rest-apis) for requests details.
+Microservice REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available microservices](https://learningorchestra.github.io/docs/usage/#microservices-rest-apis) for requests details.
 
 Python package:
 - Python 3 package
@@ -81,7 +81,7 @@ from learning_orchestra_client import *
 cluster_ip = "xx.xx.xxx.xxx"
 Context(cluster_ip)
 ```
-- Each microservice is wrapped into a class. Check the [package documentation](https://learningorchestra.github.io/learningOrchestra-docs/python-apis/) for a list of available functions and parameters.
+- Each microservice is wrapped into a class. Check the [package documentation](https://learningorchestra.github.io/docs/python-apis) for a list of available functions and parameters.
 
 ## How do I install learningOrchestra?
 
@@ -128,7 +128,7 @@ The microservices can be called on from any computer, including one that is not 
 
 We recommand using a **GUI REST API** caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Of course, regular `curl` commands from the terminal remain a possibility.
 
-The details for each microservice are available in the [documentation](https://learningorchestra.github.io/learningOrchestra-docs/usage/#microservices-rest-apis).
+The details for each microservice are available in the [documentation](https://learningorchestra.github.io/docs/usage/#microservices-rest-apis).
 
 ### Using the Python package
 
@@ -141,7 +141,7 @@ cluster_ip = "xx.xx.xxx.xxx"
 Context(cluster_ip)
 ```
 
-Check the [package documentation](https://learningorchestra.github.io/learningOrchestra-docs/python-apis/) for a list of available functions and parameters, or the [package repository](https://github.com/learningOrchestra/learningOrchestra-python-client) for an example use case.
+Check the [package documentation](https://learningorchestra.github.io/docs/python-apis) for a list of available functions and parameters, or the [package repository](https://github.com/learningOrchestra/learningOrchestra-python-client) for an example use case.
 
 ### Check cluster status
 
@@ -201,7 +201,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ###### Where can I find the documentation?
 
-Find the user documentation [here](https://learningorchestra.github.io/learningOrchestra-docs).
+Find the user documentation [here](https://learningorchestra.github.io/docs).
 
 ###### What is the website linked to the repo?
 
