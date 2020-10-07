@@ -14,7 +14,11 @@
         "code",
         "infra",
         "projectManagement",
-        "maintenance"
+        "maintenance",
+        "bug",
+        "ideas",
+        "question",
+        "review"
       ]
     },
     {
