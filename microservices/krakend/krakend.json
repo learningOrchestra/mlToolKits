@@ -75,7 +75,6 @@
       "format": "default"
     }
   },
-  "timeout": "",
   "cache_ttl": "300s",
   "output_encoding": "json",
   "name": "gatewayapi"
