@@ -2,60 +2,88 @@
   "version": 2,
   "endpoints": [
     {
-      "endpoint": "/Api/LearningOrchestra/",
+      "endpoint": "/Api/LearningOrchestra/Dataset",
       "backend": [
         {
-          "url_pattern": "/Dataset",
+          "url_pattern": "/files",
           "host": [
-            "http://0.0.0.0:5000/files"
-          ],
-          "extra_config": {},
-          "disable_host_sanitize": false
-        },
-        {
-          "url_pattern": "/Transform/Projection",
-          "host": [
-            "http://0.0.0.0:5001/projections"
-          ],
-          "extra_config": {}
-        },
-        {
-          "url_pattern": "/Transform/DataType",
-          "host": [
-            "http://0.0.0.0:5003/fieldtypes"
-          ],
-          "extra_config": {}
-        },
-        {
-          "url_pattern": "/Explore/Tsne",
-          "host": [
-            "http://0.0.0.0:5005/images"
-          ],
-          "extra_config": {}
-        },
-        {
-          "url_pattern": "/Explore/Pca",
-          "host": [
-            "http://0.0.0.0:5006/images"
-          ],
-          "extra_config": {}
-        },
-        {
-          "url_pattern": "/Explore/Histogram",
-          "host": [
-            "http://0.0.0.0:5004/histograms"
-          ],
-          "extra_config": {}
-        },
-        {
-          "url_pattern": "/Builder",
-          "host": [
-            "http://0.0.0.0:5002/models"
+            "http://0.0.0.0:5000"
           ],
           "extra_config": {}
         }
-      ],
-      "extra_config": {}
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection",
+      "backend": [
+        {
+          "url_pattern": "/projections",
+          "host": [
+            "http://0.0.0.0:5001"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "backend": [
+        {
+          "url_pattern": "/fieldtypes",
+          "host": [
+            "http://0.0.0.0:5003"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne",
+      "backend": [
+        {
+          "url_pattern": "/images",
+          "host": [
+            "http://0.0.0.0:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Pca",
+      "backend": [
+        {
+          "url_pattern": "/images",
+          "host": [
+            "http://0.0.0.0:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Histogram",
+      "backend": [
+        {
+          "url_pattern": "/histograms",
+          "host": [
+            "http://0.0.0.0:5004"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Builder",
+      "backend": [
+        {
+          "url_pattern": "/models",
+          "host": [
+            "http://0.0.0.0:5002"
+          ],
+          "extra_config": {}
+        }
+      ]
     }
   ],
   "extra_config": {
