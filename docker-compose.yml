@@ -106,7 +106,7 @@ services:
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock"
         ports:
-            - "80:8080"
+            - "8000:8080"
         deploy: *default-deploy-manager
 
     sparkmaster:
@@ -244,6 +244,16 @@ services:
             - database
             - spark
         environment: *default-service-database-env
+
+    gatewayapi:
+        image: devopsfaith/krakend:1.2.0
+        volumes:
+            - ./microservices/krakend:/etc/krakend
+        ports:
+            - "80:8080"
+            - "8090:8090"
+        deploy: *default-deploy-worker
+
 
 networks:
     database:
