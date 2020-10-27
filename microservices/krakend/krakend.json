@@ -7,7 +7,7 @@
         {
           "url_pattern": "/files",
           "host": [
-            "http://0.0.0.0:5000"
+            "http://databaseapi:5000"
           ],
           "extra_config": {}
         }
@@ -19,7 +19,7 @@
         {
           "url_pattern": "/projections",
           "host": [
-            "http://0.0.0.0:5001"
+            "http://projection:5001"
           ],
           "extra_config": {}
         }
@@ -31,7 +31,7 @@
         {
           "url_pattern": "/fieldtypes",
           "host": [
-            "http://0.0.0.0:5003"
+            "http://datatypehandler:5003"
           ],
           "extra_config": {}
         }
@@ -43,7 +43,7 @@
         {
           "url_pattern": "/images",
           "host": [
-            "http://0.0.0.0:5005"
+            "http://tsne:5005"
           ],
           "extra_config": {}
         }
@@ -55,7 +55,7 @@
         {
           "url_pattern": "/images",
           "host": [
-            "http://0.0.0.0:5006"
+            "http://pca:5006"
           ],
           "extra_config": {}
         }
@@ -67,7 +67,7 @@
         {
           "url_pattern": "/histograms",
           "host": [
-            "http://0.0.0.0:5004"
+            "http://histogram:5004"
           ],
           "extra_config": {}
         }
@@ -79,7 +79,7 @@
         {
           "url_pattern": "/models",
           "host": [
-            "http://0.0.0.0:5002"
+            "http://modelbuilder:5002"
           ],
           "extra_config": {}
         }
