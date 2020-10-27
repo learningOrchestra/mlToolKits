@@ -1,267 +1,270 @@
 version: "3.8"
 
 x-deploy: &default-deploy
-    replicas: 1
-    restart_policy:
-        condition: on-failure
+  replicas: 1
+  restart_policy:
+    condition: on-failure
 
 x-deploy-manager: &default-deploy-manager
-    <<: *default-deploy
-    placement:
-        constraints:
-            - "node.role==manager"
+  <<: *default-deploy
+  placement:
+    constraints:
+      - "node.role==manager"
 
 x-deploy-worker: &default-deploy-worker
-    <<: *default-deploy
-    placement:
-        constraints:
-            - "node.role==worker"
+  <<: *default-deploy
+  placement:
+    constraints:
+      - "node.role==worker"
 
 x-service-database-env: &default-service-database-env
-    - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-    - DATABASE_PORT=27017
-    - DATABASE_REPLICA_SET=replica_set
-    - DATABASE_NAME=database
+  - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
+  - DATABASE_PORT=27017
+  - DATABASE_REPLICA_SET=replica_set
+  - DATABASE_NAME=database
 
 services:
-    databaseapi:
-        build: microservices/database_api_image
-        image: 127.0.0.1:5050/database_api
-        ports:
-            - "5000:5000"
-        depends_on:
-            - databaseprimary
-            - images
-        deploy: *default-deploy-worker
-        volumes:
-            - "database_api:/database_api"
-        networks:
-            - database
-        environment:
-            - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary/?replicaSet=replica_set
-            - DATABASE_PORT=27017
+  databaseapi:
+    build: microservices/database_api_image
+    image: 127.0.0.1:5050/database_api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-worker
+    volumes:
+      - "database_api:/database_api"
+    networks:
+      - database
+    environment:
+      - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary/?replicaSet=replica_set
+      - DATABASE_PORT=27017
 
-    databaseprimary:
-        image: "bitnami/mongodb:3.6.17-ol-7-r26"
-        ports:
-            - "27017:27017"
-        environment:
-            - MONGODB_ROOT_PASSWORD=owl45#21
-            - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
-            - MONGODB_REPLICA_SET_MODE=primary
-            - MONGODB_REPLICA_SET_KEY=replicasetkey
-            - MONGODB_REPLICA_SET_NAME=replica_set
-        volumes:
-            - "database:/bitnami"
-        networks:
-            - database
-        deploy: *default-deploy-manager
+  databaseprimary:
+    image: "bitnami/mongodb:3.6.17-ol-7-r26"
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_ROOT_PASSWORD=owl45#21
+      - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=replicasetkey
+      - MONGODB_REPLICA_SET_NAME=replica_set
+    volumes:
+      - "database:/bitnami"
+    networks:
+      - database
+    deploy: *default-deploy-manager
 
-    databasesecondary:
-        image: "bitnami/mongodb:3.6.17-ol-7-r26"
-        depends_on:
-            - databaseprimary
-        environment:
-            - MONGODB_PRIMARY_HOST=databaseprimary
-            - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
-            - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
-            - MONGODB_REPLICA_SET_NAME=replica_set
-            - MONGODB_REPLICA_SET_KEY=replicasetkey
-            - MONGODB_REPLICA_SET_MODE=secondary
+  databasesecondary:
+    image: "bitnami/mongodb:3.6.17-ol-7-r26"
+    depends_on:
+      - databaseprimary
+    environment:
+      - MONGODB_PRIMARY_HOST=databaseprimary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+      - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
+      - MONGODB_REPLICA_SET_NAME=replica_set
+      - MONGODB_REPLICA_SET_KEY=replicasetkey
+      - MONGODB_REPLICA_SET_MODE=secondary
 
-        networks:
-            - database
-        deploy: *default-deploy-worker
+    networks:
+      - database
+    deploy: *default-deploy-worker
 
-    databasearbiter:
-        image: "bitnami/mongodb:3.6.17-ol-7-r26"
-        depends_on:
-            - databaseprimary
-        environment:
-            - MONGODB_PRIMARY_HOST=databaseprimary
-            - MONGODB_PRIMARY_PORT_NUMBER=27017
-            - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
-            - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
-            - MONGODB_REPLICA_SET_KEY=replicasetkey
-            - MONGODB_REPLICA_SET_NAME=replica_set
-            - MONGODB_REPLICA_SET_MODE=arbiter
+  databasearbiter:
+    image: "bitnami/mongodb:3.6.17-ol-7-r26"
+    depends_on:
+      - databaseprimary
+    environment:
+      - MONGODB_PRIMARY_HOST=databaseprimary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
+      - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
+      - MONGODB_REPLICA_SET_KEY=replicasetkey
+      - MONGODB_REPLICA_SET_NAME=replica_set
+      - MONGODB_REPLICA_SET_MODE=arbiter
 
-        networks:
-            - database
-        deploy: *default-deploy-worker
+    networks:
+      - database
+    deploy: *default-deploy-worker
 
-    images:
-        image: registry:2.7.1
-        ports:
-            - "5050:5000"
-        deploy: *default-deploy-manager
-        networks:
-            - database
-        volumes:
-            - "images:/var/lib/registry"
+  images:
+    image: registry:2.7.1
+    ports:
+      - "5050:5000"
+    deploy: *default-deploy-manager
+    networks:
+      - database
+    volumes:
+      - "images:/var/lib/registry"
 
-    visualizer:
-        image: dockersamples/visualizer:latest
-        volumes:
-            - "/var/run/docker.sock:/var/run/docker.sock"
-        ports:
-            - "8000:8080"
-        deploy: *default-deploy-manager
+  visualizer:
+    image: dockersamples/visualizer:latest
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "8000:8080"
+    deploy: *default-deploy-manager
 
-    sparkmaster:
-        build: microservices/spark_image
-        image: 127.0.0.1:5050/spark
-        ports:
-            - "4040:4040"
-            - "7077:7077"
-            - "8080:8080"
-        environment:
-            - SPARK_ROLE=master
-        deploy: *default-deploy-worker
-        networks:
-            - spark
-            - database
+  sparkmaster:
+    build: microservices/spark_image
+    image: 127.0.0.1:5050/spark
+    ports:
+      - "4040:4040"
+      - "7077:7077"
+      - "8080:8080"
+    environment:
+      - SPARK_ROLE=master
+    deploy: *default-deploy-worker
+    networks:
+      - spark
+      - database
 
-    sparkworker:
-        image: 127.0.0.1:5050/spark
-        entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
-        ports:
-            - "8081:8081"
-            - "41352:41352"
-        links:
-            - sparkmaster
-        environment:
-            - SPARK_MASTER=sparkmaster
-            - SPARK_ROLE=slave
-        deploy: *default-deploy-worker
-        networks:
-            - spark
-            - database
+  sparkworker:
+    image: 127.0.0.1:5050/spark
+    entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
+    ports:
+      - "8081:8081"
+      - "41352:41352"
+    links:
+      - sparkmaster
+    environment:
+      - SPARK_MASTER=sparkmaster
+      - SPARK_ROLE=slave
+    deploy: *default-deploy-worker
+    networks:
+      - spark
+      - database
 
-    projection:
-        build: microservices/projection_image
-        image: 127.0.0.1:5050/projection
-        ports:
-            - "5001:5001"
-            - "41000:41000"
-        extra_hosts:
-            - "projection:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy: *default-deploy-worker
-        networks:
-            - database
-            - spark
-        environment: *default-service-database-env
+  projection:
+    build: microservices/projection_image
+    image: 127.0.0.1:5050/projection
+    ports:
+      - "5001:5001"
+      - "41000:41000"
+    extra_hosts:
+      - "projection:0.0.0.0"
+    depends_on:
+      - databaseprimary
+      - images
+      - sparkmaster
+      - sparkworker
+    deploy: *default-deploy-worker
+    networks:
+      - database
+      - spark
+    environment: *default-service-database-env
 
-    modelbuilder:
-        build: microservices/model_builder_image
-        image: 127.0.0.1:5050/model_builder
-        ports:
-            - "5002:5002"
-            - "41100:41100"
-        extra_hosts:
-            - "modelbuilder:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy: *default-deploy-worker
-        networks:
-            - database
-            - spark
-        environment: *default-service-database-env
+  modelbuilder:
+    build: microservices/model_builder_image
+    image: 127.0.0.1:5050/model_builder
+    ports:
+      - "5002:5002"
+      - "41100:41100"
+    extra_hosts:
+      - "modelbuilder:0.0.0.0"
+    depends_on:
+      - databaseprimary
+      - images
+      - sparkmaster
+      - sparkworker
+    deploy: *default-deploy-worker
+    networks:
+      - database
+      - spark
+    environment: *default-service-database-env
 
-    datatypehandler:
-        build: microservices/data_type_handler_image
-        image: 127.0.0.1:5050/data_type_handler
-        ports:
-            - "5003:5003"
-        depends_on:
-            - databaseprimary
-            - images
-        deploy: *default-deploy-worker
-        networks:
-            - database
-        environment: *default-service-database-env
+  datatypehandler:
+    build: microservices/data_type_handler_image
+    image: 127.0.0.1:5050/data_type_handler
+    ports:
+      - "5003:5003"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-worker
+    networks:
+      - database
+    environment: *default-service-database-env
 
-    histogram:
-        build: microservices/histogram_image
-        image: 127.0.0.1:5050/histogram
-        ports:
-            - "5004:5004"
-        depends_on:
-            - databaseprimary
-            - images
-        deploy: *default-deploy-worker
-        networks:
-            - database
-        environment: *default-service-database-env
+  histogram:
+    build: microservices/histogram_image
+    image: 127.0.0.1:5050/histogram
+    ports:
+      - "5004:5004"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-worker
+    networks:
+      - database
+    environment: *default-service-database-env
 
-    tsne:
-        build: microservices/tsne_image
-        image: 127.0.0.1:5050/tsne
-        ports:
-            - "5005:5005"
-            - "41200:41200"
-        extra_hosts:
-            - "tsne:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy: *default-deploy-manager
-        volumes:
-            - "tsne:/images"
-        networks:
-            - database
-            - spark
-        environment: *default-service-database-env
+  tsne:
+    build: microservices/tsne_image
+    image: 127.0.0.1:5050/tsne
+    ports:
+      - "5005:5005"
+      - "41200:41200"
+    extra_hosts:
+      - "tsne:0.0.0.0"
+    depends_on:
+      - databaseprimary
+      - images
+      - sparkmaster
+      - sparkworker
+    deploy: *default-deploy-manager
+    volumes:
+      - "tsne:/images"
+    networks:
+      - database
+      - spark
+    environment: *default-service-database-env
 
-    pca:
-        build: microservices/pca_image
-        image: 127.0.0.1:5050/pca
-        ports:
-            - "5006:5006"
-            - "41300:41300"
-        extra_hosts:
-            - "pca:0.0.0.0"
-        depends_on:
-            - databaseprimary
-            - images
-            - sparkmaster
-            - sparkworker
-        deploy: *default-deploy-manager
-        volumes:
-            - "pca:/images"
-        networks:
-            - database
-            - spark
-        environment: *default-service-database-env
+  pca:
+    build: microservices/pca_image
+    image: 127.0.0.1:5050/pca
+    ports:
+      - "5006:5006"
+      - "41300:41300"
+    extra_hosts:
+      - "pca:0.0.0.0"
+    depends_on:
+      - databaseprimary
+      - images
+      - sparkmaster
+      - sparkworker
+    deploy: *default-deploy-manager
+    volumes:
+      - "pca:/images"
+    networks:
+      - database
+      - spark
+    environment: *default-service-database-env
 
-    gatewayapi:
-        image: devopsfaith/krakend:1.2.0
-        volumes:
-            - "./microservices/krakend:/etc/krakend"
-        ports:
-            - "80:8080"
-            - "8090:8090"
-        deploy: *default-deploy-worker
+  gatewayapi:
+    image: devopsfaith/krakend:1.2.0
+    volumes:
+      - "./microservices/krakend:/etc/krakend"
+    ports:
+      - "80:8080"
+      - "8090:8090"
+    deploy: *default-deploy-worker
+    networks:
+      - database
+      - spark
 
 
 networks:
-    database:
-    spark:
+  database:
+  spark:
 
 volumes:
-    images:
-    database:
-    database_api:
-    tsne:
-    pca:
+  images:
+  database:
+  database_api:
+  tsne:
+  pca:
