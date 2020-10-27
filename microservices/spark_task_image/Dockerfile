@@ -21,7 +21,6 @@ RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPAR
     cd $SPARK_INSTALL && ln -s spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION spark
 
 RUN pip install pyspark==$SPARK_VERSION
-RUN pip install numpy==1.19.0
 
 RUN apt-get autoremove && \
     apt-get clean && \
