@@ -167,20 +167,6 @@
     },
     {
       "endpoint": "/Api/LearningOrchestra/Transform/DataType",
-      "method": "POST",
-      "backend": [
-        {
-          "method": "POST",
-          "url_pattern": "/fieldTypes",
-          "host": [
-            "http://datatypehandler:5003"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
       "method": "PATCH",
       "backend": [
         {
