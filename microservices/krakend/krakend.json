@@ -110,17 +110,11 @@
       "backend": [
         {
           "method": "GET",
-          "url_pattern": "/files",
+          "url_pattern": "/files?type=Projection",
           "host": [
             "http://databaseapi:5000"
           ],
-          "extra_config": {
-            "github.com/devopsfaith/krakend-martian": {
-              "querystring.Modifier": {
-                "type": "projection"
-              }
-            }
-          }
+          "extra_config": {}
         }
       ]
     },
@@ -205,17 +199,11 @@
       "backend": [
         {
           "method": "GET",
-          "url_pattern": "/files",
+          "url_pattern": "/files?type=DataType",
           "host": [
             "http://databaseapi:5000"
           ],
-          "extra_config": {
-            "github.com/devopsfaith/krakend-martian": {
-              "querystring.Modifier": {
-                "type": "dataType"
-              }
-            }
-          }
+          "extra_config": {}
         }
       ]
     },
@@ -384,17 +372,11 @@
       "backend": [
         {
           "method": "GET",
-          "url_pattern": "/files",
+          "url_pattern": "/files?type=Histogram",
           "host": [
             "http://databaseapi:5000"
           ],
-          "extra_config": {
-            "github.com/devopsfaith/krakend-martian": {
-              "querystring.Modifier": {
-                "type": "histogram"
-              }
-            }
-          }
+          "extra_config": {}
         }
       ]
     },
