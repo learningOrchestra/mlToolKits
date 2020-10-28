@@ -2,9 +2,139 @@
   "version": 2,
   "endpoints": [
     {
-      "endpoint": "/Api/LearningOrchestra/Dataset/{filename}",
+      "endpoint": "/Api/LearningOrchestra/Dataset",
+      "method": "POST",
       "backend": [
         {
+          "method": "POST",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Dataset/{filename}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Dataset",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Dataset/{filename}",
+      "method": "GET",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Dataset/{filename}",
+      "method": "PUT",
+      "backend": [
+        {
+          "method": "PUT",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection",
+      "method": "POST",
+      "backend": [
+        {
+          "method": "POST",
+          "url_pattern": "/projections",
+          "host": [
+            "http://projection:5001"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection",
+      "method": "PATCH",
+      "backend": [
+        {
+          "method": "PATCH",
+          "url_pattern": "/projections",
+          "host": [
+            "http://projection:5001"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {
+            "github.com/devopsfaith/krakend-martian": {
+              "querystring.Modifier": {
+                "type": "projection"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection/{filename}",
+      "method": "GET",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
@@ -15,21 +145,25 @@
     },
     {
       "endpoint": "/Api/LearningOrchestra/Transform/Projection/{filename}",
+      "method": "DELETE",
       "backend": [
         {
-          "url_pattern": "/projections/{filename}",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
           "host": [
-            "http://projection:5001"
+            "http://databaseapi:5000"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Transform/DataType/{filename}",
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "method": "POST",
       "backend": [
         {
-          "url_pattern": "/fieldTypes/{filename}",
+          "method": "POST",
+          "url_pattern": "/fieldTypes",
           "host": [
             "http://datatypehandler:5003"
           ],
@@ -38,9 +172,134 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/{filename}",
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "method": "POST",
       "backend": [
         {
+          "method": "POST",
+          "url_pattern": "/fieldTypes",
+          "host": [
+            "http://datatypehandler:5003"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "method": "PATCH",
+      "backend": [
+        {
+          "method": "PATCH",
+          "url_pattern": "/fieldTypes",
+          "host": [
+            "http://datatypehandler:5003"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {
+            "github.com/devopsfaith/krakend-martian": {
+              "querystring.Modifier": {
+                "type": "dataType"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType/{filename}",
+      "method": "GET",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType/{filename}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/{filename}",
+      "method": "POST",
+      "backend": [
+        {
+          "method": "POST",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/images",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/{filename}",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/{filename}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "method": "DELETE",
           "url_pattern": "/images/{filename}",
           "host": [
             "http://tsne:5005"
@@ -51,8 +310,52 @@
     },
     {
       "endpoint": "/Api/LearningOrchestra/Explore/Pca/{filename}",
+      "method": "POST",
       "backend": [
         {
+          "method": "POST",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Pca/",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/images",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Pca/{filename}",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Pca/{filename}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "method": "DELETE",
           "url_pattern": "/images/{filename}",
           "host": [
             "http://pca:5006"
@@ -63,8 +366,10 @@
     },
     {
       "endpoint": "/Api/LearningOrchestra/Explore/Histogram/{filename}",
+      "method": "POST",
       "backend": [
         {
+          "method": "POST",
           "url_pattern": "/histograms/{filename}",
           "host": [
             "http://histogram:5004"
@@ -74,9 +379,64 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Builder",
+      "endpoint": "/Api/LearningOrchestra/Explore/Histogram",
+      "method": "GET",
       "backend": [
         {
+          "method": "GET",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {
+            "github.com/devopsfaith/krakend-martian": {
+              "querystring.Modifier": {
+                "type": "histogram"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Histogram/{filename}",
+      "method": "GET",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Explore/Histogram/{filename}",
+      "method": "DELETE",
+      "backend": [
+        {
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/Api/LearningOrchestra/Builder",
+      "method": "POST",
+      "backend": [
+        {
+          "method": "POST",
           "url_pattern": "/models",
           "host": [
             "http://modelbuilder:5002"
