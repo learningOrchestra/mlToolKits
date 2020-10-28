@@ -431,6 +431,7 @@
       "format": "default"
     }
   },
+  "timeout": "0s",
   "cache_ttl": "300s",
   "output_encoding": "json",
   "name": "gatewayapi"
