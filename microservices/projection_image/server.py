@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from projection import SparkManager, MongoOperations, ProjectionRequestValidator
+from projection import SparkManager, MongoOperations, \
+    ProjectionRequestValidator
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -22,7 +23,7 @@ POST = "POST"
 DELETE = "DELETE"
 
 MESSAGE_RESULT = "result"
-PROJECTION_FILENAME_NAME = "projection_filename"
+PROJECTION_FILENAME_NAME = "output_filename"
 FIELDS_NAME = "fields"
 
 MESSAGE_CREATED_FILE = "created_file"
@@ -33,24 +34,25 @@ app = Flask(__name__)
 
 
 def collection_database_url(
-    database_url, database_name, database_filename, database_replica_set
+        database_url, database_name, database_filename, database_replica_set
 ):
     return (
-        database_url
-        + "/"
-        + database_name
-        + "."
-        + database_filename
-        + "?replicaSet="
-        + database_replica_set
-        + "&authSource=admin"
+            database_url
+            + "/"
+            + database_name
+            + "."
+            + database_filename
+            + "?replicaSet="
+            + database_replica_set
+            + "&authSource=admin"
     )
 
 
-@app.route("/projections/<parent_filename>", methods=[POST])
-def create_projection(parent_filename):
+@app.route("/projections", methods=[POST])
+def create_projection():
     database = MongoOperations(
-        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
+            DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME],
     )
@@ -63,11 +65,13 @@ def create_projection(parent_filename):
         )
     except Exception as invalid_projection_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_projection_filename.args[FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: invalid_projection_filename.args[
+                FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_CONFLICT,
         )
 
     try:
+        parent_filename = request.json["input_filename"]
         request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
@@ -106,7 +110,8 @@ def create_projection(parent_filename):
     projection_fields.append(DOCUMENT_ID)
 
     spark_manager.projection(
-        parent_filename, request.json[PROJECTION_FILENAME_NAME], projection_fields
+        parent_filename, request.json[PROJECTION_FILENAME_NAME],
+        projection_fields
     )
 
     return (
@@ -117,5 +122,6 @@ def create_projection(parent_filename):
 
 if __name__ == "__main__":
     app.run(
-        host=os.environ[PROJECTION_HOST_IP], port=int(os.environ[PROJECTION_HOST_PORT])
+        host=os.environ[PROJECTION_HOST_IP],
+        port=int(os.environ[PROJECTION_HOST_PORT])
     )

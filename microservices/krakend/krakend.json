@@ -2,10 +2,10 @@
   "version": 2,
   "endpoints": [
     {
-      "endpoint": "/Api/LearningOrchestra/Dataset",
+      "endpoint": "/Api/LearningOrchestra/Dataset/{filename}",
       "backend": [
         {
-          "url_pattern": "/files",
+          "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -14,10 +14,10 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Transform/Projection",
+      "endpoint": "/Api/LearningOrchestra/Transform/Projection/{filename}",
       "backend": [
         {
-          "url_pattern": "/projections",
+          "url_pattern": "/projections/{filename}",
           "host": [
             "http://projection:5001"
           ],
@@ -26,10 +26,10 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Transform/DataType",
+      "endpoint": "/Api/LearningOrchestra/Transform/DataType/{filename}",
       "backend": [
         {
-          "url_pattern": "/fieldtypes",
+          "url_pattern": "/fieldTypes/{filename}",
           "host": [
             "http://datatypehandler:5003"
           ],
@@ -38,10 +38,10 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Explore/Tsne",
+      "endpoint": "/Api/LearningOrchestra/Explore/Tsne/{filename}",
       "backend": [
         {
-          "url_pattern": "/images",
+          "url_pattern": "/images/{filename}",
           "host": [
             "http://tsne:5005"
           ],
@@ -50,10 +50,10 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Explore/Pca",
+      "endpoint": "/Api/LearningOrchestra/Explore/Pca/{filename}",
       "backend": [
         {
-          "url_pattern": "/images",
+          "url_pattern": "/images/{filename}",
           "host": [
             "http://pca:5006"
           ],
@@ -62,10 +62,10 @@
       ]
     },
     {
-      "endpoint": "/Api/LearningOrchestra/Explore/Histogram",
+      "endpoint": "/Api/LearningOrchestra/Explore/Histogram/{filename}",
       "backend": [
         {
-          "url_pattern": "/histograms",
+          "url_pattern": "/histograms/{filename}",
           "host": [
             "http://histogram:5004"
           ],

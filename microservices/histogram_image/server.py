@@ -12,7 +12,7 @@ HISTOGRAM_PORT = "HISTOGRAM_PORT"
 MESSAGE_RESULT = "result"
 
 FIELDS_NAME = "fields"
-HISTOGRAM_FILENAME_NAME = "histogram_filename"
+HISTOGRAM_FILENAME_NAME = "output_filename"
 
 FIRST_ARGUMENT = 0
 
@@ -32,8 +32,8 @@ def collection_database_url(database_url, database_replica_set):
     return database_url + "/?replicaSet=" + database_replica_set
 
 
-@app.route("/histograms/<parent_filename>", methods=[POST])
-def create_histogram(parent_filename):
+@app.route("/histograms", methods=[POST])
+def create_histogram():
     database = MongoOperations(
         collection_database_url(
             os.environ[DATABASE_URL], os.environ[DATABASE_REPLICA_SET]
@@ -55,6 +55,7 @@ def create_histogram(parent_filename):
         )
 
     try:
+        parent_filename = request.json["input_filename"]
         request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (

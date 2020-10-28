@@ -27,7 +27,7 @@ POST = "POST"
 DELETE = "DELETE"
 
 MESSAGE_RESULT = "result"
-PCA_FILENAME_NAME = "pca_filename"
+PCA_FILENAME_NAME = "output_filename"
 LABEL_NAME = "label_name"
 
 MESSAGE_CREATED_FILE = "created_file"
@@ -54,8 +54,8 @@ def collection_database_url(
     )
 
 
-@app.route("/images/<parent_filename>", methods=[POST])
-def create_pca(parent_filename):
+@app.route("/images/", methods=[POST])
+def create_pca():
     database = MongoOperations(
         FULL_DATABASE_URL, os.environ[DATABASE_PORT], os.environ[DATABASE_NAME]
     )
@@ -72,6 +72,7 @@ def create_pca(parent_filename):
         )
 
     try:
+        parent_filename = request.json["input_filename"]
         request_validator.parent_filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
