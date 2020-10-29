@@ -53,6 +53,7 @@
       ],
       "backend": [
         {
+          "encoding": "no-op",
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
@@ -81,6 +82,7 @@
       "method": "POST",
       "backend": [
         {
+          "encoding": "no-op",
           "method": "POST",
           "url_pattern": "/projections",
           "host": [
