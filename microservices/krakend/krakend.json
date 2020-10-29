@@ -80,6 +80,7 @@
     {
       "endpoint": "/api/learningOrchestra/v1/transform/projection",
       "method": "POST",
+      "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
