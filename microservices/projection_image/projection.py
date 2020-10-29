@@ -22,24 +22,24 @@ class SparkManager:
 
         self.spark_session = (
             SparkSession.builder.appName("projection")
-            .config("spark.mongodb.input.uri", database_url_input)
-            .config("spark.mongodb.output.uri", database_url_output)
-            .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-            .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
-            .config(
+                .config("spark.mongodb.input.uri", database_url_input)
+                .config("spark.mongodb.output.uri", database_url_output)
+                .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
+                .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
+                .config(
                 "spark.jars.packages",
                 "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
             )
-            .master(
+                .master(
                 "spark://"
                 + os.environ[SPARKMASTER_HOST]
                 + ":"
                 + str(os.environ[SPARKMASTER_PORT])
             )
-            .getOrCreate()
+                .getOrCreate()
         )
 
-    def projection(self, filename, projection_filename, fields):
+    async def projection(self, filename, projection_filename, fields):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
@@ -70,16 +70,20 @@ class SparkManager:
 
         metadata_dataframe.write.format(self.MONGO_SPARK_SOURCE).save()
 
-        self.submit_projection_job_spark(fields, metadata_content, metadata_fields)
+        self.submit_projection_job_spark(fields, metadata_content,
+                                         metadata_fields)
 
-    def submit_projection_job_spark(self, fields, metadata_content, metadata_fields):
-        dataframe = self.spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
+    def submit_projection_job_spark(self, fields, metadata_content,
+                                    metadata_fields):
+        dataframe = self.spark_session.read.format(
+            self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
             dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID
         )
 
         projection_dataframe = dataframe.select(*fields)
-        projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode("append").save()
+        projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode(
+            "append").save()
 
         metadata_content_list = list(metadata_content)
         metadata_content_list[metadata_content_list.index(False)] = True
@@ -136,7 +140,8 @@ class ProjectionRequestValidator:
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
 
         for field in projection_fields:
             if field not in filename_metadata["fields"]:

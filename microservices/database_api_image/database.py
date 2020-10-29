@@ -25,7 +25,8 @@ class DatabaseApi:
 
     def add_file(self, url, filename):
         try:
-            self.file_manager_object.storage_file(filename, url, self.database_object)
+            self.file_manager_object.storage_file(filename, url,
+                                                  self.database_object)
 
         except requests.exceptions.RequestException:
             raise Exception(self.MESSAGE_INVALID_URL)
@@ -41,7 +42,7 @@ class DatabaseApi:
         limit = int(limit)
 
         for file in self.database_object.find_in_file(
-            filename, query_object, skip, limit
+                filename, query_object, skip, limit
         ):
             result.append(json.loads(dumps(file)))
 
@@ -79,7 +80,8 @@ class MongoOperations:
     def find_in_file(self, filename, query, skip=0, limit=1):
         file_collection = self.database[filename]
         return (
-            file_collection.find(query).sort(ROW_ID, ASCENDING).skip(skip).limit(limit)
+            file_collection.find(query).sort(ROW_ID, ASCENDING).skip(
+                skip).limit(limit)
         )
 
     def delete_file(self, filename):
@@ -109,7 +111,8 @@ class CsvDownloader:
     file_headers = None
 
     def __init__(self):
-        self.thread_pool = ThreadPoolExecutor(max_workers=self.MAX_NUMBER_THREADS)
+        self.thread_pool = ThreadPoolExecutor(
+            max_workers=self.MAX_NUMBER_THREADS)
         self.download_tratament_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.tratament_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
@@ -163,8 +166,8 @@ class CsvDownloader:
             first_symbol_html = "<"
             first_symbol_json = "{"
             if (
-                first_line[0][0] == first_symbol_html
-                or first_line[0][0] == first_symbol_json
+                    first_line[0][0] == first_symbol_html
+                    or first_line[0][0] == first_symbol_json
             ):
                 raise requests.exceptions.RequestException
 
