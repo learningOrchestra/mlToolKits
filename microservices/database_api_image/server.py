@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from database import CsvDownloader, DatabaseApi, MongoOperations
-import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -92,7 +92,8 @@ def delete_file(filename):
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    database.delete_file(filename)
+    thread_pool = ThreadPoolExecutor()
+    thread_pool.submit(database.delete_file, filename)
 
     return jsonify({MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
 
