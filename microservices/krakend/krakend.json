@@ -46,6 +46,7 @@
     {
       "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
       "method": "GET",
+      "output_encoding": "no-op",
       "querystring_params": [
         "skip",
         "limit",
