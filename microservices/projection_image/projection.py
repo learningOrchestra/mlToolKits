@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-from concurrent.futures import ThreadPoolExecutor
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -41,9 +40,6 @@ class SparkManager:
                 .getOrCreate()
         )
 
-        self.thread_pool = ThreadPoolExecutor(
-            max_workers=self.MAX_NUMBER_THREADS)
-
     def projection(self, filename, projection_filename, fields):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
@@ -75,9 +71,9 @@ class SparkManager:
 
         metadata_dataframe.write.format(self.MONGO_SPARK_SOURCE).save()
 
-        self.thread_pool.submit(self.submit_projection_job_spark, fields,
-                                metadata_content,
-                                metadata_fields)
+        self.submit_projection_job_spark(fields,
+                                         metadata_content,
+                                         metadata_fields)
 
     def submit_projection_job_spark(self, fields, metadata_content,
                                     metadata_fields):

@@ -2,6 +2,7 @@ from flask import jsonify, request, Flask
 import os
 from projection import SparkManager, MongoOperations, \
     ProjectionRequestValidator
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -46,6 +47,9 @@ def collection_database_url(
             + database_replica_set
             + "&authSource=admin"
     )
+
+
+thread_pool = ThreadPoolExecutor()
 
 
 @app.route("/projections", methods=[POST])
@@ -109,10 +113,9 @@ def create_projection():
 
     projection_fields.append(DOCUMENT_ID)
 
-    spark_manager.projection(
-        parent_filename, request.json[PROJECTION_FILENAME_NAME],
-        projection_fields
-    )
+    thread_pool.submit(spark_manager.projection,
+                       parent_filename, request.json[PROJECTION_FILENAME_NAME],
+                       projection_fields)
 
     return (
         jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
