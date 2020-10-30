@@ -25,7 +25,7 @@ DELETE = "DELETE"
 
 MESSAGE_RESULT = "result"
 PROJECTION_FILENAME_NAME = "output_filename"
-FIELDS_NAME = "fields"
+FIELDS_NAME = "names"
 
 MESSAGE_CREATED_FILE = "created_file"
 

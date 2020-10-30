@@ -65,15 +65,15 @@ def change_data_type():
 
     try:
         request_validator.fields_validator(
-            parent_filename, request.json)
+            parent_filename, request.json["types"])
     except Exception as invalid_fields:
         return jsonify(
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     data_type_converter = DataTypeConverter(database)
-    data_type_converter.file_converter(
-        parent_filename, request.json)
+    data_type_converter.convert_existent_file(
+        parent_filename, request.json["types"])
 
     return jsonify({MESSAGE_RESULT: MESSAGE_CHANGED_FILE}), \
            HTTP_STATUS_CODE_SUCESS
