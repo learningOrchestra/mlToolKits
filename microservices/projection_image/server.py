@@ -1,4 +1,4 @@
-from quart import jsonify, request, Quart
+from flask import jsonify, request, Flask
 import os
 from projection import SparkManager, MongoOperations, \
     ProjectionRequestValidator
@@ -30,7 +30,7 @@ MESSAGE_CREATED_FILE = "created_file"
 
 FIRST_ARGUMENT = 0
 
-app = Quart(__name__)
+app = Flask(__name__)
 
 
 def collection_database_url(
@@ -49,7 +49,7 @@ def collection_database_url(
 
 
 @app.route("/projections", methods=[POST])
-async def create_projection():
+def create_projection():
     database = MongoOperations(
         os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
             DATABASE_REPLICA_SET],
@@ -109,7 +109,7 @@ async def create_projection():
 
     projection_fields.append(DOCUMENT_ID)
 
-    await spark_manager.projection(
+    spark_manager.projection(
         parent_filename, request.json[PROJECTION_FILENAME_NAME],
         projection_fields
     )
