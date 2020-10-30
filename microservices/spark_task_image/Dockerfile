@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.6
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
