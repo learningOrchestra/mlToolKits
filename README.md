@@ -91,7 +91,7 @@ Context(cluster_ip)
 
 learningOrchestra operates from a [cluster](#what-is-a-cluster) of Docker [containers](#what-is-a-container).
 
-All your hosts must operate under Linux distributions and have [Docker Engine](https://docs.docker.com/engine/install/) installed.
+All your hosts must operate under Debian Linux OS and have [Docker Engine](https://docs.docker.com/engine/install/) installed.
 
 Configure your cluster in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/). Install [Docker Compose](https://docs.docker.com/compose/install/) on your manager instance.
 
