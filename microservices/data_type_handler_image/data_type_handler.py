@@ -73,10 +73,14 @@ class DataTypeConverter:
         self.database_connector.insert_one_in_file(filename, metadata_file)
 
     def update_finished_metadata_file(self, filename, flag):
-        metadata_file = {
+        metadata_new_value = {
             "finished": flag,
         }
-        self.database_connector.update_one(filename, metadata_file)
+        metadata_query = {
+            "_id": 0
+        }
+        self.database_connector.update_one(filename, metadata_new_value,
+                                           metadata_query)
 
 
 class MongoOperations:
