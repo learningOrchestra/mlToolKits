@@ -105,7 +105,7 @@ def create_projection():
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    projection_processing(database_url_input,
+    thread_pool.submit(projection_processing, database_url_input,
                        database_url_output, request.json[FIELDS_NAME],
                        parent_filename, request.json[PROJECTION_FILENAME_NAME])
 

@@ -44,6 +44,7 @@ class SparkManager:
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
+        fields.append("_id")
         fields_without_id = fields.copy()
 
         try:
