@@ -44,7 +44,7 @@ def collection_database_url(database_url, database_name, database_filename,
            "&authSource=admin"
 
 
-@app.route('/fieldTypes/', methods=[PATCH])
+@app.route('/fieldTypes', methods=[PATCH])
 def change_data_type():
     database = MongoOperations(
         os.environ[DATABASE_URL] + '/?replicaSet=' +
