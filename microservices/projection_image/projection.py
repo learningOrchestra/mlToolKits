@@ -45,7 +45,11 @@ class SparkManager:
         london_time = datetime.now(timezone_london)
 
         fields_without_id = fields.copy()
-        fields_without_id.remove(self.DOCUMENT_ID)
+
+        try:
+            fields_without_id.remove(self.DOCUMENT_ID)
+        except Exception:
+            pass
 
         metadata_content = (
             projection_filename,
