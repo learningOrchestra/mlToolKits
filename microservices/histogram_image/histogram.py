@@ -14,7 +14,8 @@ class Histogram:
             "fields": fields,
             "filename": histogram_filename,
             "type": "histogram",
-            "_id": 0,
+            self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID,
+            "finished": False
         }
 
         self.database_connector.insert_one_in_file(
@@ -26,15 +27,24 @@ class Histogram:
         for field in fields:
             field_accumulator = "$" + field
             print(field_accumulator, flush=True)
-            pipeline = [{"$group": {"_id": field_accumulator, "count": {"$sum": 1}}}]
+            pipeline = [
+                {"$group": {"_id": field_accumulator, "count": {"$sum": 1}}}]
 
             field_result = {
                 field: self.database_connector.aggregate(filename, pipeline),
-                "_id": document_id,
+                self.DOCUMENT_ID_NAME: document_id,
             }
             document_id += 1
 
-            self.database_connector.insert_one_in_file(histogram_filename, field_result)
+            self.database_connector.insert_one_in_file(histogram_filename,
+                                                       field_result)
+
+        metadata_finished_true_query = {"finished": True}
+        metadata_id_query = {self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID}
+
+        self.database_connector.update_one(filename,
+                                           metadata_finished_true_query,
+                                           metadata_id_query)
 
 
 class MongoOperations:
@@ -94,7 +104,8 @@ class HistogramRequestValidator:
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
 
         for field in fields:
             if field not in filename_metadata["fields"]:
