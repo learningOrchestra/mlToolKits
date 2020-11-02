@@ -105,13 +105,9 @@ def create_projection():
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    spark_manager = SparkManager(database_url_input, database_url_output)
-
-    projection_fields = request.json[FIELDS_NAME]
-
-    thread_pool.submit(spark_manager.projection,
-                       parent_filename, request.json[PROJECTION_FILENAME_NAME],
-                       projection_fields)
+    thread_pool.submit(projection_processing, database_url_input,
+                       database_url_output, request.json[FIELDS_NAME],
+                       parent_filename, request.json[PROJECTION_FILENAME_NAME])
 
     return (
         jsonify({
@@ -121,6 +117,15 @@ def create_projection():
                 "?query={}&limit=10&skip=0"}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
+
+
+def projection_processing(database_url_input, database_url_output,
+                          projection_fields, parent_filename, output_filename):
+    spark_manager = SparkManager(database_url_input, database_url_output)
+
+    spark_manager.projection(
+        parent_filename, output_filename,
+        projection_fields)
 
 
 if __name__ == "__main__":
