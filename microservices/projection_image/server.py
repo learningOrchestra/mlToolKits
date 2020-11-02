@@ -109,8 +109,6 @@ def create_projection():
 
     projection_fields = request.json[FIELDS_NAME]
 
-    projection_fields.append(DOCUMENT_ID)
-
     thread_pool.submit(spark_manager.projection,
                        parent_filename, request.json[PROJECTION_FILENAME_NAME],
                        projection_fields)
