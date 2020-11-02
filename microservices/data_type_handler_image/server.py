@@ -3,7 +3,8 @@ import os
 from data_type_handler import (
     MongoOperations,
     DataTypeHandlerRequestValidator,
-    DataTypeConverter)
+    DataTypeConverter,
+    FileMetadataHandler)
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -21,7 +22,6 @@ FIRST_ARGUMENT = 0
 
 MESSAGE_INVALID_URL = "invalid_url"
 MESSAGE_DUPLICATE_FILE = "duplicate_file"
-MESSAGE_CHANGED_FILE = "file_changed"
 MESSAGE_DELETED_FILE = "deleted_file"
 
 DATABASE_URL = "DATABASE_URL"
@@ -71,12 +71,16 @@ def change_data_type():
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
-    data_type_converter = DataTypeConverter(database)
+    metadata_handler = FileMetadataHandler()
+    data_type_converter = DataTypeConverter(database, metadata_handler)
     data_type_converter.convert_existent_file(
         parent_filename, request.json["types"])
 
-    return jsonify({MESSAGE_RESULT: MESSAGE_CHANGED_FILE}), \
-           HTTP_STATUS_CODE_SUCESS
+    return jsonify({
+        MESSAGE_RESULT: "/api/learningOrchestra/v1/dataset/" +
+                        request.json["input_filename"] +
+                        "?query={}&limit=20&skip=0"}), \
+            HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":

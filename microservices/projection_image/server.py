@@ -27,8 +27,6 @@ MESSAGE_RESULT = "result"
 PROJECTION_FILENAME_NAME = "output_filename"
 FIELDS_NAME = "names"
 
-MESSAGE_CREATED_FILE = "created_file"
-
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
@@ -118,7 +116,11 @@ def create_projection():
                        projection_fields)
 
     return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
+        jsonify({
+            MESSAGE_RESULT:
+                "/api/learningOrchestra/v1/transform/projection/" +
+                request.json["input_filename"] +
+                "?query={}&limit=10&skip=0"}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 

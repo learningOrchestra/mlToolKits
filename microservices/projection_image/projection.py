@@ -54,6 +54,7 @@ class SparkManager:
             filename,
             self.METADATA_FILE_ID,
             fields_without_id,
+            "projection"
         )
 
         metadata_fields = [
@@ -63,6 +64,7 @@ class SparkManager:
             "parent_filename",
             self.DOCUMENT_ID,
             "fields",
+            "type",
         ]
 
         metadata_dataframe = self.spark_session.createDataFrame(

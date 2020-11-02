@@ -126,7 +126,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=Projection",
+          "url_pattern": "/files?type=projection",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -211,7 +211,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=DataType",
+          "url_pattern": "/files?type=dataType",
           "host": [
             "http://databaseapi:5000"
           ],

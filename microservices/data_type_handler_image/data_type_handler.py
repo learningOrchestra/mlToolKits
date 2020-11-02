@@ -10,9 +10,10 @@ class DataTypeConverter:
     STRING_TYPE = "string"
     NUMBER_TYPE = "number"
 
-    def __init__(self, database_connector):
+    def __init__(self, database_connector, metadata_handler):
         self.database_connector = database_connector
         self.thread_pool = ThreadPoolExecutor()
+        self.metadata_handler = metadata_handler
 
     def field_converter(self, filename, field, field_type):
         query = {}
@@ -48,7 +49,7 @@ class DataTypeConverter:
 
     def convert_existent_file(self, filename, fields_dictionary):
 
-        self.update_finished_metadata_file(filename, False)
+        self.metadata_handler.update_finished_metadata_file(filename, False)
 
         self.thread_pool.submit(self.field_file_converter, filename,
                                 fields_dictionary)
@@ -58,8 +59,9 @@ class DataTypeConverter:
             self.field_converter(filename, field,
                                  fields_dictionary[field])
 
-        self.update_finished_metadata_file(filename, True)
+        self.metadata_handler.update_finished_metadata_file(filename, True)
 
+class FileMetadataHandler():
     def create_metadata_file(self, filename):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
@@ -69,6 +71,7 @@ class DataTypeConverter:
             "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             "_id": 0,
             "finished": False,
+            "type": "dataType"
         }
         self.database_connector.insert_one_in_file(filename, metadata_file)
 

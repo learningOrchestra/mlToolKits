@@ -184,6 +184,7 @@ class CsvDownloader:
             ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False,
             "fields": "processing",
+            "type": "dataset"
         }
         database_connection.insert_one_in_file(filename, metadata_file)
         self.thread_pool.submit(self.download_file, url)

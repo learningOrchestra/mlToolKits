@@ -19,7 +19,6 @@ FIRST_ARGUMENT = 0
 
 MESSAGE_INVALID_URL = "invalid_url"
 MESSAGE_DUPLICATE_FILE = "duplicate_file"
-MESSAGE_CREATED_FILE = "file_created"
 MESSAGE_DELETED_FILE = "deleted_file"
 
 GET = "GET"
@@ -55,7 +54,10 @@ def create_file():
             )
 
     return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
+        jsonify({MESSAGE_RESULT:
+                     "/api/learningOrchestra/v1/dataset/" +
+                     request.json[FILENAME] +
+                     "?query={}&limit=10&skip=0"}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 
@@ -83,7 +85,8 @@ def read_files_descriptor():
     mongo_operations = MongoOperations()
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
-    return jsonify({MESSAGE_RESULT: database.get_files()}), HTTP_STATUS_CODE_SUCESS
+    return jsonify(
+        {MESSAGE_RESULT: database.get_files()}), HTTP_STATUS_CODE_SUCESS
 
 
 @app.route("/files/<filename>", methods=[DELETE])
@@ -95,8 +98,10 @@ def delete_file(filename):
     thread_pool = ThreadPoolExecutor()
     thread_pool.submit(database.delete_file, filename)
 
-    return jsonify({MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+    return jsonify(
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":
-    app.run(host=os.environ[DATABASE_API_HOST], port=int(os.environ[DATABASE_API_PORT]))
+    app.run(host=os.environ[DATABASE_API_HOST],
+            port=int(os.environ[DATABASE_API_PORT]))
