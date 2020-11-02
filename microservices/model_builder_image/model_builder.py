@@ -11,6 +11,7 @@ from pyspark.ml.classification import (
     GBTClassifier,
     NaiveBayes,
 )
+import numpy as np
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
