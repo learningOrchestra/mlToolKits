@@ -61,7 +61,11 @@ class DataTypeConverter:
 
         self.metadata_handler.update_finished_metadata_file(filename, True)
 
+
 class FileMetadataHandler():
+    def __init__(self, database_connector):
+        self.database_connector = database_connector
+
     def create_metadata_file(self, filename):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
