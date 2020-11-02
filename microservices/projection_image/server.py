@@ -113,7 +113,7 @@ def create_projection():
         jsonify({
             MESSAGE_RESULT:
                 "/api/learningOrchestra/v1/transform/projection/" +
-                request.json["output_filename"] +
+                request.json[PROJECTION_FILENAME_NAME] +
                 "?query={}&limit=10&skip=0"}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
