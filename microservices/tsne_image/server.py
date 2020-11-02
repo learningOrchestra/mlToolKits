@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask, send_file
 import os
 from tsne import TsneGenerator, MongoOperations, TsneRequestValidator
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -31,11 +32,12 @@ MESSAGE_RESULT = "result"
 TSNE_FILENAME_NAME = "output_filename"
 LABEL_NAME = "label_name"
 
-MESSAGE_CREATED_FILE = "created_file"
 MESSAGE_DELETED_FILE = "deleted_file"
 MESSAGE_NOT_FOUND = "not_found_file"
 
 FIRST_ARGUMENT = 0
+
+thread_pool = ThreadPoolExecutor()
 
 app = Flask(__name__)
 
@@ -74,7 +76,7 @@ def create_tsne():
         )
 
     try:
-        parent_filename = request.json["input_filename"]
+        parent_filename = request.json[TSNE_FILENAME_NAME]
         request_validator.parent_filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
@@ -99,16 +101,26 @@ def create_tsne():
         os.environ[DATABASE_REPLICA_SET],
     )
 
+    thread_pool.submit(tsne_async_processing,
+                       database_url_input,
+                       parent_filename,
+                       request.json[LABEL_NAME],
+                       request.json[TSNE_FILENAME_NAME])
+
+    return (
+        jsonify({MESSAGE_RESULT: "/api/learningOrchestra/v1/explore/tsne/" +
+                                 request.json[TSNE_FILENAME_NAME]}),
+        HTTP_STATUS_CODE_SUCESS_CREATED,
+    )
+
+
+def tsne_async_processing(database_url_input, parent_filename, label_name,
+                          tsne_filename):
     tsne_generator = TsneGenerator(database_url_input)
 
     tsne_generator.create_image(
-        parent_filename, request.json[LABEL_NAME],
-        request.json[TSNE_FILENAME_NAME]
-    )
-
-    return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        parent_filename, label_name,
+        tsne_filename
     )
 
 
@@ -156,7 +168,8 @@ def delete_image(filename):
         )
 
     image_path = os.environ[IMAGES_PATH] + "/" + filename + IMAGE_FORMAT
-    os.remove(image_path)
+
+    thread_pool.submit(os.remove, image_path)
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS

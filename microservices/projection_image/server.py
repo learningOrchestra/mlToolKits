@@ -105,7 +105,7 @@ def create_projection():
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    thread_pool.submit(projection_processing, database_url_input,
+    thread_pool.submit(projection_async_processing, database_url_input,
                        database_url_output, request.json[FIELDS_NAME],
                        parent_filename, request.json[PROJECTION_FILENAME_NAME])
 
@@ -119,8 +119,9 @@ def create_projection():
     )
 
 
-def projection_processing(database_url_input, database_url_output,
-                          projection_fields, parent_filename, output_filename):
+def projection_async_processing(database_url_input, database_url_output,
+                                projection_fields, parent_filename,
+                                output_filename):
     spark_manager = SparkManager(database_url_input, database_url_output)
 
     spark_manager.projection(

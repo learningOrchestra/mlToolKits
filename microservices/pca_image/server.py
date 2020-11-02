@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask, send_file
 import os
 from pca import PcaGenerator, MongoOperations, PcaRequestValidator
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -19,7 +20,8 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 FULL_DATABASE_URL = (
-    os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[DATABASE_REPLICA_SET]
+        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
+    DATABASE_REPLICA_SET]
 )
 
 GET = "GET"
@@ -28,9 +30,9 @@ DELETE = "DELETE"
 
 MESSAGE_RESULT = "result"
 PCA_FILENAME_NAME = "output_filename"
+PARENT_FILENAME_NAME = "input_filename"
 LABEL_NAME = "label_name"
 
-MESSAGE_CREATED_FILE = "created_file"
 MESSAGE_DELETED_FILE = "deleted_file"
 MESSAGE_NOT_FOUND = "not_found_file"
 
@@ -38,24 +40,26 @@ FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
 
+thread_pool = ThreadPoolExecutor()
+
 
 def collection_database_url(
-    database_url, database_name, database_filename, database_replica_set
+        database_url, database_name, database_filename, database_replica_set
 ):
     return (
-        database_url
-        + "/"
-        + database_name
-        + "."
-        + database_filename
-        + "?replicaSet="
-        + database_replica_set
-        + "&authSource=admin"
+            database_url
+            + "/"
+            + database_name
+            + "."
+            + database_filename
+            + "?replicaSet="
+            + database_replica_set
+            + "&authSource=admin"
     )
 
 
-@app.route("/images/", methods=[POST])
-def create_pca():
+@app.route("/images", methods=[POST])
+def pca_plot():
     database = MongoOperations(
         FULL_DATABASE_URL, os.environ[DATABASE_PORT], os.environ[DATABASE_NAME]
     )
@@ -67,12 +71,13 @@ def create_pca():
         )
     except Exception as invalid_pca_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
+            jsonify(
+                {MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_CONFLICT,
         )
 
     try:
-        parent_filename = request.json["input_filename"]
+        parent_filename = request.json[PARENT_FILENAME_NAME]
         request_validator.parent_filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
@@ -97,15 +102,27 @@ def create_pca():
         os.environ[DATABASE_REPLICA_SET],
     )
 
+    thread_pool.submit(pca_async_processing,
+                       database_url_input,
+                       parent_filename,
+                       request.json[LABEL_NAME],
+                       request.json[PCA_FILENAME_NAME])
+
+    return (
+        jsonify({
+            MESSAGE_RESULT:
+                "/api/learningOrchestra/v1/explore/pca/" +
+                request.json[PCA_FILENAME_NAME]}),
+        HTTP_STATUS_CODE_SUCESS_CREATED,
+    )
+
+
+def pca_async_processing(database_url_input, parent_filename, label_name,
+                         pca_filename):
     pca_generator = PcaGenerator(database_url_input)
 
     pca_generator.create_image(
-        parent_filename, request.json[LABEL_NAME], request.json[PCA_FILENAME_NAME]
-    )
-
-    return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        parent_filename, label_name, pca_filename
     )
 
 
@@ -126,7 +143,8 @@ def get_image(filename):
         request_validator.no_pca_filename_existence_validator(filename)
     except Exception as invalid_pca_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
+            jsonify(
+                {MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_NOT_FOUND,
         )
 
@@ -146,14 +164,17 @@ def delete_image(filename):
         request_validator.no_pca_filename_existence_validator(filename)
     except Exception as invalid_pca_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
+            jsonify(
+                {MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_NOT_FOUND,
         )
 
     image_path = os.environ[IMAGES_PATH] + "/" + filename + IMAGE_FORMAT
-    os.remove(image_path)
 
-    return jsonify({MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+    thread_pool.submit(os.remove, image_path)
+
+    return jsonify(
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":

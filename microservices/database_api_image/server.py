@@ -14,6 +14,7 @@ DATABASE_API_PORT = "DATABASE_API_PORT"
 MESSAGE_RESULT = "result"
 
 FILENAME = "filename"
+URL_FIELD_NAME = "url"
 
 FIRST_ARGUMENT = 0
 
@@ -37,7 +38,7 @@ def create_file():
     database = DatabaseApi(mongo_operations, file_downloader_and_saver)
 
     try:
-        database.add_file(request.json["url"], request.json[FILENAME])
+        database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
 
     except Exception as error_message:
 

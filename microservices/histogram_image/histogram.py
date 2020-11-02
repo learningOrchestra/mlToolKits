@@ -13,6 +13,7 @@ class Histogram:
             "filename_parent": filename,
             "fields": fields,
             "filename": histogram_filename,
+            "type": "histogram",
             "_id": 0,
         }
 

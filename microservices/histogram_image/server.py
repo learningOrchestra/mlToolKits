@@ -1,6 +1,7 @@
 from flask import jsonify, Flask, request
 import os
 from histogram import MongoOperations, HistogramRequestValidator, Histogram
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
@@ -11,8 +12,9 @@ HISTOGRAM_PORT = "HISTOGRAM_PORT"
 
 MESSAGE_RESULT = "result"
 
-FIELDS_NAME = "fields"
+FIELDS_NAME = "field_names"
 HISTOGRAM_FILENAME_NAME = "output_filename"
+PARENT_FILENAME_NAME = "input_filename"
 
 FIRST_ARGUMENT = 0
 
@@ -26,6 +28,8 @@ DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 POST = "POST"
 
 app = Flask(__name__)
+
+thread_pool = ThreadPoolExecutor()
 
 
 def collection_database_url(database_url, database_replica_set):
@@ -50,12 +54,13 @@ def create_histogram():
         )
     except Exception as invalid_histogram_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_histogram_filename.args[FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: invalid_histogram_filename.args[
+                FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_CONFLICT,
         )
 
     try:
-        parent_filename = request.json["input_filename"]
+        parent_filename = request.json[PARENT_FILENAME_NAME]
         request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
@@ -64,25 +69,39 @@ def create_histogram():
         )
 
     try:
-        request_validator.fields_validator(parent_filename, request.json[FIELDS_NAME])
+        request_validator.fields_validator(parent_filename,
+                                           request.json[FIELDS_NAME])
     except Exception as invalid_fields:
         return (
             jsonify({MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    histogram = Histogram(database)
-    histogram.create_histogram(
-        parent_filename,
-        request.json[HISTOGRAM_FILENAME_NAME],
-        request.json[FIELDS_NAME],
-    )
+    thread_pool.submit(histogram_async_processing,
+                       database,
+                       parent_filename,
+                       request.json[HISTOGRAM_FILENAME_NAME],
+                       request.json[FIELDS_NAME])
 
     return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
+        jsonify({
+            MESSAGE_RESULT:
+                "/api/learningOrchestra/v1/explore/histogram/" +
+                request.json[HISTOGRAM_FILENAME_NAME]}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 
 
+def histogram_async_processing(database, parent_filename, histogram_filename,
+                               fields_name):
+    histogram = Histogram(database)
+    histogram.create_histogram(
+        parent_filename,
+        histogram_filename,
+        fields_name,
+    )
+
+
 if __name__ == "__main__":
-    app.run(host=os.environ[HISTOGRAM_HOST], port=int(os.environ[HISTOGRAM_PORT]))
+    app.run(host=os.environ[HISTOGRAM_HOST],
+            port=int(os.environ[HISTOGRAM_PORT]))
