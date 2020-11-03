@@ -5,6 +5,8 @@ import numpy as np
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
+from datetime import datetime
+import pytz
 from pyspark.ml.classification import (
     LogisticRegression,
     DecisionTreeClassifier,
@@ -28,34 +30,37 @@ class SparkModelBuilder:
 
         self.spark_session = (
             SparkSession.builder.appName("model_builder")
-            .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-            .config("spark.driver.host", os.environ[MODEL_BUILDER_HOST_NAME])
-            .config(
+                .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
+                .config("spark.driver.host",
+                        os.environ[MODEL_BUILDER_HOST_NAME])
+                .config(
                 "spark.jars.packages",
                 "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
             )
-            .config("spark.memory.fraction", 0.8)
-            .config("spark.executor.memory", "1g")
-            .config("spark.sql.shuffle.partitions", "800")
-            .config("spark.memory.offHeap.enabled", "true")
-            .config("spark.memory.offHeap.size", "1g")
-            .config("spark.scheduler.mode", "FAIR")
-            .config("spark.scheduler.pool", "model_builder")
-            .config("spark.scheduler.allocation.file", "./fairscheduler.xml")
-            .master(
+                .config("spark.memory.fraction", 0.8)
+                .config("spark.executor.memory", "1g")
+                .config("spark.sql.shuffle.partitions", "800")
+                .config("spark.memory.offHeap.enabled", "true")
+                .config("spark.memory.offHeap.size", "1g")
+                .config("spark.scheduler.mode", "FAIR")
+                .config("spark.scheduler.pool", "model_builder")
+                .config("spark.scheduler.allocation.file",
+                        "./fairscheduler.xml")
+                .master(
                 "spark://"
                 + os.environ[SPARKMASTER_HOST]
                 + ":"
                 + str(os.environ[SPARKMASTER_PORT])
             )
-            .getOrCreate()
+                .getOrCreate()
         )
 
         self.thread_pool = ThreadPoolExecutor()
 
     def file_processor(self, database_url):
         file = (
-            self.spark_session.read.format("mongo").option("uri", database_url).load()
+            self.spark_session.read.format("mongo").option("uri",
+                                                           database_url).load()
         )
 
         file_without_metadata = file.filter(
@@ -91,12 +96,13 @@ class SparkModelBuilder:
         return text_fields
 
     def build_model(
-        self,
-        database_url_training,
-        database_url_test,
-        preprocessor_code,
-        classificators_list,
-        prediction_filename,
+            self,
+            database_url_training,
+            database_url_test,
+            preprocessor_code,
+            classificators_list,
+            train_filename,
+            test_filename,
     ):
         training_df = self.file_processor(database_url_training)
         testing_df = self.file_processor(database_url_test)
@@ -118,40 +124,51 @@ class SparkModelBuilder:
 
         classificator_threads = []
 
+        timezone_london = pytz.timezone("Etc/Greenwich")
+        london_time = datetime.now(timezone_london)
+        now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
+
+        metadata_document = {
+            "parent_filename": train_filename,
+            "time_created": now_time,
+            "_id": 0,
+            "type": "builder",
+            "finished": False
+        }
+
         for classificator_name in classificators_list:
             classificator = classificator_switcher[classificator_name]
+
+            metadata_classifier = metadata_document.copy()
+            metadata_classifier["classifier"] = classificator_name
+            metadata_classifier[
+                "filename"] = test_filename + "_" + classificator_name
+
+            self.database.insert_one_in_file(
+                metadata_classifier["filename"],
+                metadata_classifier)
 
             classificator_threads.append(
                 self.thread_pool.submit(
                     self.classificator_handler,
                     classificator,
-                    classificator_name,
                     features_training,
                     features_testing,
                     features_evaluation,
-                    prediction_filename,
+                    metadata_classifier,
                 )
             )
         wait(classificator_threads)
         self.spark_session.stop()
 
     def classificator_handler(
-        self,
-        classificator,
-        classificator_name,
-        features_training,
-        features_testing,
-        features_evaluation,
-        prediction_filename,
+            self,
+            classificator,
+            features_training,
+            features_testing,
+            features_evaluation,
+            metadata_document
     ):
-        prediction_filename_name = (
-            prediction_filename + "_prediction_" + classificator_name
-        )
-        metadata_document = {
-            "filename": prediction_filename_name,
-            "classificator": classificator_name,
-            "_id": 0,
-        }
 
         classificator.featuresCol = "features"
 
@@ -163,7 +180,6 @@ class SparkModelBuilder:
         metadata_document["fit_time"] = fit_time
 
         if features_evaluation is not None:
-
             evaluation_prediction = model.transform(features_evaluation)
 
             evaluator_f1 = MulticlassClassificationEvaluator(
@@ -171,10 +187,10 @@ class SparkModelBuilder:
             )
 
             evaluator_accuracy = MulticlassClassificationEvaluator(
-                labelCol="label", predictionCol="prediction", metricName="accuracy"
+                labelCol="label", predictionCol="prediction",
+                metricName="accuracy"
             )
 
-            print(classificator_name, flush=True)
             evaluation_prediction.select("label", "prediction").show()
 
             model_f1 = evaluator_f1.evaluate(evaluation_prediction)
@@ -186,13 +202,11 @@ class SparkModelBuilder:
         testing_prediction = model.transform(features_testing)
 
         self.save_classificator_result(
-            prediction_filename_name, testing_prediction, metadata_document
+            testing_prediction,
+            metadata_document
         )
 
-    def save_classificator_result(self, filename_name, predicted_df, filename_metatada):
-        self.database.delete_file(filename_name)
-        self.database.insert_one_in_file(filename_name, filename_metatada)
-
+    def save_classificator_result(self, predicted_df, filename_metatada):
         document_id = 1
         for row in predicted_df.collect():
             row_dict = row.asDict()
@@ -204,7 +218,13 @@ class SparkModelBuilder:
             del row_dict["features"]
             del row_dict["rawPrediction"]
 
-            self.database.insert_one_in_file(filename_name, row_dict)
+            self.database.insert_one_in_file(filename_metatada["filename"],
+                                             row_dict)
+
+        flag_true_query = {"finished": True}
+        metadata_file_query = {"_id": 0}
+        self.database.update_one(filename_metatada["filename"], flag_true_query,
+                                 metadata_file_query)
 
 
 class MongoOperations:
@@ -219,6 +239,11 @@ class MongoOperations:
         file_collection = self.database[filename]
         return file_collection.find_one(query)
 
+    def update_one(self, filename, new_value, query):
+        new_values_query = {"$set": new_value}
+        file_collection = self.database[filename]
+        file_collection.update_one(query, new_values_query)
+
     def insert_one_in_file(self, filename, json_object):
         file_collection = self.database[filename]
         file_collection.insert_one(json_object)
@@ -231,7 +256,8 @@ class MongoOperations:
 class ModelBuilderRequestValidator:
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
     MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
-    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classificator_name"
+    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classifier_name"
+    MESSSAGE_INVALID_PREDICTION_NAME = "prediction_filename_already_exists"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -247,6 +273,14 @@ class ModelBuilderRequestValidator:
 
         if test_filename not in filenames:
             raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
+
+    def predictions_filename_validator(self, test_filename, classificator_list):
+        filenames = self.database.get_filenames()
+
+        for classificator_name in classificator_list:
+            prediction_filename = test_filename + "_" + classificator_name
+            if prediction_filename in filenames:
+                raise Exception(self.MESSSAGE_INVALID_PREDICTION_NAME)
 
     def model_classificators_validator(self, classificators_list):
         classificator_names_list = ["lr", "dt", "rf", "gb", "nb"]

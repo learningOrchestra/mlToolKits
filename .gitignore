@@ -9,3 +9,4 @@ learning_orchestra_client/learning_orchestra_client/__pycache__/__init__.cpython
 .idea
 site
 /learning_orchestra_client/example.py
+/venv/

@@ -1,5 +1,6 @@
 from pymongo import MongoClient
-
+from datetime import datetime
+import pytz
 
 class Histogram:
     METADATA_DOCUMENT_ID = 0
@@ -9,13 +10,17 @@ class Histogram:
         self.database_connector = database_connector
 
     def create_histogram(self, filename, histogram_filename, fields):
+        timezone_london = pytz.timezone("Etc/Greenwich")
+        london_time = datetime.now(timezone_london)
+
         metadata_histogram_filename = {
-            "filename_parent": filename,
+            "parent_filename": filename,
             "fields": fields,
             "filename": histogram_filename,
             "type": "histogram",
             self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID,
-            "finished": False
+            "finished": False,
+            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
         }
 
         self.database_connector.insert_one_in_file(
