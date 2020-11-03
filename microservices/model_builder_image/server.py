@@ -14,10 +14,6 @@ HTTP_STATUS_CODE_CONFICLT = 409
 MODEL_BUILDER_HOST_IP = "MODEL_BUILDER_HOST_IP"
 MODEL_BUILDER_HOST_PORT = "MODEL_BUILDER_HOST_PORT"
 
-GET = "GET"
-POST = "POST"
-DELETE = "DELETE"
-
 MESSAGE_RESULT = "result"
 
 DATABASE_URL = "DATABASE_URL"
@@ -31,31 +27,19 @@ MODELING_CODE_NAME = "modeling_code"
 CLASSIFIERS_NAME = "classifiers_list"
 FIRST_ARGUMENT = 0
 
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/"
+MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
+
 app = Flask(__name__)
 
 thread_pool = ThreadPoolExecutor()
 
 
-def collection_database_url(
-        database_url, database_name, database_filename, database_replica_set
-):
-    return (
-            database_url
-            + "/"
-            + database_name
-            + "."
-            + database_filename
-            + "?replicaSet="
-            + database_replica_set
-            + "&authSource=admin"
-    )
-
-
-@app.route("/models", methods=[POST])
+@app.route("/models", methods=["POST"])
 def create_model():
     database = MongoOperations(
-        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
-            DATABASE_REPLICA_SET],
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME],
     )
@@ -103,14 +87,14 @@ def create_model():
             HTTP_STATUS_CODE_CONFICLT,
         )
 
-    database_url_training = collection_database_url(
+    database_url_training = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         request.json[TRAINING_FILENAME],
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    database_url_test = collection_database_url(
+    database_url_test = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         request.json[TEST_FILENAME],
@@ -142,10 +126,11 @@ def create_prediction_files_uri(classifiers_list, test_filename):
     classifiers_uri = []
     for classifier in classifiers_list:
         classifiers_uri.append(
-            "/api/learningOrchestra/v1/builder/" +
+            MICROSERVICE_URI_GET +
             test_filename +
             "_" +
-            classifier)
+            classifier +
+            MICROSERVICE_URI_GET_PARAMS)
 
     return classifiers_uri
 

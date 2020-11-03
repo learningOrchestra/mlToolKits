@@ -19,42 +19,25 @@ DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 DOCUMENT_ID = "_id"
 METADATA_DOCUMENT_ID = 0
 
-GET = "GET"
-POST = "POST"
-DELETE = "DELETE"
-
 MESSAGE_RESULT = "result"
 PROJECTION_FILENAME_NAME = "output_filename"
+PARENT_FILENAME_NAME = "input_filename"
 FIELDS_NAME = "names"
+
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/transform/projection/"
+MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
 
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
-
-
-def collection_database_url(
-        database_url, database_name, database_filename, database_replica_set
-):
-    return (
-            database_url
-            + "/"
-            + database_name
-            + "."
-            + database_filename
-            + "?replicaSet="
-            + database_replica_set
-            + "&authSource=admin"
-    )
-
-
 thread_pool = ThreadPoolExecutor()
 
 
-@app.route("/projections", methods=[POST])
+@app.route("/projections", methods=["POST"])
 def create_projection():
     database = MongoOperations(
-        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
-            DATABASE_REPLICA_SET],
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME],
     )
@@ -73,7 +56,7 @@ def create_projection():
         )
 
     try:
-        parent_filename = request.json["input_filename"]
+        parent_filename = request.json[PARENT_FILENAME_NAME]
         request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return (
@@ -91,14 +74,14 @@ def create_projection():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    database_url_input = collection_database_url(
+    database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         parent_filename,
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    database_url_output = collection_database_url(
+    database_url_output = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         request.json[PROJECTION_FILENAME_NAME],
@@ -112,9 +95,9 @@ def create_projection():
     return (
         jsonify({
             MESSAGE_RESULT:
-                "/api/learningOrchestra/v1/transform/projection/" +
+                MICROSERVICE_URI_GET +
                 request.json[PROJECTION_FILENAME_NAME] +
-                "?query={}&limit=10&skip=0"}),
+                MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 

@@ -19,14 +19,6 @@ DATABASE_URL = "DATABASE_URL"
 DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
-FULL_DATABASE_URL = (
-        os.environ[DATABASE_URL] + "/?replicaSet=" + os.environ[
-    DATABASE_REPLICA_SET]
-)
-
-GET = "GET"
-POST = "POST"
-DELETE = "DELETE"
 
 MESSAGE_RESULT = "result"
 PCA_FILENAME_NAME = "output_filename"
@@ -38,30 +30,20 @@ MESSAGE_NOT_FOUND = "not_found_file"
 
 FIRST_ARGUMENT = 0
 
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/explore/pca/"
+
 app = Flask(__name__)
 
 thread_pool = ThreadPoolExecutor()
 
 
-def collection_database_url(
-        database_url, database_name, database_filename, database_replica_set
-):
-    return (
-            database_url
-            + "/"
-            + database_name
-            + "."
-            + database_filename
-            + "?replicaSet="
-            + database_replica_set
-            + "&authSource=admin"
-    )
-
-
-@app.route("/images", methods=[POST])
+@app.route("/images", methods=["POST"])
 def pca_plot():
     database = MongoOperations(
-        FULL_DATABASE_URL, os.environ[DATABASE_PORT], os.environ[DATABASE_NAME]
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME]
     )
     request_validator = PcaRequestValidator(database)
 
@@ -95,7 +77,7 @@ def pca_plot():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    database_url_input = collection_database_url(
+    database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         parent_filename,
@@ -111,7 +93,7 @@ def pca_plot():
     return (
         jsonify({
             MESSAGE_RESULT:
-                "/api/learningOrchestra/v1/explore/pca/" +
+                MICROSERVICE_URI_GET +
                 request.json[PCA_FILENAME_NAME]}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
@@ -126,21 +108,17 @@ def pca_async_processing(database_url_input, parent_filename, label_name,
     )
 
 
-@app.route("/images", methods=[GET])
+@app.route("/images", methods=["GET"])
 def get_images():
     images = os.listdir(os.environ[IMAGES_PATH])
     return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCESS
 
 
-@app.route("/images/<filename>", methods=[GET])
+@app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
-    database = MongoOperations(
-        FULL_DATABASE_URL, os.environ[DATABASE_PORT], os.environ[DATABASE_NAME]
-    )
-    request_validator = PcaRequestValidator(database)
-
     try:
-        request_validator.no_pca_filename_existence_validator(filename)
+        PcaRequestValidator.pca_filename_existence_validator(filename)
+
     except Exception as invalid_pca_filename:
         return (
             jsonify(
@@ -153,15 +131,10 @@ def get_image(filename):
     return send_file(image_path, mimetype="image/png")
 
 
-@app.route("/images/<filename>", methods=[DELETE])
+@app.route("/images/<filename>", methods=["DELETE"])
 def delete_image(filename):
-    database = MongoOperations(
-        FULL_DATABASE_URL, os.environ[DATABASE_PORT], os.environ[DATABASE_NAME]
-    )
-    request_validator = PcaRequestValidator(database)
-
     try:
-        request_validator.no_pca_filename_existence_validator(filename)
+        PcaRequestValidator.pca_filename_inexistence_validator(filename)
     except Exception as invalid_pca_filename:
         return (
             jsonify(

@@ -25,23 +25,19 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
-POST = "POST"
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/explore/histogram/"
+MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
 
 thread_pool = ThreadPoolExecutor()
 
 
-def collection_database_url(database_url, database_replica_set):
-    return database_url + "/?replicaSet=" + database_replica_set
-
-
-@app.route("/histograms", methods=[POST])
+@app.route("/histograms", methods=["POST"])
 def create_histogram():
     database = MongoOperations(
-        collection_database_url(
-            os.environ[DATABASE_URL], os.environ[DATABASE_REPLICA_SET]
-        ),
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME],
     )
@@ -86,8 +82,9 @@ def create_histogram():
     return (
         jsonify({
             MESSAGE_RESULT:
-                "/api/learningOrchestra/v1/explore/histogram/" +
-                request.json[HISTOGRAM_FILENAME_NAME]}),
+                MICROSERVICE_URI_GET +
+                request.json[HISTOGRAM_FILENAME_NAME] +
+                MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 

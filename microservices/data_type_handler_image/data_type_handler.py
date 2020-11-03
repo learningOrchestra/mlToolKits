@@ -62,7 +62,7 @@ class DataTypeConverter:
         self.metadata_handler.update_finished_metadata_file(filename, True)
 
 
-class FileMetadataHandler():
+class FileMetadataHandler:
     def __init__(self, database_connector):
         self.database_connector = database_connector
 
@@ -91,8 +91,9 @@ class FileMetadataHandler():
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):
@@ -145,6 +146,6 @@ class DataTypeHandlerRequestValidator:
             if field not in filename_metadata["fields"]:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)
 
-            if fields[field] != self.NUMBER_TYPE and fields[
-                field] != self.STRING_TYPE:
+            if fields[field] != self.NUMBER_TYPE and \
+                    fields[field] != self.STRING_TYPE:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)

@@ -17,7 +17,8 @@ DATA_TYPE_HANDLER_PORT = "DATA_TYPE_HANDLER_PORT"
 MESSAGE_RESULT = "result"
 
 FILENAME_NAME = "filename"
-
+FIELD_TYPES_NAMES = "types"
+PARENT_FILENAME_NAME = "input_filename"
 FIRST_ARGUMENT = 0
 
 MESSAGE_INVALID_URL = "invalid_url"
@@ -29,43 +30,34 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
-POST = "POST"
-PATCH = "PATCH"
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/dataset/"
+MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
 
 app = Flask(__name__)
 
 
-def collection_database_url(database_url, database_name, database_filename,
-                            database_replica_set):
-    return database_url + '/' + \
-           database_name + '.' + \
-           database_filename + "?replicaSet=" + \
-           database_replica_set + \
-           "&authSource=admin"
-
-
-@app.route('/fieldTypes', methods=[PATCH])
+@app.route('/fieldTypes', methods=["PATCH"])
 def change_data_type():
     database = MongoOperations(
-        os.environ[DATABASE_URL] + '/?replicaSet=' +
-        os.environ[DATABASE_REPLICA_SET], os.environ[DATABASE_PORT],
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
 
     request_validator = DataTypeHandlerRequestValidator(database)
 
     try:
-        parent_filename = request.json["input_filename"]
+        parent_filename = request.json[PARENT_FILENAME_NAME]
 
         request_validator.filename_validator(parent_filename)
     except Exception as invalid_filename:
         return jsonify(
-            {MESSAGE_RESULT:
-                 invalid_filename.args[FIRST_ARGUMENT]}), \
+            {MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
     try:
         request_validator.fields_validator(
-            parent_filename, request.json["types"])
+            parent_filename, request.json[FIELD_TYPES_NAMES])
     except Exception as invalid_fields:
         return jsonify(
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}), \
@@ -74,13 +66,13 @@ def change_data_type():
     metadata_handler = FileMetadataHandler(database)
     data_type_converter = DataTypeConverter(database, metadata_handler)
     data_type_converter.convert_existent_file(
-        parent_filename, request.json["types"])
+        parent_filename, request.json[FIELD_TYPES_NAMES])
 
     return jsonify({
-        MESSAGE_RESULT: "/api/learningOrchestra/v1/dataset/" +
-                        request.json["input_filename"] +
-                        "?query={}&limit=20&skip=0"}), \
-            HTTP_STATUS_CODE_SUCESS
+        MESSAGE_RESULT:
+            MICROSERVICE_URI_GET +
+            request.json[PARENT_FILENAME_NAME] +
+            MICROSERVICE_URI_GET_PARAMS}), HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":

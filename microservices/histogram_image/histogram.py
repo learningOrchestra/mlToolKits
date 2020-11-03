@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import pytz
 
+
 class Histogram:
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
@@ -53,8 +54,9 @@ class Histogram:
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):

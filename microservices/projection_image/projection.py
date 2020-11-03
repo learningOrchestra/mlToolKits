@@ -110,8 +110,9 @@ class SparkManager:
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find_one(self, filename, query):
@@ -120,6 +121,22 @@ class MongoOperations:
 
     def get_filenames(self):
         return self.database.list_collection_names()
+
+    @staticmethod
+    def collection_database_url(
+            database_url, database_name, database_filename,
+            database_replica_set
+    ):
+        return (
+                database_url
+                + "/"
+                + database_name
+                + "."
+                + database_filename
+                + "?replicaSet="
+                + database_replica_set
+                + "&authSource=admin"
+        )
 
 
 class ProjectionRequestValidator:

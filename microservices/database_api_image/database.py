@@ -68,11 +68,10 @@ class MongoOperations:
     DATABASE_URL = "DATABASE_URL"
     DATABASE_PORT = "DATABASE_PORT"
 
-    def __init__(self):
+    def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            os.environ[self.DATABASE_URL], int(os.environ[self.DATABASE_PORT])
-        )
-        self.database = self.mongo_client.database
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
+        self.database = self.mongo_client[database_name]
 
     def connection(self, filename):
         return self.database[filename]
@@ -155,7 +154,8 @@ class CsvDownloader:
             {"$set": {self.FINISHED: True, "fields": self.file_headers}},
         )
 
-    def validate_csv_url(self, url):
+    @staticmethod
+    def validate_csv_url(url):
         with closing(requests.get(url, stream=True)) as r:
             reader = csv.reader(
                 codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
