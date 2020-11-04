@@ -86,7 +86,6 @@ def pca_plot():
 
     thread_pool.submit(pca_async_processing,
                        database_url_input,
-                       request.json[PARENT_FILENAME_NAME],
                        request.json[LABEL_NAME],
                        request.json[PCA_FILENAME_NAME])
 
@@ -99,12 +98,12 @@ def pca_plot():
     )
 
 
-def pca_async_processing(database_url_input, parent_filename, label_name,
+def pca_async_processing(database_url_input, label_name,
                          pca_filename):
     pca_generator = PcaGenerator(database_url_input)
 
     pca_generator.create_image(
-        parent_filename, label_name, pca_filename
+        label_name, pca_filename
     )
 
 

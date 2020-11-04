@@ -86,7 +86,6 @@ def create_tsne():
 
     thread_pool.submit(tsne_async_processing,
                        database_url_input,
-                       request.json[PARENT_FILENAME_NAME],
                        request.json[LABEL_NAME],
                        request.json[TSNE_FILENAME_NAME])
 
@@ -98,12 +97,12 @@ def create_tsne():
     )
 
 
-def tsne_async_processing(database_url_input, parent_filename, label_name,
+def tsne_async_processing(database_url_input, label_name,
                           tsne_filename):
     tsne_generator = TsneGenerator(database_url_input)
 
     tsne_generator.create_image(
-        parent_filename, label_name,
+        label_name,
         tsne_filename
     )
 

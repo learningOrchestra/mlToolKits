@@ -39,7 +39,7 @@ class PcaGenerator:
                 .getOrCreate()
         )
 
-    def create_image(self, filename, label_name, pca_filename):
+    def create_image(self, label_name, pca_filename):
         dataframe = self.file_processor()
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
@@ -65,6 +65,8 @@ class PcaGenerator:
         else:
             sns_plot = sns.scatterplot(x=0, y=1, data=embedded_array)
             sns_plot.get_figure().savefig(image_path)
+
+        self.spark_session.stop()
 
     def file_processor(self):
         file = self.spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
