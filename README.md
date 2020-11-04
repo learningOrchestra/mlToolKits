@@ -40,7 +40,7 @@ learningOrchestra is designed for data scientists from both engineering and acad
 	- [Setting up your cluster](#setting-up-your-cluster)
 	- [Deploy learningOrchestra](#deploy-learningorchestra)
 - [How do I use learningOrchestra?](#how-do-i-use-learningorchestra)
-	- [Using the microservices REST API](#using-the-microservices-rest-api)
+	- [Using the REST API](#using-the-rest-api)
 	- [Using the Python package](#using-the-python-package)
 	- [Check cluster status](#check-cluster-status)
 - [About learningOrchestra](#about-learningorchestra)
@@ -54,9 +54,8 @@ learningOrchestra is designed for data scientists from both engineering and acad
 - [Requirements](#requirements)
 - [Deployment](#deployment)
 - [Cluster State](#cluster-state)
-- [Microservices REST APIs](#microservices-rest-apis)
+- [REST API](#rest-api)
 	- [Spark Microservices](#spark-microservices)
-- [Database GUI](#database-gui)
 
 <!-- /TOC -->
 
@@ -68,9 +67,9 @@ Installation instructions:
 3. `cd learningOrchestra`
 4. Deploy with `sudo ./run.sh`
 
-learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
+learningOrchestra provides two options to access its features: a REST API and a Python package.
 
-Microservice REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available microservices](https://learningorchestra.github.io/docs/usage/#microservices-rest-apis) for requests details.
+REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available features](https://learningorchestra.github.io/docs/usage/#rest-api-features) for requests details.
 
 Python package:
 - Python 3 package
@@ -81,7 +80,7 @@ from learning_orchestra_client import *
 cluster_ip = "xx.xx.xxx.xxx"
 Context(cluster_ip)
 ```
-- Each microservice is wrapped into a class. Check the [package documentation](https://learningorchestra.github.io/docs/python-apis) for a list of available functions and parameters.
+- Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for a list of available features.
 
 ## How do I install learningOrchestra?
 
@@ -116,19 +115,20 @@ Run `docker stack rm microservice`.
 
 learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
-The current version of learningOrchestra offers 7 microservices:
-- The **Database API is the central microservice**. It holds all the data, including the analysis results.
-- The **Data type API is a preprocessing microservice** dedicated to changing the type of data fields.
-- The **Projection, Histogram, t-SNE and PCA APIs are data exploration microservices**. They transform the map the data into new representation spaces so it can be visualized. They can be used on the raw data as well as on the intermediate and final results of the analysis pipeline.
-- The **Model builder API is the main analysis microservice**. It includes some preprocessing features and machine learning features to train models, evaluate models and predict information using trained models.
+The current version of learningOrchestra offers 7 features:
+- The **Dataset download datasets from an URL**. It holds and manage the downloaded data.
+- The **Data type is a transform feature** dedicated to changing the type of data fields.
+- The **Projection is a transform feature** dedicated to make projections from datasets.
+- The **Histogram, t-SNE and PCA APIs are exploration features**. They transform the map the data into new representation spaces so it can be visualized. They can be used on the raw data as well as on the intermediate and final results of the analysis pipeline.
+- The **Builder is the high couple feature**. It includes some preprocessing features and machine learning features to train models, evaluate models and predict information using trained models.
 
-The microservices can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a microservice REST API and a Python package.
+The REST API can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a REST API and a Python package.
 
-### Using the microservices REST API
+### Using the REST API
 
 We recommand using a **GUI REST API** caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Of course, regular `curl` commands from the terminal remain a possibility.
 
-The details for each microservice are available in the [documentation](https://learningorchestra.github.io/docs/usage/#microservices-rest-apis).
+The details for each feature are available in the [documentation](https://learningorchestra.github.io/docs/usage/#rest-api).
 
 ### Using the Python package
 
@@ -141,11 +141,11 @@ cluster_ip = "xx.xx.xxx.xxx"
 Context(cluster_ip)
 ```
 
-Check the [package documentation](https://learningorchestra.github.io/docs/python-apis) for a list of available functions and parameters, or the [package repository](https://github.com/learningOrchestra/learningOrchestra-python-client) for an example use case.
+Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for a list of available features and an example use case.
 
 ### Check cluster status
 
-To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:80` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
+To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:8000` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
 
 The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
