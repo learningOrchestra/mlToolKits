@@ -257,14 +257,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/tsne/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/tsne",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/images/{filename}",
+          "url_pattern": "/images",
           "host": [
             "http://tsne:5005"
           ],
@@ -321,14 +321,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/pca/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/pca",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/images/{filename}",
+          "url_pattern": "/images",
           "host": [
             "http://pca:5006"
           ],
@@ -385,14 +385,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/histogram/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/histogram",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/histograms/{filename}",
+          "url_pattern": "/histograms",
           "host": [
             "http://histogram:5004"
           ],
