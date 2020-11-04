@@ -131,7 +131,7 @@ class SparkModelBuilder:
         now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
 
         metadata_document = {
-            "parent_filename": train_filename,
+            "parent_filename": [train_filename, test_filename],
             "time_created": now_time,
             "_id": 0,
             "type": "builder",
