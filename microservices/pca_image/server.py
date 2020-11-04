@@ -59,8 +59,8 @@ def pca_plot():
         )
 
     try:
-        parent_filename = request.json[PARENT_FILENAME_NAME]
-        request_validator.parent_filename_validator(parent_filename)
+        request_validator.parent_filename_validator(
+            request.json[PARENT_FILENAME_NAME])
     except Exception as invalid_filename:
         return (
             jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
@@ -69,7 +69,7 @@ def pca_plot():
 
     try:
         request_validator.filename_label_validator(
-            parent_filename, request.json[LABEL_NAME]
+            request.json[PARENT_FILENAME_NAME], request.json[LABEL_NAME]
         )
     except Exception as invalid_label:
         return (
@@ -80,13 +80,13 @@ def pca_plot():
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
-        parent_filename,
+        request.json[PARENT_FILENAME_NAME],
         os.environ[DATABASE_REPLICA_SET],
     )
 
     thread_pool.submit(pca_async_processing,
                        database_url_input,
-                       parent_filename,
+                       request.json[PARENT_FILENAME_NAME],
                        request.json[LABEL_NAME],
                        request.json[PCA_FILENAME_NAME])
 
