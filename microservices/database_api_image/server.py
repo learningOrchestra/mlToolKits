@@ -104,7 +104,8 @@ def read_files_descriptor():
     database = DatabaseApi(mongo_operations, file_downloader)
 
     return jsonify(
-        {MESSAGE_RESULT: database.get_files()}), HTTP_STATUS_CODE_SUCESS
+        {MESSAGE_RESULT: database.get_files(
+            request.args.get("type"))}), HTTP_STATUS_CODE_SUCESS
 
 
 @app.route("/files/<filename>", methods=["DELETE"])

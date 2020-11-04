@@ -1,4 +1,3 @@
-import os
 from pymongo import MongoClient, errors, ASCENDING
 from bson.json_util import dumps
 import requests
@@ -51,13 +50,15 @@ class DatabaseApi:
     def delete_file(self, filename):
         self.database_object.delete_file(filename)
 
-    def get_files(self):
+    def get_files(self, type):
         result = []
 
         for file in self.database_object.get_filenames():
             metadata_file = self.database_object.find_one_in_file(
-                file, {ROW_ID: METADATA_ROW_ID}
+                file, {ROW_ID: METADATA_ROW_ID, "type": type}
             )
+            if metadata_file == None:
+                continue
             metadata_file.pop(ROW_ID)
             result.append(metadata_file)
 
