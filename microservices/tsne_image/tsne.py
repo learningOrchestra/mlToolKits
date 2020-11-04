@@ -88,6 +88,7 @@ class TsneGenerator:
             "time_created",
             "url",
             "parent_filename",
+            "type"
         ]
         processed_file = file_without_metadata.drop(*metadata_fields)
 
