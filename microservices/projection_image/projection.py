@@ -16,35 +16,41 @@ class SparkManager:
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     METADATA_FILE_ID = 0
     database_url_output = None
+    MAX_NUMBER_THREADS = 3
 
     def __init__(self, database_url_input, database_url_output):
         self.database_url_output = database_url_output
 
         self.spark_session = (
             SparkSession.builder.appName("projection")
-            .config("spark.mongodb.input.uri", database_url_input)
-            .config("spark.mongodb.output.uri", database_url_output)
-            .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-            .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
-            .config(
+                .config("spark.mongodb.input.uri", database_url_input)
+                .config("spark.mongodb.output.uri", database_url_output)
+                .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
+                .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
+                .config(
                 "spark.jars.packages",
                 "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
             )
-            .master(
+                .master(
                 "spark://"
                 + os.environ[SPARKMASTER_HOST]
                 + ":"
                 + str(os.environ[SPARKMASTER_PORT])
             )
-            .getOrCreate()
+                .getOrCreate()
         )
 
     def projection(self, filename, projection_filename, fields):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
+        fields.append(self.DOCUMENT_ID)
         fields_without_id = fields.copy()
-        fields_without_id.remove(self.DOCUMENT_ID)
+
+        try:
+            fields_without_id.remove(self.DOCUMENT_ID)
+        except Exception:
+            pass
 
         metadata_content = (
             projection_filename,
@@ -53,6 +59,7 @@ class SparkManager:
             filename,
             self.METADATA_FILE_ID,
             fields_without_id,
+            "projection"
         )
 
         metadata_fields = [
@@ -62,6 +69,7 @@ class SparkManager:
             "parent_filename",
             self.DOCUMENT_ID,
             "fields",
+            "type",
         ]
 
         metadata_dataframe = self.spark_session.createDataFrame(
@@ -70,16 +78,21 @@ class SparkManager:
 
         metadata_dataframe.write.format(self.MONGO_SPARK_SOURCE).save()
 
-        self.submit_projection_job_spark(fields, metadata_content, metadata_fields)
+        self.submit_projection_job_spark(fields,
+                                         metadata_content,
+                                         metadata_fields)
 
-    def submit_projection_job_spark(self, fields, metadata_content, metadata_fields):
-        dataframe = self.spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
+    def submit_projection_job_spark(self, fields, metadata_content,
+                                    metadata_fields):
+        dataframe = self.spark_session.read.format(
+            self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
             dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID
         )
 
         projection_dataframe = dataframe.select(*fields)
-        projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode("append").save()
+        projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode(
+            "append").save()
 
         metadata_content_list = list(metadata_content)
         metadata_content_list[metadata_content_list.index(False)] = True
@@ -97,8 +110,9 @@ class SparkManager:
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find_one(self, filename, query):
@@ -107,6 +121,22 @@ class MongoOperations:
 
     def get_filenames(self):
         return self.database.list_collection_names()
+
+    @staticmethod
+    def collection_database_url(
+            database_url, database_name, database_filename,
+            database_replica_set
+    ):
+        return (
+                database_url
+                + "/"
+                + database_name
+                + "."
+                + database_filename
+                + "?replicaSet="
+                + database_replica_set
+                + "&authSource=admin"
+        )
 
 
 class ProjectionRequestValidator:
@@ -136,7 +166,8 @@ class ProjectionRequestValidator:
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
 
         for field in projection_fields:
             if field not in filename_metadata["fields"]:

@@ -1,4 +1,6 @@
 from pymongo import MongoClient
+from datetime import datetime
+import pytz
 
 
 class Histogram:
@@ -9,11 +11,17 @@ class Histogram:
         self.database_connector = database_connector
 
     def create_histogram(self, filename, histogram_filename, fields):
+        timezone_london = pytz.timezone("Etc/Greenwich")
+        london_time = datetime.now(timezone_london)
+
         metadata_histogram_filename = {
-            "filename_parent": filename,
+            "parent_filename": filename,
             "fields": fields,
             "filename": histogram_filename,
-            "_id": 0,
+            "type": "histogram",
+            self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID,
+            "finished": False,
+            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
         }
 
         self.database_connector.insert_one_in_file(
@@ -25,20 +33,30 @@ class Histogram:
         for field in fields:
             field_accumulator = "$" + field
             print(field_accumulator, flush=True)
-            pipeline = [{"$group": {"_id": field_accumulator, "count": {"$sum": 1}}}]
+            pipeline = [
+                {"$group": {"_id": field_accumulator, "count": {"$sum": 1}}}]
 
             field_result = {
                 field: self.database_connector.aggregate(filename, pipeline),
-                "_id": document_id,
+                self.DOCUMENT_ID_NAME: document_id,
             }
             document_id += 1
 
-            self.database_connector.insert_one_in_file(histogram_filename, field_result)
+            self.database_connector.insert_one_in_file(histogram_filename,
+                                                       field_result)
+
+        metadata_finished_true_query = {"finished": True}
+        metadata_id_query = {self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID}
+
+        self.database_connector.update_one(filename,
+                                           metadata_finished_true_query,
+                                           metadata_id_query)
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):
@@ -93,7 +111,8 @@ class HistogramRequestValidator:
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
 
         for field in fields:
             if field not in filename_metadata["fields"]:

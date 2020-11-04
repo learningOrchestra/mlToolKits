@@ -1,4 +1,3 @@
-import os
 from pymongo import MongoClient, errors, ASCENDING
 from bson.json_util import dumps
 import requests
@@ -25,7 +24,8 @@ class DatabaseApi:
 
     def add_file(self, url, filename):
         try:
-            self.file_manager_object.storage_file(filename, url, self.database_object)
+            self.file_manager_object.storage_file(filename, url,
+                                                  self.database_object)
 
         except requests.exceptions.RequestException:
             raise Exception(self.MESSAGE_INVALID_URL)
@@ -41,7 +41,7 @@ class DatabaseApi:
         limit = int(limit)
 
         for file in self.database_object.find_in_file(
-            filename, query_object, skip, limit
+                filename, query_object, skip, limit
         ):
             result.append(json.loads(dumps(file)))
 
@@ -50,13 +50,15 @@ class DatabaseApi:
     def delete_file(self, filename):
         self.database_object.delete_file(filename)
 
-    def get_files(self):
+    def get_files(self, type):
         result = []
 
         for file in self.database_object.get_filenames():
             metadata_file = self.database_object.find_one_in_file(
-                file, {ROW_ID: METADATA_ROW_ID}
+                file, {ROW_ID: METADATA_ROW_ID, "type": type}
             )
+            if metadata_file == None:
+                continue
             metadata_file.pop(ROW_ID)
             result.append(metadata_file)
 
@@ -67,11 +69,10 @@ class MongoOperations:
     DATABASE_URL = "DATABASE_URL"
     DATABASE_PORT = "DATABASE_PORT"
 
-    def __init__(self):
+    def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            os.environ[self.DATABASE_URL], int(os.environ[self.DATABASE_PORT])
-        )
-        self.database = self.mongo_client.database
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
+        self.database = self.mongo_client[database_name]
 
     def connection(self, filename):
         return self.database[filename]
@@ -79,7 +80,8 @@ class MongoOperations:
     def find_in_file(self, filename, query, skip=0, limit=1):
         file_collection = self.database[filename]
         return (
-            file_collection.find(query).sort(ROW_ID, ASCENDING).skip(skip).limit(limit)
+            file_collection.find(query).sort(ROW_ID, ASCENDING).skip(
+                skip).limit(limit)
         )
 
     def delete_file(self, filename):
@@ -109,7 +111,8 @@ class CsvDownloader:
     file_headers = None
 
     def __init__(self):
-        self.thread_pool = ThreadPoolExecutor(max_workers=self.MAX_NUMBER_THREADS)
+        self.thread_pool = ThreadPoolExecutor(
+            max_workers=self.MAX_NUMBER_THREADS)
         self.download_tratament_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.tratament_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
@@ -152,7 +155,8 @@ class CsvDownloader:
             {"$set": {self.FINISHED: True, "fields": self.file_headers}},
         )
 
-    def validate_csv_url(self, url):
+    @staticmethod
+    def validate_csv_url(url):
         with closing(requests.get(url, stream=True)) as r:
             reader = csv.reader(
                 codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
@@ -163,8 +167,8 @@ class CsvDownloader:
             first_symbol_html = "<"
             first_symbol_json = "{"
             if (
-                first_line[0][0] == first_symbol_html
-                or first_line[0][0] == first_symbol_json
+                    first_line[0][0] == first_symbol_html
+                    or first_line[0][0] == first_symbol_json
             ):
                 raise requests.exceptions.RequestException
 
@@ -181,6 +185,7 @@ class CsvDownloader:
             ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False,
             "fields": "processing",
+            "type": "dataset"
         }
         database_connection.insert_one_in_file(filename, metadata_file)
         self.thread_pool.submit(self.download_file, url)

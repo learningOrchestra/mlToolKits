@@ -1,4 +1,7 @@
 from pymongo import MongoClient
+from datetime import datetime
+import pytz
+from concurrent.futures import ThreadPoolExecutor
 
 
 class DataTypeConverter:
@@ -7,8 +10,10 @@ class DataTypeConverter:
     STRING_TYPE = "string"
     NUMBER_TYPE = "number"
 
-    def __init__(self, database_connector):
+    def __init__(self, database_connector, metadata_handler):
         self.database_connector = database_connector
+        self.thread_pool = ThreadPoolExecutor()
+        self.metadata_handler = metadata_handler
 
     def field_converter(self, filename, field, field_type):
         query = {}
@@ -27,9 +32,9 @@ class DataTypeConverter:
 
             elif field_type == self.NUMBER_TYPE:
                 if (
-                    document[field] == int
-                    or document[field] == float
-                    or document[field] is None
+                        document[field] == int
+                        or document[field] == float
+                        or document[field] is None
                 ):
                     continue
                 if document[field] == "":
@@ -42,15 +47,53 @@ class DataTypeConverter:
 
             self.database_connector.update_one(filename, values, document)
 
-    def file_converter(self, filename, fields_dictionary):
+    def convert_existent_file(self, filename, fields_dictionary):
 
+        self.metadata_handler.update_finished_metadata_file(filename, False)
+
+        self.thread_pool.submit(self.field_file_converter, filename,
+                                fields_dictionary)
+
+    def field_file_converter(self, filename, fields_dictionary):
         for field in fields_dictionary:
-            self.field_converter(filename, field, fields_dictionary[field])
+            self.field_converter(filename, field,
+                                 fields_dictionary[field])
+
+        self.metadata_handler.update_finished_metadata_file(filename, True)
+
+
+class FileMetadataHandler:
+    def __init__(self, database_connector):
+        self.database_connector = database_connector
+
+    def create_metadata_file(self, filename):
+        timezone_london = pytz.timezone("Etc/Greenwich")
+        london_time = datetime.now(timezone_london)
+
+        metadata_file = {
+            "filename": filename,
+            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+            "_id": 0,
+            "finished": False,
+            "type": "dataType"
+        }
+        self.database_connector.insert_one_in_file(filename, metadata_file)
+
+    def update_finished_metadata_file(self, filename, flag):
+        metadata_new_value = {
+            "finished": flag,
+        }
+        metadata_query = {
+            "_id": 0
+        }
+        self.database_connector.update_one(filename, metadata_new_value,
+                                           metadata_query)
 
 
 class MongoOperations:
-    def __init__(self, database_url, database_port, database_name):
-        self.mongo_client = MongoClient(database_url, int(database_port))
+    def __init__(self, database_url, replica_set, database_port, database_name):
+        self.mongo_client = MongoClient(
+            database_url + '/?replicaSet=' + replica_set, int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):
@@ -68,6 +111,10 @@ class MongoOperations:
     def find_one(self, filename, query):
         file_collection = self.database[filename]
         return file_collection.find_one(query)
+
+    def insert_one_in_file(self, filename, json_object):
+        file_collection = self.database[filename]
+        file_collection.insert_one(json_object)
 
 
 class DataTypeHandlerRequestValidator:
@@ -92,11 +139,13 @@ class DataTypeHandlerRequestValidator:
 
         filename_metadata_query = {"filename": filename}
 
-        filename_metadata = self.database.find_one(filename, filename_metadata_query)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
 
         for field in fields:
             if field not in filename_metadata["fields"]:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)
 
-            if fields[field] != self.NUMBER_TYPE and fields[field] != self.STRING_TYPE:
+            if fields[field] != self.NUMBER_TYPE and \
+                    fields[field] != self.STRING_TYPE:
                 raise Exception(self.MESSAGE_INVALID_FIELDS)

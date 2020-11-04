@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from database import CsvDownloader, DatabaseApi, MongoOperations
+from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCESS = 200
 HTTP_STATUS_CODE_SUCESS_CREATED = 201
@@ -12,32 +13,40 @@ DATABASE_API_PORT = "DATABASE_API_PORT"
 
 MESSAGE_RESULT = "result"
 
+DATABASE_URL = "DATABASE_URL"
+DATABASE_PORT = "DATABASE_PORT"
+DATABASE_NAME = "DATABASE_NAME"
+DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
+
 FILENAME = "filename"
+URL_FIELD_NAME = "url"
 
 FIRST_ARGUMENT = 0
 
 MESSAGE_INVALID_URL = "invalid_url"
 MESSAGE_DUPLICATE_FILE = "duplicate_file"
-MESSAGE_CREATED_FILE = "file_created"
 MESSAGE_DELETED_FILE = "deleted_file"
 
-GET = "GET"
-POST = "POST"
-DELETE = "DELETE"
-
 PAGINATE_FILE_LIMIT = 20
+
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/dataset/"
+MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
 
 
-@app.route("/files", methods=[POST])
+@app.route("/files", methods=["POST"])
 def create_file():
-    file_downloader_and_saver = CsvDownloader()
-    mongo_operations = MongoOperations()
-    database = DatabaseApi(mongo_operations, file_downloader_and_saver)
+    file_downloader = CsvDownloader()
+    mongo_operations = MongoOperations(
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
+    database = DatabaseApi(mongo_operations, file_downloader)
 
     try:
-        database.add_file(request.json["url"], request.json[FILENAME])
+        database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
 
     except Exception as error_message:
 
@@ -54,16 +63,24 @@ def create_file():
             )
 
     return (
-        jsonify({MESSAGE_RESULT: MESSAGE_CREATED_FILE}),
+        jsonify({
+            MESSAGE_RESULT:
+                MICROSERVICE_URI_GET +
+                request.json[FILENAME] +
+                MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCESS_CREATED,
     )
 
 
-@app.route("/files/<filename>", methods=[GET])
+@app.route("/files/<filename>", methods=["GET"])
 def read_files(filename):
-    file_downloader_and_saver = CsvDownloader()
-    mongo_operations = MongoOperations()
-    database = DatabaseApi(mongo_operations, file_downloader_and_saver)
+    file_downloader = CsvDownloader()
+    mongo_operations = MongoOperations(
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
+    database = DatabaseApi(mongo_operations, file_downloader)
 
     limit = int(request.args.get("limit"))
     if limit > PAGINATE_FILE_LIMIT:
@@ -76,25 +93,38 @@ def read_files(filename):
     return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS
 
 
-@app.route("/files", methods=[GET])
+@app.route("/files", methods=["GET"])
 def read_files_descriptor():
-    file_downloader_and_saver = CsvDownloader()
-    mongo_operations = MongoOperations()
-    database = DatabaseApi(mongo_operations, file_downloader_and_saver)
+    file_downloader = CsvDownloader()
+    mongo_operations = MongoOperations(
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
+    database = DatabaseApi(mongo_operations, file_downloader)
 
-    return jsonify({MESSAGE_RESULT: database.get_files()}), HTTP_STATUS_CODE_SUCESS
+    return jsonify(
+        {MESSAGE_RESULT: database.get_files(
+            request.args.get("type"))}), HTTP_STATUS_CODE_SUCESS
 
 
-@app.route("/files/<filename>", methods=[DELETE])
+@app.route("/files/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    file_downloader_and_saver = CsvDownloader()
-    mongo_operations = MongoOperations()
-    database = DatabaseApi(mongo_operations, file_downloader_and_saver)
+    file_downloader = CsvDownloader()
+    mongo_operations = MongoOperations(
+        os.environ[DATABASE_URL],
+        os.environ[DATABASE_REPLICA_SET],
+        os.environ[DATABASE_PORT],
+        os.environ[DATABASE_NAME])
+    database = DatabaseApi(mongo_operations, file_downloader)
 
-    database.delete_file(filename)
+    thread_pool = ThreadPoolExecutor()
+    thread_pool.submit(database.delete_file, filename)
 
-    return jsonify({MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+    return jsonify(
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
 
 
 if __name__ == "__main__":
-    app.run(host=os.environ[DATABASE_API_HOST], port=int(os.environ[DATABASE_API_PORT]))
+    app.run(host=os.environ[DATABASE_API_HOST],
+            port=int(os.environ[DATABASE_API_PORT]))

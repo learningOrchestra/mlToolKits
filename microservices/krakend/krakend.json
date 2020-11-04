@@ -1,0 +1,547 @@
+{
+  "version": 2,
+  "endpoints": [
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/files",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=dataset",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PUT",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/projection",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/projections",
+          "host": [
+            "http://projection:5001"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/projection",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/projections",
+          "host": [
+            "http://projection:5001"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/projection",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=projection",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/projection/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/projection/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/dataType",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/fieldTypes",
+          "host": [
+            "http://datatypehandler:5003"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/dataType",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/fieldTypes",
+          "host": [
+            "http://datatypehandler:5003"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/dataType",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=dataType",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/dataType/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/dataType/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/tsne",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/images",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/tsne",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/images",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/tsne/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/tsne/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://tsne:5005"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/pca",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/images",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/pca",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/images",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/pca/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/pca/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/images/{filename}",
+          "host": [
+            "http://pca:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/histogram",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/histograms",
+          "host": [
+            "http://histogram:5004"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/histogram",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=histogram",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/histogram/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/histogram/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/builder",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/models",
+          "host": [
+            "http://modelbuilder:5002"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/builder",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=builder",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    }
+  ],
+  "extra_config": {
+    "github_com/devopsfaith/krakend-metrics": {
+      "collection_time": "60s",
+      "proxy_disabled": false,
+      "router_disabled": false,
+      "backend_disabled": false,
+      "endpoint_disabled": false,
+      "listen_address": ":8090"
+    },
+    "github_com/devopsfaith/krakend-gologging": {
+      "level": "ERROR",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    }
+  },
+  "timeout": "10s",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "gatewayapi"
+}
