@@ -1,23 +1,23 @@
 version: "3.8"
 
-deploy: &default-deploy
+x-deploy: &default-deploy
   replicas: 1
   restart_policy:
     condition: on-failure
 
-deploy-manager: &default-deploy-manager
+x-deploy-manager: &default-deploy-manager
   <<: *default-deploy
   placement:
     constraints:
       - "node.role==manager"
 
-deploy-worker: &default-deploy-worker
+x-deploy-worker: &default-deploy-worker
   <<: *default-deploy
   placement:
     constraints:
       - "node.role==worker"
 
-service-database-env: &default-service-database-env
+x-service-database-env: &default-service-database-env
   - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
   - DATABASE_PORT=27017
   - DATABASE_REPLICA_SET=replica_set
