@@ -116,7 +116,7 @@ def get_images():
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        PcaRequestValidator.pca_filename_existence_validator(filename)
+        PcaRequestValidator.pca_filename_inexistence_validator(filename)
 
     except Exception as invalid_pca_filename:
         return (

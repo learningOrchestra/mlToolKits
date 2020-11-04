@@ -116,7 +116,7 @@ def get_images():
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        TsneRequestValidator.tsne_filename_existence_validator(filename)
+        TsneRequestValidator.tsne_filename_inexistence_validator(filename)
     except Exception as invalid_tsne_filename:
         return (
             jsonify(
