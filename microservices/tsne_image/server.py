@@ -84,10 +84,15 @@ def create_tsne():
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    thread_pool.submit(tsne_async_processing,
+    '''thread_pool.submit(tsne_async_processing,
                        database_url_input,
                        request.json[LABEL_NAME],
-                       request.json[TSNE_FILENAME_NAME])
+                       request.json[TSNE_FILENAME_NAME])'''
+
+    tsne_async_processing(
+        database_url_input,
+        request.json[LABEL_NAME],
+        request.json[TSNE_FILENAME_NAME])
 
     return (
         jsonify({MESSAGE_RESULT:
