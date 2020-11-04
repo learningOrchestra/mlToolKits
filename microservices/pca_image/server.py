@@ -84,10 +84,15 @@ def pca_plot():
         os.environ[DATABASE_REPLICA_SET],
     )
 
-    thread_pool.submit(pca_async_processing,
+    '''thread_pool.submit(pca_async_processing,
                        database_url_input,
                        request.json[LABEL_NAME],
-                       request.json[PCA_FILENAME_NAME])
+                       request.json[PCA_FILENAME_NAME])'''
+
+    pca_async_processing(
+        database_url_input,
+        request.json[LABEL_NAME],
+        request.json[PCA_FILENAME_NAME])
 
     return (
         jsonify({
