@@ -12,7 +12,7 @@ HISTOGRAM_PORT = "HISTOGRAM_PORT"
 
 MESSAGE_RESULT = "result"
 
-FIELDS_NAME = "field_names"
+FIELDS_NAME = "names"
 HISTOGRAM_FILENAME_NAME = "output_filename"
 PARENT_FILENAME_NAME = "input_filename"
 

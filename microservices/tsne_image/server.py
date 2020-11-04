@@ -23,7 +23,7 @@ DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 MESSAGE_RESULT = "result"
 PARENT_FILENAME_NAME = "input_filename"
 TSNE_FILENAME_NAME = "output_filename"
-LABEL_NAME = "label_name"
+LABEL_NAME = "label"
 
 MESSAGE_DELETED_FILE = "deleted_file"
 MESSAGE_NOT_FOUND = "not_found_file"
