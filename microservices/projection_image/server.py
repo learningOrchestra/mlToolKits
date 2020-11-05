@@ -4,7 +4,7 @@ from projection import SparkManager, MongoOperations, \
     ProjectionRequestValidator
 from concurrent.futures import ThreadPoolExecutor
 
-HTTP_STATUS_CODE_SUCESS_CREATED = 201
+HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 
@@ -98,7 +98,7 @@ def create_projection():
                 MICROSERVICE_URI_GET +
                 request.json[PROJECTION_FILENAME_NAME] +
                 MICROSERVICE_URI_GET_PARAMS}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 

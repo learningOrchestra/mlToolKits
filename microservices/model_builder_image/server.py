@@ -7,9 +7,9 @@ from model_builder import (
 )
 from concurrent.futures import ThreadPoolExecutor
 
-HTTP_STATUS_CODE_SUCESS_CREATED = 201
+HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
-HTTP_STATUS_CODE_CONFICLT = 409
+HTTP_STATUS_CODE_CONFLICT = 409
 
 MODEL_BUILDER_HOST_IP = "MODEL_BUILDER_HOST_IP"
 MODEL_BUILDER_HOST_PORT = "MODEL_BUILDER_HOST_PORT"
@@ -66,7 +66,7 @@ def create_model():
         )
 
     try:
-        request_validator.model_classificators_validator(
+        request_validator.model_classifiers_validator(
             request.json[CLASSIFIERS_NAME]
         )
     except Exception as invalid_classifier_name:
@@ -84,7 +84,7 @@ def create_model():
             jsonify(
                 {MESSAGE_RESULT: invalid_prediction_filename.args[
                     FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFICLT,
+            HTTP_STATUS_CODE_CONFLICT,
         )
 
     database_url_training = MongoOperations.collection_database_url(
@@ -118,7 +118,7 @@ def create_model():
                 create_prediction_files_uri(
                     request.json[CLASSIFIERS_NAME],
                     request.json[TEST_FILENAME])}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 

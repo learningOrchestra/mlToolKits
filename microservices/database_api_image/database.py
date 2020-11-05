@@ -50,14 +50,14 @@ class DatabaseApi:
     def delete_file(self, filename):
         self.database_object.delete_file(filename)
 
-    def get_files(self, type):
+    def get_files(self, file_type):
         result = []
 
         for file in self.database_object.get_filenames():
             metadata_file = self.database_object.find_one_in_file(
-                file, {ROW_ID: METADATA_ROW_ID, "type": type}
+                file, {ROW_ID: METADATA_ROW_ID, "type": file_type}
             )
-            if metadata_file == None:
+            if metadata_file is None:
                 continue
             metadata_file.pop(ROW_ID)
             result.append(metadata_file)
@@ -113,8 +113,8 @@ class CsvDownloader:
     def __init__(self):
         self.thread_pool = ThreadPoolExecutor(
             max_workers=self.MAX_NUMBER_THREADS)
-        self.download_tratament_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
-        self.tratament_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
+        self.download_treatment_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
+        self.treatment_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
     def download_file(self, url):
         with closing(requests.get(url, stream=True)) as r:
@@ -125,13 +125,13 @@ class CsvDownloader:
             )
             self.file_headers = next(reader)
             for row in reader:
-                self.download_tratament_queue.put(row)
-        self.download_tratament_queue.put(self.FINISHED)
+                self.download_treatment_queue.put(row)
+        self.download_treatment_queue.put(self.FINISHED)
 
-    def tratament_file(self):
+    def treatment_file(self):
         row_count = 1
         while True:
-            downloaded_row = self.download_tratament_queue.get()
+            downloaded_row = self.download_treatment_queue.get()
             if downloaded_row == self.FINISHED:
                 break
             json_object = {
@@ -139,13 +139,13 @@ class CsvDownloader:
                 for index in range(len(self.file_headers))
             }
             json_object[ROW_ID] = row_count
-            self.tratament_save_queue.put(json_object)
+            self.treatment_save_queue.put(json_object)
             row_count += 1
-        self.tratament_save_queue.put(self.FINISHED)
+        self.treatment_save_queue.put(self.FINISHED)
 
     def save_file(self, database_connection, filename):
         while True:
-            json_object = self.tratament_save_queue.get()
+            json_object = self.treatment_save_queue.get()
             if json_object == self.FINISHED:
                 break
             database_connection.insert_one_in_file(filename, json_object)
@@ -189,5 +189,5 @@ class CsvDownloader:
         }
         database_connection.insert_one_in_file(filename, metadata_file)
         self.thread_pool.submit(self.download_file, url)
-        self.thread_pool.submit(self.tratament_file)
+        self.thread_pool.submit(self.treatment_file)
         self.thread_pool.submit(self.save_file, database_connection, filename)

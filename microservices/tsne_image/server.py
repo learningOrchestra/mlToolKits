@@ -3,8 +3,8 @@ import os
 from tsne import TsneGenerator, MongoOperations, TsneRequestValidator
 from concurrent.futures import ThreadPoolExecutor
 
-HTTP_STATUS_CODE_SUCESS = 200
-HTTP_STATUS_CODE_SUCESS_CREATED = 201
+HTTP_STATUS_CODE_SUCCESS = 200
+HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 HTTP_STATUS_CODE_NOT_FOUND = 404
@@ -90,10 +90,11 @@ def create_tsne():
                        request.json[TSNE_FILENAME_NAME])
 
     return (
-        jsonify({MESSAGE_RESULT:
-                     MICROSERVICE_URI_GET +
-                     request.json[TSNE_FILENAME_NAME]}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        jsonify({
+            MESSAGE_RESULT:
+                MICROSERVICE_URI_GET +
+                request.json[TSNE_FILENAME_NAME]}),
+        HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
@@ -110,13 +111,13 @@ def tsne_async_processing(database_url_input, label_name,
 @app.route("/images", methods=["GET"])
 def get_images():
     images = os.listdir(os.environ[IMAGES_PATH])
-    return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCESS
+    return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCCESS
 
 
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        TsneRequestValidator.tsne_filename_inexistence_validator(filename)
+        TsneRequestValidator.tune_filename_nonexistence_validator(filename)
     except Exception as invalid_tsne_filename:
         return (
             jsonify(
@@ -132,7 +133,7 @@ def get_image(filename):
 @app.route("/images/<filename>", methods=["DELETE"])
 def delete_image(filename):
     try:
-        TsneRequestValidator.tsne_filename_inexistence_validator(filename)
+        TsneRequestValidator.tune_filename_nonexistence_validator(filename)
     except Exception as invalid_tsne_filename:
         return (
             jsonify(
@@ -145,7 +146,7 @@ def delete_image(filename):
     thread_pool.submit(os.remove, image_path)
 
     return jsonify(
-        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
 
 
 if __name__ == "__main__":

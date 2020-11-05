@@ -3,8 +3,8 @@ import os
 from database import CsvDownloader, DatabaseApi, MongoOperations
 from concurrent.futures import ThreadPoolExecutor
 
-HTTP_STATUS_CODE_SUCESS = 200
-HTTP_STATUS_CODE_SUCESS_CREATED = 201
+HTTP_STATUS_CODE_SUCCESS = 200
+HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 HTTP_STATUS_CODE_CONFLICT = 409
 
@@ -68,7 +68,7 @@ def create_file():
                 MICROSERVICE_URI_GET +
                 request.json[FILENAME] +
                 MICROSERVICE_URI_GET_PARAMS}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
@@ -90,7 +90,7 @@ def read_files(filename):
         filename, request.args.get("skip"), limit, request.args.get("query")
     )
 
-    return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCESS
+    return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCCESS
 
 
 @app.route("/files", methods=["GET"])
@@ -105,7 +105,7 @@ def read_files_descriptor():
 
     return jsonify(
         {MESSAGE_RESULT: database.get_files(
-            request.args.get("type"))}), HTTP_STATUS_CODE_SUCESS
+            request.args.get("type"))}), HTTP_STATUS_CODE_SUCCESS
 
 
 @app.route("/files/<filename>", methods=["DELETE"])
@@ -122,7 +122,7 @@ def delete_file(filename):
     thread_pool.submit(database.delete_file, filename)
 
     return jsonify(
-        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
 
 
 if __name__ == "__main__":
