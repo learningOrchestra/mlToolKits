@@ -3,8 +3,8 @@ import os
 from pca import PcaGenerator, MongoOperations, PcaRequestValidator
 from concurrent.futures import ThreadPoolExecutor
 
-HTTP_STATUS_CODE_SUCESS = 200
-HTTP_STATUS_CODE_SUCESS_CREATED = 201
+HTTP_STATUS_CODE_SUCCESS = 200
+HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 HTTP_STATUS_CODE_NOT_FOUND = 404
@@ -94,7 +94,7 @@ def pca_plot():
             MESSAGE_RESULT:
                 MICROSERVICE_URI_GET +
                 request.json[PCA_FILENAME_NAME]}),
-        HTTP_STATUS_CODE_SUCESS_CREATED,
+        HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
@@ -110,13 +110,13 @@ def pca_async_processing(database_url_input, label_name,
 @app.route("/images", methods=["GET"])
 def get_images():
     images = os.listdir(os.environ[IMAGES_PATH])
-    return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCESS
+    return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCCESS
 
 
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        PcaRequestValidator.pca_filename_inexistence_validator(filename)
+        PcaRequestValidator.pca_filename_nonexistence_validator(filename)
 
     except Exception as invalid_pca_filename:
         return (
@@ -133,7 +133,7 @@ def get_image(filename):
 @app.route("/images/<filename>", methods=["DELETE"])
 def delete_image(filename):
     try:
-        PcaRequestValidator.pca_filename_inexistence_validator(filename)
+        PcaRequestValidator.pca_filename_nonexistence_validator(filename)
     except Exception as invalid_pca_filename:
         return (
             jsonify(
@@ -146,7 +146,7 @@ def delete_image(filename):
     thread_pool.submit(os.remove, image_path)
 
     return jsonify(
-        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCESS
+        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
 
 
 if __name__ == "__main__":

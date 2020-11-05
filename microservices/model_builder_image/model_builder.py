@@ -103,7 +103,7 @@ class SparkModelBuilder:
             database_url_training,
             database_url_test,
             preprocessor_code,
-            classificators_list,
+            classifiers_list,
             train_filename,
             test_filename,
     ):
@@ -117,7 +117,7 @@ class SparkModelBuilder:
         features_testing = preprocessing_variables["features_testing"]
         features_evaluation = preprocessing_variables["features_evaluation"]
 
-        classificator_switcher = {
+        classifier_switcher = {
             "lr": LogisticRegression(),
             "dt": DecisionTreeClassifier(),
             "rf": RandomForestClassifier(),
@@ -125,7 +125,7 @@ class SparkModelBuilder:
             "nb": NaiveBayes(),
         }
 
-        classificator_threads = []
+        classifier_threads = []
 
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
@@ -139,44 +139,44 @@ class SparkModelBuilder:
             "finished": False
         }
 
-        for classificator_name in classificators_list:
-            classificator = classificator_switcher[classificator_name]
+        for classifier_name in classifiers_list:
+            classifier = classifier_switcher[classifier_name]
 
             metadata_classifier = metadata_document.copy()
-            metadata_classifier["classifier"] = classificator_name
+            metadata_classifier["classifier"] = classifier_name
             metadata_classifier[
-                "filename"] = test_filename + "_" + classificator_name
+                "filename"] = test_filename + "_" + classifier_name
 
             self.database.insert_one_in_file(
                 metadata_classifier["filename"],
                 metadata_classifier)
 
-            classificator_threads.append(
+            classifier_threads.append(
                 self.thread_pool.submit(
-                    self.classificator_handler,
-                    classificator,
+                    self.classifier_handler,
+                    classifier,
                     features_training,
                     features_testing,
                     features_evaluation,
                     metadata_classifier,
                 )
             )
-        wait(classificator_threads)
+        wait(classifier_threads)
         self.spark_session.stop()
 
-    def classificator_handler(
+    def classifier_handler(
             self,
-            classificator,
+            classifier,
             features_training,
             features_testing,
             features_evaluation,
             metadata_document
     ):
 
-        classificator.featuresCol = "features"
+        classifier.featuresCol = "features"
 
         start_fit_model_time = time.time()
-        model = classificator.fit(features_training)
+        model = classifier.fit(features_training)
         end_fit_model_time = time.time()
 
         fit_time = end_fit_model_time - start_fit_model_time
@@ -204,12 +204,12 @@ class SparkModelBuilder:
 
         testing_prediction = model.transform(features_testing)
 
-        self.save_classificator_result(
+        self.save_classifier_result(
             testing_prediction,
             metadata_document
         )
 
-    def save_classificator_result(self, predicted_df, filename_metatada):
+    def save_classifier_result(self, predicted_df, filename_metadata):
         document_id = 1
         for row in predicted_df.collect():
             row_dict = row.asDict()
@@ -221,12 +221,12 @@ class SparkModelBuilder:
             del row_dict["features"]
             del row_dict["rawPrediction"]
 
-            self.database.insert_one_in_file(filename_metatada["filename"],
+            self.database.insert_one_in_file(filename_metadata["filename"],
                                              row_dict)
 
         flag_true_query = {"finished": True}
         metadata_file_query = {"_id": 0}
-        self.database.update_one(filename_metatada["filename"], flag_true_query,
+        self.database.update_one(filename_metadata["filename"], flag_true_query,
                                  metadata_file_query)
 
 
@@ -276,8 +276,8 @@ class MongoOperations:
 class ModelBuilderRequestValidator:
     MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
     MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
-    MESSAGE_INVALID_CLASSIFICATOR = "invalid_classifier_name"
-    MESSSAGE_INVALID_PREDICTION_NAME = "prediction_filename_already_exists"
+    MESSAGE_INVALID_CLASSIFIER = "invalid_classifier_name"
+    MESSAGE_INVALID_PREDICTION_NAME = "prediction_filename_already_exists"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -294,16 +294,16 @@ class ModelBuilderRequestValidator:
         if test_filename not in filenames:
             raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
 
-    def predictions_filename_validator(self, test_filename, classificator_list):
+    def predictions_filename_validator(self, test_filename, classifier_list):
         filenames = self.database.get_filenames()
 
-        for classificator_name in classificator_list:
-            prediction_filename = test_filename + "_" + classificator_name
+        for classifier_name in classifier_list:
+            prediction_filename = test_filename + "_" + classifier_name
             if prediction_filename in filenames:
-                raise Exception(self.MESSSAGE_INVALID_PREDICTION_NAME)
+                raise Exception(self.MESSAGE_INVALID_PREDICTION_NAME)
 
-    def model_classificators_validator(self, classificators_list):
-        classificator_names_list = ["lr", "dt", "rf", "gb", "nb"]
-        for classificator_name in classificators_list:
-            if classificator_name not in classificator_names_list:
-                raise Exception(self.MESSAGE_INVALID_CLASSIFICATOR)
+    def model_classifiers_validator(self, classifiers_list):
+        classifier_names_list = ["lr", "dt", "rf", "gb", "nb"]
+        for classifier_name in classifiers_list:
+            if classifier_name not in classifier_names_list:
+                raise Exception(self.MESSAGE_INVALID_CLASSIFIER)

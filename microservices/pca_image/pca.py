@@ -44,11 +44,11 @@ class PcaGenerator:
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
-        label_enconder = LabelEncoder()
+        label_encoder = LabelEncoder()
         encoded_dataframe = dataframe.toPandas()
 
         for field in string_fields:
-            encoded_dataframe[field] = label_enconder.fit_transform(
+            encoded_dataframe[field] = label_encoder.fit_transform(
                 encoded_dataframe[field]
             )
 
@@ -158,7 +158,7 @@ class PcaRequestValidator:
             raise Exception(PcaRequestValidator.MESSAGE_DUPLICATE_FILE)
 
     @staticmethod
-    def pca_filename_inexistence_validator(pca_filename):
+    def pca_filename_nonexistence_validator(pca_filename):
         images = os.listdir(os.environ[IMAGES_PATH])
         image_name = pca_filename + IMAGE_FORMAT
 

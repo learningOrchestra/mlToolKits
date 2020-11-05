@@ -44,11 +44,11 @@ class TsneGenerator:
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
-        label_enconder = LabelEncoder()
+        label_encoder = LabelEncoder()
         encoded_dataframe = dataframe.toPandas()
 
         for field in string_fields:
-            encoded_dataframe[field] = label_enconder.fit_transform(
+            encoded_dataframe[field] = label_encoder.fit_transform(
                 encoded_dataframe[field]
             )
 
@@ -163,7 +163,7 @@ class TsneRequestValidator:
             raise Exception(TsneRequestValidator.MESSAGE_DUPLICATE_FILE)
 
     @staticmethod
-    def tsne_filename_inexistence_validator(tsne_filename):
+    def tune_filename_nonexistence_validator(tsne_filename):
         images = os.listdir(os.environ[IMAGES_PATH])
         image_name = tsne_filename + IMAGE_FORMAT
 
