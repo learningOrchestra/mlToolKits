@@ -140,6 +140,7 @@ class PcaRequestValidator:
     MESSAGE_DUPLICATE_FILE = "duplicate_file"
     MESSAGE_INVALID_LABEL = "invalid_field"
     MESSAGE_NOT_FOUND = "file_not_found"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -149,6 +150,15 @@ class PcaRequestValidator:
 
         if filename not in filenames:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
+
+    def finished_processing_validator(self, filename):
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
+
+        if filename_metadata["finished"] == False:
+            raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
 
     @staticmethod
     def pca_filename_existence_validator(pca_filename):

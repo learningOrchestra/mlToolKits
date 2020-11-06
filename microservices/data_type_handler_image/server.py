@@ -63,6 +63,13 @@ def change_data_type():
             {MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}), \
                HTTP_STATUS_CODE_NOT_ACCEPTABLE
 
+    try:
+        request_validator.finished_processing_validator(parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
     metadata_handler = FileMetadataHandler(database)
     data_type_converter = DataTypeConverter(database, metadata_handler)
     data_type_converter.convert_existent_file(

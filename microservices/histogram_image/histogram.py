@@ -88,6 +88,7 @@ class HistogramRequestValidator:
     MESSAGE_INVALID_FIELDS = "invalid_fields"
     MESSAGE_INVALID_FILENAME = "invalid_filename"
     MESSAGE_MISSING_FIELDS = "missing_fields"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
     MESSAGE_DUPLICATE_FILE = "duplicated_filename"
 
     def __init__(self, database_connector):
@@ -98,6 +99,15 @@ class HistogramRequestValidator:
 
         if filename not in filenames:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
+
+    def finished_processing_validator(self, filename):
+        filename_metadata_query = {"filename": filename}
+
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
+
+        if filename_metadata["finished"] == False:
+            raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
 
     def histogram_filename_validator(self, histogram_filename):
         filenames = self.database.get_filenames()

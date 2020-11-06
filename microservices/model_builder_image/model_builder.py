@@ -144,8 +144,9 @@ class SparkModelBuilder:
 
             metadata_classifier = metadata_document.copy()
             metadata_classifier["classifier"] = classifier_name
-            metadata_classifier[
-                "filename"] = test_filename + "_" + classifier_name
+            metadata_classifier["filename"] = self.create_prediction_filename(
+                test_filename,
+                classifier_name)
 
             self.database.insert_one_in_file(
                 metadata_classifier["filename"],
@@ -229,6 +230,10 @@ class SparkModelBuilder:
         self.database.update_one(filename_metadata["filename"], flag_true_query,
                                  metadata_file_query)
 
+    @staticmethod
+    def create_prediction_filename(parent_filename, classifier_name):
+        return parent_filename + "_" + classifier_name
+
 
 class MongoOperations:
     def __init__(self, database_url, replica_set, database_port, database_name):
@@ -274,31 +279,35 @@ class MongoOperations:
 
 
 class ModelBuilderRequestValidator:
-    MESSAGE_INVALID_TRAINING_FILENAME = "invalid_training_filename"
-    MESSAGE_INVALID_TEST_FILENAME = "invalid_test_filename"
+    MESSAGE_INVALID_FILENAME = "invalid_input_filename"
     MESSAGE_INVALID_CLASSIFIER = "invalid_classifier_name"
     MESSAGE_INVALID_PREDICTION_NAME = "prediction_filename_already_exists"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
 
     def __init__(self, database_connector):
         self.database = database_connector
 
-    def training_filename_validator(self, training_filename):
+    def parent_filename_validator(self, filename):
         filenames = self.database.get_filenames()
 
-        if training_filename not in filenames:
-            raise Exception(self.MESSAGE_INVALID_TRAINING_FILENAME)
+        if filename not in filenames:
+            raise Exception(self.MESSAGE_INVALID_FILENAME)
 
-    def test_filename_validator(self, test_filename):
-        filenames = self.database.get_filenames()
+    def finished_processing_validator(self, filename):
+        filename_metadata_query = {"filename": filename}
 
-        if test_filename not in filenames:
-            raise Exception(self.MESSAGE_INVALID_TEST_FILENAME)
+        filename_metadata = self.database.find_one(filename,
+                                                   filename_metadata_query)
+
+        if filename_metadata["finished"] == False:
+            raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
 
     def predictions_filename_validator(self, test_filename, classifier_list):
         filenames = self.database.get_filenames()
 
         for classifier_name in classifier_list:
-            prediction_filename = test_filename + "_" + classifier_name
+            prediction_filename = SparkModelBuilder.create_prediction_filename(
+                test_filename, classifier_name)
             if prediction_filename in filenames:
                 raise Exception(self.MESSAGE_INVALID_PREDICTION_NAME)
 

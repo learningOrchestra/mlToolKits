@@ -74,6 +74,14 @@ def create_projection():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
+    try:
+        request_validator.finished_processing_validator(
+            parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
