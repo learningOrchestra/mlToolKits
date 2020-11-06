@@ -47,43 +47,14 @@ def create_tsne():
     )
     request_validator = TsneRequestValidator(database)
 
-    try:
-        request_validator.tsne_filename_existence_validator(
-            request.json[TSNE_FILENAME_NAME]
-        )
-    except Exception as invalid_tsne_filename:
-        return (
-            jsonify(
-                {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
-        )
+    request_errors = analyse_request_errors(
+        request_validator,
+        request.json[PARENT_FILENAME_NAME],
+        request.json[TSNE_FILENAME_NAME],
+        request.json[LABEL_NAME])
 
-    try:
-        request_validator.parent_filename_validator(
-            request.json[PARENT_FILENAME_NAME])
-    except Exception as invalid_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.filename_label_validator(
-            request.json[PARENT_FILENAME_NAME], request.json[LABEL_NAME]
-        )
-    except Exception as invalid_label:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.finished_processing_validator(
-            request.json[PARENT_FILENAME_NAME])
-    except Exception as unfinished_filename:
-        return jsonify(
-            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    if request_errors is not None:
+        return request_errors
 
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
@@ -103,16 +74,6 @@ def create_tsne():
                 MICROSERVICE_URI_GET +
                 request.json[TSNE_FILENAME_NAME]}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
-    )
-
-
-def tsne_async_processing(database_url_input, label_name,
-                          tsne_filename):
-    tsne_generator = TsneGenerator(database_url_input)
-
-    tsne_generator.create_image(
-        label_name,
-        tsne_filename
     )
 
 
@@ -155,6 +116,59 @@ def delete_image(filename):
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
+
+
+def tsne_async_processing(database_url_input, label_name,
+                          tsne_filename):
+    tsne_generator = TsneGenerator(database_url_input)
+
+    tsne_generator.create_image(
+        label_name,
+        tsne_filename
+    )
+
+
+def analyse_request_errors(request_validator, parent_filename,
+                           tsne_filename, label_name):
+    try:
+        request_validator.tsne_filename_existence_validator(
+            tsne_filename
+        )
+    except Exception as invalid_tsne_filename:
+        return (
+            jsonify(
+                {MESSAGE_RESULT: invalid_tsne_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.parent_filename_validator(
+            parent_filename)
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.filename_label_validator(
+            parent_filename, label_name
+        )
+    except Exception as invalid_label:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.finished_processing_validator(
+            parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
+    return None
 
 
 if __name__ == "__main__":

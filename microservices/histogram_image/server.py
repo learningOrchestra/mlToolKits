@@ -44,45 +44,18 @@ def create_histogram():
 
     request_validator = HistogramRequestValidator(database)
 
-    try:
-        request_validator.histogram_filename_validator(
-            request.json[HISTOGRAM_FILENAME_NAME]
-        )
-    except Exception as invalid_histogram_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_histogram_filename.args[
-                FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
-        )
+    request_errors = analyse_request_errors(
+        request_validator,
+        request.json[PARENT_FILENAME_NAME],
+        request.json[HISTOGRAM_FILENAME_NAME],
+        request.json[FIELDS_NAME])
 
-    try:
-        parent_filename = request.json[PARENT_FILENAME_NAME]
-        request_validator.filename_validator(parent_filename)
-    except Exception as invalid_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.fields_validator(parent_filename,
-                                           request.json[FIELDS_NAME])
-    except Exception as invalid_fields:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.finished_processing_validator(parent_filename)
-    except Exception as unfinished_filename:
-        return jsonify(
-            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    if request_errors is not None:
+        return request_errors
 
     thread_pool.submit(histogram_async_processing,
                        database,
-                       parent_filename,
+                       request.json[PARENT_FILENAME_NAME],
                        request.json[HISTOGRAM_FILENAME_NAME],
                        request.json[FIELDS_NAME])
 
@@ -104,6 +77,46 @@ def histogram_async_processing(database, parent_filename, histogram_filename,
         histogram_filename,
         fields_name,
     )
+
+
+def analyse_request_errors(request_validator, parent_filename,
+                           histogram_filename, fields_name):
+    try:
+        request_validator.histogram_filename_validator(
+            histogram_filename
+        )
+    except Exception as invalid_histogram_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_histogram_filename.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.filename_validator(parent_filename)
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.fields_validator(parent_filename,
+                                           fields_name)
+    except Exception as invalid_fields:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.finished_processing_validator(parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
+    return None
 
 
 if __name__ == "__main__":

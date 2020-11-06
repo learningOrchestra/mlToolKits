@@ -44,48 +44,19 @@ def create_projection():
 
     request_validator = ProjectionRequestValidator(database)
 
-    try:
-        request_validator.projection_filename_validator(
-            request.json[PROJECTION_FILENAME_NAME]
-        )
-    except Exception as invalid_projection_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_projection_filename.args[
-                FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
-        )
+    request_errors = analyse_request_errors(
+        request_validator,
+        request.json[PARENT_FILENAME_NAME],
+        request.json[PROJECTION_FILENAME_NAME],
+        request.json[FIELDS_NAME])
 
-    try:
-        parent_filename = request.json[PARENT_FILENAME_NAME]
-        request_validator.filename_validator(parent_filename)
-    except Exception as invalid_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.projection_fields_validator(
-            parent_filename, request.json[FIELDS_NAME]
-        )
-    except Exception as invalid_fields:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.finished_processing_validator(
-            parent_filename)
-    except Exception as unfinished_filename:
-        return jsonify(
-            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    if request_errors is not None:
+        return request_errors
 
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
-        parent_filename,
+        os.environ[PARENT_FILENAME_NAME],
         os.environ[DATABASE_REPLICA_SET],
     )
 
@@ -98,7 +69,8 @@ def create_projection():
 
     thread_pool.submit(projection_async_processing, database_url_input,
                        database_url_output, request.json[FIELDS_NAME],
-                       parent_filename, request.json[PROJECTION_FILENAME_NAME])
+                       os.environ[PARENT_FILENAME_NAME],
+                       request.json[PROJECTION_FILENAME_NAME])
 
     return (
         jsonify({
@@ -118,6 +90,48 @@ def projection_async_processing(database_url_input, database_url_output,
     spark_manager.projection(
         parent_filename, output_filename,
         projection_fields)
+
+
+def analyse_request_errors(request_validator, parent_filename,
+                           projection_filename, fields_name):
+    try:
+        request_validator.projection_filename_validator(
+            projection_filename
+        )
+    except Exception as invalid_projection_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_projection_filename.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.filename_validator(parent_filename)
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.projection_fields_validator(
+            parent_filename, fields_name
+        )
+    except Exception as invalid_fields:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_fields.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.finished_processing_validator(
+            parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
+    return None
 
 
 if __name__ == "__main__":
