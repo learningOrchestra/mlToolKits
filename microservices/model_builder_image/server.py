@@ -46,50 +46,14 @@ def create_model():
 
     request_validator = ModelBuilderRequestValidator(database)
 
-    try:
-        request_validator.parent_filename_validator(
-            request.json[TRAINING_FILENAME])
-        request_validator.parent_filename_validator(
-            request.json[TEST_FILENAME])
+    request_errors = analyse_request_errors(
+        request_validator,
+        request.json[TRAINING_FILENAME],
+        request.json[TEST_FILENAME],
+        request.json[CLASSIFIERS_NAME])
 
-    except Exception as invalid_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[
-                FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.model_classifiers_validator(
-            request.json[CLASSIFIERS_NAME]
-        )
-    except Exception as invalid_classifier_name:
-        return (
-            jsonify(
-                {MESSAGE_RESULT: invalid_classifier_name.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.predictions_filename_validator(
-            request.json[TEST_FILENAME], request.json[CLASSIFIERS_NAME])
-    except Exception as invalid_prediction_filename:
-        return (
-            jsonify(
-                {MESSAGE_RESULT: invalid_prediction_filename.args[
-                    FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
-        )
-
-    try:
-        request_validator.finished_processing_validator(
-            request.json[TRAINING_FILENAME])
-        request_validator.finished_processing_validator(
-            request.json[TEST_FILENAME])
-    except Exception as unfinished_filename:
-        return jsonify(
-            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    if request_errors is not None:
+        return request_errors
 
     database_url_training = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
@@ -152,6 +116,56 @@ def model_builder_async_processing(database, database_url_training,
         train_filename,
         test_filename,
     )
+
+
+def analyse_request_errors(request_validator, train_filename,
+                           test_filename, classifiers_name):
+    try:
+        request_validator.parent_filename_validator(
+            train_filename)
+        request_validator.parent_filename_validator(
+            test_filename)
+
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.model_classifiers_validator(
+            classifiers_name
+        )
+    except Exception as invalid_classifier_name:
+        return (
+            jsonify(
+                {MESSAGE_RESULT: invalid_classifier_name.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.predictions_filename_validator(
+            test_filename, classifiers_name)
+    except Exception as invalid_prediction_filename:
+        return (
+            jsonify(
+                {MESSAGE_RESULT: invalid_prediction_filename.args[
+                    FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.finished_processing_validator(
+            train_filename)
+        request_validator.finished_processing_validator(
+            test_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
+    return None
 
 
 if __name__ == "__main__":

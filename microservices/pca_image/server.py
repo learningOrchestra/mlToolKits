@@ -47,43 +47,14 @@ def pca_plot():
     )
     request_validator = PcaRequestValidator(database)
 
-    try:
-        request_validator.pca_filename_existence_validator(
-            request.json[PCA_FILENAME_NAME]
-        )
-    except Exception as invalid_pca_filename:
-        return (
-            jsonify(
-                {MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
-        )
+    request_errors = analyse_request_errors(
+        request_validator,
+        request.json[PARENT_FILENAME_NAME],
+        request.json[PCA_FILENAME_NAME],
+        request.json[LABEL_NAME])
 
-    try:
-        request_validator.parent_filename_validator(
-            request.json[PARENT_FILENAME_NAME])
-    except Exception as invalid_filename:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.filename_label_validator(
-            request.json[PARENT_FILENAME_NAME], request.json[LABEL_NAME]
-        )
-    except Exception as invalid_label:
-        return (
-            jsonify({MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    try:
-        request_validator.finished_processing_validator(
-            request.json[PARENT_FILENAME_NAME])
-    except Exception as unfinished_filename:
-        return jsonify(
-            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
-               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+    if request_errors is not None:
+        return request_errors
 
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
@@ -103,15 +74,6 @@ def pca_plot():
                 MICROSERVICE_URI_GET +
                 request.json[PCA_FILENAME_NAME]}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
-    )
-
-
-def pca_async_processing(database_url_input, label_name,
-                         pca_filename):
-    pca_generator = PcaGenerator(database_url_input)
-
-    pca_generator.create_image(
-        label_name, pca_filename
     )
 
 
@@ -155,6 +117,58 @@ def delete_image(filename):
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
+
+
+def pca_async_processing(database_url_input, label_name,
+                         pca_filename):
+    pca_generator = PcaGenerator(database_url_input)
+
+    pca_generator.create_image(
+        label_name, pca_filename
+    )
+
+
+def analyse_request_errors(request_validator, parent_filename,
+                           pca_filename, label_name):
+    try:
+        request_validator.pca_filename_existence_validator(
+            pca_filename
+        )
+    except Exception as invalid_pca_filename:
+        return (
+            jsonify(
+                {MESSAGE_RESULT: invalid_pca_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.parent_filename_validator(
+            parent_filename)
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.filename_label_validator(
+            parent_filename, label_name
+        )
+    except Exception as invalid_label:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_label.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.finished_processing_validator(
+            parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
+    return None
 
 
 if __name__ == "__main__":
