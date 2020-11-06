@@ -73,6 +73,13 @@ def create_histogram():
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
+    try:
+        request_validator.finished_processing_validator(parent_filename)
+    except Exception as unfinished_filename:
+        return jsonify(
+            {MESSAGE_RESULT: unfinished_filename.args[FIRST_ARGUMENT]}), \
+               HTTP_STATUS_CODE_NOT_ACCEPTABLE
+
     thread_pool.submit(histogram_async_processing,
                        database,
                        parent_filename,
