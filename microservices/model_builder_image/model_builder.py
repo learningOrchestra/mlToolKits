@@ -14,7 +14,7 @@ from pyspark.ml.classification import (
     GBTClassifier,
     NaiveBayes,
 )
-import numpy as np
+import numpy as np # Don't remove, the pyparsk uses the lib.
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -30,7 +30,7 @@ class SparkModelBuilder:
         self.database = database_connector
 
         self.spark_session = (
-            SparkSession.builder.appName("model_builder")
+            SparkSession.builder.appName("modelBuilder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host",
                         os.environ[MODEL_BUILDER_HOST_NAME])
@@ -71,11 +71,11 @@ class SparkModelBuilder:
         metadata_fields = [
             "_id",
             "fields",
-            "filename",
+            "datasetName",
             "finished",
-            "time_created",
+            "timeCreated",
             "url",
-            "parent_filename",
+            "parentDatasetName",
             "type"
         ]
         processed_file = file_without_metadata.drop(*metadata_fields)
@@ -132,8 +132,8 @@ class SparkModelBuilder:
         now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
 
         metadata_document = {
-            "parent_filename": [train_filename, test_filename],
-            "time_created": now_time,
+            "parentDatasetName": [train_filename, test_filename],
+            "timeCreated": now_time,
             "_id": 0,
             "type": "builder",
             "finished": False
@@ -144,12 +144,12 @@ class SparkModelBuilder:
 
             metadata_classifier = metadata_document.copy()
             metadata_classifier["classifier"] = classifier_name
-            metadata_classifier["filename"] = self.create_prediction_filename(
+            metadata_classifier["datasetName"] = self.create_prediction_filename(
                 test_filename,
                 classifier_name)
 
             self.database.insert_one_in_file(
-                metadata_classifier["filename"],
+                metadata_classifier["datasetName"],
                 metadata_classifier)
 
             classifier_threads.append(
@@ -181,7 +181,7 @@ class SparkModelBuilder:
         end_fit_model_time = time.time()
 
         fit_time = end_fit_model_time - start_fit_model_time
-        metadata_document["fit_time"] = fit_time
+        metadata_document["fitTime"] = fit_time
 
         if features_evaluation is not None:
             evaluation_prediction = model.transform(features_evaluation)
@@ -222,12 +222,12 @@ class SparkModelBuilder:
             del row_dict["features"]
             del row_dict["rawPrediction"]
 
-            self.database.insert_one_in_file(filename_metadata["filename"],
+            self.database.insert_one_in_file(filename_metadata["datasetName"],
                                              row_dict)
 
         flag_true_query = {"finished": True}
         metadata_file_query = {"_id": 0}
-        self.database.update_one(filename_metadata["filename"], flag_true_query,
+        self.database.update_one(filename_metadata["datasetName"], flag_true_query,
                                  metadata_file_query)
 
     @staticmethod
@@ -279,10 +279,10 @@ class MongoOperations:
 
 
 class ModelBuilderRequestValidator:
-    MESSAGE_INVALID_FILENAME = "invalid_input_filename"
-    MESSAGE_INVALID_CLASSIFIER = "invalid_classifier_name"
-    MESSAGE_INVALID_PREDICTION_NAME = "prediction_filename_already_exists"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
+    MESSAGE_INVALID_FILENAME = "invalid input dataset name"
+    MESSAGE_INVALID_CLASSIFIER = "invalid classifier name"
+    MESSAGE_INVALID_PREDICTION_NAME = "prediction dataset name already exists"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -294,7 +294,7 @@ class ModelBuilderRequestValidator:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def finished_processing_validator(self, filename):
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)

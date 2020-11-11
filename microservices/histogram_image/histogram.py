@@ -15,13 +15,13 @@ class Histogram:
         london_time = datetime.now(timezone_london)
 
         metadata_histogram_filename = {
-            "parent_filename": filename,
+            "parentDatasetName": filename,
             "fields": fields,
-            "filename": histogram_filename,
+            "datasetName": histogram_filename,
             "type": "histogram",
             self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID,
             "finished": False,
-            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
+            "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
         }
 
         self.database_connector.insert_one_in_file(
@@ -85,11 +85,11 @@ class MongoOperations:
 
 
 class HistogramRequestValidator:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicated_filename"
+    MESSAGE_INVALID_FIELDS = "invalid fields"
+    MESSAGE_INVALID_FILENAME = "invalid dataset name"
+    MESSAGE_MISSING_FIELDS = "missing fields"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
+    MESSAGE_DUPLICATE_FILE = "duplicated dataset name"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -101,7 +101,7 @@ class HistogramRequestValidator:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def finished_processing_validator(self, filename):
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
@@ -119,7 +119,7 @@ class HistogramRequestValidator:
         if not fields:
             raise Exception(self.MESSAGE_MISSING_FIELDS)
 
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)

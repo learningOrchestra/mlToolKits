@@ -78,11 +78,11 @@ class PcaGenerator:
         metadata_fields = [
             "_id",
             "fields",
-            "filename",
+            "datasetName",
             "finished",
-            "time_created",
+            "timeCreated",
             "url",
-            "parent_filename",
+            "parentDatasetName",
             "type"
         ]
         processed_file = file_without_metadata.drop(*metadata_fields)
@@ -136,11 +136,11 @@ class MongoOperations:
 
 
 class PcaRequestValidator:
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_INVALID_LABEL = "invalid_field"
-    MESSAGE_NOT_FOUND = "file_not_found"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
+    MESSAGE_INVALID_FILENAME = "invalid dataset name"
+    MESSAGE_DUPLICATE_FILE = "duplicate file"
+    MESSAGE_INVALID_LABEL = "invalid field"
+    MESSAGE_NOT_FOUND = "file not found"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -152,12 +152,12 @@ class PcaRequestValidator:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def finished_processing_validator(self, filename):
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
 
-        if filename_metadata["finished"] == False:
+        if filename_metadata["datasetName"] == False:
             raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
 
     @staticmethod
@@ -179,7 +179,7 @@ class PcaRequestValidator:
         if label is None:
             return
 
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)

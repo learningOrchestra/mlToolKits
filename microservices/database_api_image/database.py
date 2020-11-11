@@ -15,8 +15,8 @@ METADATA_ROW_ID = 0
 
 
 class DatabaseApi:
-    MESSAGE_INVALID_URL = "invalid_url"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
+    MESSAGE_INVALID_URL = "invalid url"
+    MESSAGE_DUPLICATE_FILE = "duplicate file"
 
     def __init__(self, database_object, file_manager_object):
         self.database_object = database_object
@@ -179,9 +179,9 @@ class CsvDownloader:
         london_time = datetime.now(timezone_london)
 
         metadata_file = {
-            "filename": filename,
+            "datasetName": filename,
             "url": url,
-            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+            "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             ROW_ID: METADATA_ROW_ID,
             self.FINISHED: False,
             "fields": "processing",

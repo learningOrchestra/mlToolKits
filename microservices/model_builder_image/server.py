@@ -21,10 +21,10 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
-TRAINING_FILENAME = "train_filename"
-TEST_FILENAME = "test_filename"
-MODELING_CODE_NAME = "modeling_code"
-CLASSIFIERS_NAME = "classifiers_list"
+TRAINING_FILENAME = "trainDatasetName"
+TEST_FILENAME = "testDatasetName"
+MODELING_CODE_NAME = "modelingCode"
+CLASSIFIERS_NAME = "classifiersList"
 FIRST_ARGUMENT = 0
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/"

@@ -21,12 +21,11 @@ DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 MESSAGE_RESULT = "result"
-PARENT_FILENAME_NAME = "input_filename"
-TSNE_FILENAME_NAME = "output_filename"
+PARENT_FILENAME_NAME = "inputDatasetName"
+TSNE_FILENAME_NAME = "outputPlotName"
 LABEL_NAME = "label"
 
-MESSAGE_DELETED_FILE = "deleted_file"
-MESSAGE_NOT_FOUND = "not_found_file"
+MESSAGE_DELETED_FILE = "deleted file"
 
 FIRST_ARGUMENT = 0
 

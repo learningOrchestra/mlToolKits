@@ -71,8 +71,8 @@ class FileMetadataHandler:
         london_time = datetime.now(timezone_london)
 
         metadata_file = {
-            "filename": filename,
-            "time_created": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+            "datasetName": filename,
+            "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             "_id": 0,
             "finished": False,
             "type": "dataType"
@@ -118,10 +118,10 @@ class MongoOperations:
 
 
 class DataTypeHandlerRequestValidator:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
+    MESSAGE_INVALID_FIELDS = "invalid fields"
+    MESSAGE_INVALID_FILENAME = "invalid dataset name"
+    MESSAGE_MISSING_FIELDS = "missing fields"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
     STRING_TYPE = "string"
     NUMBER_TYPE = "number"
 
@@ -135,7 +135,7 @@ class DataTypeHandlerRequestValidator:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def finished_processing_validator(self, filename):
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
@@ -147,7 +147,7 @@ class DataTypeHandlerRequestValidator:
         if not fields:
             raise Exception(self.MESSAGE_MISSING_FIELDS)
 
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)

@@ -20,8 +20,8 @@ DOCUMENT_ID = "_id"
 METADATA_DOCUMENT_ID = 0
 
 MESSAGE_RESULT = "result"
-PROJECTION_FILENAME_NAME = "output_filename"
-PARENT_FILENAME_NAME = "input_filename"
+PROJECTION_FILENAME_NAME = "outputDatasetName"
+PARENT_FILENAME_NAME = "inputDatasetName"
 FIELDS_NAME = "names"
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/transform/projection/"
