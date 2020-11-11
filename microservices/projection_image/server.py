@@ -56,7 +56,7 @@ def create_projection():
     database_url_input = MongoOperations.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
-        os.environ[PARENT_FILENAME_NAME],
+        request.json[PARENT_FILENAME_NAME],
         os.environ[DATABASE_REPLICA_SET],
     )
 
@@ -69,7 +69,7 @@ def create_projection():
 
     thread_pool.submit(projection_async_processing, database_url_input,
                        database_url_output, request.json[FIELDS_NAME],
-                       os.environ[PARENT_FILENAME_NAME],
+                       request.json[PARENT_FILENAME_NAME],
                        request.json[PROJECTION_FILENAME_NAME])
 
     return (
