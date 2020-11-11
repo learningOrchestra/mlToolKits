@@ -53,17 +53,11 @@ def create_histogram():
     if request_errors is not None:
         return request_errors
 
-    '''thread_pool.submit(histogram_async_processing,
+    thread_pool.submit(histogram_async_processing,
                        database,
                        request.json[PARENT_FILENAME_NAME],
                        request.json[HISTOGRAM_FILENAME_NAME],
-                       request.json[FIELDS_NAME])'''
-
-    histogram_async_processing(
-        database,
-        request.json[PARENT_FILENAME_NAME],
-        request.json[HISTOGRAM_FILENAME_NAME],
-        request.json[FIELDS_NAME])
+                       request.json[FIELDS_NAME])
 
     return (
         jsonify({

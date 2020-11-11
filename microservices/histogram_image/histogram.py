@@ -48,7 +48,7 @@ class Histogram:
         metadata_finished_true_query = {"finished": True}
         metadata_id_query = {self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID}
 
-        self.database_connector.update_one(filename,
+        self.database_connector.update_one(histogram_filename,
                                            metadata_finished_true_query,
                                            metadata_id_query)
 
