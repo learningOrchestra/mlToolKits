@@ -21,12 +21,11 @@ DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
 MESSAGE_RESULT = "result"
-PCA_FILENAME_NAME = "output_filename"
-PARENT_FILENAME_NAME = "input_filename"
+PCA_FILENAME_NAME = "outputPlotName"
+PARENT_FILENAME_NAME = "inputDatasetName"
 LABEL_NAME = "label"
 
-MESSAGE_DELETED_FILE = "deleted_file"
-MESSAGE_NOT_FOUND = "not_found_file"
+MESSAGE_DELETED_FILE = "deleted file"
 
 FIRST_ARGUMENT = 0
 

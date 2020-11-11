@@ -63,10 +63,10 @@ class SparkManager:
         )
 
         metadata_fields = [
-            "filename",
+            "datasetName",
             self.FINISHED,
-            "time_created",
-            "parent_filename",
+            "timeCreated",
+            "parentDatasetName",
             self.DOCUMENT_ID,
             "fields",
             "type",
@@ -140,11 +140,11 @@ class MongoOperations:
 
 
 class ProjectionRequestValidator:
-    MESSAGE_INVALID_FIELDS = "invalid_fields"
-    MESSAGE_INVALID_FILENAME = "invalid_filename"
-    MESSAGE_DUPLICATE_FILE = "duplicate_file"
-    MESSAGE_MISSING_FIELDS = "missing_fields"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished_processing_in_input_filename"
+    MESSAGE_INVALID_FIELDS = "invalid fields"
+    MESSAGE_INVALID_FILENAME = "invalid dataset name"
+    MESSAGE_DUPLICATE_FILE = "duplicate file"
+    MESSAGE_MISSING_FIELDS = "missing fields"
+    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -156,7 +156,7 @@ class ProjectionRequestValidator:
             raise Exception(self.MESSAGE_INVALID_FILENAME)
 
     def finished_processing_validator(self, filename):
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
@@ -174,7 +174,7 @@ class ProjectionRequestValidator:
         if not projection_fields:
             raise Exception(self.MESSAGE_MISSING_FIELDS)
 
-        filename_metadata_query = {"filename": filename}
+        filename_metadata_query = {"datasetName": filename}
 
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
