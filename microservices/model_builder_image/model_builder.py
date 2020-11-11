@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 import time
-import numpy as np
+import numpy as np # Don't remove, the pyparsk uses the lib.
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, wait
@@ -14,7 +14,6 @@ from pyspark.ml.classification import (
     GBTClassifier,
     NaiveBayes,
 )
-import numpy as np # Don't remove, the pyparsk uses the lib.
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
@@ -118,11 +117,11 @@ class SparkModelBuilder:
         features_evaluation = preprocessing_variables["features_evaluation"]
 
         classifier_switcher = {
-            "lr": LogisticRegression(),
-            "dt": DecisionTreeClassifier(),
-            "rf": RandomForestClassifier(),
-            "gb": GBTClassifier(),
-            "nb": NaiveBayes(),
+            "LR": LogisticRegression(),
+            "DT": DecisionTreeClassifier(),
+            "RF": RandomForestClassifier(),
+            "GB": GBTClassifier(),
+            "NB": NaiveBayes(),
         }
 
         classifier_threads = []
@@ -232,7 +231,7 @@ class SparkModelBuilder:
 
     @staticmethod
     def create_prediction_filename(parent_filename, classifier_name):
-        return parent_filename + "_" + classifier_name
+        return parent_filename + classifier_name
 
 
 class MongoOperations:
@@ -312,7 +311,7 @@ class ModelBuilderRequestValidator:
                 raise Exception(self.MESSAGE_INVALID_PREDICTION_NAME)
 
     def model_classifiers_validator(self, classifiers_list):
-        classifier_names_list = ["lr", "dt", "rf", "gb", "nb"]
+        classifier_names_list = ["LR", "DT", "RF", "GB", "NB"]
         for classifier_name in classifiers_list:
             if classifier_name not in classifier_names_list:
                 raise Exception(self.MESSAGE_INVALID_CLASSIFIER)
