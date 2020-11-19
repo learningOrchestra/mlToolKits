@@ -1,72 +1,13 @@
 from pymongo import MongoClient
 from datetime import datetime
 import pytz
-from concurrent.futures import ThreadPoolExecutor
 
 
-class DataTypeConverter:
-    METADATA_DOCUMENT_ID = 0
-    DOCUMENT_ID_NAME = "_id"
-    STRING_TYPE = "string"
-    NUMBER_TYPE = "number"
-
-    def __init__(self, database_connector, metadata_handler):
-        self.database_connector = database_connector
-        self.thread_pool = ThreadPoolExecutor()
-        self.metadata_handler = metadata_handler
-
-    def field_converter(self, filename, field, field_type):
-        query = {}
-        for document in self.database_connector.find(filename, query):
-            if document[self.DOCUMENT_ID_NAME] == self.METADATA_DOCUMENT_ID:
-                continue
-
-            values = {}
-            if field_type == self.STRING_TYPE:
-                if document[field] == str:
-                    continue
-                if document[field] is None:
-                    values[field] = ""
-                else:
-                    values[field] = str(document[field])
-
-            elif field_type == self.NUMBER_TYPE:
-                if (
-                        document[field] == int
-                        or document[field] == float
-                        or document[field] is None
-                ):
-                    continue
-                if document[field] == "":
-                    values[field] = None
-                else:
-                    values[field] = float(document[field])
-
-                    if values[field].is_integer():
-                        values[field] = int(values[field])
-
-            self.database_connector.update_one(filename, values, document)
-
-    def convert_existent_file(self, filename, fields_dictionary):
-
-        self.metadata_handler.update_finished_metadata_file(filename, False)
-
-        self.thread_pool.submit(self.field_file_converter, filename,
-                                fields_dictionary)
-
-    def field_file_converter(self, filename, fields_dictionary):
-        for field in fields_dictionary:
-            self.field_converter(filename, field,
-                                 fields_dictionary[field])
-
-        self.metadata_handler.update_finished_metadata_file(filename, True)
-
-
-class FileMetadataHandler:
+class Metadata:
     def __init__(self, database_connector):
         self.database_connector = database_connector
 
-    def create_metadata_file(self, filename):
+    def create_file(self, filename):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
@@ -79,7 +20,7 @@ class FileMetadataHandler:
         }
         self.database_connector.insert_one_in_file(filename, metadata_file)
 
-    def update_finished_metadata_file(self, filename, flag):
+    def update_finished_flag(self, filename, flag):
         metadata_new_value = {
             "finished": flag,
         }
@@ -90,7 +31,7 @@ class FileMetadataHandler:
                                            metadata_query)
 
 
-class MongoOperations:
+class Database:
     def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
             database_url + '/?replicaSet=' + replica_set, int(database_port))
@@ -117,7 +58,7 @@ class MongoOperations:
         file_collection.insert_one(json_object)
 
 
-class DataTypeHandlerRequestValidator:
+class UserRequest:
     MESSAGE_INVALID_FIELDS = "invalid fields"
     MESSAGE_INVALID_FILENAME = "invalid dataset name"
     MESSAGE_MISSING_FIELDS = "missing fields"
@@ -140,7 +81,7 @@ class DataTypeHandlerRequestValidator:
         filename_metadata = self.database.find_one(filename,
                                                    filename_metadata_query)
 
-        if filename_metadata["finished"] == False:
+        if not filename_metadata["finished"]:
             raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
 
     def fields_validator(self, filename, fields):

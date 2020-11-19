@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from database import CsvDownloader, DatabaseApi, MongoOperations
+from database import Dataset
+from utils import Database, Csv
 from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -37,13 +38,13 @@ app = Flask(__name__)
 
 @app.route("/files", methods=["POST"])
 def create_file():
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    file_downloader = Csv()
+    mongo_operations = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+    database = Dataset(mongo_operations, file_downloader)
 
     try:
         database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
@@ -74,13 +75,13 @@ def create_file():
 
 @app.route("/files/<filename>", methods=["GET"])
 def read_files(filename):
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    file_downloader = Csv()
+    mongo_operations = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+    database = Dataset(mongo_operations, file_downloader)
 
     limit = int(request.args.get("limit"))
     if limit > PAGINATE_FILE_LIMIT:
@@ -95,13 +96,13 @@ def read_files(filename):
 
 @app.route("/files", methods=["GET"])
 def read_files_descriptor():
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    file_downloader = Csv()
+    mongo_operations = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+    database = Dataset(mongo_operations, file_downloader)
 
     return jsonify(
         {MESSAGE_RESULT: database.get_files(
@@ -110,13 +111,13 @@ def read_files_descriptor():
 
 @app.route("/files/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    file_downloader = Csv()
+    mongo_operations = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+    database = Dataset(mongo_operations, file_downloader)
 
     thread_pool = ThreadPoolExecutor()
     thread_pool.submit(database.delete_file, filename)

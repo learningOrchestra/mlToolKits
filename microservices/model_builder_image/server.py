@@ -1,11 +1,8 @@
 from flask import jsonify, request, Flask
 import os
-from model_builder import (
-    SparkModelBuilder,
-    MongoOperations,
-    ModelBuilderRequestValidator,
-)
-from concurrent.futures import ThreadPoolExecutor
+from model_builder import Model
+
+from utils import Database, UserRequest, Metadata
 
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
@@ -32,60 +29,66 @@ MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
 
-thread_pool = ThreadPoolExecutor()
-
 
 @app.route("/models", methods=["POST"])
 def create_model():
-    database = MongoOperations(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url = os.environ[DATABASE_URL]
+    database_replica_set = os.environ[DATABASE_REPLICA_SET]
+    database_name = os.environ[DATABASE_NAME]
+
+    train_filename = request.json[TRAINING_FILENAME]
+    test_filename = request.json[TEST_FILENAME]
+    classifiers_name = request.json[CLASSIFIERS_NAME]
+
+    database = Database(
+        database_url,
+        database_replica_set,
         os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME],
+        database_name,
     )
 
-    request_validator = ModelBuilderRequestValidator(database)
+    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
-        request.json[TRAINING_FILENAME],
-        request.json[TEST_FILENAME],
-        request.json[CLASSIFIERS_NAME])
+        train_filename,
+        test_filename,
+        classifiers_name)
 
     if request_errors is not None:
         return request_errors
 
-    database_url_training = MongoOperations.collection_database_url(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_NAME],
-        request.json[TRAINING_FILENAME],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url_training = Database.collection_database_url(
+        database_url,
+        database_name,
+        train_filename,
+        database_replica_set,
     )
 
-    database_url_test = MongoOperations.collection_database_url(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_NAME],
-        request.json[TEST_FILENAME],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url_test = Database.collection_database_url(
+        database_url,
+        database_name,
+        test_filename,
+        database_replica_set,
     )
 
-    thread_pool.submit(
-        model_builder_async_processing,
-        database,
-        database_url_training,
-        database_url_test,
+    metadata_creator = Metadata(database, train_filename, test_filename)
+    model_builder = Model(database,
+                          metadata_creator,
+                          database_url_training,
+                          database_url_test)
+
+    model_builder.build(
         request.json[MODELING_CODE_NAME],
-        request.json[CLASSIFIERS_NAME],
-        request.json[TRAINING_FILENAME],
-        request.json[TEST_FILENAME],
+        classifiers_name
     )
 
     return (
         jsonify({
             MESSAGE_RESULT:
                 create_prediction_files_uri(
-                    request.json[CLASSIFIERS_NAME],
-                    request.json[TEST_FILENAME])}),
+                    classifiers_name,
+                    test_filename)}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -95,27 +98,11 @@ def create_prediction_files_uri(classifiers_list, test_filename):
     for classifier in classifiers_list:
         classifiers_uri.append(
             MICROSERVICE_URI_GET +
-            SparkModelBuilder.create_prediction_filename(test_filename,
-                                                         classifier) +
+            Model.create_prediction_filename(test_filename,
+                                             classifier) +
             MICROSERVICE_URI_GET_PARAMS)
 
     return classifiers_uri
-
-
-def model_builder_async_processing(database, database_url_training,
-                                   database_url_test, modeling_code,
-                                   classifiers_name, train_filename,
-                                   test_filename):
-    model_builder = SparkModelBuilder(database)
-
-    model_builder.build_model(
-        database_url_training,
-        database_url_test,
-        modeling_code,
-        classifiers_name,
-        train_filename,
-        test_filename,
-    )
 
 
 def analyse_request_errors(request_validator, train_filename,
