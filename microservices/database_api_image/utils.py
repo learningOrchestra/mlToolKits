@@ -65,7 +65,7 @@ class Csv:
         self.treatment_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
     def save_file(self, filename, url):
-        self.validate_url(url)
+        Csv.validate_url(url)
         self.create_metadata_file(filename, url)
 
         self.thread_pool.submit(self.download_row, url)
