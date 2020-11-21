@@ -38,6 +38,8 @@ app = Flask(__name__)
 
 @app.route("/files", methods=["POST"])
 def create_file():
+    print("teste3", flush=True)
+
     database_connector = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
