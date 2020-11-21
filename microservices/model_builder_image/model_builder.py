@@ -76,7 +76,7 @@ class Model:
 
         classifier_threads = []
 
-        self.classifier_switcher = {
+        classifier_switcher = {
             "LR": LogisticRegression(),
             "DT": DecisionTreeClassifier(),
             "RF": RandomForestClassifier(),
@@ -85,7 +85,7 @@ class Model:
         }
 
         for name, metadata in classifiers_metadata:
-            classifier = self.classifier_switcher[name]
+            classifier = classifier_switcher[name]
             classifier_threads.append(
                 self.thread_pool.submit(
                     self.classifier_processing,
