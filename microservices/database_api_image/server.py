@@ -50,10 +50,10 @@ def create_file():
 
     database = Dataset(database_connector, file_downloader)
 
-    try:
-        database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
+    #try:
+    database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
 
-    except Exception as error_message:
+    '''except Exception as error_message:
 
         if error_message.args[FIRST_ARGUMENT] == MESSAGE_INVALID_URL:
             return (
@@ -65,7 +65,7 @@ def create_file():
             return (
                 jsonify({MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),
                 HTTP_STATUS_CODE_CONFLICT,
-            )
+            )'''
 
     return (
         jsonify({

@@ -15,15 +15,15 @@ class Dataset:
         self.file_manager_object = file_manager_object
 
     def add_file(self, url, filename):
-        try:
-            self.file_manager_object.save_file(filename, url,
-                                               self.database_object)
+        # try:
+        self.file_manager_object.save_file(filename, url,
+                                           self.database_object)
 
-        except requests.exceptions.RequestException:
+        '''except requests.exceptions.RequestException:
             raise Exception(self.MESSAGE_INVALID_URL)
 
         except errors.PyMongoError:
-            raise Exception(self.MESSAGE_DUPLICATE_FILE)
+            raise Exception(self.MESSAGE_DUPLICATE_FILE)'''
 
     def read_file(self, filename, skip, limit, query):
         result = []
