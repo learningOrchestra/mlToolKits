@@ -65,9 +65,6 @@ class Csv:
         self.treatment_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
     def save_file(self, filename, url):
-        print("teste2", flush=True)
-
-        Csv.validate_url(url)
         self.create_metadata_file(filename, url)
 
         self.thread_pool.submit(self.download_row, url)
@@ -132,15 +129,27 @@ class Csv:
             {"$set": {self.FINISHED: flag, "fields": self.file_headers}},
         )
 
-    @staticmethod
-    def validate_url(url):
+
+class UserRequest:
+    MESSAGE_INVALID_URL = "invalid url"
+    MESSAGE_DUPLICATE_FILE = "duplicate file"
+
+    def __init__(self, database_connector):
+        self.database = database_connector
+
+    def filename_validator(self, filename):
+        filenames = self.database.get_filenames()
+
+        if filename not in filenames:
+            raise Exception(self.MESSAGE_DUPLICATE_FILE)
+
+    def csv_url_validator(self, url):
         response = requests.head(url)
         response_content_type = response.headers.get("content-type")
 
-        print("teste", flush=True)
         print(response_content_type, flush=True)
         allowed_contents_type = ["application/x-download",
                                  "text/csv",
                                  "text/plain"]
         if response_content_type not in allowed_contents_type:
-            raise requests.exceptions.RequestException
+            raise Exception(self.MESSAGE_INVALID_URL)

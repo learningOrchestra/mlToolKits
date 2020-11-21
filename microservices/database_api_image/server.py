@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from database import Dataset
-from utils import Database, Csv
+from utils import Database, Csv, UserRequest
 from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -38,7 +38,8 @@ app = Flask(__name__)
 
 @app.route("/files", methods=["POST"])
 def create_file():
-    print("teste3", flush=True)
+    url = request.json[URL_FIELD_NAME]
+    filename = request.json[FILENAME]
 
     database_connector = Database(
         os.environ[DATABASE_URL],
@@ -46,26 +47,20 @@ def create_file():
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
 
-    file_downloader = Csv(database_connector)
+    request_validator = UserRequest(database_connector)
 
+    request_errors = analyse_request_errors(
+        request_validator,
+        filename,
+        url)
+
+    if request_errors is not None:
+        return request_errors
+
+    file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
-    # try:
-    database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
-
-    '''except Exception as error_message:
-
-        if error_message.args[FIRST_ARGUMENT] == MESSAGE_INVALID_URL:
-            return (
-                jsonify({MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),
-                HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-            )
-
-        elif error_message.args[FIRST_ARGUMENT] == MESSAGE_DUPLICATE_FILE:
-            return (
-                jsonify({MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),
-                HTTP_STATUS_CODE_CONFLICT,
-            )'''
+    database.add_file(url, filename)
 
     return (
         jsonify({
@@ -131,6 +126,28 @@ def delete_file(filename):
 
     return jsonify(
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
+
+
+def analyse_request_errors(request_validator, filename, url):
+    try:
+        request_validator.filename_validator(
+            filename
+        )
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.csv_url_validator(url)
+    except Exception as invalid_url:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_url.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    return None
 
 
 if __name__ == "__main__":
