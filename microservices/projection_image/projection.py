@@ -18,14 +18,25 @@ class Projection:
 
     def __init__(self, metadata_creator, database_url_input,
                  database_url_output):
+        self.database_url_input = database_url_input
         self.database_url_output = database_url_output
         self.metadata_creator = metadata_creator
         self.thread_pool = ThreadPoolExecutor()
 
-        self.spark_session = (
+    def create(self, parent_filename, projection_filename, fields):
+        self.metadata_creator.create_file(
+            projection_filename,
+            parent_filename,
+            fields)
+
+        self.thread_pool.submit(self.execute_spark_job,
+                                projection_filename, fields)
+
+    def execute_spark_job(self, projection_filename, fields):
+        spark_session = (
             SparkSession.builder.appName("projection")
-                .config("spark.mongodb.input.uri", database_url_input)
-                .config("spark.mongodb.output.uri", database_url_output)
+                .config("spark.mongodb.input.uri", self.database_url_input)
+                .config("spark.mongodb.output.uri", self.database_url_output)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
                 .config(
@@ -41,14 +52,7 @@ class Projection:
                 .getOrCreate()
         )
 
-    def create(self, parent_filename, projection_filename, fields):
-        self.metadata_creator.create_file(projection_filename, parent_filename)
-
-        self.thread_pool.submit(self.execute_spark_job,
-                                projection_filename, fields)
-
-    def execute_spark_job(self, projection_filename, fields):
-        dataframe = self.spark_session.read.format(
+        dataframe = spark_session.read.format(
             self.MONGO_SPARK_SOURCE).load()
         dataframe = dataframe.filter(
             dataframe[self.DOCUMENT_ID] != self.METADATA_FILE_ID
@@ -59,6 +63,6 @@ class Projection:
         projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode(
             "append").save()
 
-        self.spark_session.stop()
+        spark_session.stop()
 
         self.metadata_creator.update_finished_flag(projection_filename, True)

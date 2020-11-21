@@ -39,15 +39,29 @@ class Model:
             "NB": NaiveBayes(),
         }
 
-        self.spark_session = (
+        self.thread_pool = ThreadPoolExecutor()
+
+    def build(self, modeling_code, classifiers_list):
+        classifiers_metadata = {}
+
+        for classifier_name in classifiers_list:
+            classifiers_metadata[classifier_name] = \
+                self.metadata_creator.create_file(classifier_name)
+
+        self.thread_pool.submit(self.pipeline, modeling_code,
+                                classifiers_metadata)
+
+    def pipeline(self, modeling_code, classifiers_metadata):
+        spark_session = (
             SparkSession.builder.appName("modelBuilder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-                .config("spark.driver.host",
-                        os.environ[MODEL_BUILDER_HOST_NAME])
                 .config(
-                "spark.jars.packages",
-                "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
-            )
+                "spark.driver.host",
+                os.environ[MODEL_BUILDER_HOST_NAME])
+                .config("spark.jars.packages",
+                        "org.mongodb.spark:mongo-spark" +
+                        "-connector_2.11:2.4.2",
+                        )
                 .config("spark.memory.offHeap.enabled", "true")
                 .config("spark.scheduler.mode", "FAIR")
                 .config("spark.scheduler.pool", "model_builder")
@@ -62,22 +76,11 @@ class Model:
                 .getOrCreate()
         )
 
-        self.thread_pool = ThreadPoolExecutor()
-
-    def build(self, modeling_code, classifiers_list):
-        classifiers_metadata = {}
-
-        for classifier_name in classifiers_list:
-            classifiers_metadata[classifier_name] = \
-                self.metadata_creator.create_file(classifier_name)
-
-        self.thread_pool.submit(self.pipeline, modeling_code,
-                                classifiers_metadata)
-
-    def pipeline(self, modeling_code, classifiers_metadata):
         (features_training,
          features_testing,
-         features_evaluation) = self.modeling_code_processing(modeling_code)
+         features_evaluation) = self.modeling_code_processing(
+            modeling_code,
+            spark_session)
 
         classifier_threads = []
 
@@ -102,11 +105,15 @@ class Model:
             )
             self.metadata_creator.update_finished_flag(metadata_document, True)
 
-        self.spark_session.stop()
+        spark_session.stop()
 
-    def modeling_code_processing(self, modeling_code):
-        training_df = self.file_processor(self.database_url_training)
-        testing_df = self.file_processor(self.database_url_test)
+    def modeling_code_processing(self, modeling_code, spark_session):
+        training_df = self.file_processor(
+            self.database_url_training,
+            spark_session)
+        testing_df = self.file_processor(
+            self.database_url_test,
+            spark_session)
 
         preprocessing_variables = locals()
         exec(modeling_code, globals(), preprocessing_variables)
@@ -173,9 +180,9 @@ class Model:
             self.database.insert_one_in_file(filename_metadata["datasetName"],
                                              row_dict)
 
-    def file_processor(self, database_url):
+    def file_processor(self, database_url, spark_session):
         file = (
-            self.spark_session.read.format("mongo").option(
+            spark_session.read.format("mongo").option(
                 "uri", database_url).load()
         )
 

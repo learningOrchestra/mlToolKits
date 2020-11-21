@@ -17,10 +17,11 @@ class Metadata:
             "finished": False,
         }
 
-    def create_file(self, projection_filename, parent_filename):
+    def create_file(self, projection_filename, parent_filename, fields):
         metadata = self.metadata_document.copy()
         metadata["datasetName"] = projection_filename
         metadata["parentDatasetName"] = parent_filename
+        metadata["fields"] = fields
 
         self.database_connector.insert_one_in_file(
             projection_filename,
@@ -52,6 +53,11 @@ class Database:
 
     def get_filenames(self):
         return self.database.list_collection_names()
+
+    def update_one(self, filename, new_value, query):
+        new_values_query = {"$set": new_value}
+        file_collection = self.database[filename]
+        file_collection.update_one(query, new_values_query)
 
     @staticmethod
     def collection_database_url(
