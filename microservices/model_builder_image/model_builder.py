@@ -57,7 +57,6 @@ class Model:
                         "org.mongodb.spark:mongo-spark" +
                         "-connector_2.11:2.4.2",
                         )
-                .config("spark.memory.offHeap.enabled", "true")
                 .config("spark.scheduler.mode", "FAIR")
                 .config("spark.scheduler.pool", "model_builder")
                 .config("spark.scheduler.allocation.file",
