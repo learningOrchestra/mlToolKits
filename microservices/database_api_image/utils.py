@@ -57,36 +57,25 @@ class Csv:
     ROW_ID = "_id"
     METADATA_ROW_ID = 0
 
-    def __init__(self):
+    def __init__(self, database_connection):
+        self.database_connection = database_connection
         self.thread_pool = ThreadPoolExecutor(
             max_workers=self.MAX_NUMBER_THREADS)
         self.download_treatment_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
         self.treatment_save_queue = Queue(maxsize=self.MAX_QUEUE_SIZE)
 
-    def save_file(self, filename, url, database_connection):
+    def save_file(self, filename, url):
         self.validate_url(url)
+        self.create_metadata_file(filename, url)
 
-        timezone_london = pytz.timezone("Etc/Greenwich")
-        london_time = datetime.now(timezone_london)
-
-        metadata_file = {
-            "datasetName": filename,
-            "url": url,
-            "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
-            self.ROW_ID: self.METADATA_ROW_ID,
-            self.FINISHED: False,
-            "fields": "processing",
-            "type": "dataset"
-        }
-        database_connection.insert_one_in_file(filename, metadata_file)
         self.thread_pool.submit(self.download_row, url)
         self.thread_pool.submit(self.treat_row)
-        self.thread_pool.submit(self.save_row, database_connection, filename)
+        self.thread_pool.submit(self.save_row, filename)
 
     def download_row(self, url):
-        with closing(requests.get(url, stream=True)) as r:
+        with closing(requests.get(url, stream=True)) as response:
             reader = csv.reader(
-                codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
+                codecs.iterdecode(response.iter_lines(), encoding="utf-8"),
                 delimiter=",",
                 quotechar='"',
             )
@@ -110,31 +99,44 @@ class Csv:
             row_count += 1
         self.treatment_save_queue.put(self.FINISHED)
 
-    def save_row(self, database_connection, filename):
+    def save_row(self, filename):
         while True:
             json_object = self.treatment_save_queue.get()
             if json_object == self.FINISHED:
                 break
-            database_connection.insert_one_in_file(filename, json_object)
-        database_connection.update_one_in_file(
+            self.database_connection.insert_one_in_file(filename, json_object)
+
+        self.update_medata_finished_flag(filename, True)
+
+    def create_metadata_file(self, filename, url):
+        timezone_london = pytz.timezone("Etc/Greenwich")
+        london_time = datetime.now(timezone_london)
+
+        metadata_file = {
+            "datasetName": filename,
+            "url": url,
+            "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
+            self.ROW_ID: self.METADATA_ROW_ID,
+            self.FINISHED: False,
+            "fields": "processing",
+            "type": "dataset"
+        }
+        self.database_connection.insert_one_in_file(filename, metadata_file)
+
+    def update_medata_finished_flag(self, filename, flag):
+        self.database_connection.update_one_in_file(
             filename,
             {self.ROW_ID: self.METADATA_ROW_ID},
-            {"$set": {self.FINISHED: True, "fields": self.file_headers}},
+            {"$set": {self.FINISHED: flag, "fields": self.file_headers}},
         )
 
     @staticmethod
     def validate_url(url):
-        with closing(requests.get(url, stream=True)) as r:
-            reader = csv.reader(
-                codecs.iterdecode(r.iter_lines(), encoding="utf-8"),
-                delimiter=",",
-                quotechar='"',
-            )
-            first_line = next(reader)
-            first_symbol_html = "<"
-            first_symbol_json = "{"
-            if (
-                    first_line[0][0] == first_symbol_html
-                    or first_line[0][0] == first_symbol_json
-            ):
-                raise requests.exceptions.RequestException
+        response = requests.head(url)
+        response_content_type = response.headers.get("content-type")
+
+        allowed_contents_type = ["application/x-download",
+                                 "text/csv",
+                                 "text/plain"]
+        if response_content_type not in allowed_contents_type:
+            raise requests.exceptions.RequestException
