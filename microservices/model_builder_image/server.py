@@ -131,7 +131,7 @@ def analyse_request_errors(request_validator, train_filename,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    try:
+    """try:
         request_validator.predictions_filename_validator(
             test_filename, classifiers_name)
     except Exception as invalid_prediction_filename:
@@ -140,7 +140,7 @@ def analyse_request_errors(request_validator, train_filename,
                 {MESSAGE_RESULT: invalid_prediction_filename.args[
                     FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_CONFLICT,
-        )
+        )"""
 
     try:
         request_validator.finished_processing_validator(
