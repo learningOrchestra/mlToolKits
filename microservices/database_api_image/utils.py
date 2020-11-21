@@ -140,16 +140,16 @@ class UserRequest:
     def filename_validator(self, filename):
         filenames = self.database.get_filenames()
 
-        if filename not in filenames:
+        if filename in filenames:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def csv_url_validator(self, url):
         response = requests.head(url)
         response_content_type = response.headers.get("content-type")
 
-        print(response_content_type, flush=True)
         allowed_contents_type = ["application/x-download",
                                  "text/csv",
                                  "text/plain"]
+
         if response_content_type not in allowed_contents_type:
             raise Exception(self.MESSAGE_INVALID_URL)
