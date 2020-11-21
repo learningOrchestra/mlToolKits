@@ -103,7 +103,6 @@ class Model:
                 testing_prediction,
                 metadata_document
             )
-            self.metadata_creator.update_finished_flag(metadata_document, True)
 
         spark_session.stop()
 
@@ -179,6 +178,8 @@ class Model:
 
             self.database.insert_one_in_file(filename_metadata["datasetName"],
                                              row_dict)
+
+        self.metadata_creator.update_finished_flag(filename_metadata, True)
 
     def file_processor(self, database_url, spark_session):
         file = (
