@@ -31,14 +31,6 @@ class Model:
         self.database_url_test = database_url_test
         self.metadata_creator = metadata_creator
 
-        self.classifier_switcher = {
-            "LR": LogisticRegression(),
-            "DT": DecisionTreeClassifier(),
-            "RF": RandomForestClassifier(),
-            "GB": GBTClassifier(),
-            "NB": NaiveBayes(),
-        }
-
         self.thread_pool = ThreadPoolExecutor()
 
     def build(self, modeling_code, classifiers_list):
@@ -83,6 +75,14 @@ class Model:
             spark_session)
 
         classifier_threads = []
+
+        self.classifier_switcher = {
+            "LR": LogisticRegression(),
+            "DT": DecisionTreeClassifier(),
+            "RF": RandomForestClassifier(),
+            "GB": GBTClassifier(),
+            "NB": NaiveBayes(),
+        }
 
         for name, metadata in classifiers_metadata:
             classifier = self.classifier_switcher[name]
