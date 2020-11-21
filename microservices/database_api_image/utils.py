@@ -135,6 +135,7 @@ class Csv:
         response = requests.head(url)
         response_content_type = response.headers.get("content-type")
 
+        print("teste", flush=True)
         print(response_content_type, flush=True)
         allowed_contents_type = ["application/x-download",
                                  "text/csv",
