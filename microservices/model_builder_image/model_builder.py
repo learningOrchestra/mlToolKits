@@ -40,8 +40,11 @@ class Model:
             classifiers_metadata[classifier_name] = \
                 self.metadata_creator.create_file(classifier_name)
 
-        self.thread_pool.submit(self.pipeline, modeling_code,
-                                classifiers_metadata)
+        '''self.thread_pool.submit(self.pipeline, modeling_code,
+                                classifiers_metadata)'''
+
+        self.pipeline(modeling_code,
+                      classifiers_metadata)
 
     def pipeline(self, modeling_code, classifiers_metadata):
         spark_session = (

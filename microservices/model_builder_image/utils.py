@@ -30,6 +30,7 @@ class Metadata:
                 self.test_filename,
                 classifier_name)
 
+        self.database_connector.delete_file(metadata["datasetName"])
         self.database_connector.insert_one_in_file(
             metadata["datasetName"],
             metadata)
