@@ -96,7 +96,7 @@ class Model:
 
         print("teste", flush=True)
         print(classifiers_metadata, flush=True)
-        for name, metadata in classifiers_metadata:
+        for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
 
             print(name, flush=True)
