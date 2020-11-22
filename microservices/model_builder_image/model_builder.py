@@ -85,8 +85,6 @@ class Model:
 
         print("modeling code processado", flush=True)
 
-        classifier_threads = []
-
         classifier_switcher = {
             "LR": LogisticRegression(),
             "DT": DecisionTreeClassifier(),
@@ -94,6 +92,7 @@ class Model:
             "GB": GBTClassifier(),
             "NB": NaiveBayes(),
         }
+        classifier_threads = []
 
         for name, metadata in classifiers_metadata:
             classifier = classifier_switcher[name]
@@ -102,7 +101,7 @@ class Model:
             print(metadata, flush=True)
             classifier_threads.append(
                 self.thread_pool.submit(
-                    self.classifier_processing,
+                    Model.classifier_processing,
                     classifier,
                     features_training,
                     features_testing,
