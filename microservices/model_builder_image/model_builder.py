@@ -94,6 +94,8 @@ class Model:
         }
         classifier_threads = []
 
+        print("teste")
+        print(classifiers_metadata)
         for name, metadata in classifiers_metadata:
             classifier = classifier_switcher[name]
 
