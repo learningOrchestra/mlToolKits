@@ -40,16 +40,14 @@ class Model:
             classifiers_metadata[classifier_name] = \
                 self.metadata_creator.create_file(classifier_name)
 
-        '''self.thread_pool.submit(self.pipeline, modeling_code,
-                                classifiers_metadata)'''
-
-        self.pipeline(modeling_code,
-                      classifiers_metadata)
+        self.thread_pool.submit(self.pipeline, modeling_code,
+                                classifiers_metadata)
 
     def pipeline(self, modeling_code, classifiers_metadata):
-        print("comeco", flush=True)
         spark_session = (
-            SparkSession.builder.appName("modelBuilder")
+            SparkSession
+                .builder
+                .appName("modelBuilder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host",
                         os.environ[MODEL_BUILDER_HOST_NAME])
@@ -57,7 +55,7 @@ class Model:
                         "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
                 .config("spark.scheduler.mode", "FAIR")
-                .config("spark.scheduler.pool", "model_builder")
+                .config("spark.scheduler.pool", "modelBuilder")
                 .config("spark.scheduler.allocation.file",
                         "./fairscheduler.xml")
                 .master("spark://"
@@ -67,15 +65,11 @@ class Model:
                         )
                 .getOrCreate()
         )
-        print("spark instanciado", flush=True)
 
-        (features_training,
-         features_testing,
-         features_evaluation) = self.modeling_code_processing(
-            modeling_code,
-            spark_session)
-
-        print("modeling code processado", flush=True)
+        (features_training, features_testing, features_evaluation) = \
+            self.modeling_code_processing(
+                modeling_code,
+                spark_session)
 
         classifier_switcher = {
             "LR": LogisticRegression(),
@@ -86,13 +80,8 @@ class Model:
         }
         classifier_threads = []
 
-        print("teste", flush=True)
-        print(classifiers_metadata, flush=True)
         for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
-
-            print(name, flush=True)
-            print(metadata, flush=True)
             classifier_threads.append(
                 self.thread_pool.submit(
                     Model.classifier_processing,
@@ -104,19 +93,12 @@ class Model:
                 )
             )
 
-
-        print("classificadores em execuccao", flush=True)
-
         for classifier in classifier_threads:
             testing_prediction, metadata_document = classifier.result()
-            print(metadata_document, flush=True)
-
             self.save_classifier_result(
                 testing_prediction,
                 metadata_document
             )
-
-        print("finalizando", flush=True)
 
         spark_session.stop()
 
@@ -145,7 +127,6 @@ class Model:
             features_evaluation,
             metadata_document
     ):
-        print("oi", flush=True)
 
         classifier.featuresCol = "features"
 
@@ -155,8 +136,6 @@ class Model:
 
         fit_time = end_fit_model_time - start_fit_model_time
         metadata_document["fitTime"] = fit_time
-
-        print("bruto", flush=True)
 
         if features_evaluation is not None:
             evaluation_prediction = model.transform(features_evaluation)
@@ -178,17 +157,11 @@ class Model:
             metadata_document["F1"] = str(model_f1)
             metadata_document["accuracy"] = str(model_accuracy)
 
-        print("aqui ce deixa", flush=True)
-
         testing_prediction = model.transform(features_testing)
-
-        print("topppppppp", flush=True)
 
         return testing_prediction, metadata_document
 
     def save_classifier_result(self, predicted_df, filename_metadata):
-        print("final", flush=True)
-        print(filename_metadata, flush=True)
         self.database.update_one(
             filename_metadata["datasetName"],
             filename_metadata,
@@ -204,20 +177,16 @@ class Model:
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
-            print("okokokokok", flush=True)
 
             self.database.insert_one_in_file(filename_metadata["datasetName"],
                                              row_dict)
-            print("rolou?", flush=True)
 
         self.metadata_creator.update_finished_flag(
             filename_metadata["datasetName"], True)
 
     def file_processor(self, database_url, spark_session):
-        file = (
-            spark_session.read.format("mongo").option(
-                "uri", database_url).load()
-        )
+        file = spark_session.read.format("mongo").option(
+            "uri", database_url).load()
 
         file_without_metadata = file.filter(
             file[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID
