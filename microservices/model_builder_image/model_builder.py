@@ -199,6 +199,11 @@ class Model:
     def save_classifier_result(self, predicted_df, filename_metadata):
         print("final", flush=True)
         print(filename_metadata, flush=True)
+        self.database.update_one(
+            filename_metadata["datasetName"],
+            filename_metadata,
+            {self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID})
+
         document_id = 1
         for row in predicted_df.collect():
             row_dict = row.asDict()
@@ -215,7 +220,8 @@ class Model:
                                              row_dict)
             print("rolou?", flush=True)
 
-        self.metadata_creator.update_finished_flag(filename_metadata, True)
+        self.metadata_creator.update_finished_flag(
+            filename_metadata["datasetName"], True)
 
     def file_processor(self, database_url, spark_session):
         file = (
