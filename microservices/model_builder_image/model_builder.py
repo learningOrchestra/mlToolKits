@@ -101,7 +101,7 @@ class Model:
 
             print(name, flush=True)
             print(metadata, flush=True)
-            classifier_threads.append(
+            '''classifier_threads.append(
                 self.thread_pool.submit(
                     Model.classifier_processing,
                     classifier,
@@ -110,9 +110,20 @@ class Model:
                     features_evaluation,
                     metadata,
                 )
+            )'''
+            testing_prediction, metadata_document = Model.classifier_processing(
+                classifier,
+                features_training,
+                features_testing,
+                features_evaluation,
+                metadata,
+            )
+            self.save_classifier_result(
+                testing_prediction,
+                metadata_document
             )
 
-        print("classificadores em execuccao", flush=True)
+        '''print("classificadores em execuccao", flush=True)
 
         for classifier in classifier_threads:
             testing_prediction, metadata_document = classifier.result()
@@ -121,7 +132,7 @@ class Model:
             self.save_classifier_result(
                 testing_prediction,
                 metadata_document
-            )
+            )'''
 
         print("finalizando", flush=True)
 
