@@ -155,6 +155,8 @@ class Model:
             features_evaluation,
             metadata_document
     ):
+        print("oi", flush=True)
+
         classifier.featuresCol = "features"
 
         start_fit_model_time = time.time()
@@ -163,6 +165,8 @@ class Model:
 
         fit_time = end_fit_model_time - start_fit_model_time
         metadata_document["fitTime"] = fit_time
+
+        print("bruto", flush=True)
 
         if features_evaluation is not None:
             evaluation_prediction = model.transform(features_evaluation)
@@ -184,7 +188,11 @@ class Model:
             metadata_document["F1"] = str(model_f1)
             metadata_document["accuracy"] = str(model_accuracy)
 
+        print("aqui ce deixa", flush=True)
+
         testing_prediction = model.transform(features_testing)
+
+        print("topppppppp", flush=True)
 
         return testing_prediction, metadata_document
 
