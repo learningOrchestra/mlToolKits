@@ -47,6 +47,7 @@ class Model:
                       classifiers_metadata)
 
     def pipeline(self, modeling_code, classifiers_metadata):
+        print("comeco", flush=True)
         spark_session = (
             SparkSession.builder.appName("modelBuilder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
@@ -74,12 +75,15 @@ class Model:
             )
                 .getOrCreate()
         )
+        print("spark instanciado", flush=True)
 
         (features_training,
          features_testing,
          features_evaluation) = self.modeling_code_processing(
             modeling_code,
             spark_session)
+
+        print("modeling code processado", flush=True)
 
         classifier_threads = []
 
@@ -104,12 +108,18 @@ class Model:
                 )
             )
 
+        print("classificadores em execuccao", flush=True)
+
         for classifier in classifier_threads:
             testing_prediction, metadata_document = classifier.result()
+            print(metadata_document, flush=True)
+
             self.save_classifier_result(
                 testing_prediction,
                 metadata_document
             )
+
+        print("finalizando", flush=True)
 
         spark_session.stop()
 
