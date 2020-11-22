@@ -34,21 +34,21 @@ class Projection:
 
     def execute_spark_job(self, projection_filename, fields):
         spark_session = (
-            SparkSession.builder.appName("projection")
+            SparkSession
+                .builder
+                .appName("projection")
                 .config("spark.mongodb.input.uri", self.database_url_input)
                 .config("spark.mongodb.output.uri", self.database_url_output)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
-                .config(
-                "spark.jars.packages",
-                "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
-            )
-                .master(
-                "spark://"
-                + os.environ[SPARKMASTER_HOST]
-                + ":"
-                + str(os.environ[SPARKMASTER_PORT])
-            )
+                .config("spark.jars.packages",
+                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
+                        )
+                .master("spark://"
+                        + os.environ[SPARKMASTER_HOST]
+                        + ":"
+                        + str(os.environ[SPARKMASTER_PORT])
+                        )
                 .getOrCreate()
         )
 

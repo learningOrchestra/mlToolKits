@@ -20,26 +20,28 @@ class Pca:
     IMAGE_FORMAT = ".png"
 
     def __init__(self, database_url_input):
-        self.spark_session = (
-            SparkSession.builder.appName("pca")
-                .config("spark.mongodb.input.uri", database_url_input)
+        self.database_url_input = database_url_input
+
+    def create_image(self, label_name, pca_filename):
+        spark_session = (
+            SparkSession
+                .builder
+                .appName("pca")
+                .config("spark.mongodb.input.uri", self.database_url_input)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host", os.environ[PCA_HOST_NAME])
-                .config(
-                "spark.jars.packages",
-                "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
-            )
-                .master(
-                "spark://"
-                + os.environ[SPARKMASTER_HOST]
-                + ":"
-                + str(os.environ[SPARKMASTER_PORT])
-            )
+                .config("spark.jars.packages",
+                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
+                        )
+                .master("spark://"
+                        + os.environ[SPARKMASTER_HOST]
+                        + ":"
+                        + str(os.environ[SPARKMASTER_PORT])
+                        )
                 .getOrCreate()
         )
 
-    def create_image(self, label_name, pca_filename):
-        dataframe = self.file_processor()
+        dataframe = self.file_processor(spark_session)
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
@@ -66,10 +68,10 @@ class Pca:
             sns_plot = sns.scatterplot(x=0, y=1, data=embedded_array)
             sns_plot.get_figure().savefig(image_path)
 
-        self.spark_session.stop()
+        spark_session.stop()
 
-    def file_processor(self):
-        file = self.spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
+    def file_processor(self, spark_session):
+        file = spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
 
         file_without_metadata = file.filter(
             file[self.DOCUMENT_ID] != self.METADATA_FILE_ID
