@@ -9,7 +9,7 @@ class Metadata:
         self.METADATA_DOCUMENT_ID = 0
         self.DOCUMENT_ID_NAME = "_id"
 
-    def create_file(self, parent_filename, fields, histogram_filename):
+    def create_file(self, parent_filename, histogram_filename, fields):
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
