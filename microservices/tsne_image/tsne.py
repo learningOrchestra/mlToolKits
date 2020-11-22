@@ -1,6 +1,5 @@
 from pyspark.sql import SparkSession
 import os
-from pymongo import MongoClient
 import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import LabelEncoder
@@ -12,35 +11,37 @@ SPARKMASTER_PORT = "SPARKMASTER_PORT"
 SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 TSNE_HOST_NAME = "TSNE_HOST_NAME"
 IMAGES_PATH = "IMAGES_PATH"
-IMAGE_FORMAT = ".png"
 
 
-class TsneGenerator:
+class Tsne:
     MONGO_SPARK_SOURCE = "com.mongodb.spark.sql.DefaultSource"
     DOCUMENT_ID = "_id"
     METADATA_FILE_ID = 0
+    IMAGE_FORMAT = ".png"
 
     def __init__(self, database_url_input):
-        self.spark_session = (
-            SparkSession.builder.appName("tsne")
-                .config("spark.mongodb.input.uri", database_url_input)
+        self.database_url_input = database_url_input
+
+    def create_image(self, label_name, tsne_filename):
+        spark_session = (
+            SparkSession
+                .builder
+                .appName("tsne")
+                .config("spark.mongodb.input.uri", self.database_url_input)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host", os.environ[TSNE_HOST_NAME])
-                .config(
-                "spark.jars.packages",
-                "org.mongodb.spark:mongo-spark" + "-connector_2.11:2.4.2",
-            )
-                .master(
-                "spark://"
-                + os.environ[SPARKMASTER_HOST]
-                + ":"
-                + str(os.environ[SPARKMASTER_PORT])
-            )
+                .config("spark.jars.packages",
+                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
+                        )
+                .master("spark://"
+                        + os.environ[SPARKMASTER_HOST]
+                        + ":"
+                        + str(os.environ[SPARKMASTER_PORT])
+                        )
                 .getOrCreate()
         )
 
-    def create_image(self, label_name, tsne_filename):
-        dataframe = self.file_processor()
+        dataframe = self.file_processor(spark_session)
         dataframe = dataframe.dropna()
         string_fields = self.fields_from_dataframe(dataframe, is_string=True)
 
@@ -56,7 +57,7 @@ class TsneGenerator:
         embedded_array = TSNE().fit_transform(treated_array)
         embedded_array = pandas.DataFrame(embedded_array)
         image_path = os.environ[
-                         IMAGES_PATH] + "/" + tsne_filename + IMAGE_FORMAT
+                         IMAGES_PATH] + "/" + tsne_filename + self.IMAGE_FORMAT
 
         if label_name is not None:
             embedded_array[label_name] = encoded_dataframe[label_name]
@@ -71,10 +72,10 @@ class TsneGenerator:
             )
             sns_plot.get_figure().savefig(image_path)
 
-        self.spark_session.stop()
+        spark_session.stop()
 
-    def file_processor(self):
-        file = self.spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
+    def file_processor(self, spark_session):
+        file = spark_session.read.format(self.MONGO_SPARK_SOURCE).load()
 
         file_without_metadata = file.filter(
             file[self.DOCUMENT_ID] != self.METADATA_FILE_ID
@@ -109,85 +110,3 @@ class TsneGenerator:
                     text_fields.append(column)
 
         return text_fields
-
-
-class MongoOperations:
-    def __init__(self, database_url, replica_set, database_port, database_name):
-        self.mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, int(database_port))
-        self.database = self.mongo_client[database_name]
-
-    def find_one(self, filename, query):
-        file_collection = self.database[filename]
-        return file_collection.find_one(query)
-
-    def get_filenames(self):
-        return self.database.list_collection_names()
-
-    @staticmethod
-    def collection_database_url(
-            database_url, database_name, database_filename, database_replica_set
-    ):
-        return (
-                database_url
-                + "/"
-                + database_name
-                + "."
-                + database_filename
-                + "?replicaSet="
-                + database_replica_set
-                + "&authSource=admin"
-        )
-
-
-class TsneRequestValidator:
-    MESSAGE_INVALID_FILENAME = "invalid dataset name"
-    MESSAGE_DUPLICATE_FILE = "duplicate file"
-    MESSAGE_INVALID_LABEL = "invalid field"
-    MESSAGE_NOT_FOUND = "file not found"
-    MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
-
-    def __init__(self, database_connector):
-        self.database = database_connector
-
-    def parent_filename_validator(self, filename):
-        filenames = self.database.get_filenames()
-
-        if filename not in filenames:
-            raise Exception(self.MESSAGE_INVALID_FILENAME)
-
-    def finished_processing_validator(self, filename):
-        filename_metadata_query = {"datasetName": filename}
-
-        filename_metadata = self.database.find_one(filename,
-                                                   filename_metadata_query)
-
-        if filename_metadata["finished"] == False:
-            raise Exception(self.MESSAGE_UNFINISHED_PROCESSING)
-
-    @staticmethod
-    def tsne_filename_existence_validator(tsne_filename):
-        images = os.listdir(os.environ[IMAGES_PATH])
-        image_name = tsne_filename + IMAGE_FORMAT
-        if image_name in images:
-            raise Exception(TsneRequestValidator.MESSAGE_DUPLICATE_FILE)
-
-    @staticmethod
-    def tune_filename_nonexistence_validator(tsne_filename):
-        images = os.listdir(os.environ[IMAGES_PATH])
-        image_name = tsne_filename + IMAGE_FORMAT
-
-        if image_name not in images:
-            raise Exception(TsneRequestValidator.MESSAGE_NOT_FOUND)
-
-    def filename_label_validator(self, filename, label):
-        if label is None:
-            return
-
-        filename_metadata_query = {"datasetName": filename}
-
-        filename_metadata = self.database.find_one(filename,
-                                                   filename_metadata_query)
-
-        if label not in filename_metadata["fields"]:
-            raise Exception(self.MESSAGE_INVALID_LABEL)

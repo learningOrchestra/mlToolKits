@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask, send_file
 import os
-from tsne import TsneGenerator, MongoOperations, TsneRequestValidator
+from tsne import Tsne
+from utils import Database, UserRequest
 from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -38,13 +39,13 @@ app = Flask(__name__)
 
 @app.route("/images", methods=["POST"])
 def create_tsne():
-    database = MongoOperations(
+    database = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME]
     )
-    request_validator = TsneRequestValidator(database)
+    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -55,7 +56,7 @@ def create_tsne():
     if request_errors is not None:
         return request_errors
 
-    database_url_input = MongoOperations.collection_database_url(
+    database_url_input = Database.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         request.json[PARENT_FILENAME_NAME],
@@ -85,7 +86,7 @@ def get_images():
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        TsneRequestValidator.tune_filename_nonexistence_validator(filename)
+        UserRequest.tsne_filename_nonexistence_validator(filename)
     except Exception as invalid_tsne_filename:
         return (
             jsonify(
@@ -101,7 +102,7 @@ def get_image(filename):
 @app.route("/images/<filename>", methods=["DELETE"])
 def delete_image(filename):
     try:
-        TsneRequestValidator.tune_filename_nonexistence_validator(filename)
+        UserRequest.tsne_filename_nonexistence_validator(filename)
     except Exception as invalid_tsne_filename:
         return (
             jsonify(
@@ -119,7 +120,7 @@ def delete_image(filename):
 
 def tsne_async_processing(database_url_input, label_name,
                           tsne_filename):
-    tsne_generator = TsneGenerator(database_url_input)
+    tsne_generator = Tsne(database_url_input)
 
     tsne_generator.create_image(
         label_name,

@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask, send_file
 import os
-from pca import PcaGenerator, MongoOperations, PcaRequestValidator
+from pca import Pca
+from utils import Database, UserRequest
 from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -38,13 +39,13 @@ thread_pool = ThreadPoolExecutor()
 
 @app.route("/images", methods=["POST"])
 def pca_plot():
-    database = MongoOperations(
+    database = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME]
     )
-    request_validator = PcaRequestValidator(database)
+    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -55,7 +56,7 @@ def pca_plot():
     if request_errors is not None:
         return request_errors
 
-    database_url_input = MongoOperations.collection_database_url(
+    database_url_input = Database.collection_database_url(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_NAME],
         request.json[PARENT_FILENAME_NAME],
@@ -85,7 +86,7 @@ def get_images():
 @app.route("/images/<filename>", methods=["GET"])
 def get_image(filename):
     try:
-        PcaRequestValidator.pca_filename_nonexistence_validator(filename)
+        UserRequest.pca_filename_nonexistence_validator(filename)
 
     except Exception as invalid_pca_filename:
         return (
@@ -102,7 +103,7 @@ def get_image(filename):
 @app.route("/images/<filename>", methods=["DELETE"])
 def delete_image(filename):
     try:
-        PcaRequestValidator.pca_filename_nonexistence_validator(filename)
+        UserRequest.pca_filename_nonexistence_validator(filename)
     except Exception as invalid_pca_filename:
         return (
             jsonify(
@@ -120,7 +121,7 @@ def delete_image(filename):
 
 def pca_async_processing(database_url_input, label_name,
                          pca_filename):
-    pca_generator = PcaGenerator(database_url_input)
+    pca_generator = Pca(database_url_input)
 
     pca_generator.create_image(
         label_name, pca_filename

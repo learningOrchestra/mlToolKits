@@ -1,8 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from projection import SparkManager, MongoOperations, \
-    ProjectionRequestValidator
-from concurrent.futures import ThreadPoolExecutor
+from projection import Projection
+from utils import Database, UserRequest, Metadata
 
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -30,66 +29,65 @@ MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
 FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
-thread_pool = ThreadPoolExecutor()
 
 
 @app.route("/projections", methods=["POST"])
 def create_projection():
-    database = MongoOperations(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url = os.environ[DATABASE_URL]
+    database_replica_set = os.environ[DATABASE_REPLICA_SET]
+    database_name = os.environ[DATABASE_NAME]
+    parent_filename = request.json[PARENT_FILENAME_NAME]
+    projection_filename = request.json[PROJECTION_FILENAME_NAME]
+    projection_fields = request.json[FIELDS_NAME]
+
+    database = Database(
+        database_url,
+        database_replica_set,
         os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME],
+        database_name,
     )
 
-    request_validator = ProjectionRequestValidator(database)
+    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
-        request.json[PARENT_FILENAME_NAME],
-        request.json[PROJECTION_FILENAME_NAME],
-        request.json[FIELDS_NAME])
+        parent_filename,
+        projection_filename,
+        projection_fields)
 
     if request_errors is not None:
         return request_errors
 
-    database_url_input = MongoOperations.collection_database_url(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_NAME],
-        request.json[PARENT_FILENAME_NAME],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url_input = Database.collection_database_url(
+        database_url,
+        database_name,
+        parent_filename,
+        database_replica_set,
     )
 
-    database_url_output = MongoOperations.collection_database_url(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_NAME],
-        request.json[PROJECTION_FILENAME_NAME],
-        os.environ[DATABASE_REPLICA_SET],
+    database_url_output = Database.collection_database_url(
+        database_url,
+        database_name,
+        projection_filename,
+        database_replica_set,
     )
 
-    thread_pool.submit(projection_async_processing, database_url_input,
-                       database_url_output, request.json[FIELDS_NAME],
-                       request.json[PARENT_FILENAME_NAME],
-                       request.json[PROJECTION_FILENAME_NAME])
+    metadata_creator = Metadata(database)
+    projection = Projection(metadata_creator, database_url_input,
+                            database_url_output)
+
+    projection.create(
+        parent_filename, projection_filename,
+        projection_fields)
 
     return (
         jsonify({
             MESSAGE_RESULT:
                 MICROSERVICE_URI_GET +
-                request.json[PROJECTION_FILENAME_NAME] +
+                projection_filename +
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
-
-
-def projection_async_processing(database_url_input, database_url_output,
-                                projection_fields, parent_filename,
-                                output_filename):
-    spark_manager = SparkManager(database_url_input, database_url_output)
-
-    spark_manager.projection(
-        parent_filename, output_filename,
-        projection_fields)
 
 
 def analyse_request_errors(request_validator, parent_filename,

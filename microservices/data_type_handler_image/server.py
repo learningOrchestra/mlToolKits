@@ -1,10 +1,7 @@
 from flask import jsonify, Flask, request
 import os
-from data_type_handler import (
-    MongoOperations,
-    DataTypeHandlerRequestValidator,
-    DataTypeConverter,
-    FileMetadataHandler)
+from data_type_update import DataType
+from utils import Database, UserRequest, Metadata
 
 HTTP_STATUS_CODE_SUCCESS = 200
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
@@ -34,30 +31,33 @@ app = Flask(__name__)
 
 @app.route('/fieldTypes', methods=["PATCH"])
 def change_data_type():
-    database = MongoOperations(
+    parent_filename = request.json[PARENT_FILENAME_NAME]
+    field_types_names = request.json[FIELD_TYPES_NAMES]
+
+    database = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    request_validator = DataTypeHandlerRequestValidator(database)
+    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
-        request.json[PARENT_FILENAME_NAME],
-        request.json[FIELD_TYPES_NAMES])
+        parent_filename,
+        field_types_names)
 
     if request_errors is not None:
         return request_errors
 
-    metadata_handler = FileMetadataHandler(database)
-    data_type_converter = DataTypeConverter(database, metadata_handler)
+    metadata_handler = Metadata(database)
+    data_type_converter = DataType(database, metadata_handler)
     data_type_converter.convert_existent_file(
-        request.json[PARENT_FILENAME_NAME], request.json[FIELD_TYPES_NAMES])
+        parent_filename, field_types_names)
 
     return jsonify({
         MESSAGE_RESULT:
             MICROSERVICE_URI_GET +
-            request.json[PARENT_FILENAME_NAME] +
+            parent_filename +
             MICROSERVICE_URI_GET_PARAMS}), HTTP_STATUS_CODE_SUCCESS
 
 

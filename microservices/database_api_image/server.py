@@ -1,6 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from database import CsvDownloader, DatabaseApi, MongoOperations
+from database import Dataset
+from utils import Database, Csv, UserRequest
 from concurrent.futures import ThreadPoolExecutor
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -37,30 +38,29 @@ app = Flask(__name__)
 
 @app.route("/files", methods=["POST"])
 def create_file():
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    url = request.json[URL_FIELD_NAME]
+    filename = request.json[FILENAME]
+
+    database_connector = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
 
-    try:
-        database.add_file(request.json[URL_FIELD_NAME], request.json[FILENAME])
+    request_validator = UserRequest(database_connector)
 
-    except Exception as error_message:
+    request_errors = analyse_request_errors(
+        request_validator,
+        filename,
+        url)
 
-        if error_message.args[FIRST_ARGUMENT] == MESSAGE_INVALID_URL:
-            return (
-                jsonify({MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),
-                HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-            )
+    if request_errors is not None:
+        return request_errors
 
-        elif error_message.args[FIRST_ARGUMENT] == MESSAGE_DUPLICATE_FILE:
-            return (
-                jsonify({MESSAGE_RESULT: error_message.args[FIRST_ARGUMENT]}),
-                HTTP_STATUS_CODE_CONFLICT,
-            )
+    file_downloader = Csv(database_connector)
+    database = Dataset(database_connector, file_downloader)
+
+    database.add_file(url, filename)
 
     return (
         jsonify({
@@ -74,13 +74,14 @@ def create_file():
 
 @app.route("/files/<filename>", methods=["GET"])
 def read_files(filename):
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    database_connector = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+
+    file_downloader = Csv(database_connector)
+    database = Dataset(database_connector, file_downloader)
 
     limit = int(request.args.get("limit"))
     if limit > PAGINATE_FILE_LIMIT:
@@ -95,13 +96,14 @@ def read_files(filename):
 
 @app.route("/files", methods=["GET"])
 def read_files_descriptor():
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    database_connector = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+
+    file_downloader = Csv(database_connector)
+    database = Dataset(database_connector, file_downloader)
 
     return jsonify(
         {MESSAGE_RESULT: database.get_files(
@@ -110,13 +112,14 @@ def read_files_descriptor():
 
 @app.route("/files/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    file_downloader = CsvDownloader()
-    mongo_operations = MongoOperations(
+    database_connector = Database(
         os.environ[DATABASE_URL],
         os.environ[DATABASE_REPLICA_SET],
         os.environ[DATABASE_PORT],
         os.environ[DATABASE_NAME])
-    database = DatabaseApi(mongo_operations, file_downloader)
+
+    file_downloader = Csv(database_connector)
+    database = Dataset(database_connector, file_downloader)
 
     thread_pool = ThreadPoolExecutor()
     thread_pool.submit(database.delete_file, filename)
@@ -125,6 +128,28 @@ def delete_file(filename):
         {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
 
 
+def analyse_request_errors(request_validator, filename, url):
+    try:
+        request_validator.filename_validator(
+            filename
+        )
+    except Exception as invalid_filename:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.csv_url_validator(url)
+    except Exception as invalid_url:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_url.args[FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    return None
+
+
 if __name__ == "__main__":
     app.run(host=os.environ[DATABASE_API_HOST],
-            port=int(os.environ[DATABASE_API_PORT]))
+            port=int(os.environ[DATABASE_API_PORT]), debug=True)
