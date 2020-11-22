@@ -97,6 +97,9 @@ class Model:
 
         for name, metadata in classifiers_metadata:
             classifier = classifier_switcher[name]
+
+            print(name, flush=True)
+            print(metadata, flush=True)
             classifier_threads.append(
                 self.thread_pool.submit(
                     self.classifier_processing,
