@@ -11,14 +11,18 @@ class Histogram:
         self.thread_pool = ThreadPoolExecutor()
 
     def create_file(self, parent_filename, histogram_filename, fields):
-        self.thread_pool.submit(self.file_processing, parent_filename,
-                                histogram_filename, fields)
+        self.metadata_handler.create_file(
+            parent_filename,
+            histogram_filename,
+            fields)
 
-    def file_processing(self, parent_filename, histogram_filename,
-                        fields):
-        self.metadata_handler.create_file(parent_filename,
-                                              histogram_filename, fields)
+        self.thread_pool.submit(
+            self.file_processing,
+            parent_filename,
+            histogram_filename,
+            fields)
 
+    def file_processing(self, parent_filename, histogram_filename, fields):
         document_id = 1
 
         for field in fields:
