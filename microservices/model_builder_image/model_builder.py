@@ -57,6 +57,11 @@ class Model:
                         "org.mongodb.spark:mongo-spark" +
                         "-connector_2.11:2.4.2",
                         )
+                .config("spark.memory.fraction", 0.8)
+                .config("spark.executor.memory", "1g")
+                .config("spark.sql.shuffle.partitions", "800")
+                .config("spark.memory.offHeap.enabled", "true")
+                .config("spark.memory.offHeap.size", "1g")
                 .config("spark.scheduler.mode", "FAIR")
                 .config("spark.scheduler.pool", "model_builder")
                 .config("spark.scheduler.allocation.file",
