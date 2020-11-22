@@ -197,6 +197,8 @@ class Model:
         return testing_prediction, metadata_document
 
     def save_classifier_result(self, predicted_df, filename_metadata):
+        print("final", flush=True)
+        print(filename_metadata, flush=True)
         document_id = 1
         for row in predicted_df.collect():
             row_dict = row.asDict()
@@ -207,9 +209,11 @@ class Model:
 
             del row_dict["features"]
             del row_dict["rawPrediction"]
+            print("okokokokok", flush=True)
 
             self.database.insert_one_in_file(filename_metadata["datasetName"],
                                              row_dict)
+            print("rolou?", flush=True)
 
         self.metadata_creator.update_finished_flag(filename_metadata, True)
 
