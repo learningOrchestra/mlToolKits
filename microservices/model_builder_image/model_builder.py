@@ -51,28 +51,20 @@ class Model:
         spark_session = (
             SparkSession.builder.appName("modelBuilder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-                .config(
-                "spark.driver.host",
-                os.environ[MODEL_BUILDER_HOST_NAME])
+                .config("spark.driver.host",
+                        os.environ[MODEL_BUILDER_HOST_NAME])
                 .config("spark.jars.packages",
-                        "org.mongodb.spark:mongo-spark" +
-                        "-connector_2.11:2.4.2",
+                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
-                .config("spark.memory.fraction", 0.8)
-                .config("spark.executor.memory", "1g")
-                .config("spark.sql.shuffle.partitions", "800")
-                .config("spark.memory.offHeap.enabled", "true")
-                .config("spark.memory.offHeap.size", "1g")
                 .config("spark.scheduler.mode", "FAIR")
                 .config("spark.scheduler.pool", "model_builder")
                 .config("spark.scheduler.allocation.file",
                         "./fairscheduler.xml")
-                .master(
-                "spark://"
-                + os.environ[SPARKMASTER_HOST]
-                + ":"
-                + str(os.environ[SPARKMASTER_PORT])
-            )
+                .master("spark://"
+                        + os.environ[SPARKMASTER_HOST]
+                        + ":"
+                        + str(os.environ[SPARKMASTER_PORT])
+                        )
                 .getOrCreate()
         )
         print("spark instanciado", flush=True)
