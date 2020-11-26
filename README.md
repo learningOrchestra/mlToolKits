@@ -192,6 +192,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Matheus-Gr"><img src="https://avatars3.githubusercontent.com/u/54548097?v=4" width="100px;" alt=""/><br /><sub><b>Matheus Gonçalves RIbeiro</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Code">💻</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Tests">⚠️</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/otaviomapa"><img src="https://avatars1.githubusercontent.com/u/31167827?v=4" width="100px;" alt=""/><br /><sub><b>otavio</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Code">💻</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Tests">⚠️</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Documentation">📖</a></td>
   </tr>
 </table>
 
