@@ -76,6 +76,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Matheus-Gr",
+      "name": "Matheus Gonçalves RIbeiro",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/54548097?v=4",
+      "profile": "https://github.com/Matheus-Gr",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
