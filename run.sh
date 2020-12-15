@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "learningOrschestra: a distributed machine learning resource tool"
+echo "learningOrchestra: a distributed machine learning processing tool"
 echo "--------------------------------------------------------------------"
-echo "Buiding the learningOrschestra microservice images..."
+echo "Building the learningOrchestra microservice images..."
 echo "--------------------------------------------------------------------"
 
 docker build --tag spark_task microservices/spark_task_image
@@ -11,7 +11,7 @@ docker push 127.0.0.1:5050/spark_task
 docker-compose build
 
 echo "--------------------------------------------------------------------"
-echo "Adding the image microservice in docker daemon security exception..."
+echo "Adding the microservice images in docker daemon security exception..."
 echo "--------------------------------------------------------------------"
 
 echo '{
@@ -42,7 +42,7 @@ database_api_repository=127.0.0.1:5050/database_api
 
 
 echo "--------------------------------------------------------------------"
-echo "Pushing databaseapi microservice image..."
+echo "Pushing databaseApi microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $database_api_repository
 
@@ -50,7 +50,7 @@ docker push $database_api_repository
 spark_repository=127.0.0.1:5050/spark
 
 echo "--------------------------------------------------------------------"
-echo "Pushing spark microservice image..."
+echo "Pushing spark image..."
 echo "--------------------------------------------------------------------"
 docker push $spark_repository
 
@@ -66,7 +66,7 @@ docker push $projection_repository
 model_builder_repository=127.0.0.1:5050/model_builder
 
 echo "--------------------------------------------------------------------"
-echo "Pushing modelbuilder microservice image..."
+echo "Pushing modelBuilder microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $model_builder_repository
 
@@ -74,7 +74,7 @@ docker push $model_builder_repository
 data_type_handler_repository=127.0.0.1:5050/data_type_handler
 
 echo "--------------------------------------------------------------------"
-echo "Pushing datatypehandler microservice image..."
+echo "Pushing dataTypeHandler microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $data_type_handler_repository
 
@@ -101,6 +101,14 @@ echo "--------------------------------------------------------------------"
 echo "Pushing pca microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $pca_repository
+
+
+default_model_repository=127.0.0.1:5050/default_model
+
+echo "--------------------------------------------------------------------"
+echo "Pushing defaultModel microservice image..."
+echo "--------------------------------------------------------------------"
+docker push $default_model_repository
 
 
 echo "--------------------------------------------------------------------"

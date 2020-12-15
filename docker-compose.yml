@@ -255,6 +255,18 @@ services:
       - database
       - spark
 
+  defaultmodel:
+    build: microservices/default_model_image
+    image: 127.0.0.1:5050/default_model
+    ports:
+      - "5007:5007"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-worker
+    networks:
+      - database
+    environment: *default-service-database-env
 
 networks:
   database:
