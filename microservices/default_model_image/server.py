@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from default_model import DefaultModel
-from utils import Database, UserRequest, Metadata
+from default_model_utils import Database, UserRequest, Metadata
 
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -55,7 +55,8 @@ def create_default_model():
         request_validator,
         model_name,
         tool,
-        function)
+        function,
+        function_parameters)
 
     if request_errors is not None:
         return request_errors
@@ -92,18 +93,52 @@ def read_tool_functions(tool):
 
 
 def analyse_request_errors(request_validator,
-                           model_name_filename,
-                           model_tool,
-                           model_tool_function):
+                           model_name,
+                           tool_name,
+                           function_name,
+                           function_parameters):
     try:
-        request_validator.projection_filename_validator(
-            model_name_filename
+        request_validator.not_duplicated_filename_validator(
+            model_name
         )
-    except Exception as invalid_projection_filename:
+    except Exception as duplicated_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_projection_filename.args[
+            jsonify({MESSAGE_RESULT: duplicated_model_filename.args[
                 FIRST_ARGUMENT]}),
             HTTP_STATUS_CODE_CONFLICT,
+        )
+
+    try:
+        request_validator.available_tool_name_validator(
+            tool_name
+        )
+    except Exception as invalid_tool_name:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_tool_name.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.valid_function_validator(
+            function_name
+        )
+    except Exception as invalid_function_name:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_function_name.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    try:
+        request_validator.valid_function_parameters_validator(
+            function_parameters
+        )
+    except Exception as invalid_function_parameters:
+        return (
+            jsonify({MESSAGE_RESULT: invalid_function_parameters.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     return None
