@@ -5,8 +5,8 @@ from default_model_utils import Metadata
 
 
 class DefaultModel:
-    WRITE_MODEL_OBJECT_OPTION = "wb"
-    READ_MODEL_OBJECT_OPTION = "rb"
+    __WRITE_MODEL_OBJECT_OPTION = "wb"
+    __READ_MODEL_OBJECT_OPTION = "rb"
 
     def __init__(self, metadata_creator: Metadata):
         self.metadata_creator = metadata_creator
@@ -36,7 +36,7 @@ class DefaultModel:
         self.metadata_creator.update_finished_flag(model_name, flag=True)
 
     def __save(self, model_instance, model_name: str):
-        model_output = open(model_name, self.WRITE_MODEL_OBJECT_OPTION)
+        model_output = open(model_name, self.__WRITE_MODEL_OBJECT_OPTION)
         pickle.dumps(model_instance, model_output)
         model_output.close()
 
