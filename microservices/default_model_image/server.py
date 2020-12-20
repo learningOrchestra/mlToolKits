@@ -80,7 +80,7 @@ def create_default_model() -> jsonify:
 
 
 @app.route("/defaultModel/<model_name>", methods=["PATCH"])
-def update_default_model(model_name) -> jsonify:
+def update_default_model(model_name: str) -> jsonify:
     database_url = os.environ[DATABASE_URL]
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
