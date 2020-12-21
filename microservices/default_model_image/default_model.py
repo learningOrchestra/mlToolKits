@@ -1,7 +1,7 @@
 import importlib
 import pickle
 from concurrent.futures import ThreadPoolExecutor
-from .utils import Metadata, Database
+from utils import Metadata, Database
 
 
 class DefaultModel:

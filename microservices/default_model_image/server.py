@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from .default_model import DefaultModel
-from .utils import Database, UserRequest, Metadata
+from default_model import DefaultModel
+from utils import Database, UserRequest, Metadata
 from typing import Union
 
 HTTP_STATUS_CODE_SUCCESS = 200
