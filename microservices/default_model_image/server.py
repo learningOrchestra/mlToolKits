@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
-from default_model import DefaultModel
-from default_model_utils import Database, UserRequest, Metadata
+from .default_model import DefaultModel
+from .utils import Database, UserRequest, Metadata
 from typing import Union
 
 HTTP_STATUS_CODE_SUCCESS = 200
@@ -64,7 +64,7 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator)
+    default_model = DefaultModel(metadata_creator, database)
 
     default_model.create(
         model_name, tool, function, description, function_parameters)
@@ -109,7 +109,7 @@ def update_default_model(model_name: str) -> jsonify:
     tool, function = get_model_tool_and_function(database, model_name)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator)
+    default_model = DefaultModel(metadata_creator, database)
 
     default_model.update(
         model_name, tool, function, description, function_parameters)

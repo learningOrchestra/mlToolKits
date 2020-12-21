@@ -59,15 +59,12 @@ class Metadata:
             "finished": False,
         }
 
-    def create_file(self, model_name: str, description: str,
-                    tool: str, function: str,
-                    function_parameters: dict) -> dict:
+    def create_file(self, model_name: str,
+                    tool: str, function: str) -> dict:
         metadata = self.__metadata_document.copy()
         metadata["modelName"] = model_name
-        metadata["description"] = description
         metadata["tool"] = tool
         metadata["function"] = function
-        metadata["functionParameters"] = function_parameters
 
         self.__database_connector.insert_one_in_file(
             model_name,
