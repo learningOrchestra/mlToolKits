@@ -267,6 +267,8 @@ services:
     networks:
       - database
     environment: *default-service-database-env
+    volumes:
+      - "default_model:/models"
 
 networks:
   database:
@@ -276,5 +278,6 @@ volumes:
   images:
   database:
   database_api:
+  default_model:
   tsne:
   pca:
