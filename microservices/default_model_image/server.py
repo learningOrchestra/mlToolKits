@@ -38,7 +38,7 @@ def create_default_model() -> jsonify:
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
 
-    model_name = request.json["model_name"]
+    model_name = request.json["modelName"]
     description = request.json["description"]
     tool = request.json["tool"]
     function = request.json["function"]
