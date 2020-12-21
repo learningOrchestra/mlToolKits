@@ -263,7 +263,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-worker
+    deploy: *default-deploy-manager
     networks:
       - database
     environment: *default-service-database-env
