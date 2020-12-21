@@ -37,6 +37,11 @@ class DefaultModel:
         self.__thread_pool.submit(self.__pipeline, model_name, tool, function,
                                   function_parameters)
 
+    @staticmethod
+    def available_tools() -> list:
+        available_tools = ["sklearn"]
+        return available_tools
+
     def __create_model_document(self, model_name, description,
                                 function_parameters):
         model_document = {
@@ -57,8 +62,3 @@ class DefaultModel:
         model_output = open(model_name, self.__WRITE_MODEL_OBJECT_OPTION)
         pickle.dumps(model_instance, model_output)
         model_output.close()
-
-    @staticmethod
-    def available_tools() -> list:
-        available_tools = ["sklearn"]
-        return available_tools
