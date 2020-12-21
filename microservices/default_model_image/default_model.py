@@ -52,8 +52,8 @@ class DefaultModel:
 
     def __pipeline(self, model_name: str, tool: str, function: str,
                    function_parameters: dict):
-        module = importlib.import_module(tool)
-        module_function = getattr(module, function)
+        importlib.import_module(tool)
+        module_function = getattr(tool, function)
         function_instance = module_function(*function_parameters)
         self.__save(function_instance, model_name)
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
