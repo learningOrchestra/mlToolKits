@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.7-slim
 
 WORKDIR /usr/src/default_model
 COPY . /usr/src/default_model
