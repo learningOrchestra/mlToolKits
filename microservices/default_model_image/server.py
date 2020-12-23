@@ -142,9 +142,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     try:
-        package_name = module_path.split(".")[FIRST_ARGUMENT]
         request_validator.available_module_path_validator(
-            package_name
+            module_path
         )
     except Exception as invalid_tool_name:
         return (
