@@ -3,7 +3,7 @@ import pytz
 from pymongo import MongoClient
 import inspect
 import importlib
-
+from pydoc import locate
 
 class Database:
     def __init__(self, database_url: str, replica_set: str, database_port: int,
@@ -104,8 +104,7 @@ class UserRequest:
 
     def valid_function_validator(self, tool_name: str, function_name: str):
         # try:
-        tool = importlib.import_module(tool_name)
-        getattr(tool, function_name)
+        locate(tool_name + "." + function_name)
 
         # except Exception:
         #     raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
