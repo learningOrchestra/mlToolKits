@@ -167,7 +167,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
     try:
         request_validator.available_tool_name_validator(
-            tool_name
+            tool_name.split(".")[0]
         )
     except Exception as invalid_tool_name:
         return (
