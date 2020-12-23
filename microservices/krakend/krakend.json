@@ -539,6 +539,22 @@
       ]
     },
     {
+      "endpoint": "/api/learningOrchestra/v1/model/default/{modelname}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/defaultModel/{modelname}",
+          "host": [
+            "http://defaultmodel:5007"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
       "endpoint": "/api/learningOrchestra/v1/model/default/package",
       "method": "GET",
       "output_encoding": "no-op",
@@ -587,14 +603,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/model/default/{modelname}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files/{filename}",
+          "url_pattern": "/files/{modelname}",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -603,14 +619,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/model/default/{modelname}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/files/{filename}",
+          "url_pattern": "/files/{modelname}",
           "host": [
             "http://databaseapi:5000"
           ],
