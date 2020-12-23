@@ -562,7 +562,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/defaultModel/tool/",
+          "url_pattern": "/defaultModel/tool",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -587,14 +587,30 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/",
+      "endpoint": "/api/learningOrchestra/v1/model/default",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/defaultModel?type=defaultModel",
+          "url_pattern": "/files?type=defaultModel",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/model/default/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -610,7 +626,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/defaultModel/{filename}",
+          "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
           ],
