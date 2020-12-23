@@ -555,7 +555,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/tool",
+      "endpoint": "/api/learningOrchestra/v1/model/default/package",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -571,14 +571,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/tool/{toolName}",
+      "endpoint": "/api/learningOrchestra/v1/model/default/package/{toolName}/detail",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/defaultModel/tool/{toolName}",
+          "url_pattern": "/defaultModel/tool/{toolName}/detail",
           "host": [
             "http://defaultmodel:5007"
           ],

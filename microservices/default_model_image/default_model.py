@@ -2,7 +2,7 @@ import importlib
 import pickle
 from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database
-
+from constants import *
 
 class DefaultModel:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
@@ -41,14 +41,13 @@ class DefaultModel:
 
     @staticmethod
     def available_tools() -> list:
-        available_tools = ["sklearn"]
-        return available_tools
+        return AVAILABLE_MODULES
 
     def __create_model_document(self, model_name, description,
                                 class_parameters):
         model_document = {
-            "description": description,
-            "classParameters": class_parameters
+            DESCRIPTION_FIELD_NAME: description,
+            CLASS_PARAMETERS_FIELD_NAME: class_parameters
         }
         self.__database_connector.insert_one_in_file(model_name, model_document)
 

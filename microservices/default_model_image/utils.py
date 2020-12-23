@@ -3,6 +3,7 @@ import pytz
 from pymongo import MongoClient
 import inspect
 import importlib
+from constants import *
 
 
 class Database:
@@ -54,17 +55,17 @@ class Metadata:
 
         self.__metadata_document = {
             "timeCreated": self.__now_time,
-            "_id": 0,
+            ID_FIELD_NAME: METADATA_DOCUMENT_ID,
             "type": "defaultModel",
-            "finished": False,
+            FINISHED_FIELD_NAME: False,
         }
 
     def create_file(self, model_name: str,
                     module_path: str, class_name: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata["modelName"] = model_name
-        metadata["modulePath"] = module_path
-        metadata["class"] = class_name
+        metadata[MODEL_FIELD_NAME] = model_name
+        metadata[MODULE_PATH_FIELD_NAME] = module_path
+        metadata[CLASS_FIELD_NAME] = class_name
 
         self.__database_connector.insert_one_in_file(
             model_name,
@@ -73,8 +74,8 @@ class Metadata:
         return metadata
 
     def update_finished_flag(self, filename: str, flag: bool):
-        flag_true_query = {"finished": flag}
-        metadata_file_query = {"_id": 0}
+        flag_true_query = {FINISHED_FIELD_NAME: flag}
+        metadata_file_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
         self.__database_connector.update_one(filename,
                                              flag_true_query,
                                              metadata_file_query)
@@ -116,7 +117,6 @@ class UserRequest:
         module_function = getattr(module, function)
         valid_function_parameters = inspect.getfullargspec(module_function)
 
-        arguments_list_index = 0
         for parameter, value in function_parameters:
-            if parameter not in valid_function_parameters[arguments_list_index]:
+            if parameter not in valid_function_parameters[FIRST_ARGUMENT]:
                 raise Exception(self.__MESSAGE_INVALID_FUNCTION_PARAMETER)
