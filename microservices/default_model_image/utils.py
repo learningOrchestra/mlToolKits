@@ -104,8 +104,8 @@ class UserRequest:
 
     def valid_function_validator(self, tool_name: str, function_name: str):
         # try:
-            importlib.import_module(tool_name)
-            getattr(tool_name, function_name)
+        importlib.import_module(tool_name)
+        getattr(tool_name, function_name)
 
         # except Exception:
         #     raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
