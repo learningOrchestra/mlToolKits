@@ -83,7 +83,7 @@ class Metadata:
 
 class UserRequest:
     __MESSAGE_DUPLICATE_FILE = "duplicate file"
-    __MESSAGE_INVALID_PACKAGE_NAME = "invalid package name"
+    __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
     __MESSAGE_INVALID_CLASS_NAME = "invalid class name"
     __MESSAGE_INVALID_CLASS_PARAMETER = "invalid class parameter"
 
@@ -96,12 +96,12 @@ class UserRequest:
         if filename in filenames:
             raise Exception(self.__MESSAGE_DUPLICATE_FILE)
 
-    def available_package_name_validator(self, package: str):
+    def available_module_path_validator(self, package: str):
         try:
             importlib.import_module(package)
 
         except Exception:
-            raise Exception(self.__MESSAGE_INVALID_PACKAGE_NAME)
+            raise Exception(self.__MESSAGE_INVALID_MODULE_PATH_NAME)
 
     def valid_class_validator(self, tool_name: str, function_name: str):
         try:
