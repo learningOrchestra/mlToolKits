@@ -14,28 +14,30 @@ class DefaultModel:
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
 
-    def create(self, model_name: str, tool: str, function: str,
+    def create(self, model_name: str, module_path: str, class_name: str,
                description: str,
-               function_parameters: dict):
-        self.__metadata_creator.create_file(model_name, tool,
-                                            function)
+               class_parameters: dict):
+        self.__metadata_creator.create_file(model_name, module_path,
+                                            class_name)
 
         self.__create_model_document(model_name, description,
-                                     function_parameters)
+                                     class_parameters)
 
-        self.__thread_pool.submit(self.__pipeline, model_name, tool, function,
-                                  function_parameters)
+        self.__thread_pool.submit(self.__pipeline, model_name, module_path,
+                                  class_name,
+                                  class_parameters)
 
-    def update(self, model_name: str, tool: str, function: str,
+    def update(self, model_name: str, module_path: str, class_name: str,
                description: str,
-               function_parameters: dict):
+               class_parameters: dict):
         self.__metadata_creator.update_finished_flag(model_name, False)
 
         self.__create_model_document(model_name, description,
-                                     function_parameters)
+                                     class_parameters)
 
-        self.__thread_pool.submit(self.__pipeline, model_name, tool, function,
-                                  function_parameters)
+        self.__thread_pool.submit(self.__pipeline, model_name, module_path,
+                                  class_name,
+                                  class_parameters)
 
     @staticmethod
     def available_tools() -> list:
@@ -43,18 +45,18 @@ class DefaultModel:
         return available_tools
 
     def __create_model_document(self, model_name, description,
-                                function_parameters):
+                                class_parameters):
         model_document = {
             "description": description,
-            "functionParameters": function_parameters
+            "classParameters": class_parameters
         }
         self.__database_connector.insert_one_in_file(model_name, model_document)
 
-    def __pipeline(self, model_name: str, tool: str, function: str,
-                   function_parameters: dict):
-        importlib.import_module(tool)
-        module_function = getattr(tool, function)
-        function_instance = module_function(*function_parameters)
+    def __pipeline(self, model_name: str, module_path: str, class_name: str,
+                   class_parameters: dict):
+        module = importlib.import_module(module_path)
+        module_function = getattr(module, class_name)
+        function_instance = module_function(*class_parameters)
         self.__save(function_instance, model_name)
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 

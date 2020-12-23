@@ -60,11 +60,11 @@ class Metadata:
         }
 
     def create_file(self, model_name: str,
-                    tool: str, function: str) -> dict:
+                    module_path: str, class_name: str) -> dict:
         metadata = self.__metadata_document.copy()
         metadata["modelName"] = model_name
-        metadata["tool"] = tool
-        metadata["function"] = function
+        metadata["modulePath"] = module_path
+        metadata["class"] = class_name
 
         self.__database_connector.insert_one_in_file(
             model_name,
@@ -95,23 +95,23 @@ class UserRequest:
         if filename in filenames:
             raise Exception(self.__MESSAGE_DUPLICATE_FILE)
 
-    def available_tool_name_validator(self, tool_name: str):
+    def available_package_name_validator(self, package: str):
         try:
-            importlib.import_module(tool_name)
+            importlib.import_module(package)
 
         except Exception:
             raise Exception(self.__MESSAGE_INVALID_TOOL_NAME)
 
-    def valid_function_validator(self, tool_name: str, function_name: str):
-        # try:
-        module = importlib.import_module(tool_name)
-        getattr(module, function_name)
+    def valid_class_validator(self, tool_name: str, function_name: str):
+        try:
+            module = importlib.import_module(tool_name)
+            getattr(module, function_name)
 
-        # except Exception:
-        #     raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
+        except Exception:
+            raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
 
-    def valid_function_parameters_validator(self, tool: str, function: str,
-                                            function_parameters: dict):
+    def valid_class_parameters_validator(self, tool: str, function: str,
+                                         function_parameters: dict):
         module = importlib.import_module(tool)
         module_function = getattr(module, function)
         valid_function_parameters = inspect.getfullargspec(module_function)

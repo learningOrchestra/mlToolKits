@@ -22,7 +22,7 @@ METADATA_DOCUMENT_ID = 0
 
 MESSAGE_RESULT = "result"
 
-FUNCTION_PARAMETERS_NAME = "functionParameters"
+FUNCTION_PARAMETERS_NAME = "classParameters"
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/model/default/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
@@ -40,9 +40,9 @@ def create_default_model() -> jsonify:
 
     model_name = request.json["modelName"]
     description = request.json["description"]
-    tool = request.json["tool"]
-    function = request.json["function"]
-    function_parameters = request.json[FUNCTION_PARAMETERS_NAME]
+    module_path = request.json["modulePath"]
+    class_name = request.json["class"]
+    class_parameters = request.json[FUNCTION_PARAMETERS_NAME]
 
     database = Database(
         database_url,
@@ -56,9 +56,9 @@ def create_default_model() -> jsonify:
     request_errors = analyse_post_request_errors(
         request_validator,
         model_name,
-        tool,
-        function,
-        function_parameters)
+        module_path,
+        class_name,
+        class_parameters)
 
     if request_errors is not None:
         return request_errors
@@ -67,7 +67,7 @@ def create_default_model() -> jsonify:
     default_model = DefaultModel(metadata_creator, database)
 
     default_model.create(
-        model_name, tool, function, description, function_parameters)
+        model_name, module_path, class_name, description, class_parameters)
 
     return (
         jsonify({
@@ -150,9 +150,9 @@ def read_tool_functions(tool) -> jsonify:
 
 def analyse_post_request_errors(request_validator: UserRequest,
                                 model_name: str,
-                                tool_name: str,
-                                function_name: str,
-                                function_parameters: dict) \
+                                module_path: str,
+                                class_name: str,
+                                class_parameters: dict) \
         -> Union[tuple, None]:
     try:
         request_validator.not_duplicated_filename_validator(
@@ -166,8 +166,9 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     try:
-        request_validator.available_tool_name_validator(
-            tool_name.split(".")[0]
+        package_name = module_path.split(".")[FIRST_ARGUMENT]
+        request_validator.available_package_name_validator(
+            package_name
         )
     except Exception as invalid_tool_name:
         return (
@@ -177,9 +178,9 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     try:
-        request_validator.valid_function_validator(
-            tool_name,
-            function_name
+        request_validator.valid_class_validator(
+            module_path,
+            class_name
         )
     except Exception as invalid_function_name:
         return (
@@ -189,10 +190,10 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     try:
-        request_validator.valid_function_parameters_validator(
-            tool_name,
-            function_name,
-            function_parameters
+        request_validator.valid_class_parameters_validator(
+            module_path,
+            class_name,
+            class_parameters
         )
     except Exception as invalid_function_parameters:
         return (
@@ -222,7 +223,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
 
     tool, function = get_model_tool_and_function(database, model_name)
     try:
-        request_validator.valid_function_parameters_validator(
+        request_validator.valid_class_parameters_validator(
             tool,
             function,
             function_parameters
