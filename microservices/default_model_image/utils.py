@@ -103,12 +103,12 @@ class UserRequest:
             raise Exception(self.__MESSAGE_INVALID_TOOL_NAME)
 
     def valid_function_validator(self, tool_name: str, function_name: str):
-        try:
+        # try:
             importlib.import_module(tool_name)
             getattr(tool_name, function_name)
 
-        except Exception:
-            raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
+        # except Exception:
+        #     raise Exception(self.__MESSAGE_INVALID_FUNCTION_NAME)
 
     def valid_function_parameters_validator(self, tool: str, function: str,
                                             function_parameters: dict):
