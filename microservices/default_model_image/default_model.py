@@ -64,5 +64,5 @@ class DefaultModel:
 
     def __save(self, model_instance, model_name: str):
         model_output = open(model_name, self.__WRITE_MODEL_OBJECT_OPTION)
-        pickle.dumps(model_instance, model_output)
+        pickle.dump(model_instance, model_output)
         model_output.close()
