@@ -132,7 +132,7 @@ class Csv:
 
 class UserRequest:
     MESSAGE_INVALID_URL = "invalid url"
-    MESSAGE_DUPLICATE_FILE = "duplicate file"
+    MESSAGE_DUPLICATE_FILE = "duplicated dataset name"
     URL_CONTENT_TYPE_INDEX = 0
     URL_CONTENT_TYPE_SEPARATOR = ";"
 

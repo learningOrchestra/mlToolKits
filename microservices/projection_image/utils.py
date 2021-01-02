@@ -79,7 +79,7 @@ class Database:
 class UserRequest:
     MESSAGE_INVALID_FIELDS = "invalid fields"
     MESSAGE_INVALID_FILENAME = "invalid dataset name"
-    MESSAGE_DUPLICATE_FILE = "duplicate file"
+    MESSAGE_DUPLICATE_FILE = "duplicated projection name"
     MESSAGE_MISSING_FIELDS = "missing fields"
     MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
 

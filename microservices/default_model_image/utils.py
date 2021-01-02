@@ -83,7 +83,7 @@ class Metadata:
 
 
 class UserRequest:
-    __MESSAGE_DUPLICATE_FILE = "duplicate file"
+    __MESSAGE_DUPLICATE_FILE = "duplicated model name"
     __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
     __MESSAGE_INVALID_CLASS_NAME = "invalid class name"
     __MESSAGE_INVALID_CLASS_PARAMETER = "invalid class parameter"

@@ -35,9 +35,9 @@ class Database:
 
 class UserRequest:
     MESSAGE_INVALID_FILENAME = "invalid dataset name"
-    MESSAGE_DUPLICATE_FILE = "duplicate file"
+    MESSAGE_DUPLICATE_FILE = "duplicated plot name"
     MESSAGE_INVALID_LABEL = "invalid field"
-    MESSAGE_NOT_FOUND = "file not found"
+    MESSAGE_NOT_FOUND = "plot name doesn't found"
     MESSAGE_UNFINISHED_PROCESSING = "unfinished processing in input dataset"
     IMAGE_FORMAT = ".png"
 
