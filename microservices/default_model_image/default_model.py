@@ -51,13 +51,15 @@ class DefaultModel:
     def available_tools() -> list:
         return AVAILABLE_MODULES
 
-    def __create_model_document(self, model_name, description,
-                                class_parameters):
+    def __create_model_document(self, model_name: str, description: str,
+                                class_parameters: dict):
         model_document = {
             DESCRIPTION_FIELD_NAME: description,
             CLASS_PARAMETERS_FIELD_NAME: class_parameters
         }
-        self.__database_connector.insert_one_in_file(model_name, model_document)
+        self.__database_connector.insert_one_in_file(
+            model_name,
+            model_document)
 
     def __pipeline(self, model_name: str, module_path: str, class_name: str,
                    class_parameters: dict):
@@ -67,6 +69,6 @@ class DefaultModel:
         self.__save(function_instance, model_name)
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
-    def __save(self, model_instance, model_name: str):
+    def __save(self, model_instance: object, model_name: str):
         with open(model_name, self.__WRITE_MODEL_OBJECT_OPTION) as model_output:
             pickle.dump(model_instance, model_output)
