@@ -109,21 +109,6 @@ def read_tools() -> jsonify:
     )
 
 
-@app.route("/defaultModel/tool/<tool>/detail", methods=[GET_METHOD_NAME])
-def read_tool_functions(tool) -> jsonify:
-    if tool not in DefaultModel.available_tools():
-        return (
-            jsonify({MESSAGE_RESULT: "Package doesn't available"}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
-        )
-
-    return (
-        jsonify({
-            MESSAGE_RESULT: help(tool)}),
-        HTTP_STATUS_CODE_SUCCESS,
-    )
-
-
 def analyse_post_request_errors(request_validator: UserRequest,
                                 model_name: str,
                                 module_path: str,
