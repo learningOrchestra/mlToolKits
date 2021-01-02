@@ -13,9 +13,9 @@ class Database:
             database_url + '/?replicaSet=' + replica_set, database_port)
         self.__database = self.__mongo_client[database_name]
 
-    def find_one(self, filename: str, query: dict) -> object:
+    def find_one(self, filename: str, query: dict, sort: list) -> object:
         file_collection = self.__database[filename]
-        return file_collection.find_one(query)
+        return file_collection.find_one(query, sort=sort)
 
     def insert_one_in_file(self, filename: str, json_object: dict) -> None:
         file_collection = self.__database[filename]

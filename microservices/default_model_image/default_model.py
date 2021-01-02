@@ -51,14 +51,17 @@ class DefaultModel:
     def __create_model_document(self, model_name: str, description: str,
                                 class_parameters: dict) -> None:
 
-        highest_id_query = {
-            ID_FIELD_NAME: -1
+        document_id_query = {
+            ID_FIELD_NAME: {
+                "$exists": True
+            }
         }
-        find_result = self.__database_connector.find_one(
-            model_name, highest_id_query)
+        highest_id_sort = [(ID_FIELD_NAME, -1)]
+        highest_id_document = self.__database_connector.find_one(
+            model_name, document_id_query, highest_id_sort)
 
-        print(find_result, flush=True)
-        highest_id = find_result[FIRST_ARGUMENT][ID_FIELD_NAME]
+        highest_id = highest_id_document[ID_FIELD_NAME]
+        print(highest_id, flush=True)
 
         model_document = {
             DESCRIPTION_FIELD_NAME: description,
