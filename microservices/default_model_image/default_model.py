@@ -23,9 +23,12 @@ class DefaultModel:
         self.__create_model_document(model_name, description,
                                      class_parameters)
 
-        self.__thread_pool.submit(self.__pipeline, model_name, module_path,
+        '''self.__thread_pool.submit(self.__pipeline, model_name, module_path,
                                   class_name,
-                                  class_parameters)
+                                  class_parameters)'''
+        self.__pipeline(model_name, module_path,
+        class_name,
+        class_parameters)
 
     def update(self, model_name: str, module_path: str, class_name: str,
                description: str,
