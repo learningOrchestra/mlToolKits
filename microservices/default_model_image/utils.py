@@ -13,7 +13,7 @@ class Database:
             database_url + '/?replicaSet=' + replica_set, database_port)
         self.__database = self.__mongo_client[database_name]
 
-    def find_one(self, filename: str, query: dict, sort: list) -> object:
+    def find_one(self, filename: str, query: dict, sort: list = []) -> object:
         file_collection = self.__database[filename]
         return file_collection.find_one(query, sort=sort)
 

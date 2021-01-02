@@ -191,11 +191,10 @@ def analyse_patch_request_errors(request_validator: UserRequest,
 
 def get_model_tool_and_function(database: Database, model_name: str) -> tuple:
     metadata_document_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-    empty_sort = []
     model_metadata = database.find_one(
         model_name,
-        metadata_document_query,
-        empty_sort)
+        metadata_document_query)
+
     module_path = model_metadata[MODULE_PATH_FIELD_NAME]
     class_name = model_metadata[CLASS_FIELD_NAME]
 
