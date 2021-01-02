@@ -50,9 +50,20 @@ class DefaultModel:
 
     def __create_model_document(self, model_name: str, description: str,
                                 class_parameters: dict) -> None:
+
+        highest_id_query = {
+            ID_FIELD_NAME: -1
+        }
+        find_result = self.__database_connector.find_one(
+            model_name, highest_id_query)
+
+        print(find_result, flush=True)
+        highest_id = find_result[FIRST_ARGUMENT][ID_FIELD_NAME]
+
         model_document = {
             DESCRIPTION_FIELD_NAME: description,
-            CLASS_PARAMETERS_FIELD_NAME: class_parameters
+            CLASS_PARAMETERS_FIELD_NAME: class_parameters,
+            ID_FIELD_NAME:  highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
             model_name,
