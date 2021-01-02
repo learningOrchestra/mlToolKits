@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-import inspect
+from inspect import signature
 import importlib
 from constants import *
 
@@ -115,8 +115,10 @@ class UserRequest:
                                          function_parameters: dict):
         module = importlib.import_module(tool)
         module_function = getattr(module, function)
-        valid_function_parameters = inspect.getfullargspec(module_function)
+        valid_function_parameters = signature(module_function.__init___)
         print(valid_function_parameters, flush=True)
+        print(valid_function_parameters.parameters, flush=True)
+
         for parameter, value in function_parameters.items():
-            if parameter not in valid_function_parameters[FIRST_ARGUMENT]:
+            if parameter not in valid_function_parameters.parameters:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
