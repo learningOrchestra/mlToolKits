@@ -574,6 +574,11 @@
       "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
       "method": "GET",
       "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
       "backend": [
         {
           "encoding": "no-op",
