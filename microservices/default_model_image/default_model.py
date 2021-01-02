@@ -67,6 +67,5 @@ class DefaultModel:
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
     def __save(self, model_instance, model_name: str):
-        model_output = open(model_name, self.__WRITE_MODEL_OBJECT_OPTION)
-        pickle.dump(model_instance, model_output)
-        model_output.close()
+        with open(model_name, self.__WRITE_MODEL_OBJECT_OPTION) as model_output:
+            pickle.dump(model_instance, model_output)

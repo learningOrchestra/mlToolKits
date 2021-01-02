@@ -116,8 +116,6 @@ class UserRequest:
         module = importlib.import_module(tool)
         module_function = getattr(module, function)
         valid_function_parameters = signature(module_function.__init__)
-        print(valid_function_parameters, flush=True)
-        print(valid_function_parameters.parameters, flush=True)
 
         for parameter, value in function_parameters.items():
             if parameter not in valid_function_parameters.parameters:
