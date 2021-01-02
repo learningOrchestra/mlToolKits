@@ -70,11 +70,12 @@ class DefaultModel:
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
     def __save(self, model_instance: object, model_name: str) -> None:
-            model_output = open(model_name, self.__WRITE_MODEL_OBJECT_OPTION)
+            model_output = open("/models/" + model_name,
+                                self.__WRITE_MODEL_OBJECT_OPTION)
             pickle.dump(model_instance, model_output)
             model_output.close()
 
-            teste = open("teste", "w")
+            teste = open("/models/teste", "w")
             teste.write("um teste")
             teste.close()
             print("sdfsdfdsfdsf", flush=True)
