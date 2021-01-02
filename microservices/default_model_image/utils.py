@@ -116,7 +116,7 @@ class UserRequest:
         module = importlib.import_module(tool)
         module_function = getattr(module, function)
         valid_function_parameters = inspect.getfullargspec(module_function)
-
-        for parameter, value in function_parameters:
+        print(valid_function_parameters, flush=True)
+        for parameter, value in function_parameters.items():
             if parameter not in valid_function_parameters[FIRST_ARGUMENT]:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)

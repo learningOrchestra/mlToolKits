@@ -38,6 +38,10 @@ class DefaultModel:
         self.__create_model_document(model_name, description,
                                      class_parameters)
 
+        '''self.__thread_pool.submit(self.__pipeline, model_name, module_path,
+                                  class_name,
+                                  class_parameters)'''
+
         self.__thread_pool.submit(self.__pipeline, model_name, module_path,
                                   class_name,
                                   class_parameters)
@@ -58,7 +62,7 @@ class DefaultModel:
                    class_parameters: dict):
         module = importlib.import_module(module_path)
         module_function = getattr(module, class_name)
-        function_instance = module_function(*class_parameters)
+        function_instance = module_function(**class_parameters)
         self.__save(function_instance, model_name)
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
