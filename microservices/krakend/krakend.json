@@ -539,30 +539,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/package",
-      "method": "GET",
+      "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
+      "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/defaultModel/tool",
-          "host": [
-            "http://defaultmodel:5007"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/model/default/package/{toolName}/detail",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/defaultModel/tool/{toolName}/detail",
+          "method": "PATCH",
+          "url_pattern": "/defaultModel/{modelName}",
           "host": [
             "http://defaultmodel:5007"
           ],
