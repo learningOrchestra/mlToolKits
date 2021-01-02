@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database
 from constants import *
 
+
 class DefaultModel:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
@@ -27,8 +28,8 @@ class DefaultModel:
                                   class_name,
                                   class_parameters)'''
         self.__pipeline(model_name, module_path,
-        class_name,
-        class_parameters)
+                        class_name,
+                        class_parameters)
 
     def update(self, model_name: str, module_path: str, class_name: str,
                description: str,
