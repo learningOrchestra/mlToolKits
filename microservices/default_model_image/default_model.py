@@ -5,6 +5,7 @@ from utils import Metadata, Database
 from constants import *
 import os
 
+
 class DefaultModel:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
@@ -70,14 +71,8 @@ class DefaultModel:
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
     def __save(self, model_instance: object, model_name: str) -> None:
-            model_output = open("/models/" + model_name,
-                                self.__WRITE_MODEL_OBJECT_OPTION)
-            pickle.dump(model_instance, model_output)
-            model_output.close()
-
-            teste = open("/models/teste", "w")
-            teste.write("um teste")
-            teste.close()
-            print("sdfsdfdsfdsf", flush=True)
-            print("MY PATH = " + os.getcwd(), flush=True)
-            print(os.listdir('.'), flush=True)
+        models_path = os.environ["MODELS_PATH"] + "/" + model_name
+        model_output = open(models_path,
+                            self.__WRITE_MODEL_OBJECT_OPTION)
+        pickle.dump(model_instance, model_output)
+        model_output.close()

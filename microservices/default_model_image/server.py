@@ -171,14 +171,14 @@ def analyse_patch_request_errors(request_validator: UserRequest,
                                  class_parameters: dict) \
         -> Union[tuple, None]:
     try:
-        request_validator.not_duplicated_filename_validator(
+        request_validator.existent_filename_validator(
             model_name
         )
-    except Exception as duplicated_model_filename:
+    except Exception as nonexistent_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: duplicated_model_filename.args[
+            jsonify({MESSAGE_RESULT: nonexistent_model_filename.args[
                 FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     module_path, class_name = get_model_tool_and_function(database, model_name)

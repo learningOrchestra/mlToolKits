@@ -87,6 +87,7 @@ class UserRequest:
     __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
     __MESSAGE_INVALID_CLASS_NAME = "invalid class name"
     __MESSAGE_INVALID_CLASS_PARAMETER = "invalid class parameter"
+    __MESSAGE_NONEXISTENT_FILE = "model name doesn't exist"
 
     def __init__(self, database_connector: Database):
         self.__database = database_connector
@@ -96,6 +97,12 @@ class UserRequest:
 
         if filename in filenames:
             raise Exception(self.__MESSAGE_DUPLICATE_FILE)
+
+    def existent_filename_validator(self, filename: str) -> None:
+        filenames = self.__database.get_filenames()
+
+        if filename not in filenames:
+            raise Exception(self.__MESSAGE_NONEXISTENT_FILE)
 
     def available_module_path_validator(self, package: str) -> None:
         try:
