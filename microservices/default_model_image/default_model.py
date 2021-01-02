@@ -3,7 +3,7 @@ import pickle
 from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database
 from constants import *
-
+import os
 
 class DefaultModel:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
@@ -78,3 +78,5 @@ class DefaultModel:
             teste.write("um teste")
             teste.close()
             print("sdfsdfdsfdsf", flush=True)
+            print("MY PATH = " + os.getcwd(), flush=True)
+            print(os.listdir('.'), flush=True)
