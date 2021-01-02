@@ -587,7 +587,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/package",
+      "endpoint": "/api/learningOrchestra/v1/model/default#package",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
