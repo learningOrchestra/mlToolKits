@@ -17,7 +17,7 @@ class DefaultModel:
 
     def create(self, model_name: str, module_path: str, class_name: str,
                description: str,
-               class_parameters: dict):
+               class_parameters: dict) -> None:
         self.__metadata_creator.create_file(model_name, module_path,
                                             class_name)
 
@@ -33,7 +33,7 @@ class DefaultModel:
 
     def update(self, model_name: str, module_path: str, class_name: str,
                description: str,
-               class_parameters: dict):
+               class_parameters: dict) -> None:
         self.__metadata_creator.update_finished_flag(model_name, False)
 
         self.__create_model_document(model_name, description,
@@ -52,7 +52,7 @@ class DefaultModel:
         return AVAILABLE_MODULES
 
     def __create_model_document(self, model_name: str, description: str,
-                                class_parameters: dict):
+                                class_parameters: dict) -> None:
         model_document = {
             DESCRIPTION_FIELD_NAME: description,
             CLASS_PARAMETERS_FIELD_NAME: class_parameters
@@ -62,13 +62,13 @@ class DefaultModel:
             model_document)
 
     def __pipeline(self, model_name: str, module_path: str, class_name: str,
-                   class_parameters: dict):
+                   class_parameters: dict) -> None:
         module = importlib.import_module(module_path)
         module_function = getattr(module, class_name)
         function_instance = module_function(**class_parameters)
         self.__save(function_instance, model_name)
         self.__metadata_creator.update_finished_flag(model_name, flag=True)
 
-    def __save(self, model_instance: object, model_name: str):
+    def __save(self, model_instance: object, model_name: str) -> None:
         with open(model_name, self.__WRITE_MODEL_OBJECT_OPTION) as model_output:
             pickle.dump(model_instance, model_output)
