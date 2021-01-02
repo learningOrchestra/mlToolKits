@@ -100,15 +100,6 @@ def update_default_model(model_name: str) -> jsonify:
     )
 
 
-@app.route("/defaultModel/tool", methods=[GET_METHOD_NAME])
-def read_tools() -> jsonify:
-    return (
-        jsonify({
-            MESSAGE_RESULT: DefaultModel.available_tools()}),
-        HTTP_STATUS_CODE_SUCCESS,
-    )
-
-
 def analyse_post_request_errors(request_validator: UserRequest,
                                 model_name: str,
                                 module_path: str,

@@ -48,10 +48,6 @@ class DefaultModel:
                                   class_name,
                                   class_parameters)
 
-    @staticmethod
-    def available_tools() -> list:
-        return AVAILABLE_MODULES
-
     def __create_model_document(self, model_name: str, description: str,
                                 class_parameters: dict) -> None:
         model_document = {

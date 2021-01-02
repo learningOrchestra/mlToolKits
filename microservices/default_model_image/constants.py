@@ -1,5 +1,3 @@
-AVAILABLE_MODULES = ["sklearn"]
-
 MODULE_PATH_FIELD_NAME = "modulePath"
 CLASS_FIELD_NAME = "class"
 CLASS_PARAMETERS_FIELD_NAME = "classParameters"

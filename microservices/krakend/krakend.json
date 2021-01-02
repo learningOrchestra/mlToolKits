@@ -592,22 +592,6 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/package",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/defaultModel/tool",
-          "host": [
-            "http://defaultmodel:5007"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
       "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
       "method": "DELETE",
       "output_encoding": "no-op",
