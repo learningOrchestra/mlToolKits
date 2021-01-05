@@ -25,12 +25,9 @@ class DefaultModel:
         self.__create_model_document(model_name, description,
                                      class_parameters)
 
-        '''self.__thread_pool.submit(self.__pipeline, model_name, module_path,
+        self.__thread_pool.submit(self.__pipeline, model_name, module_path,
                                   class_name,
-                                  class_parameters)'''
-        self.__pipeline(model_name, module_path,
-                        class_name,
-                        class_parameters)
+                                  class_parameters)
 
     def update(self, model_name: str, module_path: str, class_name: str,
                description: str,
@@ -50,7 +47,6 @@ class DefaultModel:
 
     def __create_model_document(self, model_name: str, description: str,
                                 class_parameters: dict) -> None:
-
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True
@@ -66,7 +62,7 @@ class DefaultModel:
         model_document = {
             DESCRIPTION_FIELD_NAME: description,
             CLASS_PARAMETERS_FIELD_NAME: class_parameters,
-            ID_FIELD_NAME:  highest_id + 1
+            ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
             model_name,
