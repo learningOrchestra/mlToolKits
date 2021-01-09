@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from default_model import DefaultModel
-from utils import Database, UserRequest, Metadata
+from utils import *
 from typing import Union
 from constants import *
 
@@ -40,10 +40,11 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database)
+    default_model = DefaultModel(metadata_creator, database, model_name,
+                                 module_path, class_name)
 
     default_model.create(
-        model_name, module_path, class_name, description, class_parameters)
+        description, class_parameters)
 
     return (
         jsonify({
@@ -73,22 +74,25 @@ def update_default_model(model_name: str) -> jsonify:
 
     request_validator = UserRequest(database)
 
+    data = Data(database)
+
     request_errors = analyse_patch_request_errors(
         request_validator,
-        database,
+        data,
         model_name,
         function_parameters)
 
     if request_errors is not None:
         return request_errors
 
-    tool, function = get_model_tool_and_function(database, model_name)
+    module_path, class_name = data.get_module_and_class_from_a_model(model_name)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database)
+    default_model = DefaultModel(metadata_creator, database, model_name,
+                                 module_path, class_name)
 
     default_model.update(
-        model_name, tool, function, description, function_parameters)
+        description, function_parameters)
 
     return (
         jsonify({
@@ -157,7 +161,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
 
 def analyse_patch_request_errors(request_validator: UserRequest,
-                                 database: Database,
+                                 data: Data,
                                  model_name: str,
                                  class_parameters: dict) \
         -> Union[tuple, None]:
@@ -172,7 +176,8 @@ def analyse_patch_request_errors(request_validator: UserRequest,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    module_path, class_name = get_model_tool_and_function(database, model_name)
+    module_path, class_name = data.get_module_and_class_from_a_model(
+        model_name)
     try:
         request_validator.valid_class_parameters_validator(
             module_path,
@@ -187,18 +192,6 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
 
     return None
-
-
-def get_model_tool_and_function(database: Database, model_name: str) -> tuple:
-    metadata_document_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-    model_metadata = database.find_one(
-        model_name,
-        metadata_document_query)
-
-    module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-    class_name = model_metadata[CLASS_FIELD_NAME]
-
-    return module_path, class_name
 
 
 if __name__ == "__main__":

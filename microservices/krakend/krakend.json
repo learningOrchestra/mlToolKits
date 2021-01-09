@@ -606,6 +606,91 @@
           "extra_config": {}
         }
       ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/binaryExecutor",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=train",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
     }
   ],
   "extra_config": {

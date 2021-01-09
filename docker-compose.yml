@@ -270,6 +270,22 @@ services:
     volumes:
       - "default_model:/models"
 
+  binaryexecutor:
+    build: microservices/binary_executor_image
+    image: 127.0.0.1:5050/binary_executor
+    ports:
+      - "5008:5008"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-manager
+    networks:
+      - database
+    environment: *default-service-database-env
+    volumes:
+      - "default_model:/models"
+      - "binary_executor:/binaries"
+
 networks:
   database:
   spark:
@@ -279,5 +295,6 @@ volumes:
   database:
   database_api:
   default_model:
+  binary_executor:
   tsne:
   pca:
