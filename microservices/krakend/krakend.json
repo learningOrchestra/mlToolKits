@@ -615,7 +615,7 @@
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/binaryExecutor",
+          "url_pattern": "/binaryExecutor?type=train",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -631,7 +631,7 @@
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/binaryExecutor/{name}",
+          "url_pattern": "/binaryExecutor/{name}?type=train",
           "host": [
             "http://binaryexecutor:5008"
           ],

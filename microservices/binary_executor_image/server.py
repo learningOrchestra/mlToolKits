@@ -13,7 +13,7 @@ DATABASE_NAME = os.environ[DATABASE_NAME]
 
 
 @app.route("/binaryExecutor", methods=["POST"])
-def create_default_model() -> jsonify:
+def create_execution() -> jsonify:
     service_type = request.args.get(TYPE_FIELD_NAME)
 
     parent_name = request.json[PARENT_NAME_FIELD_NAME]
@@ -66,7 +66,7 @@ def create_default_model() -> jsonify:
 
 
 @app.route("/binaryExecutor/<filename>", methods=["PATCH"])
-def update_default_model(filename: str) -> jsonify:
+def update_execution(filename: str) -> jsonify:
     service_type = request.args.get(TYPE_FIELD_NAME)
 
     database = Database(
