@@ -11,6 +11,7 @@ class Execution:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
     __DATASET_KEY_CHARACTER = "$"
+    __REMOVE_KEY_CHARACTER = ""
 
     def __init__(self, metadata_creator: Metadata,
                  database_connector: Database,
@@ -75,12 +76,14 @@ class Execution:
     def __parameters_treatment(self, method_parameters: dict) -> dict:
         for name, value in method_parameters.items():
             if self.__DATASET_KEY_CHARACTER in value:
-                dataset_name = value.replace(self.__DATASET_KEY_CHARACTER, "")
+                dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
+                                             self.__REMOVE_KEY_CHARACTER)
                 dataset = self.__database_connector.get_entire_collection(
                     dataset_name)
                 dataset_dataframe = pd.DataFrame(dataset)
                 method_parameters[name] = dataset_dataframe.values
 
+        print(method_parameters[0], flush=True)
         return method_parameters
 
     def __execute_a_object_method(self, class_instance: object, method: str,

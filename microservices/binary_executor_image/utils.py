@@ -18,7 +18,9 @@ class Database:
         return file_collection.find_one(query, sort=sort)
 
     def get_entire_collection(self, filename: str) -> list:
-        return list(self.__database[filename].find({}))
+        database_documents_query = {
+            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+        return list(self.__database[filename].find(database_documents_query))
 
     def insert_one_in_file(self, filename: str, json_object: dict) -> None:
         file_collection = self.__database[filename]
@@ -63,25 +65,25 @@ class Metadata:
             FINISHED_FIELD_NAME: False,
         }
 
-    def create_file(self, model_name: str,
-                    train_name: str,
+    def create_file(self, parent_name: str,
+                    filename: str,
                     class_method: str,
                     service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata[PARENT_NAME_FIELD_NAME] = model_name
-        metadata[NAME_FIELD_NAME] = train_name
+        metadata[PARENT_NAME_FIELD_NAME] = parent_name
+        metadata[NAME_FIELD_NAME] = filename
         metadata[METHOD_FIELD_NAME] = class_method
         metadata[TYPE_FIELD_NAME] = service_type
 
         self.__database_connector.insert_one_in_file(
-            model_name,
+            filename,
             metadata)
 
         return metadata
 
-    def read_metadata(self, model_name: str) -> object:
+    def read_metadata(self, parent_name: str) -> object:
         metadata_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-        return self.__database_connector.find_one(model_name, metadata_query)
+        return self.__database_connector.find_one(parent_name, metadata_query)
 
     def update_finished_flag(self, filename: str, flag: bool) -> None:
         flag_true_query = {FINISHED_FIELD_NAME: flag}
@@ -119,7 +121,7 @@ class UserRequest:
     __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
     __MESSAGE_INVALID_METHOD_NAME = "invalid method name"
     __MESSAGE_INVALID_CLASS_METHOD_PARAMETER = "invalid class method parameter"
-    __MESSAGE_NONEXISTENT_FILE = "name doesn't exist"
+    __MESSAGE_NONEXISTENT_FILE = "parentName doesn't exist"
 
     def __init__(self, database_connector: Database):
         self.__database = database_connector
