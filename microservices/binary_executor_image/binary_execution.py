@@ -84,10 +84,11 @@ class Execution:
                                              self.__REMOVE_KEY_CHARACTER)
                 dataset = self.__database_connector.get_entire_collection(
                     dataset_name)
+
+                print(dataset[0], flush=True)
                 dataset_dataframe = pd.DataFrame(dataset)
                 method_parameters[name] = dataset_dataframe.values
 
-        print(method_parameters[0], flush=True)
         return method_parameters
 
     def __execute_a_object_method(self, class_instance: object, method: str,
