@@ -59,7 +59,7 @@ def create_execution() -> jsonify:
         jsonify({
             MESSAGE_RESULT:
                 MICROSERVICE_URI_SWITCHER[service_type] +
-                parent_name +
+                filename +
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )

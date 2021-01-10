@@ -37,9 +37,13 @@ class Execution:
                                                           description,
                                                           method_parameters)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   module_path,
-                                  method_parameters)
+                                  method_parameters)'''
+
+        self.__pipeline(
+            module_path,
+            method_parameters)
 
     def update(self,
                module_path: str,
