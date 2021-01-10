@@ -85,7 +85,6 @@ class Execution:
                 dataset = self.__database_connector.get_entire_collection(
                     dataset_name)
 
-                print(dataset[0], flush=True)
                 dataset_dataframe = pd.DataFrame(dataset)
                 method_parameters[name] = dataset_dataframe.values
 

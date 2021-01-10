@@ -20,7 +20,13 @@ class Database:
     def get_entire_collection(self, filename: str) -> list:
         database_documents_query = {
             ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
-        return list(self.__database[filename].find(database_documents_query))
+
+        database_projection_query = {
+            ID_FIELD_NAME: False
+        }
+        return list(self.__database[filename].find(
+            filter=database_documents_query,
+            projection=database_projection_query))
 
     def insert_one_in_file(self, filename: str, json_object: dict) -> None:
         file_collection = self.__database[filename]
