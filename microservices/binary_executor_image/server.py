@@ -124,8 +124,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as duplicated_train_filename:
         return (
-            jsonify({MESSAGE_RESULT: duplicated_train_filename.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(duplicated_train_filename)}),
             HTTP_STATUS_CODE_CONFLICT,
         )
 
@@ -135,8 +134,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_model_name:
         return (
-            jsonify({MESSAGE_RESULT: invalid_model_name.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_model_name)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -152,8 +150,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_method_name:
         return (
-            jsonify({MESSAGE_RESULT: invalid_method_name.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_method_name)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -166,8 +163,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_method_parameters:
         return (
-            jsonify({MESSAGE_RESULT: invalid_method_parameters.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_method_parameters)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -185,8 +181,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as nonexistent_train_filename:
         return (
-            jsonify({MESSAGE_RESULT: nonexistent_train_filename.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(nonexistent_train_filename)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -204,8 +199,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_parameters:
         return (
-            jsonify({MESSAGE_RESULT: invalid_function_parameters.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_function_parameters)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
