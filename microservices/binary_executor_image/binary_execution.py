@@ -33,17 +33,11 @@ class Execution:
                 module_path: str,
                 method_parameters: dict,
                 description: str) -> None:
-        self.__metadata_creator.create_execution_document(self.executor_name,
-                                                          description,
-                                                          method_parameters)
 
-        '''self.__thread_pool.submit(self.__pipeline,
+        self.__thread_pool.submit(self.__pipeline,
                                   module_path,
-                                  method_parameters)'''
-
-        self.__pipeline(
-            module_path,
-            method_parameters)
+                                  method_parameters,
+                                  description)
 
     def update(self,
                module_path: str,
@@ -51,14 +45,10 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.update_finished_flag(self.executor_name, False)
 
-        self.__metadata_creator.create_execution_document(self.executor_name,
-                                                          description,
-                                                          method_parameters)
-
         self.__thread_pool.submit(self.__pipeline,
                                   module_path,
-                                  method_parameters
-                                  )
+                                  method_parameters,
+                                  description)
 
     def __read_a_model_instance(self) -> object:
         model_binary_instance = open(self.__get_read_binary_path(),
@@ -67,15 +57,31 @@ class Execution:
 
     def __pipeline(self,
                    module_path: str,
-                   method_parameters: dict) -> None:
-        importlib.import_module(module_path)
-        model_instance = self.__read_a_model_instance()
-        method_result = self.__execute_a_object_method(model_instance,
-                                                       self.class_method,
-                                                       method_parameters)
-        self.__save(method_result)
-        self.__metadata_creator.update_finished_flag(self.executor_name,
-                                                     flag=True)
+                   method_parameters: dict,
+                   description: str) -> None:
+        try:
+            importlib.import_module(module_path)
+            model_instance = self.__read_a_model_instance()
+            method_result = self.__execute_a_object_method(model_instance,
+                                                           self.class_method,
+                                                           method_parameters)
+            self.__save(method_result)
+            self.__metadata_creator.update_finished_flag(self.executor_name,
+                                                         flag=True)
+
+        except Exception as exception:
+            self.__metadata_creator.create_execution_document(
+                self.executor_name,
+                description,
+                method_parameters,
+                exception.args[
+                    FIRST_ARGUMENT])
+            return None
+
+        self.__metadata_creator.create_execution_document(self.executor_name,
+                                                          description,
+                                                          method_parameters,
+                                                          )
 
     def __parameters_treatment(self, method_parameters: dict) -> dict:
         for name, value in method_parameters.items():

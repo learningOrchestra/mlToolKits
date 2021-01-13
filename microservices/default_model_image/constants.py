@@ -27,6 +27,7 @@ METADATA_DOCUMENT_ID = 0
 MESSAGE_RESULT = "result"
 
 FUNCTION_PARAMETERS_NAME = "classParameters"
+EXCEPTION_FIELD_NAME = "exception"
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/model/default/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"

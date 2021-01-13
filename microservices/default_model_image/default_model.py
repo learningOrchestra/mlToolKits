@@ -29,31 +29,40 @@ class DefaultModel:
     def create(self,
                description: str,
                class_parameters: dict) -> None:
-        self.__metadata_creator.create_model_document(self.model_name,
-                                                      description,
-                                                      class_parameters)
 
-        self.__thread_pool.submit(self.__pipeline, class_parameters)
+        self.__thread_pool.submit(self.__pipeline,
+                                  class_parameters,
+                                  description)
 
     def update(self,
                description: str,
                class_parameters: dict) -> None:
         self.__metadata_creator.update_finished_flag(self.model_name, False)
 
+        self.__thread_pool.submit(self.__pipeline,
+                                  class_parameters,
+                                  description)
+
+    def __pipeline(self,
+                   class_parameters: dict, description: str) -> None:
+        try:
+            module = importlib.import_module(self.module_path)
+            module_function = getattr(module, self.class_name)
+            function_instance = module_function(**class_parameters)
+            self.__save(function_instance)
+            self.__metadata_creator.update_finished_flag(self.model_name,
+                                                         flag=True)
+        except Exception as exception:
+            self.__metadata_creator.create_model_document(self.model_name,
+                                                          description,
+                                                          class_parameters,
+                                                          exception.args[
+                                                              FIRST_ARGUMENT])
+            return
+
         self.__metadata_creator.create_model_document(self.model_name,
                                                       description,
                                                       class_parameters)
-
-        self.__thread_pool.submit(self.__pipeline,
-                                  class_parameters)
-
-    def __pipeline(self,
-                   class_parameters: dict) -> None:
-        module = importlib.import_module(self.module_path)
-        module_function = getattr(module, self.class_name)
-        function_instance = module_function(**class_parameters)
-        self.__save(function_instance)
-        self.__metadata_creator.update_finished_flag(self.model_name, flag=True)
 
     def __save(self, model_instance: object) -> None:
         model_output = open(self.__get_binary_path(),

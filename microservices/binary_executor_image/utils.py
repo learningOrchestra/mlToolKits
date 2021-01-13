@@ -100,7 +100,8 @@ class Metadata:
 
     def create_execution_document(self, executor_name: str,
                                   description: str,
-                                  method_parameters: dict) -> None:
+                                  method_parameters: dict,
+                                  exception: str = "") -> None:
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True
@@ -113,6 +114,7 @@ class Metadata:
         highest_id = highest_id_document[ID_FIELD_NAME]
 
         model_document = {
+            EXCEPTION_FIELD_NAME: exception,
             DESCRIPTION_FIELD_NAME: description,
             METHOD_PARAMETERS_FIELD_NAME: method_parameters,
             ID_FIELD_NAME: highest_id + 1

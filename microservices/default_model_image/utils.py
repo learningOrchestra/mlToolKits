@@ -82,7 +82,7 @@ class Metadata:
                                              metadata_file_query)
 
     def create_model_document(self, model_name: str, description: str,
-                              class_parameters: dict) -> None:
+                              class_parameters: dict, exception: str = "") -> None:
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True
@@ -93,9 +93,9 @@ class Metadata:
             model_name, document_id_query, highest_id_sort)
 
         highest_id = highest_id_document[ID_FIELD_NAME]
-        print(highest_id, flush=True)
 
         model_document = {
+            EXCEPTION_FIELD_NAME: exception,
             DESCRIPTION_FIELD_NAME: description,
             CLASS_PARAMETERS_FIELD_NAME: class_parameters,
             ID_FIELD_NAME: highest_id + 1
