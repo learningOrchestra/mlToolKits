@@ -125,8 +125,7 @@ def delete_default_model(model_name: str) -> jsonify:
         )
     except Exception as nonexistent_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: nonexistent_model_filename.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(nonexistent_model_filename)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
