@@ -101,7 +101,7 @@ class Metadata:
     def create_execution_document(self, executor_name: str,
                                   description: str,
                                   method_parameters: dict,
-                                  exception: str = "") -> None:
+                                  exception: str = None) -> None:
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True

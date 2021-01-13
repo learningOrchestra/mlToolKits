@@ -56,8 +56,7 @@ class DefaultModel:
             self.__metadata_creator.create_model_document(self.model_name,
                                                           description,
                                                           class_parameters,
-                                                          exception.args[
-                                                              FIRST_ARGUMENT])
+                                                          str(exception))
             return
 
         self.__metadata_creator.create_model_document(self.model_name,

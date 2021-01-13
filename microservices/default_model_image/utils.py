@@ -82,7 +82,8 @@ class Metadata:
                                              metadata_file_query)
 
     def create_model_document(self, model_name: str, description: str,
-                              class_parameters: dict, exception: str = "") -> None:
+                              class_parameters: dict,
+                              exception: str = None) -> None:
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True
