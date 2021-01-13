@@ -599,9 +599,9 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/files/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}",
           "host": [
-            "http://databaseapi:5000"
+            "http://defaultmodel:5007"
           ],
           "extra_config": {}
         }

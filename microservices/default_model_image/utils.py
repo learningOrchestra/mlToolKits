@@ -29,6 +29,10 @@ class Database:
         file_collection = self.__database[filename]
         file_collection.update_one(query, new_values_query)
 
+    def delete_file(self, filename: str) -> None:
+        file_collection = self.__database[filename]
+        file_collection.drop()
+
     @staticmethod
     def collection_database_url(
             database_url: str,

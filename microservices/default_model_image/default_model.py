@@ -10,11 +10,12 @@ class DefaultModel:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
 
-    def __init__(self, metadata_creator: Metadata,
+    def __init__(self,
                  database_connector: Database,
                  model_name: str,
-                 module_path: str,
-                 class_name: str):
+                 metadata_creator: Metadata = None,
+                 module_path: str = None,
+                 class_name: str = None):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
@@ -43,6 +44,15 @@ class DefaultModel:
                                   class_parameters,
                                   description)
 
+    def delete(self):
+
+        self.__thread_pool.submit(self.__database_connector.delete_file,
+                                  self.model_name)
+        self.__thread_pool.submit(os.remove, self.__get_binary_path())
+
+    def __get_binary_path(self):
+        return os.environ[MODELS_VOLUME_PATH] + "/" + self.model_name
+
     def __pipeline(self,
                    class_parameters: dict, description: str) -> None:
         try:
@@ -68,6 +78,3 @@ class DefaultModel:
                             self.__WRITE_MODEL_OBJECT_OPTION)
         pickle.dump(model_instance, model_output)
         model_output.close()
-
-    def __get_binary_path(self):
-        return os.environ[MODELS_VOLUME_PATH] + "/" + self.model_name

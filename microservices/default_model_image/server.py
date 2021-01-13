@@ -40,7 +40,7 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database, model_name,
+    default_model = DefaultModel(database, model_name, metadata_creator,
                                  module_path, class_name)
 
     default_model.create(
@@ -88,7 +88,7 @@ def update_default_model(model_name: str) -> jsonify:
     module_path, class_name = data.get_module_and_class_from_a_model(model_name)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database, model_name,
+    default_model = DefaultModel(database, model_name, metadata_creator,
                                  module_path, class_name)
 
     default_model.update(
@@ -102,6 +102,36 @@ def update_default_model(model_name: str) -> jsonify:
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
+
+
+@app.route("/defaultModel/<model_name>", methods=["DELETE"])
+def delete_default_model(model_name: str) -> jsonify:
+    database_url = os.environ[DATABASE_URL]
+    database_replica_set = os.environ[DATABASE_REPLICA_SET]
+    database_name = os.environ[DATABASE_NAME]
+
+    database = Database(
+        database_url,
+        database_replica_set,
+        int(os.environ[DATABASE_PORT]),
+        database_name,
+    )
+
+    request_validator = UserRequest(database)
+
+    try:
+        request_validator.existent_filename_validator(
+            model_name
+        )
+    except Exception as nonexistent_model_filename:
+        return (
+            jsonify({MESSAGE_RESULT: nonexistent_model_filename.args[
+                FIRST_ARGUMENT]}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    default_model = DefaultModel(database, model_name)
+    default_model.delete()
 
 
 def analyse_post_request_errors(request_validator: UserRequest,
