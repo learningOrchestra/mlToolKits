@@ -154,7 +154,6 @@ class UserRequest:
 
         class_members = getmembers(module_class)
         class_methods = [method[FIRST_ARGUMENT] for method in class_members]
-        print(class_methods, flush=True)
 
         if method_name not in class_methods:
             raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)

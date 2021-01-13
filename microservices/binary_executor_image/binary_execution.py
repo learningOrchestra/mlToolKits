@@ -105,7 +105,11 @@ class Execution:
         return model_method(**self.__parameters_treatment(parameters))
 
     def __save(self, model_instance: object) -> None:
-        model_output = open(self.__get_write_binary_path(),
+        model_output_path = self.__get_write_binary_path()
+        if not os.path.exists(os.path.dirname(model_output_path)):
+            os.makedirs(os.path.dirname(model_output_path))
+
+        model_output = open(model_output_path,
                             self.__WRITE_MODEL_OBJECT_OPTION)
         pickle.dump(model_instance, model_output)
         model_output.close()
