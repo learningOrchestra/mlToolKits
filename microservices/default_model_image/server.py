@@ -104,8 +104,8 @@ def update_default_model(model_name: str) -> jsonify:
     )
 
 
-@app.route("/defaultModel/<model_name>", methods=["DELETE"])
-def delete_default_model(model_name: str) -> jsonify:
+@app.route("/defaultModel/<filename>", methods=["DELETE"])
+def delete_default_model(filename: str) -> jsonify:
     database_url = os.environ[DATABASE_URL]
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
@@ -121,7 +121,7 @@ def delete_default_model(model_name: str) -> jsonify:
 
     try:
         request_validator.existent_filename_validator(
-            model_name
+            filename
         )
     except Exception as nonexistent_model_filename:
         return (
@@ -129,7 +129,7 @@ def delete_default_model(model_name: str) -> jsonify:
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    default_model = DefaultModel(database, model_name)
+    default_model = DefaultModel(database, filename)
     default_model.delete()
 
 
