@@ -13,12 +13,14 @@ class Execution:
     __DATASET_KEY_CHARACTER = "$"
     __REMOVE_KEY_CHARACTER = ""
 
-    def __init__(self, metadata_creator: Metadata,
+    def __init__(self,
                  database_connector: Database,
                  executor_name: str,
-                 parent_name: str,
-                 class_method: str,
-                 service_type: str):
+                 service_type: str,
+                 parent_name: str = None,
+                 metadata_creator: Metadata = None,
+                 class_method: str = None
+                 ):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
@@ -49,6 +51,12 @@ class Execution:
                                   module_path,
                                   method_parameters,
                                   description)
+
+    def delete(self):
+
+        self.__thread_pool.submit(self.__database_connector.delete_file,
+                                  self.executor_name)
+        self.__thread_pool.submit(os.remove, self.__get_write_binary_path())
 
     def __read_a_model_instance(self) -> object:
         model_binary_instance = open(self.__get_read_binary_path(),

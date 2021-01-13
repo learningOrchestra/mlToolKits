@@ -56,8 +56,8 @@ def create_default_model() -> jsonify:
     )
 
 
-@app.route("/defaultModel/<model_name>", methods=["PATCH"])
-def update_default_model(model_name: str) -> jsonify:
+@app.route("/defaultModel/<filename>", methods=["PATCH"])
+def update_default_model(filename: str) -> jsonify:
     database_url = os.environ[DATABASE_URL]
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
@@ -79,16 +79,16 @@ def update_default_model(model_name: str) -> jsonify:
     request_errors = analyse_patch_request_errors(
         request_validator,
         data,
-        model_name,
+        filename,
         function_parameters)
 
     if request_errors is not None:
         return request_errors
 
-    module_path, class_name = data.get_module_and_class_from_a_model(model_name)
+    module_path, class_name = data.get_module_and_class_from_a_model(filename)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(database, model_name, metadata_creator,
+    default_model = DefaultModel(database, filename, metadata_creator,
                                  module_path, class_name)
 
     default_model.update(
@@ -98,7 +98,7 @@ def update_default_model(model_name: str) -> jsonify:
         jsonify({
             MESSAGE_RESULT:
                 MICROSERVICE_URI_GET +
-                model_name +
+                filename +
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )

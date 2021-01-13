@@ -43,12 +43,15 @@ def create_execution() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    train_model = Execution(metadata_creator,
-                            database,
-                            filename,
-                            parent_name,
-                            class_method,
-                            service_type)
+    train_model = Execution(
+        database,
+        filename,
+        service_type,
+        parent_name,
+        metadata_creator,
+        class_method
+    )
+
     data = Data(database)
     module_path, class_name = data.get_module_and_class_from_a_model(
         parent_name)
@@ -93,10 +96,13 @@ def update_execution(filename: str) -> jsonify:
     data = Data(database)
     module_path, function = data.get_module_and_class_from_a_model(
         filename)
-    model_name = data.get_model_name_from_a_train(filename)
+    model_name = data.get_model_name_from_a_child(filename)
+    method_name = data.get_class_method_from_a_executor_name(filename)
+
     metadata_creator = Metadata(database)
-    default_model = Execution(metadata_creator, database, filename,
-                              model_name, method_parameters, service_type)
+    default_model = Execution(database, filename, service_type, model_name,
+                              metadata_creator,
+                              method_name)
 
     default_model.update(
         module_path, method_parameters, description)
@@ -109,6 +115,36 @@ def update_execution(filename: str) -> jsonify:
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
+
+
+@app.route("/defaultModel/<filename>", methods=["DELETE"])
+def delete_default_model(filename: str) -> jsonify:
+    database_url = os.environ[DATABASE_URL]
+    database_replica_set = os.environ[DATABASE_REPLICA_SET]
+    database_name = os.environ[DATABASE_NAME]
+    service_type = request.args.get("type")
+
+    database = Database(
+        database_url,
+        database_replica_set,
+        int(os.environ[DATABASE_PORT]),
+        database_name,
+    )
+
+    request_validator = UserRequest(database)
+
+    try:
+        request_validator.existent_filename_validator(
+            filename
+        )
+    except Exception as nonexistent_model_filename:
+        return (
+            jsonify({MESSAGE_RESULT: str(nonexistent_model_filename)}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    default_model = Execution(database, filename, service_type)
+    default_model.delete()
 
 
 def analyse_post_request_errors(request_validator: UserRequest,

@@ -40,6 +40,10 @@ class Database:
         file_collection = self.__database[filename]
         file_collection.update_one(query, new_values_query)
 
+    def delete_file(self, filename: str) -> None:
+        file_collection = self.__database[filename]
+        file_collection.drop()
+
     @staticmethod
     def collection_database_url(
             database_url: str,
@@ -213,7 +217,7 @@ class Data:
 
         return train_metadata[METHOD_FIELD_NAME]
 
-    def get_model_name_from_a_train(
+    def get_model_name_from_a_child(
             self, train_name: str) -> str:
         train_metadata = self.__database.find_one(
             train_name,
