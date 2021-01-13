@@ -85,7 +85,8 @@ class Execution:
                                                           )
 
     def __parameters_treatment(self, method_parameters: dict) -> dict:
-        for name, value in method_parameters.items():
+        parameters = method_parameters.copy()
+        for name, value in parameters.items():
             if self.__DATASET_KEY_CHARACTER in value:
                 dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
                                              self.__REMOVE_KEY_CHARACTER)
@@ -93,9 +94,9 @@ class Execution:
                     dataset_name)
 
                 dataset_dataframe = pd.DataFrame(dataset)
-                method_parameters[name] = dataset_dataframe.values
+                parameters[name] = dataset_dataframe.values
 
-        return method_parameters
+        return parameters
 
     def __execute_a_object_method(self, class_instance: object, method: str,
                                   parameters: dict) -> object:
