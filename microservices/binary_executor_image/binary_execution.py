@@ -34,7 +34,6 @@ class Execution:
                 method_parameters: dict,
                 description: str) -> None:
 
-
         self.__pipeline(module_path, method_parameters, description)
         '''self.__thread_pool.submit(self.__pipeline,
                                   module_path,
