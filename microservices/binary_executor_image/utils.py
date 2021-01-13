@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-from inspect import signature
+from inspect import signature, getmembers
 import importlib
 from constants import *
 
@@ -151,9 +151,12 @@ class UserRequest:
                                      method_name: str) -> None:
         module = importlib.import_module(tool_name)
         module_class = getattr(module, class_name)
-        print(list(module_class.__dict__.keys()), flush=True)
-        print(list(module_class.__dict__), flush=True)
-        if method_name not in list(module_class.__dict__.keys()):
+
+        class_members = getmembers(module_class)
+        class_methods = [method[FIRST_ARGUMENT] for method in class_members]
+        print(class_methods, flush=True)
+
+        if method_name not in class_methods:
             raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
 
     def valid_method_parameters_validator(self, tool_name: str,
