@@ -151,6 +151,8 @@ class UserRequest:
                                      method_name: str) -> None:
         module = importlib.import_module(tool_name)
         module_class = getattr(module, class_name)
+        print(list(module_class.__dict__.keys()), flush=True)
+        print(list(module_class.__dict__), flush=True)
         if method_name not in list(module_class.__dict__.keys()):
             raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
 
