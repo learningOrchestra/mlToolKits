@@ -122,7 +122,7 @@ def delete_default_model(filename: str) -> jsonify:
     database_url = os.environ[DATABASE_URL]
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
-    service_type = request.args.get("type")
+    service_type = request.args.get(TYPE_FIELD_NAME)
 
     database = Database(
         database_url,
