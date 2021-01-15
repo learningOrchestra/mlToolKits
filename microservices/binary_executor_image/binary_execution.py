@@ -28,13 +28,16 @@ class Execution:
         self.parent_name = parent_name
         self.class_method = class_method
         self.service_type = service_type
-        self.__metadata_creator.create_file(parent_name, executor_name,
-                                            class_method, service_type)
 
-    def execute(self,
-                module_path: str,
-                method_parameters: dict,
-                description: str) -> None:
+    def create(self,
+               module_path: str,
+               method_parameters: dict,
+               description: str) -> None:
+
+        self.__metadata_creator.create_file(self.parent_name,
+                                            self.executor_name,
+                                            self.class_method,
+                                            self.service_type)
 
         self.__thread_pool.submit(self.__pipeline,
                                   module_path,

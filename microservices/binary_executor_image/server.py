@@ -55,7 +55,7 @@ def create_execution() -> jsonify:
     data = Data(database)
     module_path, class_name = data.get_module_and_class_from_a_model(
         parent_name)
-    train_model.execute(
+    train_model.create(
         module_path, method_parameters, description)
 
     return (

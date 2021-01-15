@@ -24,13 +24,11 @@ class DefaultModel:
         self.module_path = module_path
         self.class_name = class_name
 
-        self.__metadata_creator.create_file(model_name, module_path,
-                                            class_name)
-
     def create(self,
                description: str,
                class_parameters: dict) -> None:
-
+        self.__metadata_creator.create_file(self.model_name, self.module_path,
+                                            self.class_name)
         self.__thread_pool.submit(self.__pipeline,
                                   class_parameters,
                                   description)
