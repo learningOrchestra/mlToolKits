@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-from inspect import signature
+from inspect import signature, getmembers
 import importlib
 from constants import *
 
@@ -16,6 +16,17 @@ class Database:
     def find_one(self, filename: str, query: dict, sort: list = []):
         file_collection = self.__database[filename]
         return file_collection.find_one(query, sort=sort)
+
+    def get_entire_collection(self, filename: str) -> list:
+        database_documents_query = {
+            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+
+        database_projection_query = {
+            ID_FIELD_NAME: False
+        }
+        return list(self.__database[filename].find(
+            filter=database_documents_query,
+            projection=database_projection_query))
 
     def insert_one_in_file(self, filename: str, json_object: dict) -> None:
         file_collection = self.__database[filename]
@@ -61,22 +72,28 @@ class Metadata:
         self.__metadata_document = {
             "timeCreated": self.__now_time,
             ID_FIELD_NAME: METADATA_DOCUMENT_ID,
-            "type": "defaultModel",
             FINISHED_FIELD_NAME: False,
         }
 
-    def create_file(self, model_name: str,
-                    module_path: str, class_name: str) -> dict:
+    def create_file(self, parent_name: str,
+                    filename: str,
+                    class_method: str,
+                    service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata[MODEL_FIELD_NAME] = model_name
-        metadata[MODULE_PATH_FIELD_NAME] = module_path
-        metadata[CLASS_FIELD_NAME] = class_name
+        metadata[PARENT_NAME_FIELD_NAME] = parent_name
+        metadata[NAME_FIELD_NAME] = filename
+        metadata[METHOD_FIELD_NAME] = class_method
+        metadata[TYPE_FIELD_NAME] = service_type
 
         self.__database_connector.insert_one_in_file(
-            model_name,
+            filename,
             metadata)
 
         return metadata
+
+    def read_metadata(self, parent_name: str) -> object:
+        metadata_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        return self.__database_connector.find_one(parent_name, metadata_query)
 
     def update_finished_flag(self, filename: str, flag: bool) -> None:
         flag_true_query = {FINISHED_FIELD_NAME: flag}
@@ -85,9 +102,10 @@ class Metadata:
                                              flag_true_query,
                                              metadata_file_query)
 
-    def create_model_document(self, model_name: str, description: str,
-                              class_parameters: dict,
-                              exception: str = None) -> None:
+    def create_execution_document(self, executor_name: str,
+                                  description: str,
+                                  method_parameters: dict,
+                                  exception: str = None) -> None:
         document_id_query = {
             ID_FIELD_NAME: {
                 "$exists": True
@@ -95,27 +113,27 @@ class Metadata:
         }
         highest_id_sort = [(ID_FIELD_NAME, -1)]
         highest_id_document = self.__database_connector.find_one(
-            model_name, document_id_query, highest_id_sort)
+            executor_name, document_id_query, highest_id_sort)
 
         highest_id = highest_id_document[ID_FIELD_NAME]
 
         model_document = {
             EXCEPTION_FIELD_NAME: exception,
             DESCRIPTION_FIELD_NAME: description,
-            CLASS_PARAMETERS_FIELD_NAME: class_parameters,
+            METHOD_PARAMETERS_FIELD_NAME: method_parameters,
             ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
-            model_name,
+            executor_name,
             model_document)
 
 
 class UserRequest:
-    __MESSAGE_DUPLICATE_FILE = "duplicated model name"
+    __MESSAGE_DUPLICATE_FILE = "duplicated name"
     __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
-    __MESSAGE_INVALID_CLASS_NAME = "invalid class name"
-    __MESSAGE_INVALID_CLASS_PARAMETER = "invalid class parameter"
-    __MESSAGE_NONEXISTENT_FILE = "model name doesn't exist"
+    __MESSAGE_INVALID_METHOD_NAME = "invalid method name"
+    __MESSAGE_INVALID_CLASS_METHOD_PARAMETER = "invalid class method parameter"
+    __MESSAGE_NONEXISTENT_FILE = "parentName doesn't exist"
 
     def __init__(self, database_connector: Database):
         self.__database = database_connector
@@ -132,30 +150,30 @@ class UserRequest:
         if filename not in filenames:
             raise Exception(self.__MESSAGE_NONEXISTENT_FILE)
 
-    def available_module_path_validator(self, package: str) -> None:
-        try:
-            importlib.import_module(package)
+    def valid_method_class_validator(self, tool_name: str,
+                                     class_name: str,
+                                     method_name: str) -> None:
+        module = importlib.import_module(tool_name)
+        module_class = getattr(module, class_name)
 
-        except Exception:
-            raise Exception(self.__MESSAGE_INVALID_MODULE_PATH_NAME)
+        class_members = getmembers(module_class)
+        class_methods = [method[FIRST_ARGUMENT] for method in class_members]
 
-    def valid_class_validator(self, tool_name: str, function_name: str) -> None:
-        try:
-            module = importlib.import_module(tool_name)
-            getattr(module, function_name)
+        if method_name not in class_methods:
+            raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
 
-        except Exception:
-            raise Exception(self.__MESSAGE_INVALID_CLASS_NAME)
+    def valid_method_parameters_validator(self, tool_name: str,
+                                          class_name: str,
+                                          class_method: str,
+                                          method_parameters: dict) -> None:
+        module = importlib.import_module(tool_name)
+        module_class = getattr(module, class_name)
+        class_method_reference = getattr(module_class, class_method)
+        valid_function_parameters = signature(class_method_reference)
 
-    def valid_class_parameters_validator(self, tool: str, function: str,
-                                         function_parameters: dict) -> None:
-        module = importlib.import_module(tool)
-        module_function = getattr(module, function)
-        valid_function_parameters = signature(module_function.__init__)
-
-        for parameter, value in function_parameters.items():
+        for parameter, value in method_parameters.items():
             if parameter not in valid_function_parameters.parameters:
-                raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
+                raise Exception(self.__MESSAGE_INVALID_CLASS_METHOD_PARAMETER)
 
 
 class Data:
@@ -163,7 +181,8 @@ class Data:
         self.__database = database
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
 
-    def get_module_and_class_from_a_model(self, model_name: str) -> tuple:
+    def get_module_and_class_from_a_model(self,
+                                          model_name: str) -> tuple:
         model_metadata = self.__database.find_one(
             model_name,
             self.__METADATA_QUERY)
@@ -172,3 +191,36 @@ class Data:
         class_name = model_metadata[CLASS_FIELD_NAME]
 
         return module_path, class_name
+
+    def get_module_and_class_from_a_executor_name(self,
+                                                  train_name: str) -> tuple:
+        train_metadata = self.__database.find_one(
+            train_name,
+            self.__METADATA_QUERY)
+
+        model_name = train_metadata[PARENT_NAME_FIELD_NAME]
+
+        model_metadata = self.__database.find_one(
+            model_name,
+            self.__METADATA_QUERY)
+
+        module_path = model_metadata[MODULE_PATH_FIELD_NAME]
+        class_name = model_metadata[CLASS_FIELD_NAME]
+
+        return module_path, class_name
+
+    def get_class_method_from_a_executor_name(
+            self, train_name: str) -> str:
+        train_metadata = self.__database.find_one(
+            train_name,
+            self.__METADATA_QUERY)
+
+        return train_metadata[METHOD_FIELD_NAME]
+
+    def get_model_name_from_a_child(
+            self, train_name: str) -> str:
+        train_metadata = self.__database.find_one(
+            train_name,
+            self.__METADATA_QUERY)
+
+        return train_metadata[PARENT_NAME_FIELD_NAME]

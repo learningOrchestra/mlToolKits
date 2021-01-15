@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from default_model import DefaultModel
-from utils import Database, UserRequest, Metadata
+from utils import *
 from typing import Union
 from constants import *
 
@@ -40,10 +40,11 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database)
+    default_model = DefaultModel(database, model_name, metadata_creator,
+                                 module_path, class_name)
 
     default_model.create(
-        model_name, module_path, class_name, description, class_parameters)
+        description, class_parameters)
 
     return (
         jsonify({
@@ -55,8 +56,8 @@ def create_default_model() -> jsonify:
     )
 
 
-@app.route("/defaultModel/<model_name>", methods=["PATCH"])
-def update_default_model(model_name: str) -> jsonify:
+@app.route("/defaultModel/<filename>", methods=["PATCH"])
+def update_default_model(filename: str) -> jsonify:
     database_url = os.environ[DATABASE_URL]
     database_replica_set = os.environ[DATABASE_REPLICA_SET]
     database_name = os.environ[DATABASE_NAME]
@@ -73,30 +74,68 @@ def update_default_model(model_name: str) -> jsonify:
 
     request_validator = UserRequest(database)
 
+    data = Data(database)
+
     request_errors = analyse_patch_request_errors(
         request_validator,
-        database,
-        model_name,
+        data,
+        filename,
         function_parameters)
 
     if request_errors is not None:
         return request_errors
 
-    tool, function = get_model_tool_and_function(database, model_name)
+    module_path, class_name = data.get_module_and_class_from_a_model(filename)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(metadata_creator, database)
+    default_model = DefaultModel(database, filename, metadata_creator,
+                                 module_path, class_name)
 
     default_model.update(
-        model_name, tool, function, description, function_parameters)
+        description, function_parameters)
 
     return (
         jsonify({
             MESSAGE_RESULT:
                 MICROSERVICE_URI_GET +
-                model_name +
+                filename +
                 MICROSERVICE_URI_GET_PARAMS}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
+    )
+
+
+@app.route("/defaultModel/<filename>", methods=["DELETE"])
+def delete_default_model(filename: str) -> jsonify:
+    database_url = os.environ[DATABASE_URL]
+    database_replica_set = os.environ[DATABASE_REPLICA_SET]
+    database_name = os.environ[DATABASE_NAME]
+
+    database = Database(
+        database_url,
+        database_replica_set,
+        int(os.environ[DATABASE_PORT]),
+        database_name,
+    )
+
+    request_validator = UserRequest(database)
+
+    try:
+        request_validator.existent_filename_validator(
+            filename
+        )
+    except Exception as nonexistent_model_filename:
+        return (
+            jsonify({MESSAGE_RESULT: str(nonexistent_model_filename)}),
+            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+    default_model = DefaultModel(database, filename)
+    default_model.delete()
+
+    return (
+        jsonify({
+            MESSAGE_RESULT: DELETED_MESSAGE}),
+        HTTP_STATUS_CODE_SUCCESS,
     )
 
 
@@ -112,8 +151,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as duplicated_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: duplicated_model_filename.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(duplicated_model_filename)}),
             HTTP_STATUS_CODE_CONFLICT,
         )
 
@@ -123,8 +161,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_tool_name:
         return (
-            jsonify({MESSAGE_RESULT: invalid_tool_name.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_tool_name)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -135,8 +172,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_name:
         return (
-            jsonify({MESSAGE_RESULT: invalid_function_name.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_function_name)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -148,8 +184,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_parameters:
         return (
-            jsonify({MESSAGE_RESULT: invalid_function_parameters.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_function_parameters)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
@@ -157,7 +192,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
 
 def analyse_patch_request_errors(request_validator: UserRequest,
-                                 database: Database,
+                                 data: Data,
                                  model_name: str,
                                  class_parameters: dict) \
         -> Union[tuple, None]:
@@ -167,12 +202,12 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as nonexistent_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: nonexistent_model_filename.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(nonexistent_model_filename)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    module_path, class_name = get_model_tool_and_function(database, model_name)
+    module_path, class_name = data.get_module_and_class_from_a_model(
+        model_name)
     try:
         request_validator.valid_class_parameters_validator(
             module_path,
@@ -181,24 +216,11 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_parameters:
         return (
-            jsonify({MESSAGE_RESULT: invalid_function_parameters.args[
-                FIRST_ARGUMENT]}),
+            jsonify({MESSAGE_RESULT: str(invalid_function_parameters)}),
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     return None
-
-
-def get_model_tool_and_function(database: Database, model_name: str) -> tuple:
-    metadata_document_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-    model_metadata = database.find_one(
-        model_name,
-        metadata_document_query)
-
-    module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-    class_name = model_metadata[CLASS_FIELD_NAME]
-
-    return module_path, class_name
 
 
 if __name__ == "__main__":
