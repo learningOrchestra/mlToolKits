@@ -146,6 +146,12 @@ def delete_default_model(filename: str) -> jsonify:
     default_model = Execution(database, filename, service_type)
     default_model.delete()
 
+    return (
+        jsonify({
+            MESSAGE_RESULT: DELETED_MESSAGE}),
+        HTTP_STATUS_CODE_SUCCESS,
+    )
+
 
 def analyse_post_request_errors(request_validator: UserRequest,
                                 database: Database,

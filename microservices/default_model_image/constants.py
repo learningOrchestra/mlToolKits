@@ -26,6 +26,8 @@ METADATA_DOCUMENT_ID = 0
 
 MESSAGE_RESULT = "result"
 
+DELETED_MESSAGE = "deleted file"
+
 FUNCTION_PARAMETERS_NAME = "classParameters"
 EXCEPTION_FIELD_NAME = "exception"
 
