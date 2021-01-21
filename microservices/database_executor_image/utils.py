@@ -99,7 +99,7 @@ class Metadata:
         metadata[CLASS_FIELD_NAME] = class_name
         metadata[CLASS_PARAMETERS_FIELD_NAME] = class_parameters
         metadata[TYPE_PARAM_NAME] = service_type
-        metadata[EXECUTIONS_FIELD_NAME] = EXECUTIONS_FIELD_NAME
+        metadata[EXECUTIONS_FIELD_NAME] = []
 
         self.__database_connector.insert_one_in_file(
             filename,
