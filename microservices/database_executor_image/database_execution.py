@@ -50,10 +50,6 @@ class VolumeStorage(ExecutionStorage):
     def get_image_path(filename: str) -> str:
         return os.environ[IMAGES_VOLUME_PATH] + "/" + filename
 
-    @staticmethod
-    def get_images_path() -> str:
-        return os.environ[IMAGES_VOLUME_PATH] + "/"
-
 
 class Execution:
     __WRITE_MODEL_OBJECT_OPTION = "wb"

@@ -143,12 +143,6 @@ def update_execution(filename: str) -> jsonify:
     )
 
 
-@app.route(MICROSERVICE_URI_PATH, methods=["GET"])
-def get_images():
-    images = os.listdir(VolumeStorage.get_images_path())
-    return jsonify({MESSAGE_RESULT: images}), HTTP_STATUS_CODE_SUCCESS
-
-
 @app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["GET"])
 def get_image(filename):
     database = Database(
