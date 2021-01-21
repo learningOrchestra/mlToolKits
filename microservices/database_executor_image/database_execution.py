@@ -35,9 +35,8 @@ class VolumeStorage(ExecutionStorage):
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
-    def save(self, instance: pd.Dataframe, filename: str) -> None:
-        output_path = self.__get_image_path(filename)
-
+    def save(self, instance: pd.DataFrame, filename: str) -> None:
+        output_path = self.get_image_path(filename)
         sns_plot = sns.scatterplot(data=instance)
         sns_plot.get_figure().savefig(output_path)
 
@@ -52,7 +51,7 @@ class VolumeStorage(ExecutionStorage):
         return os.environ[IMAGES_VOLUME_PATH] + "/" + filename
 
     @staticmethod
-    def get_images_path() ->str:
+    def get_images_path() -> str:
         return os.environ[IMAGES_VOLUME_PATH] + "/"
 
 
