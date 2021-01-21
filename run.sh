@@ -87,7 +87,7 @@ echo "--------------------------------------------------------------------"
 docker push $histogram_repository
 
 
-database_executor_repository=127.0.0.1:5050/explore
+database_executor_repository=127.0.0.1:5050/database_executor
 
 echo "--------------------------------------------------------------------"
 echo "Pushing database executor microservice image..."
