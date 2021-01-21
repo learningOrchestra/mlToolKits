@@ -224,20 +224,10 @@ def analyse_post_request_errors(request_validator: UserRequest,
         request_validator.not_duplicated_filename_validator(
             filename
         )
-    except Exception as duplicated_train_filename:
+    except Exception as duplicated_filename:
         return (
-            jsonify({MESSAGE_RESULT: str(duplicated_train_filename)}),
+            jsonify({MESSAGE_RESULT: str(duplicated_filename)}),
             HTTP_STATUS_CODE_CONFLICT,
-        )
-
-    try:
-        request_validator.existent_filename_validator(
-            filename
-        )
-    except Exception as invalid_model_name:
-        return (
-            jsonify({MESSAGE_RESULT: str(invalid_model_name)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
