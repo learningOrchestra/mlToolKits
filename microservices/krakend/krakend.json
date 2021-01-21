@@ -521,6 +521,177 @@
           "extra_config": {}
         }
       ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/databaseExecutor?type=explore&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/databaseExecutor?type=explore&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/databaseExecutor?type=transform&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/databaseExecutor?type=transform&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform&tool=scikitLearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
     }
   ],
   "extra_config": {

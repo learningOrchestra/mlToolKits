@@ -87,20 +87,12 @@ echo "--------------------------------------------------------------------"
 docker push $histogram_repository
 
 
-tsne_repository=127.0.0.1:5050/tsne
+database_executor_repository=127.0.0.1:5050/explore
 
 echo "--------------------------------------------------------------------"
-echo "Pushing tsne microservice image..."
+echo "Pushing database executor microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $tsne_repository
-
-
-pca_repository=127.0.0.1:5050/pca
-
-echo "--------------------------------------------------------------------"
-echo "Pushing pca microservice image..."
-echo "--------------------------------------------------------------------"
-docker push $pca_repository
+docker push $database_executor_repository
 
 
 echo "--------------------------------------------------------------------"
