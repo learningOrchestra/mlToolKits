@@ -190,10 +190,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/LaChapeliere"><img src="https://avatars2.githubusercontent.com/u/7062546?v=4" width="100px;" alt=""/><br /><sub><b>LaChapeliere</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=LaChapeliere" title="Documentation">📖</a></td>
     <td align="center"><a href="https://sudipto.ghosh.pro"><img src="https://avatars3.githubusercontent.com/u/11232940?v=4" width="100px;" alt=""/><br /><sub><b>Sudipto Ghosh</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=sudiptog81" title="Code">💻</a></td>
   </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/Matheus-Gr"><img src="https://avatars3.githubusercontent.com/u/54548097?v=4" width="100px;" alt=""/><br /><sub><b>Matheus Gonçalves RIbeiro</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Code">💻</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Tests">⚠️</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=Matheus-Gr" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/otaviomapa"><img src="https://avatars1.githubusercontent.com/u/31167827?v=4" width="100px;" alt=""/><br /><sub><b>otavio</b></sub></a><br /><a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Code">💻</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Tests">⚠️</a> <a href="https://github.com/learningOrchestra/learningOrchestra/commits?author=otaviomapa" title="Documentation">📖</a></td>
-  </tr>
 </table>
 
 <!-- markdownlint-enable -->
