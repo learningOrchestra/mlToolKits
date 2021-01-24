@@ -156,8 +156,7 @@ class Execution:
                 dataset = self.__database_connector.get_entire_collection(
                     dataset_name)
 
-                dataset_dataframe = pd.DataFrame(dataset)
-                parameters[name] = dataset_dataframe.values
+                parameters[name] = pd.DataFrame(dataset)
 
         return parameters
 
