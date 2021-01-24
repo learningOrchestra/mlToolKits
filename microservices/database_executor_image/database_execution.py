@@ -156,7 +156,7 @@ class Execution:
                 dataset = self.__database_connector.get_entire_collection(
                     dataset_name)
 
-                parameters[name] = pd.DataFrame(dataset)
+                parameters[name] = pd.DataFrame(dataset).dropna()
                 print(parameters[name], flush=True)
 
         return parameters
