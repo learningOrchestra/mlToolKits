@@ -22,6 +22,7 @@ class DatabaseStorage(ExecutionStorage):
     def save(self, instance: pd.DataFrame, filename: str) -> None:
         instance_dict = instance.to_dict("records")
         self.__database_connector.delete_data_in_file(filename)
+        print(instance, flush=True)
         self.__database_connector.insert_many_in_file(filename,
                                                       instance_dict)
 
