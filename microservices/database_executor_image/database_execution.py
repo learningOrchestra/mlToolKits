@@ -157,6 +157,7 @@ class Execution:
                     dataset_name)
 
                 parameters[name] = pd.DataFrame(dataset)
+                print(parameters[name], flush=True)
 
         return parameters
 
