@@ -47,8 +47,9 @@ class Database:
         return self.__database.list_collection_names()
 
     def update_one(self, filename: str, new_value: dict, query: dict) -> None:
+        new_values_query = {"$set": new_value}
         file_collection = self.__database[filename]
-        file_collection.update_one(query, new_value)
+        file_collection.update_one(query, new_values_query)
 
     def delete_file(self, filename: str) -> None:
         file_collection = self.__database[filename]
