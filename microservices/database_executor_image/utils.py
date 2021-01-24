@@ -38,12 +38,10 @@ class Database:
 
     def delete_data_in_file(self, filename: str) -> None:
         file_collection = self.__database[filename]
-        delete_query = {
-            "$ne": {
-                ID_FIELD_NAME: METADATA_DOCUMENT_ID
-            }
-        }
-        file_collection.delete_many(delete_query)
+        database_documents_query = {
+            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+
+        file_collection.delete_many(filter=database_documents_query)
 
     def get_filenames(self) -> list:
         return self.__database.list_collection_names()
