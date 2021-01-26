@@ -1,34 +1,42 @@
-import pandas as pd
 from concurrent.futures import ThreadPoolExecutor
 from utils import *
 from constants import *
 import os
 import seaborn as sns
+import pickle
 
 
 class ExecutionStorage:
     def save(self, instance: pd.DataFrame, filename: str) -> None:
         pass
 
-    def delete(self, filename: str):
+    def delete(self, filename: str) -> None:
         pass
 
 
 class DatabaseStorage(ExecutionStorage):
+    __WRITE_OBJECT_OPTION = "wb"
+
     def __init__(self, database_connector: Database):
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
     def save(self, instance: pd.DataFrame, filename: str) -> None:
-        instance_dict = instance.to_dict("records")
-        self.__database_connector.delete_data_in_file(filename)
-        print(instance, flush=True)
-        self.__database_connector.insert_many_in_file(filename,
-                                                      instance_dict)
+        output_path = self.__get_instance_binary_path(filename)
 
-    def delete(self, filename: str):
+        instance_output = open(output_path,
+                               self.__WRITE_OBJECT_OPTION)
+        pickle.dump(instance, instance_output)
+        instance_output.close()
+
+    def delete(self, filename: str) -> None:
         self.__thread_pool.submit(
             self.__database_connector.delete_file, filename)
+        self.__thread_pool.submit(
+            os.remove, self.__get_instance_binary_path(filename))
+
+    def __get_instance_binary_path(self, filename: str) -> str:
+        return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
 
 
 class VolumeStorage(ExecutionStorage):
@@ -41,7 +49,7 @@ class VolumeStorage(ExecutionStorage):
         sns_plot = sns.scatterplot(data=instance)
         sns_plot.get_figure().savefig(output_path)
 
-    def delete(self, filename: str):
+    def delete(self, filename: str) -> None:
         self.__thread_pool.submit(
             self.__database_connector.delete_file, filename)
         self.__thread_pool.submit(os.remove,
@@ -53,11 +61,6 @@ class VolumeStorage(ExecutionStorage):
 
 
 class Execution:
-    __WRITE_MODEL_OBJECT_OPTION = "wb"
-    __READ_MODEL_OBJECT_OPTION = "rb"
-    __DATASET_KEY_CHARACTER = "$"
-    __REMOVE_KEY_CHARACTER = ""
-
     def __init__(self,
                  database_connector: Database,
                  filename: str,
@@ -147,22 +150,50 @@ class Execution:
                                                           method_parameters
                                                           )
 
-    def __parameters_treatment(self, method_parameters: dict) -> dict:
-        parameters = method_parameters.copy()
-        for name, value in parameters.items():
-            if self.__DATASET_KEY_CHARACTER in value:
-                dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
-                                             self.__REMOVE_KEY_CHARACTER)
-                dataset = self.__database_connector.get_entire_collection(
-                    dataset_name)
-
-                parameters[name] = pd.DataFrame(dataset).dropna()
-                print(parameters[name], flush=True)
-
-        return parameters
-
     def __execute_a_object_method(self, class_instance: object, method: str,
                                   parameters: dict) -> pd.DataFrame:
         model_method = getattr(class_instance, method)
-        method_result = model_method(**self.__parameters_treatment(parameters))
+        method_result = model_method(**parameters)
         return pd.DataFrame(method_result)
+
+    class MethodParameters:
+        __DATASET_KEY_CHARACTER = "$"
+        __DATASET_COLUMN_KEY_CHARACTER = "."
+        __REMOVE_KEY_CHARACTER = ""
+
+        def __init__(self, database: Database):
+            self.__database_connector = database
+
+        def treat_parameters(self, method_parameters: dict) -> dict:
+            parameters = method_parameters.copy()
+
+            for name, value in parameters.items():
+                if self.__is_dataset(value):
+                    dataset_name = self.__get__dataset_name_from_value(
+                        value)
+                    data = Data(self.__database_connector, dataset_name)
+
+                    if self.__has_column_in_dataset_name(value):
+                        column_name = self.__get_column_name_from_value(value)
+                        parameters[name] = data.get_filename_column_content(
+                            column_name)
+                    else:
+                        parameters[name] = data.get_filename_content()
+
+            return parameters
+
+        def __is_dataset(self, value: str) -> bool:
+            return self.__DATASET_KEY_CHARACTER in value
+
+        def __get__dataset_name_from_value(self, value: str) -> str:
+            dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
+                                         self.__REMOVE_KEY_CHARACTER)
+            return dataset_name.split(self.__DATASET_COLUMN_KEY_CHARACTER)[
+                FIRST_ARGUMENT]
+
+        def __has_column_in_dataset_name(self, dataset_name: str) -> bool:
+            return self.__DATASET_COLUMN_KEY_CHARACTER in dataset_name
+
+        def __get_column_name_from_value(self, value: str) -> str:
+            return value.split(
+                self.__DATASET_COLUMN_KEY_CHARACTER)[SECOND_ARGUMENT]

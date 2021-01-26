@@ -4,6 +4,8 @@ from pymongo import MongoClient
 from inspect import signature, getmembers
 import importlib
 from constants import *
+import pandas as pd
+import pickle
 
 
 class Database:
@@ -23,6 +25,17 @@ class Database:
 
         database_projection_query = {
             ID_FIELD_NAME: False
+        }
+        return list(self.__database[filename].find(
+            filter=database_documents_query,
+            projection=database_projection_query))
+
+    def get_field_from_collection(self, filename: str, field: str) -> list:
+        database_documents_query = {
+            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+
+        database_projection_query = {
+            field: True
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
@@ -98,7 +111,6 @@ class Metadata:
         metadata[CLASS_FIELD_NAME] = class_name
         metadata[CLASS_PARAMETERS_FIELD_NAME] = class_parameters
         metadata[TYPE_PARAM_NAME] = service_type
-        metadata[EXECUTIONS_FIELD_NAME] = []
 
         self.__database_connector.insert_one_in_file(
             filename,
@@ -119,27 +131,30 @@ class Metadata:
 
     def create_execution_document(self, executor_name: str,
                                   description: str,
-                                  method_name: str,
+                                  class_method_name: str,
                                   method_parameters: dict,
                                   exception: str = None) -> None:
-        document_query = {
-            ID_FIELD_NAME: METADATA_DOCUMENT_ID
-        }
-
-        model_document = {
-            "$push": {
-                EXECUTIONS_FIELD_NAME: {
-                    EXCEPTION_FIELD_NAME: exception,
-                    DESCRIPTION_FIELD_NAME: description,
-                    METHOD_FIELD_NAME: method_name,
-                    METHOD_PARAMETERS_FIELD_NAME: method_parameters}
+        document_id_query = {
+            ID_FIELD_NAME: {
+                "$exists": True
             }
         }
-        self.__database_connector.update_one(
+        highest_id_sort = [(ID_FIELD_NAME, -1)]
+        highest_id_document = self.__database_connector.find_one(
+            executor_name, document_id_query, highest_id_sort)
+
+        highest_id = highest_id_document[ID_FIELD_NAME]
+
+        model_document = {
+            EXCEPTION_FIELD_NAME: exception,
+            DESCRIPTION_FIELD_NAME: description,
+            METHOD_FIELD_NAME: class_method_name,
+            METHOD_PARAMETERS_FIELD_NAME: method_parameters,
+            ID_FIELD_NAME: highest_id + 1
+        }
+        self.__database_connector.insert_one_in_file(
             executor_name,
-            model_document,
-            document_query
-        )
+            model_document)
 
 
 class UserRequest:
@@ -222,20 +237,60 @@ class Data:
         self.__database = database
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
         self.filename = filename
+        self.__READ_OBJECT_OPTION = "wb"
 
     def get_module_and_class(self) -> tuple:
-        model_metadata = self.__database.find_one(
+        metadata = self.__database.find_one(
             self.filename,
             self.__METADATA_QUERY)
 
-        module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-        class_name = model_metadata[CLASS_FIELD_NAME]
+        module_path = metadata[MODULE_PATH_FIELD_NAME]
+        class_name = metadata[CLASS_FIELD_NAME]
 
         return module_path, class_name
 
     def get_class_parameters(self) -> dict:
-        model_metadata = self.__database.find_one(
+        metadata = self.__database.find_one(
             self.filename,
             self.__METADATA_QUERY)
 
-        return model_metadata[CLASS_PARAMETERS_FIELD_NAME]
+        return metadata[CLASS_PARAMETERS_FIELD_NAME]
+
+    def get_filename_content(self) -> pd.DataFrame:
+        if self.__is_stored_in_volume():
+            binary_instance = open(self.__get_read_binary_path(),
+                                   self.__READ_OBJECT_OPTION)
+            return pickle.load(binary_instance)
+        else:
+            dataset = self.__database.get_entire_collection(
+                self.filename)
+
+            return pd.DataFrame(dataset).dropna()
+
+    def get_filename_column_content(self, column_name: str) -> pd.DataFrame:
+        if self.__is_stored_in_volume():
+            binary_reader = open(self.__get_read_binary_path(),
+                                 self.__READ_OBJECT_OPTION)
+            instance = pickle.load(binary_reader)
+            return instance[column_name]
+        else:
+            dataset = self.__database.get_field_from_collection(
+                self.filename, column_name)
+
+            return pd.DataFrame(dataset).dropna()
+
+    def __is_stored_in_volume(self) -> bool:
+        volume_types = [
+            TRANSFORM_TYPE
+        ]
+        return self.__get_type() in volume_types
+
+    def __get_type(self):
+        metadata = self.__database.find_one(
+            self.filename,
+            self.__METADATA_QUERY)
+
+        return metadata[TYPE_PARAM_NAME]
+
+    def __get_read_binary_path(self) -> str:
+        return self.__get_type() + "/" + self.filename
