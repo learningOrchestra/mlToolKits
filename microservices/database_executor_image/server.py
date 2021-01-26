@@ -54,6 +54,9 @@ def create_execution() -> jsonify:
     elif service_type == TRANSFORM_TYPE:
         storage = DatabaseStorage(database)
 
+    parameters = Parameters(database)
+    method_parameters = parameters.treat(method_parameters)
+
     execution = Execution(
         database,
         filename,
@@ -118,6 +121,9 @@ def update_execution(filename: str) -> jsonify:
         storage = VolumeStorage(database)
     elif service_type == TRANSFORM_TYPE:
         storage = DatabaseStorage(database)
+
+    parameters = Parameters(database)
+    method_parameters = parameters.treat(method_parameters)
 
     execution = Execution(
         database,

@@ -156,44 +156,45 @@ class Execution:
         method_result = model_method(**parameters)
         return pd.DataFrame(method_result)
 
-    class MethodParameters:
-        __DATASET_KEY_CHARACTER = "$"
-        __DATASET_COLUMN_KEY_CHARACTER = "."
-        __REMOVE_KEY_CHARACTER = ""
 
-        def __init__(self, database: Database):
-            self.__database_connector = database
+class Parameters:
+    __DATASET_KEY_CHARACTER = "$"
+    __DATASET_COLUMN_KEY_CHARACTER = "."
+    __REMOVE_KEY_CHARACTER = ""
 
-        def treat_parameters(self, method_parameters: dict) -> dict:
-            parameters = method_parameters.copy()
+    def __init__(self, database: Database):
+        self.__database_connector = database
 
-            for name, value in parameters.items():
-                if self.__is_dataset(value):
-                    dataset_name = self.__get__dataset_name_from_value(
-                        value)
-                    data = Data(self.__database_connector, dataset_name)
+    def treat(self, method_parameters: dict) -> dict:
+        parameters = method_parameters.copy()
 
-                    if self.__has_column_in_dataset_name(value):
-                        column_name = self.__get_column_name_from_value(value)
-                        parameters[name] = data.get_filename_column_content(
-                            column_name)
-                    else:
-                        parameters[name] = data.get_filename_content()
+        for name, value in parameters.items():
+            if self.__is_dataset(value):
+                dataset_name = self.__get__dataset_name_from_value(
+                    value)
+                data = Data(self.__database_connector, dataset_name)
 
-            return parameters
+                if self.__has_column_in_dataset_name(value):
+                    column_name = self.__get_column_name_from_value(value)
+                    parameters[name] = data.get_filename_column_content(
+                        column_name)
+                else:
+                    parameters[name] = data.get_filename_content()
 
-        def __is_dataset(self, value: str) -> bool:
-            return self.__DATASET_KEY_CHARACTER in value
+        return parameters
 
-        def __get__dataset_name_from_value(self, value: str) -> str:
-            dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
-                                         self.__REMOVE_KEY_CHARACTER)
-            return dataset_name.split(self.__DATASET_COLUMN_KEY_CHARACTER)[
-                FIRST_ARGUMENT]
+    def __is_dataset(self, value: str) -> bool:
+        return self.__DATASET_KEY_CHARACTER in value
 
-        def __has_column_in_dataset_name(self, dataset_name: str) -> bool:
-            return self.__DATASET_COLUMN_KEY_CHARACTER in dataset_name
+    def __get__dataset_name_from_value(self, value: str) -> str:
+        dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
+                                     self.__REMOVE_KEY_CHARACTER)
+        return dataset_name.split(self.__DATASET_COLUMN_KEY_CHARACTER)[
+            FIRST_ARGUMENT]
 
-        def __get_column_name_from_value(self, value: str) -> str:
-            return value.split(
-                self.__DATASET_COLUMN_KEY_CHARACTER)[SECOND_ARGUMENT]
+    def __has_column_in_dataset_name(self, dataset_name: str) -> bool:
+        return self.__DATASET_COLUMN_KEY_CHARACTER in dataset_name
+
+    def __get_column_name_from_value(self, value: str) -> str:
+        return value.split(
+            self.__DATASET_COLUMN_KEY_CHARACTER)[SECOND_ARGUMENT]
