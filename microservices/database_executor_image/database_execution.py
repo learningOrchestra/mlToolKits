@@ -57,7 +57,7 @@ class VolumeStorage(ExecutionStorage):
 
     @staticmethod
     def get_image_path(filename: str) -> str:
-        return os.environ[IMAGES_VOLUME_PATH] + "/" + filename + IMAGE_FORMAT
+        return os.environ[EXPLORE_VOLUME_PATH] + "/" + filename + IMAGE_FORMAT
 
 
 class Execution:

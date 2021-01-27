@@ -213,7 +213,7 @@ services:
       - images
     deploy: *default-deploy-manager
     volumes:
-      - "database_executor:/images"
+      - "database_executor:/explore"
       - "database_executor:/transform"
     networks:
       - database
