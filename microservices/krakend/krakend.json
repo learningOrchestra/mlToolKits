@@ -592,6 +592,27 @@
       ]
     },
     {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}/metadata",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
       "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
