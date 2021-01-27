@@ -238,7 +238,7 @@ class Data:
         self.__database = database
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
         self.filename = filename
-        self.__READ_OBJECT_OPTION = "wb"
+        self.__READ_OBJECT_OPTION = "rb"
 
     def get_module_and_class(self) -> tuple:
         metadata = self.__database.find_one(
