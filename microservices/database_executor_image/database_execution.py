@@ -188,23 +188,30 @@ class Parameters:
 
         for name, value in parameters.items():
             if self.__is_dataset(value):
-                dataset_name = self.__get__dataset_name_from_value(
+                dataset_name = self.__get_dataset_name_from_value(
                     value)
+                print(dataset_name, flush=True)
                 data = Data(self.__database_connector, dataset_name)
 
                 if self.__has_column_in_dataset_name(value):
                     column_name = self.__get_column_name_from_value(value)
+                    print(column_name, flush=True)
+
                     parameters[name] = data.get_filename_column_content(
                         column_name)
+
+                    print(parameters[name], flush=True)
                 else:
                     parameters[name] = data.get_filename_content()
+                    print(parameters[name], flush=True)
+
 
         return parameters
 
     def __is_dataset(self, value: str) -> bool:
         return self.__DATASET_KEY_CHARACTER in value
 
-    def __get__dataset_name_from_value(self, value: str) -> str:
+    def __get_dataset_name_from_value(self, value: str) -> str:
         dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
                                      self.__REMOVE_KEY_CHARACTER)
         return dataset_name.split(self.__DATASET_COLUMN_KEY_CHARACTER)[

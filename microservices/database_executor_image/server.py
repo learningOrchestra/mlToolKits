@@ -56,7 +56,8 @@ def create_execution() -> jsonify:
 
     parameters = Parameters(database)
     method_parameters = parameters.treat(method_parameters)
-
+    print("method_parameters", flush=True)
+    print(method_parameters, flush=True)
     execution = Execution(
         database,
         filename,
