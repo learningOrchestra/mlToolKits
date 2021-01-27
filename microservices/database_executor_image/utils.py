@@ -294,4 +294,4 @@ class Data:
         return metadata[TYPE_PARAM_NAME]
 
     def __get_read_binary_path(self) -> str:
-        return self.__get_type() + "/" + self.filename
+        return  "/" + self.__get_type() + "/" + self.filename
