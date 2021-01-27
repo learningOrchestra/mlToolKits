@@ -35,7 +35,8 @@ class Database:
             ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
-            field: True
+            field: True,
+            ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
