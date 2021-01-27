@@ -214,6 +214,7 @@ services:
     deploy: *default-deploy-manager
     volumes:
       - "database_executor:/images"
+      - "database_executor:/transform"
     networks:
       - database
     environment: *default-service-database-env
