@@ -99,7 +99,7 @@ class Execution:
                                   class_method_name,
                                   method_parameters,
                                   description)'''
-
+        print("teste0", flush=True)
         self.__pipeline(
             self.module_path,
             self.class_name,
@@ -134,16 +134,24 @@ class Execution:
             module_function = getattr(module, class_name)
             class_instance = module_function(**class_parameters)
 
+            print("teste1", flush=True)
+
             method_result = self.__execute_a_object_method(class_instance,
                                                            class_method_name,
                                                            method_parameters)
 
+            print("teste2", flush=True)
+
             self.__storage.save(method_result, self.filename)
+
+            print("teste3", flush=True)
 
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
 
         except Exception as exception:
+            print("teste4", flush=True)
+
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
@@ -151,6 +159,8 @@ class Execution:
                 method_parameters,
                 str(exception))
             return None
+
+        print("teste5", flush=True)
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
