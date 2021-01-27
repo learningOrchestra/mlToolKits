@@ -55,9 +55,6 @@ def create_execution() -> jsonify:
         storage = DatabaseStorage(database)
 
     parameters = Parameters(database)
-    method_parameters = parameters.treat(method_parameters)
-    print("method_parameters", flush=True)
-    print(method_parameters, flush=True)
     execution = Execution(
         database,
         filename,
@@ -66,7 +63,8 @@ def create_execution() -> jsonify:
         metadata_creator,
         module_path,
         class_name,
-        class_parameters)
+        class_parameters,
+        parameters)
 
     execution.create(class_method_name, method_parameters, description)
 
@@ -124,7 +122,6 @@ def update_execution(filename: str) -> jsonify:
         storage = DatabaseStorage(database)
 
     parameters = Parameters(database)
-    method_parameters = parameters.treat(method_parameters)
 
     execution = Execution(
         database,
@@ -134,7 +131,8 @@ def update_execution(filename: str) -> jsonify:
         metadata_creator,
         module_path,
         class_name,
-        class_parameters)
+        class_parameters,
+        parameters)
 
     execution.create(class_method_name, method_parameters, description)
     return (
