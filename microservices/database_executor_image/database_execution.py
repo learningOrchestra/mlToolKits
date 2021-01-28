@@ -1,63 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from utils import *
 from constants import *
-import os
-import seaborn as sns
-import pickle
-
-
-class ExecutionStorage:
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        pass
-
-    def delete(self, filename: str) -> None:
-        pass
-
-
-class DatabaseStorage(ExecutionStorage):
-    __WRITE_OBJECT_OPTION = "wb"
-
-    def __init__(self, database_connector: Database):
-        self.__database_connector = database_connector
-        self.__thread_pool = ThreadPoolExecutor()
-
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        output_path = self.__get_instance_binary_path(filename)
-
-        instance_output = open(output_path,
-                               self.__WRITE_OBJECT_OPTION)
-        pickle.dump(instance, instance_output)
-        instance_output.close()
-
-    def delete(self, filename: str) -> None:
-        self.__thread_pool.submit(
-            self.__database_connector.delete_file, filename)
-        self.__thread_pool.submit(
-            os.remove, self.__get_instance_binary_path(filename))
-
-    def __get_instance_binary_path(self, filename: str) -> str:
-        return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
-
-
-class VolumeStorage(ExecutionStorage):
-    def __init__(self, database_connector: Database = None):
-        self.__database_connector = database_connector
-        self.__thread_pool = ThreadPoolExecutor()
-
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        output_path = self.get_image_path(filename)
-        sns_plot = sns.scatterplot(data=instance)
-        sns_plot.get_figure().savefig(output_path)
-
-    def delete(self, filename: str) -> None:
-        self.__thread_pool.submit(
-            self.__database_connector.delete_file, filename)
-        self.__thread_pool.submit(os.remove,
-                                  VolumeStorage.get_image_path(filename))
-
-    @staticmethod
-    def get_image_path(filename: str) -> str:
-        return os.environ[EXPLORE_VOLUME_PATH] + "/" + filename + IMAGE_FORMAT
 
 
 class Parameters:
@@ -65,8 +8,9 @@ class Parameters:
     __DATASET_COLUMN_KEY_CHARACTER = "."
     __REMOVE_KEY_CHARACTER = ""
 
-    def __init__(self, database: Database):
+    def __init__(self, database: Database, data: Data):
         self.__database_connector = database
+        self.__data = data
 
     def treat(self, method_parameters: dict) -> dict:
         parameters = method_parameters.copy()
@@ -75,20 +19,15 @@ class Parameters:
             if self.__is_dataset(value):
                 dataset_name = self.__get_dataset_name_from_value(
                     value)
-                print(dataset_name, flush=True)
-                data = Data(self.__database_connector, dataset_name)
-
                 if self.__has_column_in_dataset_name(value):
                     column_name = self.__get_column_name_from_value(value)
-                    print(column_name, flush=True)
 
-                    parameters[name] = data.get_filename_column_content(
-                        column_name)
+                    parameters[name] = self.__data.get_filename_column_content(
+                        dataset_name, column_name)
 
-                    print(parameters[name], flush=True)
                 else:
-                    parameters[name] = data.get_filename_content()
-                    print(parameters[name], flush=True)
+                    parameters[name] = self.__data.get_filename_content(
+                        dataset_name)
 
         return parameters
 
@@ -143,21 +82,13 @@ class Execution:
                                             self.class_parameters,
                                             self.service_type)
 
-        '''self.__thread_pool.submit(self.__pipeline,
+        self.__thread_pool.submit(self.__pipeline,
                                   self.module_path,
                                   self.class_name,
                                   self.class_parameters,
                                   class_method_name,
                                   method_parameters,
-                                  description)'''
-        print("teste0", flush=True)
-        self.__pipeline(
-            self.module_path,
-            self.class_name,
-            self.class_parameters,
-            class_method_name,
-            method_parameters,
-            description)
+                                  description)
 
     def update(self,
                class_method_name: str,
@@ -185,24 +116,16 @@ class Execution:
             module_function = getattr(module, class_name)
             class_instance = module_function(**class_parameters)
 
-            print("teste1", flush=True)
-
             method_result = self.__execute_a_object_method(class_instance,
                                                            class_method_name,
                                                            method_parameters)
 
-            print("teste2", flush=True)
-
             self.__storage.save(method_result, self.filename)
-
-            print("teste3", flush=True)
 
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
 
         except Exception as exception:
-            print("teste4", flush=True)
-
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
@@ -210,8 +133,6 @@ class Execution:
                 method_parameters,
                 str(exception))
             return None
-
-        print("teste5", flush=True)
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,

@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
@@ -5,6 +6,8 @@ from inspect import signature, getmembers
 import importlib
 from constants import *
 import pandas as pd
+import os
+import seaborn as sns
 import pickle
 
 
@@ -233,16 +236,70 @@ class UserRequest:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
 
 
+class ExecutionStorage:
+    def save(self, instance: pd.DataFrame, filename: str) -> None:
+        pass
+
+    def delete(self, filename: str) -> None:
+        pass
+
+
+class TransformStorage(ExecutionStorage):
+    __WRITE_OBJECT_OPTION = "wb"
+
+    def __init__(self, database_connector: Database):
+        self.__database_connector = database_connector
+        self.__thread_pool = ThreadPoolExecutor()
+
+    def save(self, instance: pd.DataFrame, filename: str) -> None:
+        output_path = TransformStorage.get_file_path(filename)
+
+        instance_output = open(output_path,
+                               self.__WRITE_OBJECT_OPTION)
+        pickle.dump(instance, instance_output)
+        instance_output.close()
+
+    def delete(self, filename: str) -> None:
+        self.__thread_pool.submit(
+            self.__database_connector.delete_file, filename)
+        self.__thread_pool.submit(
+            os.remove, TransformStorage.get_file_path(filename))
+
+    @staticmethod
+    def get_file_path(filename: str) -> str:
+        return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+
+
+class ExploreStorage(ExecutionStorage):
+    def __init__(self, database_connector: Database = None):
+        self.__database_connector = database_connector
+        self.__thread_pool = ThreadPoolExecutor()
+
+    def save(self, instance: pd.DataFrame, filename: str) -> None:
+        output_path = ExploreStorage.get_file_path(filename)
+        sns_plot = sns.scatterplot(data=instance)
+        sns_plot.get_figure().savefig(output_path)
+
+    def delete(self, filename: str) -> None:
+        self.__thread_pool.submit(
+            self.__database_connector.delete_file, filename)
+        self.__thread_pool.submit(os.remove,
+                                  ExploreStorage.get_file_path(filename))
+
+    @staticmethod
+    def get_file_path(filename: str) -> str:
+        return os.environ[EXPLORE_VOLUME_PATH] + "/" + filename + IMAGE_FORMAT
+
+
 class Data:
-    def __init__(self, database: Database, filename):
+    def __init__(self, database: Database):
         self.__database = database
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-        self.filename = filename
         self.__READ_OBJECT_OPTION = "rb"
 
-    def get_module_and_class(self) -> tuple:
+    def get_module_and_class(self, filename: str) -> tuple:
         metadata = self.__database.find_one(
-            self.filename,
+            filename,
             self.__METADATA_QUERY)
 
         module_path = metadata[MODULE_PATH_FIELD_NAME]
@@ -250,48 +307,50 @@ class Data:
 
         return module_path, class_name
 
-    def get_class_parameters(self) -> dict:
+    def get_class_parameters(self, filename: str) -> dict:
         metadata = self.__database.find_one(
-            self.filename,
+            filename,
             self.__METADATA_QUERY)
 
         return metadata[CLASS_PARAMETERS_FIELD_NAME]
 
-    def get_filename_content(self) -> pd.DataFrame:
-        if self.__is_stored_in_volume():
-            binary_instance = open(self.__get_read_binary_path(),
-                                   self.__READ_OBJECT_OPTION)
+    def get_filename_content(self, filename: str) -> pd.DataFrame:
+        if self.__is_stored_in_volume(filename):
+            binary_instance = open(
+                TransformStorage.get_file_path(
+                    filename),
+                self.__READ_OBJECT_OPTION)
             return pickle.load(binary_instance)
         else:
             dataset = self.__database.get_entire_collection(
-                self.filename)
+                filename)
 
             return pd.DataFrame(dataset).dropna()
 
-    def get_filename_column_content(self, column_name: str) -> pd.DataFrame:
-        if self.__is_stored_in_volume():
-            binary_reader = open(self.__get_read_binary_path(),
-                                 self.__READ_OBJECT_OPTION)
+    def get_filename_column_content(self, filename: str,
+                                    column_name: str) -> pd.DataFrame:
+        if self.__is_stored_in_volume(filename):
+            binary_reader = open(
+                TransformStorage.get_file_path(
+                    filename),
+                self.__READ_OBJECT_OPTION)
             instance = pickle.load(binary_reader)
             return instance[column_name]
         else:
             dataset = self.__database.get_field_from_collection(
-                self.filename, column_name)
+                filename, column_name)
 
             return pd.DataFrame(dataset).dropna()
 
-    def __is_stored_in_volume(self) -> bool:
-        volume_types = [
-            TRANSFORM_TYPE
-        ]
-        return self.__get_type() in volume_types
-
-    def __get_type(self):
+    def get_type(self, filename):
         metadata = self.__database.find_one(
-            self.filename,
+            filename,
             self.__METADATA_QUERY)
 
         return metadata[TYPE_PARAM_NAME]
 
-    def __get_read_binary_path(self) -> str:
-        return  "/" + self.__get_type() + "/" + self.filename
+    def __is_stored_in_volume(self, filename) -> bool:
+        volume_types = [
+            TRANSFORM_TYPE
+        ]
+        return self.get_type(filename) in volume_types

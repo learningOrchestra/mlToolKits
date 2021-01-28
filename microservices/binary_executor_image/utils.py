@@ -1,9 +1,13 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
 from inspect import signature, getmembers
 import importlib
 from constants import *
+import pandas as pd
+import pickle
+import os
 
 
 class Database:
@@ -22,6 +26,18 @@ class Database:
             ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
+            ID_FIELD_NAME: False
+        }
+        return list(self.__database[filename].find(
+            filter=database_documents_query,
+            projection=database_projection_query))
+
+    def get_field_from_collection(self, filename: str, field: str) -> list:
+        database_documents_query = {
+            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+
+        database_projection_query = {
+            field: True,
             ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
@@ -176,7 +192,60 @@ class UserRequest:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_METHOD_PARAMETER)
 
 
+class VolumeStorage:
+    __WRITE_MODEL_OBJECT_OPTION = "wb"
+    __READ_MODEL_OBJECT_OPTION = "rb"
+
+    def __init__(self, database_connector: Database = None):
+        self.__database_connector = database_connector
+        self.__thread_pool = ThreadPoolExecutor()
+
+    def save(self, instance: object, filename: str, service_type: str) -> None:
+        model_output_path = VolumeStorage.get_write_binary_path(
+            filename, service_type)
+        if not os.path.exists(os.path.dirname(model_output_path)):
+            os.makedirs(os.path.dirname(model_output_path))
+
+        model_output = open(model_output_path,
+                            self.__WRITE_MODEL_OBJECT_OPTION)
+        pickle.dump(instance, model_output)
+        model_output.close()
+
+    def delete(self, filename: str, service_type: str) -> None:
+        self.__thread_pool.submit(self.__database_connector.delete_file,
+                                  filename)
+        self.__thread_pool.submit(
+            os.remove,
+            VolumeStorage.get_write_binary_path(filename, service_type))
+
+    def read(self, filename, service_type: str) -> object:
+        model_binary_instance = open(
+            VolumeStorage.get_read_binary_path(
+                filename, service_type),
+            self.__READ_MODEL_OBJECT_OPTION)
+        return pickle.load(model_binary_instance)
+
+    @staticmethod
+    def get_write_binary_path(filename: str, service_type: str) -> str:
+        return os.environ[
+                   BINARY_VOLUME_PATH] + "/" + service_type + "/" + filename
+
+    @staticmethod
+    def get_read_binary_path(filename: str, service_type: str) -> str:
+        if service_type == DEFAULT_MODEL_TYPE:
+            return os.environ[MODELS_VOLUME_PATH] + "/" + filename
+
+        elif service_type == TRANSFORM_TYPE:
+            return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+
+        else:
+            return os.environ[BINARY_VOLUME_PATH] + "/" + \
+                   service_type + "/" + filename
+
+
 class Data:
+    __READ_OBJECT_OPTION = "rb"
+
     def __init__(self, database: Database):
         self.__database = database
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
@@ -224,3 +293,49 @@ class Data:
             self.__METADATA_QUERY)
 
         return train_metadata[PARENT_NAME_FIELD_NAME]
+
+    def get_type(self, filename: str) -> str:
+        metadata = self.__database.find_one(
+            filename,
+            self.__METADATA_QUERY)
+
+        return metadata[TYPE_FIELD_NAME]
+
+    def get_filename_content(self, filename) -> pd.DataFrame:
+        if self.__is_stored_in_volume(filename):
+            service_type = self.get_type(filename)
+            binary_instance = open(
+                VolumeStorage.get_read_binary_path(filename, service_type),
+                self.__READ_OBJECT_OPTION)
+            return pickle.load(binary_instance)
+        else:
+            dataset = self.__database.get_entire_collection(
+                filename)
+
+            return pd.DataFrame(dataset).dropna()
+
+    def get_filename_column_content(self, filename: str,
+                                    column_name: str) -> pd.DataFrame:
+        if self.__is_stored_in_volume(filename):
+            service_type = self.get_type(filename)
+            binary_reader = open(
+                VolumeStorage.get_read_binary_path(filename, service_type),
+                self.__READ_OBJECT_OPTION)
+            instance = pickle.load(binary_reader)
+            return instance[column_name]
+        else:
+            dataset = self.__database.get_field_from_collection(
+                filename, column_name)
+
+            return pd.DataFrame(dataset).dropna()
+
+    def __is_stored_in_volume(self, filename: str) -> bool:
+        volume_types = [
+            TUNE_TYPE,
+            TRAIN_TYPE,
+            EVALUATE_TYPE,
+            PREDICT_TYPE,
+            TRANSFORM_TYPE
+        ]
+
+        return self.get_type(filename) in volume_types

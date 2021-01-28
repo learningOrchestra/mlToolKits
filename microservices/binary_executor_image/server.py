@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from binary_execution import Execution
+from binary_execution import *
 from utils import *
 from typing import Union
 from constants import *
@@ -10,9 +10,10 @@ app = Flask(__name__)
 DATABASE_URL = os.environ[DATABASE_URL]
 DATABASE_REPLICA_SET = os.environ[DATABASE_REPLICA_SET]
 DATABASE_NAME = os.environ[DATABASE_NAME]
+DATABASE_PORT = int(os.environ[DATABASE_PORT])
 
 
-@app.route("/binaryExecutor", methods=["POST"])
+@app.route(MICROSERVICE_URI_PATH, methods=["POST"])
 def create_execution() -> jsonify:
     service_type = request.args.get(TYPE_FIELD_NAME)
 
@@ -25,7 +26,7 @@ def create_execution() -> jsonify:
     database = Database(
         DATABASE_URL,
         DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
+        DATABASE_PORT,
         DATABASE_NAME,
     )
 
@@ -43,16 +44,23 @@ def create_execution() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
+    data = Data(database)
+    parent_name_service_type = data.get_type(parent_name)
+    parameters_handler = Parameters(database, data)
+    storage = VolumeStorage(database)
+
     train_model = Execution(
         database,
         filename,
         service_type,
         parent_name,
+        parent_name_service_type,
         metadata_creator,
-        class_method
+        class_method,
+        parameters_handler,
+        storage
     )
 
-    data = Data(database)
     module_path, class_name = data.get_module_and_class_from_a_model(
         parent_name)
     train_model.create(
@@ -68,14 +76,14 @@ def create_execution() -> jsonify:
     )
 
 
-@app.route("/binaryExecutor/<filename>", methods=["PATCH"])
+@app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["PATCH"])
 def update_execution(filename: str) -> jsonify:
     service_type = request.args.get(TYPE_FIELD_NAME)
 
     database = Database(
         DATABASE_URL,
         DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
+        DATABASE_PORT,
         DATABASE_NAME,
     )
 
@@ -100,9 +108,23 @@ def update_execution(filename: str) -> jsonify:
     method_name = data.get_class_method_from_a_executor_name(filename)
 
     metadata_creator = Metadata(database)
-    default_model = Execution(database, filename, service_type, model_name,
-                              metadata_creator,
-                              method_name)
+
+    data = Data(database)
+    parent_name_service_type = data.get_type(model_name)
+
+    parameters_handler = Parameters(database, data)
+    storage = VolumeStorage(database)
+
+    default_model = Execution(
+        database,
+        filename,
+        service_type,
+        model_name,
+        parent_name_service_type,
+        metadata_creator,
+        method_name,
+        parameters_handler,
+        storage)
 
     default_model.update(
         module_path, method_parameters, description)
@@ -117,18 +139,15 @@ def update_execution(filename: str) -> jsonify:
     )
 
 
-@app.route("/defaultModel/<filename>", methods=["DELETE"])
+@app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["DELETE"])
 def delete_default_model(filename: str) -> jsonify:
-    database_url = os.environ[DATABASE_URL]
-    database_replica_set = os.environ[DATABASE_REPLICA_SET]
-    database_name = os.environ[DATABASE_NAME]
     service_type = request.args.get(TYPE_FIELD_NAME)
 
     database = Database(
-        database_url,
-        database_replica_set,
-        int(os.environ[DATABASE_PORT]),
-        database_name,
+        DATABASE_URL,
+        DATABASE_REPLICA_SET,
+        DATABASE_PORT,
+        DATABASE_NAME,
     )
 
     request_validator = UserRequest(database)
@@ -143,8 +162,8 @@ def delete_default_model(filename: str) -> jsonify:
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    default_model = Execution(database, filename, service_type)
-    default_model.delete()
+    storage = VolumeStorage(database)
+    storage.delete(filename, service_type)
 
     return (
         jsonify({

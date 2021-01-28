@@ -261,6 +261,7 @@ services:
     volumes:
       - "default_model:/models"
       - "binary_executor:/binaries"
+      - "database_executor:/transform"
 
 networks:
   database:

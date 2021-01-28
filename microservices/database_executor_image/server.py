@@ -50,11 +50,12 @@ def create_execution() -> jsonify:
 
     storage = None
     if service_type == EXPLORE_TYPE:
-        storage = VolumeStorage(database)
+        storage = ExploreStorage(database)
     elif service_type == TRANSFORM_TYPE:
-        storage = DatabaseStorage(database)
+        storage = TransformStorage(database)
 
-    parameters = Parameters(database)
+    data = Data(database)
+    parameters = Parameters(database, data)
     execution = Execution(
         database,
         filename,
@@ -111,17 +112,17 @@ def update_execution(filename: str) -> jsonify:
 
     metadata_creator = Metadata(database)
 
-    data = Data(database, filename)
-    module_path, class_name = data.get_module_and_class()
-    class_parameters = data.get_class_parameters()
+    data = Data(database)
+    module_path, class_name = data.get_module_and_class(filename)
+    class_parameters = data.get_class_parameters(filename)
 
     storage = None
     if service_type == EXPLORE_TYPE:
-        storage = VolumeStorage(database)
+        storage = ExploreStorage(database)
     elif service_type == TRANSFORM_TYPE:
-        storage = DatabaseStorage(database)
+        storage = TransformStorage(database)
 
-    parameters = Parameters(database)
+    parameters = Parameters(database, data)
 
     execution = Execution(
         database,
@@ -168,7 +169,7 @@ def get_image(filename):
             HTTP_STATUS_CODE_NOT_FOUND,
         )
 
-    image_path = VolumeStorage.get_image_path(filename)
+    image_path = ExploreStorage.get_file_path(filename)
 
     return send_file(image_path, mimetype="image/png")
 
@@ -198,9 +199,9 @@ def delete_default_model(filename: str) -> jsonify:
 
     storage = None
     if service_type == EXPLORE_TYPE:
-        storage = VolumeStorage(database)
+        storage = ExploreStorage(database)
     elif service_type == TRANSFORM_TYPE:
-        storage = DatabaseStorage(database)
+        storage = TransformStorage(database)
 
     storage.delete(filename)
 
@@ -306,8 +307,8 @@ def analyse_patch_request_errors(request_validator: UserRequest,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    data = Data(database, filename)
-    module_path, class_name = data.get_module_and_class()
+    data = Data(database)
+    module_path, class_name = data.get_module_and_class(filename)
 
     try:
         request_validator.valid_method_class_validator(
