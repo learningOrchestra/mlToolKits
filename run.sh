@@ -87,22 +87,6 @@ echo "--------------------------------------------------------------------"
 docker push $histogram_repository
 
 
-tsne_repository=127.0.0.1:5050/tsne
-
-echo "--------------------------------------------------------------------"
-echo "Pushing tsne microservice image..."
-echo "--------------------------------------------------------------------"
-docker push $tsne_repository
-
-
-pca_repository=127.0.0.1:5050/pca
-
-echo "--------------------------------------------------------------------"
-echo "Pushing pca microservice image..."
-echo "--------------------------------------------------------------------"
-docker push $pca_repository
-
-
 default_model_repository=127.0.0.1:5050/default_model
 
 echo "--------------------------------------------------------------------"
@@ -117,6 +101,14 @@ echo "--------------------------------------------------------------------"
 echo "Pushing binaryExecutor microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $binary_executor_repository
+
+
+database_executor_repository=127.0.0.1:5050/database_executor
+
+echo "--------------------------------------------------------------------"
+echo "Pushing database executor microservice image..."
+echo "--------------------------------------------------------------------"
+docker push $database_executor_repository
 
 
 echo "--------------------------------------------------------------------"

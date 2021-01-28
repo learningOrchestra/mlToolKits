@@ -201,46 +201,22 @@ services:
       - database
     environment: *default-service-database-env
 
-  tsne:
-    build: microservices/tsne_image
-    image: 127.0.0.1:5050/tsne
-    ports:
-      - "5005:5005"
-      - "41200:41200"
-    extra_hosts:
-      - "tsne:0.0.0.0"
-    depends_on:
-      - databaseprimary
-      - images
-      - sparkmaster
-      - sparkworker
-    deploy: *default-deploy-manager
-    volumes:
-      - "tsne:/images"
-    networks:
-      - database
-      - spark
-    environment: *default-service-database-env
-
-  pca:
-    build: microservices/pca_image
-    image: 127.0.0.1:5050/pca
+  databasexecutor:
+    build: microservices/database_executor_image
+    image: 127.0.0.1:5050/database_executor
     ports:
       - "5006:5006"
-      - "41300:41300"
     extra_hosts:
-      - "pca:0.0.0.0"
+      - "database_executor:0.0.0.0"
     depends_on:
       - databaseprimary
       - images
-      - sparkmaster
-      - sparkworker
     deploy: *default-deploy-manager
     volumes:
-      - "pca:/images"
+      - "database_executor:/explore"
+      - "database_executor:/transform"
     networks:
       - database
-      - spark
     environment: *default-service-database-env
 
   gatewayapi:
@@ -294,7 +270,6 @@ volumes:
   images:
   database:
   database_api:
+  database_executor:
   default_model:
   binary_executor:
-  tsne:
-  pca:
