@@ -106,7 +106,7 @@ docker push $binary_executor_repository
 database_executor_repository=127.0.0.1:5050/database_executor
 
 echo "--------------------------------------------------------------------"
-echo "Pushing database executor microservice image..."
+echo "Pushing databaseExecutor microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $database_executor_repository
 
