@@ -136,6 +136,11 @@ def update_execution(filename: str) -> jsonify:
         parameters)
 
     execution.create(class_method_name, method_parameters, description)
+
+    response_params = None
+    if service_type == TRANSFORM_TYPE:
+        response_params = MICROSERVICE_URI_GET_PARAMS
+        
     return (
         jsonify({
             MESSAGE_RESULT:
@@ -144,7 +149,7 @@ def update_execution(filename: str) -> jsonify:
                 tool_type +
                 "/" +
                 filename +
-                MICROSERVICE_URI_GET_PARAMS}),
+                response_params}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
