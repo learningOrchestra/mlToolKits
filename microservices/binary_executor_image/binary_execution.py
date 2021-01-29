@@ -59,12 +59,12 @@ class Execution:
                  database_connector: Database,
                  executor_name: str,
                  executor_service_type: str,
-                 parent_name: str = None,
-                 parent_name_service_type: str = None,
-                 metadata_creator: Metadata = None,
-                 class_method: str = None,
-                 parameters_handler: Parameters = None,
-                 storage: VolumeStorage = None,
+                 parent_name: str,
+                 parent_name_service_type: str,
+                 metadata_creator: Metadata,
+                 class_method: str,
+                 parameters_handler: Parameters,
+                 storage: VolumeStorage,
                  ):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()

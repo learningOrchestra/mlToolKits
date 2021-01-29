@@ -1,9 +1,12 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
 from inspect import signature
 import importlib
 from constants import *
+import pickle
+import os
 
 
 class Database:
@@ -156,6 +159,31 @@ class UserRequest:
         for parameter, value in function_parameters.items():
             if parameter not in valid_function_parameters.parameters:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
+
+
+class ModelStorage:
+    __WRITE_MODEL_OBJECT_OPTION = "wb"
+    __READ_MODEL_OBJECT_OPTION = "rb"
+
+    def __init__(self, database_connector: Database):
+        self.__thread_pool = ThreadPoolExecutor()
+        self.__database_connector = database_connector
+
+    def save(self, filename: str, model_instance: object) -> None:
+        model_output = open(ModelStorage.get_binary_path(filename),
+                            self.__WRITE_MODEL_OBJECT_OPTION)
+        pickle.dump(model_instance, model_output)
+        model_output.close()
+
+    def delete(self, filename: str) -> None:
+        self.__thread_pool.submit(self.__database_connector.delete_file,
+                                  filename)
+        self.__thread_pool.submit(os.remove,
+                                  ModelStorage.get_binary_path(filename))
+
+    @staticmethod
+    def get_binary_path(filename: str) -> str:
+        return os.environ[MODELS_VOLUME_PATH] + "/" + filename
 
 
 class Data:

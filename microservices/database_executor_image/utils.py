@@ -252,7 +252,7 @@ class TransformStorage(ExecutionStorage):
         self.__thread_pool = ThreadPoolExecutor()
 
     def save(self, instance: pd.DataFrame, filename: str) -> None:
-        output_path = TransformStorage.get_file_path(filename)
+        output_path = TransformStorage.get_write_binary_path(filename)
 
         instance_output = open(output_path,
                                self.__WRITE_OBJECT_OPTION)
@@ -263,11 +263,23 @@ class TransformStorage(ExecutionStorage):
         self.__thread_pool.submit(
             self.__database_connector.delete_file, filename)
         self.__thread_pool.submit(
-            os.remove, TransformStorage.get_file_path(filename))
+            os.remove, TransformStorage.get_write_binary_path(filename))
 
     @staticmethod
-    def get_file_path(filename: str) -> str:
+    def get_write_binary_path(filename: str) -> str:
         return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+
+    @staticmethod
+    def get_read_binary_path(filename: str, service_type: str) -> str:
+        if service_type == DEFAULT_MODEL_TYPE:
+            return os.environ[MODELS_VOLUME_PATH] + "/" + filename
+
+        elif service_type == TRANSFORM_TYPE:
+            return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+
+        else:
+            return os.environ[BINARY_VOLUME_PATH] + "/" + \
+                   service_type + "/" + filename
 
 
 class ExploreStorage(ExecutionStorage):
@@ -316,9 +328,10 @@ class Data:
 
     def get_filename_content(self, filename: str) -> pd.DataFrame:
         if self.__is_stored_in_volume(filename):
+            service_type = self.get_type(filename)
             binary_instance = open(
-                TransformStorage.get_file_path(
-                    filename),
+                TransformStorage.get_read_binary_path(
+                    filename, service_type),
                 self.__READ_OBJECT_OPTION)
             return pickle.load(binary_instance)
         else:
@@ -330,9 +343,10 @@ class Data:
     def get_filename_column_content(self, filename: str,
                                     column_name: str) -> pd.DataFrame:
         if self.__is_stored_in_volume(filename):
+            service_type = self.get_type(filename)
             binary_reader = open(
-                TransformStorage.get_file_path(
-                    filename),
+                TransformStorage.get_read_binary_path(
+                    filename, service_type),
                 self.__READ_OBJECT_OPTION)
             instance = pickle.load(binary_reader)
             return instance[column_name]

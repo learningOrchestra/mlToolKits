@@ -1,5 +1,4 @@
 from flask import jsonify, request, Flask
-import os
 from default_model import DefaultModel
 from utils import *
 from typing import Union
@@ -40,8 +39,14 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(database, model_name, metadata_creator,
-                                 module_path, class_name)
+    storage = ModelStorage(database)
+    default_model = DefaultModel(
+        database,
+        model_name,
+        metadata_creator,
+        module_path,
+        class_name,
+        storage)
 
     default_model.create(
         description, class_parameters)
@@ -88,8 +93,14 @@ def update_default_model(filename: str) -> jsonify:
     module_path, class_name = data.get_module_and_class_from_a_model(filename)
 
     metadata_creator = Metadata(database)
-    default_model = DefaultModel(database, filename, metadata_creator,
-                                 module_path, class_name)
+    storage = ModelStorage(database)
+    default_model = DefaultModel(
+        database,
+        filename,
+        metadata_creator,
+        module_path,
+        class_name,
+        storage)
 
     default_model.update(
         description, function_parameters)
@@ -129,8 +140,8 @@ def delete_default_model(filename: str) -> jsonify:
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    default_model = DefaultModel(database, filename)
-    default_model.delete()
+    storage = ModelStorage(database)
+    storage.delete(filename)
 
     return (
         jsonify({

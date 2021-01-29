@@ -54,11 +54,11 @@ class Execution:
                  filename: str,
                  service_type: str,
                  storage: ExecutionStorage,
-                 metadata_creator: Metadata = None,
-                 module_path: str = None,
-                 class_name: str = None,
-                 class_parameters: dict = None,
-                 parameters_handler: Parameters = None
+                 metadata_creator: Metadata,
+                 module_path: str,
+                 class_name: str,
+                 class_parameters: dict,
+                 parameters_handler: Parameters
                  ):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()

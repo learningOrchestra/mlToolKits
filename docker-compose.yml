@@ -215,6 +215,8 @@ services:
     volumes:
       - "database_executor:/explore"
       - "database_executor:/transform"
+      - "default_model:/models"
+      - "binary_executor:/binaries"
     networks:
       - database
     environment: *default-service-database-env
