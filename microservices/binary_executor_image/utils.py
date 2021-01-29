@@ -312,7 +312,7 @@ class Data:
             dataset = self.__database.get_entire_collection(
                 filename)
 
-            return pd.DataFrame(dataset).dropna()
+            return pd.DataFrame(dataset)
 
     def get_filename_column_content(self, filename: str,
                                     column_name: str) -> pd.DataFrame:
@@ -327,7 +327,7 @@ class Data:
             dataset = self.__database.get_field_from_collection(
                 filename, column_name)
 
-            return pd.DataFrame(dataset).dropna()
+            return pd.DataFrame(dataset)
 
     def __is_stored_in_volume(self, filename: str) -> bool:
         volume_types = [

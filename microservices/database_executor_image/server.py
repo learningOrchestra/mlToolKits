@@ -276,7 +276,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     try:
-        request_validator.valid_method_parameters_validator(
+        request_validator.valid_method_parameters_name_validator(
             module_path,
             class_name,
             class_method,
@@ -323,7 +323,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
 
     try:
-        request_validator.valid_method_parameters_validator(
+        request_validator.valid_method_parameters_name_validator(
             module_path,
             class_name,
             class_method,

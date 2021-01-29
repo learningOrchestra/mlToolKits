@@ -197,10 +197,10 @@ class UserRequest:
         if method_name not in class_methods:
             raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
 
-    def valid_method_parameters_validator(self, tool_name: str,
-                                          class_name: str,
-                                          class_method: str,
-                                          method_parameters: dict) -> None:
+    def valid_method_parameters_name_validator(self, tool_name: str,
+                                               class_name: str,
+                                               class_method: str,
+                                               method_parameters: dict) -> None:
         module = importlib.import_module(tool_name)
         module_class = getattr(module, class_name)
         class_method_reference = getattr(module_class, class_method)
@@ -338,7 +338,7 @@ class Data:
             dataset = self.__database.get_entire_collection(
                 filename)
 
-            return pd.DataFrame(dataset).dropna()
+            return pd.DataFrame(dataset)
 
     def get_filename_column_content(self, filename: str,
                                     column_name: str) -> pd.DataFrame:
@@ -354,7 +354,7 @@ class Data:
             dataset = self.__database.get_field_from_collection(
                 filename, column_name)
 
-            return pd.DataFrame(dataset).dropna()
+            return pd.DataFrame(dataset)
 
     def get_type(self, filename):
         metadata = self.__database.find_one(
