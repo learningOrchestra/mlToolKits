@@ -140,7 +140,7 @@ def update_execution(filename: str) -> jsonify:
     response_params = None
     if service_type == TRANSFORM_TYPE:
         response_params = MICROSERVICE_URI_GET_PARAMS
-        
+
     return (
         jsonify({
             MESSAGE_RESULT:

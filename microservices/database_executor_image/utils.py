@@ -166,7 +166,7 @@ class UserRequest:
     __MESSAGE_INVALID_MODULE_PATH_NAME = "invalid module path name"
     __MESSAGE_INVALID_METHOD_NAME = "invalid method name"
     __MESSAGE_INVALID_CLASS_METHOD_PARAMETER = "invalid class method parameter"
-    __MESSAGE_NONEXISTENT_FILE = "parentName doesn't exist"
+    __MESSAGE_NONEXISTENT_FILE = "parent name doesn't exist"
     __MESSAGE_INVALID_CLASS_NAME = "invalid class name"
     __MESSAGE_INVALID_CLASS_PARAMETER = "invalid class parameter"
 
