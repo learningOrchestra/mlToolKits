@@ -523,7 +523,7 @@
       ]
     },
      {
-      "endpoint": "/api/learningOrchestra/v1/model/default",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -539,7 +539,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
@@ -555,7 +555,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -571,7 +571,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -592,7 +592,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/default/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
@@ -608,7 +608,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -624,7 +624,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
@@ -640,7 +640,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -656,7 +656,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -677,7 +677,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
@@ -693,7 +693,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -709,7 +709,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
@@ -725,7 +725,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -741,7 +741,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -762,7 +762,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
@@ -778,7 +778,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -794,7 +794,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/{name}",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
@@ -810,7 +810,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -826,7 +826,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/{name}",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -847,7 +847,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/{name}",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
@@ -863,7 +863,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict",
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -879,7 +879,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/{name}",
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
@@ -895,7 +895,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict",
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -911,7 +911,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/{name}",
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -932,7 +932,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/{name}",
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
