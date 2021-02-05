@@ -99,12 +99,25 @@ services:
     volumes:
       - "images:/var/lib/registry"
 
-  visualizer:
-    image: dockersamples/visualizer:latest
+  agent:
+    image: portainer/agent:linux-amd64-2.1.0-alpine
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - portainer
+    deploy: *default-deploy-worker
+
+  portainer:
+    image: portainer/portainer-ce:2.1.1-alpine
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
     ports:
-      - "8000:8080"
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - portainer:/data
+    networks:
+      - portainer
     deploy: *default-deploy-manager
 
   sparkmaster:
@@ -284,6 +297,7 @@ services:
 networks:
   database:
   spark:
+  portainer:
 
 volumes:
   images:
@@ -292,3 +306,4 @@ volumes:
   database_executor:
   default_model:
   binary_executor:
+  portainer:
