@@ -6,7 +6,7 @@ import os
 
 class Parameters:
     __DATASET_KEY_CHARACTER = "$"
-    __DATASET_COLUMN_KEY_CHARACTER = "."
+    __DATASET_WITH_OBJECT_KEY_CHARACTER = "."
     __REMOVE_KEY_CHARACTER = ""
 
     def __init__(self, database: Database, data: Data):
@@ -20,16 +20,14 @@ class Parameters:
             if self.__is_dataset(value):
                 dataset_name = self.__get_dataset_name_from_value(
                     value)
+                if self.__has_dot_in_dataset_name(value):
+                    object_name = self.__get_name_after_dot_from_value(value)
 
-                if self.__has_column_in_dataset_name(value):
-                    column_name = self.__get_column_name_from_value(value)
-
-                    parameters[name] = self.__data.get_filename_column_content(
-                        dataset_name,
-                        column_name)
+                    parameters[name] = self.__data.get_object_from_dataset(
+                        dataset_name, object_name)
 
                 else:
-                    parameters[name] = self.__data.get_filename_content(
+                    parameters[name] = self.__data.get_dataset_content(
                         dataset_name)
 
         return parameters
@@ -40,15 +38,15 @@ class Parameters:
     def __get_dataset_name_from_value(self, value: str) -> str:
         dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
                                      self.__REMOVE_KEY_CHARACTER)
-        return dataset_name.split(self.__DATASET_COLUMN_KEY_CHARACTER)[
+        return dataset_name.split(self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[
             FIRST_ARGUMENT]
 
-    def __has_column_in_dataset_name(self, dataset_name: str) -> bool:
-        return self.__DATASET_COLUMN_KEY_CHARACTER in dataset_name
+    def __has_dot_in_dataset_name(self, dataset_name: str) -> bool:
+        return self.__DATASET_WITH_OBJECT_KEY_CHARACTER in dataset_name
 
-    def __get_column_name_from_value(self, value: str) -> str:
+    def __get_name_after_dot_from_value(self, value: str) -> str:
         return value.split(
-            self.__DATASET_COLUMN_KEY_CHARACTER)[SECOND_ARGUMENT]
+            self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[SECOND_ARGUMENT]
 
 
 class Execution:
@@ -64,7 +62,7 @@ class Execution:
                  metadata_creator: Metadata,
                  class_method: str,
                  parameters_handler: Parameters,
-                 storage: VolumeStorage,
+                 storage: ObjectStorage,
                  ):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()

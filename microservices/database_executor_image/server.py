@@ -54,7 +54,7 @@ def create_execution() -> jsonify:
     elif service_type == TRANSFORM_TYPE:
         storage = TransformStorage(database)
 
-    data = Data(database)
+    data = Data(database, storage)
     parameters = Parameters(database, data)
     execution = Execution(
         database,
@@ -69,6 +69,10 @@ def create_execution() -> jsonify:
 
     execution.create(class_method_name, method_parameters, description)
 
+    response_params = None
+    if service_type == TRANSFORM_TYPE:
+        response_params = MICROSERVICE_URI_GET_PARAMS
+
     return (
         jsonify({
             MESSAGE_RESULT:
@@ -77,7 +81,7 @@ def create_execution() -> jsonify:
                 tool_type +
                 "/" +
                 filename +
-                MICROSERVICE_URI_GET_PARAMS}),
+                response_params}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -100,9 +104,17 @@ def update_execution(filename: str) -> jsonify:
 
     request_validator = UserRequest(database)
 
+    storage = None
+    if service_type == EXPLORE_TYPE:
+        storage = ExploreStorage(database)
+    elif service_type == TRANSFORM_TYPE:
+        storage = TransformStorage(database)
+
+    data = Data(database, storage)
+
     request_errors = analyse_patch_request_errors(
         request_validator,
-        database,
+        data,
         filename,
         class_method_name,
         method_parameters)
@@ -112,15 +124,8 @@ def update_execution(filename: str) -> jsonify:
 
     metadata_creator = Metadata(database)
 
-    data = Data(database)
     module_path, class_name = data.get_module_and_class(filename)
     class_parameters = data.get_class_parameters(filename)
-
-    storage = None
-    if service_type == EXPLORE_TYPE:
-        storage = ExploreStorage(database)
-    elif service_type == TRANSFORM_TYPE:
-        storage = TransformStorage(database)
 
     parameters = Parameters(database, data)
 
@@ -135,7 +140,7 @@ def update_execution(filename: str) -> jsonify:
         class_parameters,
         parameters)
 
-    execution.create(class_method_name, method_parameters, description)
+    execution.update(class_method_name, method_parameters, description)
 
     response_params = None
     if service_type == TRANSFORM_TYPE:
@@ -174,9 +179,10 @@ def get_image(filename):
             HTTP_STATUS_CODE_NOT_FOUND,
         )
 
-    image_path = ExploreStorage.get_file_path(filename)
+    storage = ExploreStorage(database)
+    image = storage.read(filename)
 
-    return send_file(image_path, mimetype="image/png")
+    return send_file(image, mimetype="image/png")
 
 
 @app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["DELETE"])
@@ -297,7 +303,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
 
 def analyse_patch_request_errors(request_validator: UserRequest,
-                                 database: Database,
+                                 data: Data,
                                  filename: str,
                                  class_method: str,
                                  method_parameters: dict) \
@@ -312,7 +318,6 @@ def analyse_patch_request_errors(request_validator: UserRequest,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    data = Data(database)
     module_path, class_name = data.get_module_and_class(filename)
 
     try:

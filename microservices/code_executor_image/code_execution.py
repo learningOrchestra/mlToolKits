@@ -53,11 +53,8 @@ class Execution:
                  database_connector: Database,
                  filename: str,
                  service_type: str,
-                 storage: ExecutionStorage,
+                 storage: ObjectStorage,
                  metadata_creator: Metadata,
-                 module_path: str,
-                 class_name: str,
-                 class_parameters: dict,
                  parameters_handler: Parameters
                  ):
         self.__metadata_creator = metadata_creator
@@ -66,61 +63,40 @@ class Execution:
         self.__storage = storage
         self.__parameters_handler = parameters_handler
         self.filename = filename
-        self.module_path = module_path
-        self.class_name = class_name
-        self.class_parameters = class_parameters
         self.service_type = service_type
 
     def create(self,
-               class_method_name: str,
-               method_parameters: dict,
+               function: str,
+               function_parameters: dict,
                description: str) -> None:
 
-        self.__metadata_creator.create_file(self.filename,
-                                            self.module_path,
-                                            self.class_name,
-                                            self.class_parameters,
-                                            self.service_type)
+        self.__metadata_creator.create_file(self.filename, self.service_type)
 
         self.__thread_pool.submit(self.__pipeline,
-                                  self.module_path,
-                                  self.class_name,
-                                  self.class_parameters,
-                                  class_method_name,
-                                  method_parameters,
+                                  function,
+                                  function_parameters,
                                   description)
 
     def update(self,
-               class_method_name: str,
-               method_parameters: dict,
+               function: str,
+               function_parameters: dict,
                description: str) -> None:
         self.__metadata_creator.update_finished_flag(self.filename, False)
 
         self.__thread_pool.submit(self.__pipeline,
-                                  self.module_path,
-                                  self.class_name,
-                                  self.class_parameters,
-                                  class_method_name,
-                                  method_parameters,
+                                  function,
+                                  function_parameters,
                                   description)
 
     def __pipeline(self,
-                   module_path: str,
-                   class_name: str,
-                   class_parameters: dict,
-                   class_method_name: str,
-                   method_parameters: dict,
+                   function: str,
+                   function_parameters: dict,
                    description: str) -> None:
         try:
-            module = importlib.import_module(module_path)
-            module_function = getattr(module, class_name)
-            class_instance = module_function(**class_parameters)
+            function_result = self.__execute_function(function,
+                                                      function_parameters)
 
-            method_result = self.__execute_a_object_method(class_instance,
-                                                           class_method_name,
-                                                           method_parameters)
-
-            self.__storage.save(method_result, self.filename)
+            self.__storage.save(function_result, self.filename)
 
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
@@ -129,20 +105,19 @@ class Execution:
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
-                class_method_name,
-                method_parameters,
+                function_parameters,
                 str(exception))
             return None
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
-                                                          class_method_name,
-                                                          method_parameters
+                                                          function_parameters,
                                                           )
 
-    def __execute_a_object_method(self, class_instance: object, method: str,
-                                  parameters: dict) -> pd.DataFrame:
-        method_reference = getattr(class_instance, method)
-        treated_parameters = self.__parameters_handler.treat(parameters)
-        method_result = method_reference(**treated_parameters)
-        return pd.DataFrame(method_result)
+    def __execute_function(self, function: str,
+                           parameters: dict) -> dict:
+        function_parameters = self.__parameters_handler.treat(parameters)
+        context_variables = locals()
+        exec(function, globals(), context_variables)
+
+        return context_variables["response"]

@@ -2,12 +2,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-from inspect import signature, getmembers
-import importlib
 from constants import *
 import pandas as pd
 import os
-import seaborn as sns
 import pickle
 
 
@@ -104,16 +101,9 @@ class Metadata:
         }
 
     def create_file(self,
-                    filename: str,
-                    module_path: str,
-                    class_name: str,
-                    class_parameters: dict,
-                    service_type: str) -> dict:
+                    filename: str, service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
         metadata[NAME_FIELD_NAME] = filename
-        metadata[MODULE_PATH_FIELD_NAME] = module_path
-        metadata[CLASS_FIELD_NAME] = class_name
-        metadata[CLASS_PARAMETERS_FIELD_NAME] = class_parameters
         metadata[TYPE_PARAM_NAME] = service_type
 
         self.__database_connector.insert_one_in_file(
@@ -135,8 +125,7 @@ class Metadata:
 
     def create_execution_document(self, executor_name: str,
                                   description: str,
-                                  class_method_name: str,
-                                  method_parameters: dict,
+                                  function_parameters: dict,
                                   exception: str = None) -> None:
         document_id_query = {
             ID_FIELD_NAME: {
@@ -152,8 +141,7 @@ class Metadata:
         model_document = {
             EXCEPTION_FIELD_NAME: exception,
             DESCRIPTION_FIELD_NAME: description,
-            METHOD_FIELD_NAME: class_method_name,
-            METHOD_PARAMETERS_FIELD_NAME: method_parameters,
+            FUNCTION_PARAMETERS_FIELD_NAME: function_parameters,
             ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
@@ -185,96 +173,35 @@ class UserRequest:
         if filename not in filenames:
             raise Exception(self.__MESSAGE_NONEXISTENT_FILE)
 
-    def valid_method_class_validator(self, tool_name: str,
-                                     class_name: str,
-                                     method_name: str) -> None:
-        module = importlib.import_module(tool_name)
-        module_class = getattr(module, class_name)
 
-        class_members = getmembers(module_class)
-        class_methods = [method[FIRST_ARGUMENT] for method in class_members]
-
-        if method_name not in class_methods:
-            raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
-
-    def valid_method_parameters_name_validator(self, tool_name: str,
-                                               class_name: str,
-                                               class_method: str,
-                                               method_parameters: dict) -> None:
-        module = importlib.import_module(tool_name)
-        module_class = getattr(module, class_name)
-        class_method_reference = getattr(module_class, class_method)
-        valid_function_parameters = signature(class_method_reference)
-
-        for parameter, value in method_parameters.items():
-            if parameter not in valid_function_parameters.parameters:
-                raise Exception(self.__MESSAGE_INVALID_CLASS_METHOD_PARAMETER)
-
-    def available_module_path_validator(self, package: str) -> None:
-        try:
-            importlib.import_module(package)
-
-        except Exception:
-            raise Exception(self.__MESSAGE_INVALID_MODULE_PATH_NAME)
-
-    def valid_class_validator(self, tool_name: str, function_name: str) -> None:
-        try:
-            module = importlib.import_module(tool_name)
-            getattr(module, function_name)
-
-        except Exception:
-            raise Exception(self.__MESSAGE_INVALID_CLASS_NAME)
-
-    def valid_class_parameters_validator(self, tool: str, function: str,
-                                         function_parameters: dict) -> None:
-        module = importlib.import_module(tool)
-        module_function = getattr(module, function)
-        valid_function_parameters = signature(module_function.__init__)
-
-        for parameter, value in function_parameters.items():
-            if parameter not in valid_function_parameters.parameters:
-                raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
-
-
-class ExecutionStorage:
+class ObjectStorage:
     __WRITE_OBJECT_OPTION = "wb"
     __READ_OBJECT_OPTION = "rb"
 
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        pass
-
-    def read(self, filename: str, service_type: str) -> object:
-        pass
-
-    def delete(self, filename: str) -> None:
-        pass
-
-
-class TransformStorage(ExecutionStorage):
     def __init__(self, database_connector: Database):
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        output_path = TransformStorage.get_write_binary_path(filename)
+    def read(self, filename: str, service_type: str) -> object:
+        binary_instance = open(
+            ObjectStorage.get_read_binary_path(
+                filename, service_type),
+            self.__READ_OBJECT_OPTION)
+        return pickle.load(binary_instance)
+
+    def save(self, instance: dict, filename: str) -> None:
+        output_path = ObjectStorage.get_write_binary_path(filename)
 
         instance_output = open(output_path,
                                self.__WRITE_OBJECT_OPTION)
         pickle.dump(instance, instance_output)
         instance_output.close()
 
-    def read(self, filename: str, service_type: str) -> object:
-        binary_instance = open(
-            TransformStorage.get_read_binary_path(
-                filename, service_type),
-            self.__READ_OBJECT_OPTION)
-        return pickle.load(binary_instance)
-
     def delete(self, filename: str) -> None:
         self.__thread_pool.submit(
             self.__database_connector.delete_file, filename)
         self.__thread_pool.submit(
-            os.remove, TransformStorage.get_write_binary_path(filename))
+            os.remove, ObjectStorage.get_write_binary_path(filename))
 
     @staticmethod
     def get_write_binary_path(filename: str) -> str:
@@ -293,55 +220,11 @@ class TransformStorage(ExecutionStorage):
                    service_type + "/" + filename
 
 
-class ExploreStorage(ExecutionStorage):
-    def __init__(self, database_connector: Database = None):
-        self.__database_connector = database_connector
-        self.__thread_pool = ThreadPoolExecutor()
-
-    def save(self, instance: pd.DataFrame, filename: str) -> None:
-        output_path = ExploreStorage.get_file_path(filename)
-        sns_plot = sns.scatterplot(data=instance)
-        sns_plot.get_figure().savefig(output_path)
-
-    def read(self, filename: str, service_type: str = None) -> object:
-        image = open(
-            ExploreStorage.get_file_path(
-                filename))
-        return image
-
-    def delete(self, filename: str) -> None:
-        self.__thread_pool.submit(
-            self.__database_connector.delete_file, filename)
-        self.__thread_pool.submit(os.remove,
-                                  ExploreStorage.get_file_path(filename))
-
-    @staticmethod
-    def get_file_path(filename: str) -> str:
-        return os.environ[EXPLORE_VOLUME_PATH] + "/" + filename + IMAGE_FORMAT
-
-
 class Data:
-    def __init__(self, database: Database, storage: ExecutionStorage):
+    def __init__(self, database: Database, storage: ObjectStorage):
         self.__database = database
         self.__storage = storage
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
-
-    def get_module_and_class(self, filename: str) -> tuple:
-        metadata = self.__database.find_one(
-            filename,
-            self.__METADATA_QUERY)
-
-        module_path = metadata[MODULE_PATH_FIELD_NAME]
-        class_name = metadata[CLASS_FIELD_NAME]
-
-        return module_path, class_name
-
-    def get_class_parameters(self, filename: str) -> dict:
-        metadata = self.__database.find_one(
-            filename,
-            self.__METADATA_QUERY)
-
-        return metadata[CLASS_PARAMETERS_FIELD_NAME]
 
     def get_dataset_content(self, filename: str) -> object:
         if self.__is_stored_in_volume(filename):
@@ -359,7 +242,7 @@ class Data:
         instance = self.__storage.read(filename, service_type)
         return instance[object_name]
 
-    def get_type(self, filename):
+    def get_type(self, filename) -> str:
         metadata = self.__database.find_one(
             filename,
             self.__METADATA_QUERY)

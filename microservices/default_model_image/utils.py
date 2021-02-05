@@ -161,7 +161,7 @@ class UserRequest:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_PARAMETER)
 
 
-class ModelStorage:
+class ObjectStorage:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
 
@@ -170,7 +170,7 @@ class ModelStorage:
         self.__database_connector = database_connector
 
     def save(self, filename: str, model_instance: object) -> None:
-        model_output = open(ModelStorage.get_binary_path(filename),
+        model_output = open(ObjectStorage.get_binary_path(filename),
                             self.__WRITE_MODEL_OBJECT_OPTION)
         pickle.dump(model_instance, model_output)
         model_output.close()
@@ -179,7 +179,7 @@ class ModelStorage:
         self.__thread_pool.submit(self.__database_connector.delete_file,
                                   filename)
         self.__thread_pool.submit(os.remove,
-                                  ModelStorage.get_binary_path(filename))
+                                  ObjectStorage.get_binary_path(filename))
 
     @staticmethod
     def get_binary_path(filename: str) -> str:

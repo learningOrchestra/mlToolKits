@@ -31,10 +31,12 @@ def create_execution() -> jsonify:
     )
 
     request_validator = UserRequest(database)
+    storage = ObjectStorage(database)
+    data = Data(database, storage)
 
     request_errors = analyse_post_request_errors(
         request_validator,
-        database,
+        data,
         filename,
         parent_name,
         class_method,
@@ -44,10 +46,9 @@ def create_execution() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    data = Data(database)
+
     parent_name_service_type = data.get_type(parent_name)
     parameters_handler = Parameters(database, data)
-    storage = VolumeStorage(database)
 
     train_model = Execution(
         database,
@@ -91,29 +92,26 @@ def update_execution(filename: str) -> jsonify:
     method_parameters = request.json[METHOD_PARAMETERS_FIELD_NAME]
 
     request_validator = UserRequest(database)
+    storage = ObjectStorage(database)
+    data = Data(database, storage)
 
     request_errors = analyse_patch_request_errors(
         request_validator,
-        database,
+        data,
         filename,
         method_parameters)
 
     if request_errors is not None:
         return request_errors
 
-    data = Data(database)
     module_path, function = data.get_module_and_class_from_a_model(
         filename)
     model_name = data.get_model_name_from_a_child(filename)
     method_name = data.get_class_method_from_a_executor_name(filename)
 
     metadata_creator = Metadata(database)
-
-    data = Data(database)
     parent_name_service_type = data.get_type(model_name)
-
     parameters_handler = Parameters(database, data)
-    storage = VolumeStorage(database)
 
     default_model = Execution(
         database,
@@ -162,7 +160,7 @@ def delete_default_model(filename: str) -> jsonify:
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    storage = VolumeStorage(database)
+    storage = ObjectStorage(database)
     storage.delete(filename, service_type)
 
     return (
@@ -173,7 +171,7 @@ def delete_default_model(filename: str) -> jsonify:
 
 
 def analyse_post_request_errors(request_validator: UserRequest,
-                                database: Database,
+                                data: Data,
                                 train_name: str,
                                 model_name: str,
                                 class_method: str,
@@ -199,7 +197,6 @@ def analyse_post_request_errors(request_validator: UserRequest,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    data = Data(database)
     module_path, class_name = data.get_module_and_class_from_a_model(
         model_name)
 
@@ -232,7 +229,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
 
 def analyse_patch_request_errors(request_validator: UserRequest,
-                                 database: Database,
+                                 data: Data,
                                  train_name: str,
                                  method_parameters: dict) \
         -> Union[tuple, None]:
@@ -246,7 +243,6 @@ def analyse_patch_request_errors(request_validator: UserRequest,
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    data = Data(database)
     module_path, class_name = data.get_module_and_class_from_a_executor_name(
         train_name)
 

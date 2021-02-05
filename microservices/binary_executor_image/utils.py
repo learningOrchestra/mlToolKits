@@ -192,7 +192,7 @@ class UserRequest:
                 raise Exception(self.__MESSAGE_INVALID_CLASS_METHOD_PARAMETER)
 
 
-class VolumeStorage:
+class ObjectStorage:
     __WRITE_MODEL_OBJECT_OPTION = "wb"
     __READ_MODEL_OBJECT_OPTION = "rb"
 
@@ -201,7 +201,7 @@ class VolumeStorage:
         self.__thread_pool = ThreadPoolExecutor()
 
     def save(self, instance: object, filename: str, service_type: str) -> None:
-        model_output_path = VolumeStorage.get_write_binary_path(
+        model_output_path = ObjectStorage.get_write_binary_path(
             filename, service_type)
         if not os.path.exists(os.path.dirname(model_output_path)):
             os.makedirs(os.path.dirname(model_output_path))
@@ -216,11 +216,11 @@ class VolumeStorage:
                                   filename)
         self.__thread_pool.submit(
             os.remove,
-            VolumeStorage.get_write_binary_path(filename, service_type))
+            ObjectStorage.get_write_binary_path(filename, service_type))
 
     def read(self, filename, service_type: str) -> object:
         model_binary_instance = open(
-            VolumeStorage.get_read_binary_path(
+            ObjectStorage.get_read_binary_path(
                 filename, service_type),
             self.__READ_MODEL_OBJECT_OPTION)
         return pickle.load(model_binary_instance)
@@ -244,10 +244,9 @@ class VolumeStorage:
 
 
 class Data:
-    __READ_OBJECT_OPTION = "rb"
-
-    def __init__(self, database: Database):
+    def __init__(self, database: Database, storage: ObjectStorage):
         self.__database = database
+        self.__storage = storage
         self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
 
     def get_module_and_class_from_a_model(self,
@@ -301,33 +300,21 @@ class Data:
 
         return metadata[TYPE_FIELD_NAME]
 
-    def get_filename_content(self, filename) -> pd.DataFrame:
+    def get_dataset_content(self, filename: str) -> object:
         if self.__is_stored_in_volume(filename):
             service_type = self.get_type(filename)
-            binary_instance = open(
-                VolumeStorage.get_read_binary_path(filename, service_type),
-                self.__READ_OBJECT_OPTION)
-            return pickle.load(binary_instance)
+            return self.__storage.read(filename, service_type)
         else:
             dataset = self.__database.get_entire_collection(
                 filename)
 
             return pd.DataFrame(dataset)
 
-    def get_filename_column_content(self, filename: str,
-                                    column_name: str) -> pd.DataFrame:
-        if self.__is_stored_in_volume(filename):
-            service_type = self.get_type(filename)
-            binary_reader = open(
-                VolumeStorage.get_read_binary_path(filename, service_type),
-                self.__READ_OBJECT_OPTION)
-            instance = pickle.load(binary_reader)
-            return instance[column_name]
-        else:
-            dataset = self.__database.get_field_from_collection(
-                filename, column_name)
-
-            return pd.DataFrame(dataset)
+    def get_object_from_dataset(self, filename: str,
+                                object_name: str) -> object:
+        service_type = self.get_type(filename)
+        instance = self.__storage.read(filename, service_type)
+        return instance[object_name]
 
     def __is_stored_in_volume(self, filename: str) -> bool:
         volume_types = [

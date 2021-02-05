@@ -1,6 +1,6 @@
 import importlib
 from concurrent.futures import ThreadPoolExecutor
-from utils import Metadata, Database, ModelStorage
+from utils import Metadata, Database, ObjectStorage
 from constants import *
 
 
@@ -11,7 +11,7 @@ class DefaultModel:
                  metadata_creator: Metadata,
                  module_path: str,
                  class_name: str,
-                 storage: ModelStorage):
+                 storage: ObjectStorage):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector

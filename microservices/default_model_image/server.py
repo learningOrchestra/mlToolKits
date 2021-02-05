@@ -39,7 +39,7 @@ def create_default_model() -> jsonify:
         return request_errors
 
     metadata_creator = Metadata(database)
-    storage = ModelStorage(database)
+    storage = ObjectStorage(database)
     default_model = DefaultModel(
         database,
         model_name,
@@ -93,7 +93,7 @@ def update_default_model(filename: str) -> jsonify:
     module_path, class_name = data.get_module_and_class_from_a_model(filename)
 
     metadata_creator = Metadata(database)
-    storage = ModelStorage(database)
+    storage = ObjectStorage(database)
     default_model = DefaultModel(
         database,
         filename,
@@ -140,7 +140,7 @@ def delete_default_model(filename: str) -> jsonify:
             HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    storage = ModelStorage(database)
+    storage = ObjectStorage(database)
     storage.delete(filename)
 
     return (

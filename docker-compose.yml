@@ -206,8 +206,6 @@ services:
     image: 127.0.0.1:5050/database_executor
     ports:
       - "5006:5006"
-    extra_hosts:
-      - "database_executor:0.0.0.0"
     depends_on:
       - databaseprimary
       - images
@@ -264,6 +262,24 @@ services:
       - "default_model:/models"
       - "binary_executor:/binaries"
       - "database_executor:/transform"
+
+  codexecutor:
+    build: microservices/code_executor_image
+    image: 127.0.0.1:5050/code_executor
+    ports:
+      - "5009:5009"
+    depends_on:
+      - databaseprimary
+      - images
+    deploy: *default-deploy-manager
+    volumes:
+      - "database_executor:/explore"
+      - "database_executor:/transform"
+      - "default_model:/models"
+      - "binary_executor:/binaries"
+    networks:
+      - database
+    environment: *default-service-database-env
 
 networks:
   database:
