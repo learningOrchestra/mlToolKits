@@ -106,7 +106,10 @@ services:
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     networks:
       - portainer
-    deploy: *default-deploy-worker
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
 
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
@@ -118,7 +121,11 @@ services:
       - portainer:/data
     networks:
       - portainer
-    deploy: *default-deploy-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
 
   sparkmaster:
     build: microservices/spark_image
