@@ -108,7 +108,9 @@ services:
       - portainer
     deploy:
       mode: global
-
+      placement:
+        constraints: 
+          - "node.platform.os==linux"
 
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
