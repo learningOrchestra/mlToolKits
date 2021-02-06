@@ -109,7 +109,7 @@ services:
     deploy:
       mode: global
       placement:
-        constraints: 
+        constraints:
           - "node.platform.os==linux"
 
   portainer:
@@ -122,7 +122,12 @@ services:
       - portainer:/data
     networks:
       - portainer
-    deploy: *default-deploy-manager
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - "node.role==manager"
 
   sparkmaster:
     build: microservices/spark_image
