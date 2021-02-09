@@ -71,14 +71,10 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.create_file(self.filename, self.service_type)
 
-        '''self.__thread_pool.submit(self.__pipeline,
+        self.__thread_pool.submit(self.__pipeline,
                                   function,
                                   function_parameters,
-                                  description)'''
-        self.__pipeline(
-            function,
-            function_parameters,
-            description)
+                                  description)
 
     def update(self,
                function: str,
@@ -86,35 +82,31 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.update_finished_flag(self.filename, False)
 
-        '''self.__thread_pool.submit(self.__pipeline,
+        self.__thread_pool.submit(self.__pipeline,
                                   function,
                                   function_parameters,
-                                  description)'''
-        self.__pipeline(
-            function,
-            function_parameters,
-            description)
+                                  description)
 
     def __pipeline(self,
                    function: str,
                    function_parameters: dict,
                    description: str) -> None:
-        # try:
-        function_result = self.__execute_function(function,
-                                                  function_parameters)
+        try:
+            function_result = self.__execute_function(function,
+                                                      function_parameters)
 
-        self.__storage.save(function_result, self.filename)
+            self.__storage.save(function_result, self.filename)
 
-        self.__metadata_creator.update_finished_flag(self.filename,
-                                                     flag=True)
+            self.__metadata_creator.update_finished_flag(self.filename,
+                                                         flag=True)
 
-        '''except Exception as exception:
+        except Exception as exception:
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
                 function_parameters,
                 str(exception))
-            return None'''
+            return None
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
