@@ -124,7 +124,8 @@ class Execution:
     def __execute_function(self, function: str,
                            parameters: dict) -> dict:
         function_parameters = self.__parameters_handler.treat(parameters)
+        response = {}
         context_variables = locals()
-        exec(function, globals(), context_variables)
+        exec(function, function_parameters, context_variables)
 
-        return context_variables["response"]
+        return response
