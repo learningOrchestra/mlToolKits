@@ -44,7 +44,7 @@ EVALUATE_TYPE = "evaluate"
 PREDICT_TYPE = "predict"
 
 MICROSERVICE_URI_SWITCHER = {
-    "transformPython": "/api/learningOrchestra/v1/transform/python",
+    "pythonTransform": "/api/learningOrchestra/v1/transform/python",
 
 }
 
