@@ -82,10 +82,14 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.update_finished_flag(self.filename, False)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   function,
                                   function_parameters,
-                                  description)
+                                  description)'''
+        self.__pipeline(
+        function,
+        function_parameters,
+        description)
 
     def __pipeline(self,
                    function: str,
