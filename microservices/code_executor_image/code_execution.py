@@ -113,24 +113,24 @@ class Execution:
                    function_parameters: dict,
                    description: str) -> None:
         function_message = None
-        try:
-            function_result, function_message = self.__execute_function(
-                function,
-                function_parameters)
+        # try:
+        function_result, function_message = self.__execute_function(
+            function,
+            function_parameters)
 
-            self.__storage.save(function_result, self.filename)
+        self.__storage.save(function_result, self.filename)
 
-            self.__metadata_creator.update_finished_flag(self.filename,
-                                                         flag=True)
+        self.__metadata_creator.update_finished_flag(self.filename,
+                                                     flag=True)
 
-        except Exception as exception:
+        '''except Exception as exception:
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
                 function_parameters,
                 function_message,
                 str(exception))
-            return None
+            return None'''
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
