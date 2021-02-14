@@ -4,3 +4,4 @@ datetime==4.3
 pytz==2020.1
 pandas
 numpy
+nltk

@@ -1,6 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor
 from utils import *
 from constants import *
+from io import StringIO
+import sys
 
 
 class Parameters:
@@ -91,9 +93,11 @@ class Execution:
                    function: str,
                    function_parameters: dict,
                    description: str) -> None:
+        function_message = None
         try:
-            function_result = self.__execute_function(function,
-                                                      function_parameters)
+            function_result, function_message = self.__execute_function(
+                function,
+                function_parameters)
 
             self.__storage.save(function_result, self.filename)
 
@@ -105,19 +109,28 @@ class Execution:
                 self.filename,
                 description,
                 function_parameters,
+                function_message,
                 str(exception))
             return None
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
                                                           function_parameters,
+                                                          function_message
                                                           )
 
     def __execute_function(self, function: str,
-                           parameters: dict) -> dict:
+                           parameters: dict) -> (dict, str):
         function_parameters = self.__parameters_handler.treat(parameters)
-        response = {}
+
+        old_stdout = sys.stdout
+        redirected_output = sys.stdout = StringIO()
+
+        function_response = {}
         context_variables = locals()
         exec(function, function_parameters, context_variables)
 
-        return response
+        function_message = redirected_output.getvalue()
+        sys.stdout = old_stdout
+
+        return function_response, function_message

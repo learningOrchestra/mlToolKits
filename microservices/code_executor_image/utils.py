@@ -126,6 +126,7 @@ class Metadata:
     def create_execution_document(self, executor_name: str,
                                   description: str,
                                   function_parameters: dict,
+                                  function_message: str,
                                   exception: str = None) -> None:
         document_id_query = {
             ID_FIELD_NAME: {
@@ -140,6 +141,7 @@ class Metadata:
 
         model_document = {
             EXCEPTION_FIELD_NAME: exception,
+            FUNCTION_MESSAGE_FIELD_NAME: function_message,
             DESCRIPTION_FIELD_NAME: description,
             FUNCTION_PARAMETERS_FIELD_NAME: function_parameters,
             ID_FIELD_NAME: highest_id + 1
