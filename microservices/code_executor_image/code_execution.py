@@ -7,6 +7,19 @@ import validators
 import requests
 
 
+class Function:
+    def treat(self, function: str) -> str:
+        if self.__is_url(function):
+            function = self.__get_data_from_url(function)
+        return function
+
+    def __is_url(self, value: str) -> bool:
+        return validators.url(value)
+
+    def __get_data_from_url(self, url: str) -> str:
+        return requests.get(url, allow_redirects=True).text
+
+
 class Parameters:
     __DATASET_KEY_CHARACTER = "$"
     __DATASET_WITH_OBJECT_KEY_CHARACTER = "."
@@ -33,13 +46,6 @@ class Parameters:
                     parameters[name] = self.__data.get_dataset_content(
                         dataset_name)
 
-        function_value = parameters[FUNCTION_FIELD_NAME]
-        if self.__is_url(function_value):
-            parameters[FUNCTION_FIELD_NAME] = \
-                self.__get_data_from_url(function_value)
-
-            print(parameters[FUNCTION_FIELD_NAME], flush=True)
-
         return parameters
 
     def __is_dataset(self, value: str) -> bool:
@@ -58,12 +64,6 @@ class Parameters:
         return value.split(
             self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[SECOND_ARGUMENT]
 
-    def __is_url(self, value: str) -> bool:
-        return validators.url(value)
-
-    def __get_data_from_url(self, url: str) -> str:
-        return requests.get(url, allow_redirects=True).text
-
 
 class Execution:
     def __init__(self,
@@ -72,13 +72,15 @@ class Execution:
                  service_type: str,
                  storage: ObjectStorage,
                  metadata_creator: Metadata,
-                 parameters_handler: Parameters
+                 parameters_handler: Parameters,
+                 function_handler: Function
                  ):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
         self.__storage = storage
         self.__parameters_handler = parameters_handler
+        self.__function_handler = function_handler
         self.filename = filename
         self.service_type = service_type
 
@@ -141,13 +143,15 @@ class Execution:
     def __execute_function(self, function: str,
                            parameters: dict) -> (dict, str):
         function_parameters = self.__parameters_handler.treat(parameters)
-        print(function_parameters, flush=True)
+        function_code = self.__function_handler.treat(function)
+        print(function_code, flush=True)
+
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
 
         function_response = {}
         context_variables = locals()
-        exec(function, function_parameters, context_variables)
+        exec(function_code, function_parameters, context_variables)
 
         function_message = redirected_output.getvalue()
         sys.stdout = old_stdout

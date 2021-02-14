@@ -40,6 +40,7 @@ def create_execution() -> jsonify:
     storage = ObjectStorage(database)
     data = Data(database, storage)
     parameters = Parameters(database, data)
+    function_treat = Function()
 
     execution = Execution(
         database,
@@ -47,7 +48,8 @@ def create_execution() -> jsonify:
         service_type,
         storage,
         metadata_creator,
-        parameters)
+        parameters,
+        function_treat)
 
     execution.create(function, function_parameters, description)
 
@@ -89,6 +91,7 @@ def update_execution(filename: str) -> jsonify:
     storage = ObjectStorage(database)
     data = Data(database, storage)
     parameters = Parameters(database, data)
+    function_treat = Function()
 
     execution = Execution(
         database,
@@ -96,7 +99,8 @@ def update_execution(filename: str) -> jsonify:
         service_type,
         storage,
         metadata_creator,
-        parameters)
+        parameters,
+        function_treat)
 
     execution.update(function, function_parameters, description)
 
