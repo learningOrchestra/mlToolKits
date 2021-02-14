@@ -38,6 +38,8 @@ class Parameters:
             parameters[FUNCTION_FIELD_NAME] = \
                 self.__get_data_from_url(function_value)
 
+            print(parameters[FUNCTION_FIELD_NAME], flush=True)
+
         return parameters
 
     def __is_dataset(self, value: str) -> bool:
