@@ -2,6 +2,8 @@ pymongo==3.10.1
 flask==1.1.2
 datetime==4.3
 pytz==2020.1
+validators==0.18.2
+requests==2.25.1
 pandas
 numpy
 nltk

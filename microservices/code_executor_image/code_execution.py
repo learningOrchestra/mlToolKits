@@ -3,6 +3,8 @@ from utils import *
 from constants import *
 from io import StringIO
 import sys
+import validators
+import requests
 
 
 class Parameters:
@@ -31,6 +33,11 @@ class Parameters:
                     parameters[name] = self.__data.get_dataset_content(
                         dataset_name)
 
+        function_value = parameters[FUNCTION_FIELD_NAME]
+        if self.__is_url(function_value):
+            parameters[FUNCTION_FIELD_NAME] = \
+                self.__get_data_from_url(function_value)
+
         return parameters
 
     def __is_dataset(self, value: str) -> bool:
@@ -48,6 +55,12 @@ class Parameters:
     def __get_name_after_dot_from_value(self, value: str) -> str:
         return value.split(
             self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[SECOND_ARGUMENT]
+
+    def __is_url(self, value: str) -> bool:
+        return validators.url(value)
+
+    def __get_data_from_url(self, url: str) -> str:
+        return requests.get(url, allow_redirects=True).text
 
 
 class Execution:
