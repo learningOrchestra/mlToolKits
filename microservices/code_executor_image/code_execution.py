@@ -127,7 +127,7 @@ class Execution:
                 description,
                 function_parameters,
                 function_message,
-                str(exception))
+                repr(exception))
             return None
 
         self.__metadata_creator.create_execution_document(self.filename,
