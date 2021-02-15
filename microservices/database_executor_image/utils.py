@@ -264,6 +264,8 @@ class TransformStorage(ExecutionStorage):
         instance_output.close()
 
     def read(self, filename: str, service_type: str) -> object:
+        print(TransformStorage.get_read_binary_path(
+            filename, service_type), flush=True)
         binary_instance = open(
             TransformStorage.get_read_binary_path(
                 filename, service_type),

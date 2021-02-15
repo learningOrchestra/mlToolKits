@@ -87,10 +87,11 @@ def read_files(filename):
 
     request_params = request.args.to_dict()
     if "limit" in request_params:
-        if request_params["limit"] < PAGINATE_FILE_LIMIT:
+        if int(request_params["limit"]) < PAGINATE_FILE_LIMIT:
             limit = int(request_params["limit"])
     if "skip" in request_params:
-        skip = int(request_params["skip"])
+        if int(request_params["skip"]) >= 0:
+            skip = int(request_params["skip"])
     if "query" in request_params:
         query = request_params["query"]
 
