@@ -28,7 +28,7 @@ MESSAGE_INVALID_URL = "invalid url"
 MESSAGE_DUPLICATE_FILE = "duplicate file"
 MESSAGE_DELETED_FILE = "deleted file"
 
-PAGINATE_FILE_LIMIT = 20
+PAGINATE_FILE_LIMIT = 100
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/dataset/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
@@ -83,12 +83,19 @@ def read_files(filename):
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
-    limit = int(request.args.get("limit"))
-    if limit > PAGINATE_FILE_LIMIT:
-        limit = PAGINATE_FILE_LIMIT
+    limit, skip, query = 20, 0, {}
+
+    request_params = request.args.to_dict()
+    if "limit" in request_params:
+        if request_params["limit"] < PAGINATE_FILE_LIMIT:
+            limit = int(request_params["limit"])
+    if "skip" in request_params:
+        skip = int(request_params["skip"])
+    if "query" in request_params:
+        query = request_params["query"]
 
     file_result = database.read_file(
-        filename, request.args.get("skip"), limit, request.args.get("query")
+        filename, skip, limit, query
     )
 
     return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCCESS
