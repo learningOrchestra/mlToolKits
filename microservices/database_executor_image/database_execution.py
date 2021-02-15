@@ -75,20 +75,26 @@ class Execution:
                class_method_name: str,
                method_parameters: dict,
                description: str) -> None:
-
         self.__metadata_creator.create_file(self.filename,
                                             self.module_path,
                                             self.class_name,
                                             self.class_parameters,
                                             self.service_type)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   self.module_path,
                                   self.class_name,
                                   self.class_parameters,
                                   class_method_name,
                                   method_parameters,
-                                  description)
+                                  description)'''
+        self.__pipeline(
+            self.module_path,
+            self.class_name,
+            self.class_parameters,
+            class_method_name,
+            method_parameters,
+            description)
 
     def update(self,
                class_method_name: str,
@@ -111,28 +117,28 @@ class Execution:
                    class_method_name: str,
                    method_parameters: dict,
                    description: str) -> None:
-        try:
-            module = importlib.import_module(module_path)
-            module_function = getattr(module, class_name)
-            class_instance = module_function(**class_parameters)
+        # try:
+        module = importlib.import_module(module_path)
+        module_function = getattr(module, class_name)
+        class_instance = module_function(**class_parameters)
 
-            method_result = self.__execute_a_object_method(class_instance,
-                                                           class_method_name,
-                                                           method_parameters)
+        method_result = self.__execute_a_object_method(class_instance,
+                                                       class_method_name,
+                                                       method_parameters)
 
-            self.__storage.save(method_result, self.filename)
+        self.__storage.save(method_result, self.filename)
 
-            self.__metadata_creator.update_finished_flag(self.filename,
-                                                         flag=True)
+        self.__metadata_creator.update_finished_flag(self.filename,
+                                                     flag=True)
 
-        except Exception as exception:
+        '''except Exception as exception:
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
                 class_method_name,
                 method_parameters,
                 repr(exception))
-            return None
+            return None'''
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
