@@ -142,11 +142,8 @@ class Execution:
         response = None
         context_variables = locals()
 
-        for parameter, value in function_parameters.items():
-            context_variables[parameter] = value
-
         try:
-            exec(function_code, globals(), context_variables)
+            exec(function_code, function_parameters, context_variables)
         except Exception as error:
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
@@ -156,5 +153,4 @@ class Execution:
         function_message = redirected_output.getvalue()
         sys.stdout = old_stdout
 
-        print(response, flush=True)
         return response, function_message, None
