@@ -45,6 +45,7 @@ TUNE_TYPE = "tune"
 TRAIN_TYPE = "train"
 EVALUATE_TYPE = "evaluate"
 PREDICT_TYPE = "predict"
+PYTHON_TRANSFORM_TYPE = "pythonTransform"
 
 MICROSERVICE_URI_SWITCHER = {
     "explore": "/api/learningOrchestra/v1/explore/",
