@@ -112,8 +112,8 @@ class Execution:
                    description: str) -> None:
         function_result, function_message, function_error = \
             self.__execute_function(
-            function,
-            function_parameters)
+                function,
+                function_parameters)
 
         if function_result and not function_error:
             self.__storage.save(function_result, self.filename)
