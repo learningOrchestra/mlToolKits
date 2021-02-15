@@ -8,6 +8,7 @@ import csv
 from pymongo import MongoClient, ASCENDING
 import requests
 import re
+import validators
 
 
 class Database:
@@ -136,8 +137,6 @@ class Csv:
 class UserRequest:
     MESSAGE_INVALID_URL = "invalid url"
     MESSAGE_DUPLICATE_FILE = "duplicated dataset name"
-    URL_CONTENT_TYPE_INDEX = 0
-    URL_CONTENT_TYPE_SEPARATOR = ";"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -149,18 +148,5 @@ class UserRequest:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def csv_url_validator(self, url):
-        response_content_type = requests.head(url).headers.get("content-type")
-
-        if self.URL_CONTENT_TYPE_SEPARATOR in response_content_type:
-            response_content_type = \
-                response_content_type.split(self.URL_CONTENT_TYPE_SEPARATOR)[
-                    self.URL_CONTENT_TYPE_INDEX]
-
-        print(response_content_type, flush=True)
-
-        allowed_contents_type = ["application/x-download",
-                                 "text/csv",
-                                 "text/plain"]
-
-        if response_content_type not in allowed_contents_type:
+        if not validators.url(url):
             raise Exception(self.MESSAGE_INVALID_URL)
