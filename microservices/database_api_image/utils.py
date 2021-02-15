@@ -7,6 +7,7 @@ from contextlib import closing
 import csv
 from pymongo import MongoClient, ASCENDING
 import requests
+import re
 
 
 class Database:
@@ -78,7 +79,9 @@ class Csv:
                 delimiter=",",
                 quotechar='"',
             )
-            self.file_headers = next(reader)
+            untreated_headers = next(reader)
+            self.file_headers = [re.sub('\W+', '', column) for column in
+                                 untreated_headers]
             for row in reader:
                 self.download_treatment_queue.put(row)
         self.download_treatment_queue.put(self.FINISHED)
