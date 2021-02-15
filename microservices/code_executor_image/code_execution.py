@@ -156,4 +156,5 @@ class Execution:
         function_message = redirected_output.getvalue()
         sys.stdout = old_stdout
 
+        print(response, flush=True)
         return response, function_message, None
