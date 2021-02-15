@@ -235,7 +235,8 @@ class ObjectStorage:
         if service_type == DEFAULT_MODEL_TYPE:
             return os.environ[MODELS_VOLUME_PATH] + "/" + filename
 
-        elif service_type == TRANSFORM_TYPE:
+        elif service_type == TRANSFORM_TYPE or \
+             service_type == PYTHON_TRANSFORM_TYPE:
             return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
 
         else:

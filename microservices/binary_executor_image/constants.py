@@ -44,6 +44,7 @@ TRAIN_TYPE = "train"
 EVALUATE_TYPE = "evaluate"
 PREDICT_TYPE = "predict"
 TRANSFORM_TYPE = "transform"
+PYTHON_TRANSFORM_TYPE = "pythonTransform"
 
 MICROSERVICE_URI_PATH = "/binaryExecutor"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
