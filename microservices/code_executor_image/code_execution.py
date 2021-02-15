@@ -128,25 +128,32 @@ class Execution:
 
     def __execute_function(self, function: str,
                            parameters: dict) -> (dict, str, str):
+        # This function returns a tuple with 3 items, the first item is a dict
+        # defined inside of executed function, the second item is the the output
+        # caught in executed function and the last item is the the exception
+        # message, in case of a threw exception in executed function.
+        
         function_parameters = self.__parameters_handler.treat(parameters)
         function_code = self.__function_handler.treat(function)
 
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
 
-        function_response = None
-        function_error = None
+        response = None
         context_variables = locals()
 
+        for parameter, value in function_parameters.items():
+            context_variables[parameter] = value
+
         try:
-            exec(function_code, function_parameters, context_variables)
+            exec(function_code, globals(), context_variables)
         except Exception as error:
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
             function_error = repr(error)
-            return function_response, function_message, function_error
+            return response, function_message, function_error
 
         function_message = redirected_output.getvalue()
         sys.stdout = old_stdout
 
-        return function_response, function_message, function_error
+        return response, function_message, None
