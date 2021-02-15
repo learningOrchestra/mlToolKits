@@ -110,45 +110,43 @@ class Execution:
                    function: str,
                    function_parameters: dict,
                    description: str) -> None:
-        function_message = None
-        try:
-            function_result, function_message = self.__execute_function(
-                function,
-                function_parameters)
+        function_result, function_message, function_error = \
+            self.__execute_function(
+            function,
+            function_parameters)
 
+        if function_result and not function_error:
             self.__storage.save(function_result, self.filename)
-
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
-
-        except Exception as exception:
-            self.__metadata_creator.create_execution_document(
-                self.filename,
-                description,
-                function_parameters,
-                function_message,
-                repr(exception))
-            return None
 
         self.__metadata_creator.create_execution_document(self.filename,
                                                           description,
                                                           function_parameters,
-                                                          function_message
-                                                          )
+                                                          function_message,
+                                                          function_error)
 
     def __execute_function(self, function: str,
-                           parameters: dict) -> (dict, str):
+                           parameters: dict) -> (dict, str, str):
         function_parameters = self.__parameters_handler.treat(parameters)
         function_code = self.__function_handler.treat(function)
 
         old_stdout = sys.stdout
         redirected_output = sys.stdout = StringIO()
 
-        function_response = {}
+        function_response = None
+        function_error = None
         context_variables = locals()
-        exec(function_code, function_parameters, context_variables)
+
+        try:
+            exec(function_code, function_parameters, context_variables)
+        except Exception as error:
+            function_message = redirected_output.getvalue()
+            sys.stdout = old_stdout
+            function_error = repr(error)
+            return function_response, function_message, function_error
 
         function_message = redirected_output.getvalue()
         sys.stdout = old_stdout
 
-        return function_response, function_message
+        return function_response, function_message, function_error
