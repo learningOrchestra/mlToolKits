@@ -90,10 +90,14 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.create_file(self.filename, self.service_type)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   function,
                                   function_parameters,
-                                  description)
+                                  description)'''
+        self.__pipeline(
+            function,
+            function_parameters,
+            description)
 
     def update(self,
                function: str,
@@ -132,7 +136,7 @@ class Execution:
         # defined inside of executed function, the second item is the the output
         # caught in executed function and the last item is the the exception
         # message, in case of a threw exception in executed function.
-        
+
         function_parameters = self.__parameters_handler.treat(parameters)
         function_code = self.__function_handler.treat(function)
 
