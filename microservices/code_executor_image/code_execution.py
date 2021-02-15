@@ -144,13 +144,13 @@ class Execution:
 
         try:
             exec(function_code, function_parameters, context_variables)
+            function_message = redirected_output.getvalue()
+            sys.stdout = old_stdout
+            print(response, flush=True)
+            return response, function_message, None
+
         except Exception as error:
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
             function_error = repr(error)
             return response, function_message, function_error
-
-        function_message = redirected_output.getvalue()
-        sys.stdout = old_stdout
-
-        return response, function_message, None
