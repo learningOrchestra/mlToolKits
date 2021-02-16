@@ -93,6 +93,8 @@ class Metadata:
 
     def create_file(self, parent_name: str,
                     filename: str,
+                    module_path: str,
+                    class_name: str,
                     class_method: str,
                     service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
@@ -100,6 +102,8 @@ class Metadata:
         metadata[NAME_FIELD_NAME] = filename
         metadata[METHOD_FIELD_NAME] = class_method
         metadata[TYPE_FIELD_NAME] = service_type
+        metadata[MODULE_PATH_FIELD_NAME] = module_path
+        metadata[CLASS_FIELD_NAME] = class_name
 
         self.__database_connector.insert_one_in_file(
             filename,

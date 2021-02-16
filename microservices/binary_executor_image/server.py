@@ -65,7 +65,7 @@ def create_execution() -> jsonify:
     module_path, class_name = data.get_module_and_class_from_a_model(
         parent_name)
     train_model.create(
-        module_path, method_parameters, description)
+        module_path, class_name, method_parameters, description)
 
     return (
         jsonify({
@@ -172,14 +172,14 @@ def delete_default_model(filename: str) -> jsonify:
 
 def analyse_post_request_errors(request_validator: UserRequest,
                                 data: Data,
-                                train_name: str,
-                                model_name: str,
+                                filename: str,
+                                parent_name: str,
                                 class_method: str,
                                 method_parameters: dict) \
         -> Union[tuple, None]:
     try:
         request_validator.not_duplicated_filename_validator(
-            train_name
+            filename
         )
     except Exception as duplicated_train_filename:
         return (
@@ -189,7 +189,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
     try:
         request_validator.existent_filename_validator(
-            model_name
+            parent_name
         )
     except Exception as invalid_model_name:
         return (
@@ -198,7 +198,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
 
     module_path, class_name = data.get_module_and_class_from_a_model(
-        model_name)
+        parent_name)
 
     try:
         request_validator.valid_method_class_validator(
@@ -230,12 +230,12 @@ def analyse_post_request_errors(request_validator: UserRequest,
 
 def analyse_patch_request_errors(request_validator: UserRequest,
                                  data: Data,
-                                 train_name: str,
+                                 filename: str,
                                  method_parameters: dict) \
         -> Union[tuple, None]:
     try:
         request_validator.existent_filename_validator(
-            train_name
+            filename
         )
     except Exception as nonexistent_train_filename:
         return (
@@ -244,9 +244,9 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
 
     module_path, class_name = data.get_module_and_class_from_a_executor_name(
-        train_name)
+        filename)
 
-    class_method = data.get_class_method_from_a_executor_name(train_name)
+    class_method = data.get_class_method_from_a_executor_name(filename)
     try:
         request_validator.valid_method_parameters_validator(
             module_path,

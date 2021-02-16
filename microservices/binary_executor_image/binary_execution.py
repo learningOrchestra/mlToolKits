@@ -77,11 +77,14 @@ class Execution:
 
     def create(self,
                module_path: str,
+               class_name: str,
                method_parameters: dict,
                description: str) -> None:
 
         self.__metadata_creator.create_file(self.parent_name,
                                             self.executor_name,
+                                            module_path,
+                                            class_name,
                                             self.class_method,
                                             self.executor_service_type)
 
