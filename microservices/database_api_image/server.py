@@ -95,9 +95,6 @@ def read_files(filename):
     if "query" in request_params:
         query = request_params["query"]
 
-    print(query, flush=True)
-    print(type(query), flush=True)
-
     file_result = database.read_file(
         filename, skip, limit, query
     )
