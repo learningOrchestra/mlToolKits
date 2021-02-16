@@ -1,7 +1,7 @@
+import importlib
 from concurrent.futures import ThreadPoolExecutor
-from utils import *
-from constants import *
-import os
+from utils import Database, Data, Metadata, ObjectStorage
+from constants import Constants
 
 
 class Parameters:
@@ -39,14 +39,14 @@ class Parameters:
         dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
                                      self.__REMOVE_KEY_CHARACTER)
         return dataset_name.split(self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[
-            FIRST_ARGUMENT]
+            Constants.FIRST_ARGUMENT]
 
     def __has_dot_in_dataset_name(self, dataset_name: str) -> bool:
         return self.__DATASET_WITH_OBJECT_KEY_CHARACTER in dataset_name
 
     def __get_name_after_dot_from_value(self, value: str) -> str:
         return value.split(
-            self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[SECOND_ARGUMENT]
+            self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[Constants.SECOND_ARGUMENT]
 
 
 class Execution:

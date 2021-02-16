@@ -1,37 +1,41 @@
 from flask import jsonify, request, Flask, send_file
-from database_execution import *
-from utils import *
+from database_execution import Parameters, Execution
+from utils import (
+    Database,
+    UserRequest,
+    ExploreStorage,
+    TransformStorage,
+    Metadata,
+    Data)
+import os
 from typing import Union
-from constants import *
+from constants import Constants
 
 app = Flask(__name__)
 
-DATABASE_URL = os.environ[DATABASE_URL]
-DATABASE_REPLICA_SET = os.environ[DATABASE_REPLICA_SET]
-DATABASE_NAME = os.environ[DATABASE_NAME]
+database = Database(
+    os.environ[Constants.DATABASE_URL],
+    os.environ[Constants.DATABASE_REPLICA_SET],
+    int(os.environ[Constants.DATABASE_PORT]),
+    os.environ[Constants.DATABASE_NAME],
+)
+request_validator = UserRequest(database)
+explore_storage = ExploreStorage(database)
+transform_storage = TransformStorage(database)
 
 
-@app.route(MICROSERVICE_URI_PATH, methods=["POST"])
+@app.route(Constants.MICROSERVICE_URI_PATH, methods=["POST"])
 def create_execution() -> jsonify:
-    service_type = request.args.get(TYPE_PARAM_NAME)
-    tool_type = request.args.get(TOOL_PARAM_NAME)
+    service_type = request.args.get(Constants.TYPE_PARAM_NAME)
+    tool_type = request.args.get(Constants.TOOL_PARAM_NAME)
 
-    filename = request.json[NAME_FIELD_NAME]
-    description = request.json[DESCRIPTION_FIELD_NAME]
-    module_path = request.json[MODULE_PATH_FIELD_NAME]
-    class_name = request.json[CLASS_FIELD_NAME]
-    class_parameters = request.json[CLASS_PARAMETERS_FIELD_NAME]
-    class_method_name = request.json[METHOD_FIELD_NAME]
-    method_parameters = request.json[METHOD_PARAMETERS_FIELD_NAME]
-
-    database = Database(
-        DATABASE_URL,
-        DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
-        DATABASE_NAME,
-    )
-
-    request_validator = UserRequest(database)
+    filename = request.json[Constants.NAME_FIELD_NAME]
+    description = request.json[Constants.DESCRIPTION_FIELD_NAME]
+    module_path = request.json[Constants.MODULE_PATH_FIELD_NAME]
+    class_name = request.json[Constants.CLASS_FIELD_NAME]
+    class_parameters = request.json[Constants.CLASS_PARAMETERS_FIELD_NAME]
+    class_method_name = request.json[Constants.METHOD_FIELD_NAME]
+    method_parameters = request.json[Constants.METHOD_PARAMETERS_FIELD_NAME]
 
     request_errors = analyse_post_request_errors(
         request_validator,
@@ -46,16 +50,16 @@ def create_execution() -> jsonify:
     if request_errors is not None:
         return request_errors
 
-    metadata_creator = Metadata(database)
-
     storage = None
-    if service_type == EXPLORE_TYPE:
-        storage = ExploreStorage(database)
-    elif service_type == TRANSFORM_TYPE:
-        storage = TransformStorage(database)
+    if service_type == Constants.EXPLORE_TYPE:
+        storage = explore_storage
+    elif service_type == Constants.TRANSFORM_TYPE:
+        storage = transform_storage
 
     data = Data(database, storage)
     parameters = Parameters(database, data)
+    metadata_creator = Metadata(database)
+
     execution = Execution(
         database,
         filename,
@@ -70,45 +74,35 @@ def create_execution() -> jsonify:
     execution.create(class_method_name, method_parameters, description)
 
     response_params = None
-    if service_type == TRANSFORM_TYPE:
-        response_params = MICROSERVICE_URI_GET_PARAMS
+    if service_type == Constants.TRANSFORM_TYPE:
+        response_params = Constants.MICROSERVICE_URI_GET_PARAMS
 
     return (
         jsonify({
-            MESSAGE_RESULT:
-                MICROSERVICE_URI_SWITCHER[service_type] +
+            Constants.MESSAGE_RESULT:
+                Constants.MICROSERVICE_URI_SWITCHER[service_type] +
                 "/" +
                 tool_type +
                 "/" +
                 filename +
                 response_params}),
-        HTTP_STATUS_CODE_SUCCESS_CREATED,
+        Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
-@app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["PATCH"])
+@app.route(Constants.MICROSERVICE_URI_PATH + "/<filename>", methods=["PATCH"])
 def update_execution(filename: str) -> jsonify:
-    service_type = request.args.get(TYPE_PARAM_NAME)
-    tool_type = request.args.get(TOOL_PARAM_NAME)
-
-    database = Database(
-        DATABASE_URL,
-        DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
-        DATABASE_NAME,
-    )
-
-    description = request.json[DESCRIPTION_FIELD_NAME]
-    class_method_name = request.json[METHOD_FIELD_NAME]
-    method_parameters = request.json[METHOD_PARAMETERS_FIELD_NAME]
-
-    request_validator = UserRequest(database)
+    service_type = request.args.get(Constants.TYPE_PARAM_NAME)
+    tool_type = request.args.get(Constants.TOOL_PARAM_NAME)
+    description = request.json[Constants.DESCRIPTION_FIELD_NAME]
+    class_method_name = request.json[Constants.METHOD_FIELD_NAME]
+    method_parameters = request.json[Constants.METHOD_PARAMETERS_FIELD_NAME]
 
     storage = None
-    if service_type == EXPLORE_TYPE:
-        storage = ExploreStorage(database)
-    elif service_type == TRANSFORM_TYPE:
-        storage = TransformStorage(database)
+    if service_type == Constants.EXPLORE_TYPE:
+        storage = explore_storage
+    elif service_type == Constants.TRANSFORM_TYPE:
+        storage = transform_storage
 
     data = Data(database, storage)
 
@@ -122,12 +116,11 @@ def update_execution(filename: str) -> jsonify:
     if request_errors is not None:
         return request_errors
 
-    metadata_creator = Metadata(database)
-
     module_path, class_name = data.get_module_and_class(filename)
     class_parameters = data.get_class_parameters(filename)
 
     parameters = Parameters(database, data)
+    metadata_creator = Metadata(database)
 
     execution = Execution(
         database,
@@ -143,60 +136,43 @@ def update_execution(filename: str) -> jsonify:
     execution.update(class_method_name, method_parameters, description)
 
     response_params = None
-    if service_type == TRANSFORM_TYPE:
-        response_params = MICROSERVICE_URI_GET_PARAMS
+    if service_type == Constants.TRANSFORM_TYPE:
+        response_params = Constants.MICROSERVICE_URI_GET_PARAMS
 
     return (
         jsonify({
-            MESSAGE_RESULT:
-                MICROSERVICE_URI_SWITCHER[service_type] +
+            Constants.MESSAGE_RESULT:
+                Constants.MICROSERVICE_URI_SWITCHER[service_type] +
                 "/" +
                 tool_type +
                 "/" +
                 filename +
                 response_params}),
-        HTTP_STATUS_CODE_SUCCESS_CREATED,
+        Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
-@app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["GET"])
+@app.route(Constants.MICROSERVICE_URI_PATH + "/<filename>", methods=["GET"])
 def get_image(filename):
-    database = Database(
-        DATABASE_URL,
-        DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
-        DATABASE_NAME,
-    )
-    request_validator = UserRequest(database)
-
     try:
         request_validator.existent_filename_validator(filename)
 
     except Exception as invalid_filename:
         return (
             jsonify(
-                {MESSAGE_RESULT: str(invalid_filename)}),
-            HTTP_STATUS_CODE_NOT_FOUND,
+                {Constants.MESSAGE_RESULT: str(invalid_filename)}),
+            Constants.HTTP_STATUS_CODE_NOT_FOUND,
         )
 
-    storage = ExploreStorage(database)
+    storage = explore_storage
     image = storage.read(filename)
 
     return send_file(image, mimetype="image/png")
 
 
-@app.route(MICROSERVICE_URI_PATH + "/<filename>", methods=["DELETE"])
+@app.route(Constants.MICROSERVICE_URI_PATH + "/<filename>", methods=["DELETE"])
 def delete_default_model(filename: str) -> jsonify:
-    service_type = request.args.get(TYPE_PARAM_NAME)
-
-    database = Database(
-        DATABASE_URL,
-        DATABASE_REPLICA_SET,
-        int(os.environ[DATABASE_PORT]),
-        DATABASE_NAME,
-    )
-
-    request_validator = UserRequest(database)
+    service_type = request.args.get(Constants.TYPE_PARAM_NAME)
 
     try:
         request_validator.existent_filename_validator(
@@ -204,22 +180,23 @@ def delete_default_model(filename: str) -> jsonify:
         )
     except Exception as nonexistent_model_filename:
         return (
-            jsonify({MESSAGE_RESULT: str(nonexistent_model_filename)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify(
+                {Constants.MESSAGE_RESULT: str(nonexistent_model_filename)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     storage = None
-    if service_type == EXPLORE_TYPE:
-        storage = ExploreStorage(database)
-    elif service_type == TRANSFORM_TYPE:
-        storage = TransformStorage(database)
+    if service_type == Constants.EXPLORE_TYPE:
+        storage = explore_storage
+    elif service_type == Constants.TRANSFORM_TYPE:
+        storage = transform_storage
 
     storage.delete(filename)
 
     return (
         jsonify({
-            MESSAGE_RESULT: DELETED_MESSAGE}),
-        HTTP_STATUS_CODE_SUCCESS,
+            Constants.MESSAGE_RESULT: Constants.DELETED_MESSAGE}),
+        Constants.HTTP_STATUS_CODE_SUCCESS,
     )
 
 
@@ -237,8 +214,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as duplicated_filename:
         return (
-            jsonify({MESSAGE_RESULT: str(duplicated_filename)}),
-            HTTP_STATUS_CODE_CONFLICT,
+            jsonify({Constants.MESSAGE_RESULT: str(duplicated_filename)}),
+            Constants.HTTP_STATUS_CODE_CONFLICT,
         )
 
     try:
@@ -247,8 +224,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_tool_name:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_tool_name)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_tool_name)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
@@ -258,8 +235,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_name:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_function_name)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_function_name)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
@@ -270,8 +247,9 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_parameters:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_function_parameters)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify(
+                {Constants.MESSAGE_RESULT: str(invalid_function_parameters)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
@@ -282,8 +260,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_method_name:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_method_name)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_method_name)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
@@ -295,8 +273,8 @@ def analyse_post_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_method_parameters:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_method_parameters)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_method_parameters)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     return None
@@ -314,8 +292,9 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as nonexistent_train_filename:
         return (
-            jsonify({MESSAGE_RESULT: str(nonexistent_train_filename)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify(
+                {Constants.MESSAGE_RESULT: str(nonexistent_train_filename)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     module_path, class_name = data.get_module_and_class(filename)
@@ -328,8 +307,8 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_method_name:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_method_name)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_method_name)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     try:
@@ -341,8 +320,9 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
     except Exception as invalid_function_parameters:
         return (
-            jsonify({MESSAGE_RESULT: str(invalid_function_parameters)}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify(
+                {Constants.MESSAGE_RESULT: str(invalid_function_parameters)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     return None

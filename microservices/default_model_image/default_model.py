@@ -1,7 +1,6 @@
 import importlib
 from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database, ObjectStorage
-from constants import *
 
 
 class DefaultModel:

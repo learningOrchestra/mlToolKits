@@ -4,7 +4,7 @@ import pytz
 from pymongo import MongoClient
 from inspect import signature, getmembers
 import importlib
-from constants import *
+from constants import Constants
 import pandas as pd
 import pickle
 import os
@@ -23,10 +23,10 @@ class Database:
 
     def get_entire_collection(self, filename: str) -> list:
         database_documents_query = {
-            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
-            ID_FIELD_NAME: False
+            Constants.ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
@@ -34,11 +34,11 @@ class Database:
 
     def get_field_from_collection(self, filename: str, field: str) -> list:
         database_documents_query = {
-            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
             field: True,
-            ID_FIELD_NAME: False
+            Constants.ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
@@ -87,8 +87,8 @@ class Metadata:
 
         self.__metadata_document = {
             "timeCreated": self.__now_time,
-            ID_FIELD_NAME: METADATA_DOCUMENT_ID,
-            FINISHED_FIELD_NAME: False,
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID,
+            Constants.FINISHED_FIELD_NAME: False,
         }
 
     def create_file(self, parent_name: str,
@@ -98,12 +98,12 @@ class Metadata:
                     class_method: str,
                     service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata[PARENT_NAME_FIELD_NAME] = parent_name
-        metadata[NAME_FIELD_NAME] = filename
-        metadata[METHOD_FIELD_NAME] = class_method
-        metadata[TYPE_FIELD_NAME] = service_type
-        metadata[MODULE_PATH_FIELD_NAME] = module_path
-        metadata[CLASS_FIELD_NAME] = class_name
+        metadata[Constants.PARENT_NAME_FIELD_NAME] = parent_name
+        metadata[Constants.NAME_FIELD_NAME] = filename
+        metadata[Constants.METHOD_FIELD_NAME] = class_method
+        metadata[Constants.TYPE_FIELD_NAME] = service_type
+        metadata[Constants.MODULE_PATH_FIELD_NAME] = module_path
+        metadata[Constants.CLASS_FIELD_NAME] = class_name
 
         self.__database_connector.insert_one_in_file(
             filename,
@@ -112,12 +112,14 @@ class Metadata:
         return metadata
 
     def read_metadata(self, parent_name: str) -> object:
-        metadata_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        metadata_query = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
         return self.__database_connector.find_one(parent_name, metadata_query)
 
     def update_finished_flag(self, filename: str, flag: bool) -> None:
-        flag_true_query = {FINISHED_FIELD_NAME: flag}
-        metadata_file_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        flag_true_query = {Constants.FINISHED_FIELD_NAME: flag}
+        metadata_file_query = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
         self.__database_connector.update_one(filename,
                                              flag_true_query,
                                              metadata_file_query)
@@ -127,21 +129,21 @@ class Metadata:
                                   method_parameters: dict,
                                   exception: str = None) -> None:
         document_id_query = {
-            ID_FIELD_NAME: {
+            Constants.ID_FIELD_NAME: {
                 "$exists": True
             }
         }
-        highest_id_sort = [(ID_FIELD_NAME, -1)]
+        highest_id_sort = [(Constants.ID_FIELD_NAME, -1)]
         highest_id_document = self.__database_connector.find_one(
             executor_name, document_id_query, highest_id_sort)
 
-        highest_id = highest_id_document[ID_FIELD_NAME]
+        highest_id = highest_id_document[Constants.ID_FIELD_NAME]
 
         model_document = {
-            EXCEPTION_FIELD_NAME: exception,
-            DESCRIPTION_FIELD_NAME: description,
-            METHOD_PARAMETERS_FIELD_NAME: method_parameters,
-            ID_FIELD_NAME: highest_id + 1
+            Constants.EXCEPTION_FIELD_NAME: exception,
+            Constants.DESCRIPTION_FIELD_NAME: description,
+            Constants.METHOD_PARAMETERS_FIELD_NAME: method_parameters,
+            Constants.ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
             executor_name,
@@ -177,7 +179,8 @@ class UserRequest:
         module_class = getattr(module, class_name)
 
         class_members = getmembers(module_class)
-        class_methods = [method[FIRST_ARGUMENT] for method in class_members]
+        class_methods = [method[Constants.FIRST_ARGUMENT] for method in
+                         class_members]
 
         if method_name not in class_methods:
             raise Exception(self.__MESSAGE_INVALID_METHOD_NAME)
@@ -232,19 +235,20 @@ class ObjectStorage:
     @staticmethod
     def get_write_binary_path(filename: str, service_type: str) -> str:
         return os.environ[
-                   BINARY_VOLUME_PATH] + "/" + service_type + "/" + filename
+                   Constants.BINARY_VOLUME_PATH] + "/" + \
+               service_type + "/" + filename
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
-        if service_type == DEFAULT_MODEL_TYPE:
-            return os.environ[MODELS_VOLUME_PATH] + "/" + filename
+        if service_type == Constants.DEFAULT_MODEL_TYPE:
+            return os.environ[Constants.MODELS_VOLUME_PATH] + "/" + filename
 
-        elif service_type == TRANSFORM_TYPE or \
-             service_type == PYTHON_TRANSFORM_TYPE:
-            return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+        elif service_type == Constants.TRANSFORM_TYPE or \
+                service_type == Constants.PYTHON_TRANSFORM_TYPE:
+            return os.environ[Constants.TRANSFORM_VOLUME_PATH] + "/" + filename
 
         else:
-            return os.environ[BINARY_VOLUME_PATH] + "/" + \
+            return os.environ[Constants.BINARY_VOLUME_PATH] + "/" + \
                    service_type + "/" + filename
 
 
@@ -252,7 +256,8 @@ class Data:
     def __init__(self, database: Database, storage: ObjectStorage):
         self.__database = database
         self.__storage = storage
-        self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        self.__METADATA_QUERY = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
     def get_module_and_class_from_a_model(self,
                                           model_name: str) -> tuple:
@@ -260,8 +265,8 @@ class Data:
             model_name,
             self.__METADATA_QUERY)
 
-        module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-        class_name = model_metadata[CLASS_FIELD_NAME]
+        module_path = model_metadata[Constants.MODULE_PATH_FIELD_NAME]
+        class_name = model_metadata[Constants.CLASS_FIELD_NAME]
 
         return module_path, class_name
 
@@ -271,14 +276,14 @@ class Data:
             train_name,
             self.__METADATA_QUERY)
 
-        model_name = train_metadata[PARENT_NAME_FIELD_NAME]
+        model_name = train_metadata[Constants.PARENT_NAME_FIELD_NAME]
 
         model_metadata = self.__database.find_one(
             model_name,
             self.__METADATA_QUERY)
 
-        module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-        class_name = model_metadata[CLASS_FIELD_NAME]
+        module_path = model_metadata[Constants.MODULE_PATH_FIELD_NAME]
+        class_name = model_metadata[Constants.CLASS_FIELD_NAME]
 
         return module_path, class_name
 
@@ -288,7 +293,7 @@ class Data:
             train_name,
             self.__METADATA_QUERY)
 
-        return train_metadata[METHOD_FIELD_NAME]
+        return train_metadata[Constants.METHOD_FIELD_NAME]
 
     def get_model_name_from_a_child(
             self, train_name: str) -> str:
@@ -296,14 +301,14 @@ class Data:
             train_name,
             self.__METADATA_QUERY)
 
-        return train_metadata[PARENT_NAME_FIELD_NAME]
+        return train_metadata[Constants.PARENT_NAME_FIELD_NAME]
 
     def get_type(self, filename: str) -> str:
         metadata = self.__database.find_one(
             filename,
             self.__METADATA_QUERY)
 
-        return metadata[TYPE_FIELD_NAME]
+        return metadata[Constants.TYPE_FIELD_NAME]
 
     def get_dataset_content(self, filename: str) -> object:
         if self.__is_stored_in_volume(filename):
@@ -323,11 +328,11 @@ class Data:
 
     def __is_stored_in_volume(self, filename: str) -> bool:
         volume_types = [
-            TUNE_TYPE,
-            TRAIN_TYPE,
-            EVALUATE_TYPE,
-            PREDICT_TYPE,
-            TRANSFORM_TYPE
+            Constants.TUNE_TYPE,
+            Constants.TRAIN_TYPE,
+            Constants.EVALUATE_TYPE,
+            Constants.PREDICT_TYPE,
+            Constants.TRANSFORM_TYPE
         ]
 
         return self.get_type(filename) in volume_types

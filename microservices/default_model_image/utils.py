@@ -4,7 +4,7 @@ import pytz
 from pymongo import MongoClient
 from inspect import signature
 import importlib
-from constants import *
+from constants import Constants
 import pickle
 import os
 
@@ -63,17 +63,17 @@ class Metadata:
 
         self.__metadata_document = {
             "timeCreated": self.__now_time,
-            ID_FIELD_NAME: METADATA_DOCUMENT_ID,
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID,
             "type": "defaultModel",
-            FINISHED_FIELD_NAME: False,
+            Constants.FINISHED_FIELD_NAME: False,
         }
 
     def create_file(self, model_name: str,
                     module_path: str, class_name: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata[MODEL_FIELD_NAME] = model_name
-        metadata[MODULE_PATH_FIELD_NAME] = module_path
-        metadata[CLASS_FIELD_NAME] = class_name
+        metadata[Constants.MODEL_FIELD_NAME] = model_name
+        metadata[Constants.MODULE_PATH_FIELD_NAME] = module_path
+        metadata[Constants.CLASS_FIELD_NAME] = class_name
 
         self.__database_connector.insert_one_in_file(
             model_name,
@@ -82,8 +82,9 @@ class Metadata:
         return metadata
 
     def update_finished_flag(self, filename: str, flag: bool) -> None:
-        flag_true_query = {FINISHED_FIELD_NAME: flag}
-        metadata_file_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        flag_true_query = {Constants.FINISHED_FIELD_NAME: flag}
+        metadata_file_query = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
         self.__database_connector.update_one(filename,
                                              flag_true_query,
                                              metadata_file_query)
@@ -92,21 +93,21 @@ class Metadata:
                               class_parameters: dict,
                               exception: str = None) -> None:
         document_id_query = {
-            ID_FIELD_NAME: {
+            Constants.ID_FIELD_NAME: {
                 "$exists": True
             }
         }
-        highest_id_sort = [(ID_FIELD_NAME, -1)]
+        highest_id_sort = [(Constants.ID_FIELD_NAME, -1)]
         highest_id_document = self.__database_connector.find_one(
             model_name, document_id_query, highest_id_sort)
 
-        highest_id = highest_id_document[ID_FIELD_NAME]
+        highest_id = highest_id_document[Constants.ID_FIELD_NAME]
 
         model_document = {
-            EXCEPTION_FIELD_NAME: exception,
-            DESCRIPTION_FIELD_NAME: description,
-            CLASS_PARAMETERS_FIELD_NAME: class_parameters,
-            ID_FIELD_NAME: highest_id + 1
+            Constants.EXCEPTION_FIELD_NAME: exception,
+            Constants.DESCRIPTION_FIELD_NAME: description,
+            Constants.CLASS_PARAMETERS_FIELD_NAME: class_parameters,
+            Constants.ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
             model_name,
@@ -183,20 +184,21 @@ class ObjectStorage:
 
     @staticmethod
     def get_binary_path(filename: str) -> str:
-        return os.environ[MODELS_VOLUME_PATH] + "/" + filename
+        return os.environ[Constants.MODELS_VOLUME_PATH] + "/" + filename
 
 
 class Data:
     def __init__(self, database: Database):
         self.__database = database
-        self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        self.__METADATA_QUERY = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
     def get_module_and_class_from_a_model(self, model_name: str) -> tuple:
         model_metadata = self.__database.find_one(
             model_name,
             self.__METADATA_QUERY)
 
-        module_path = model_metadata[MODULE_PATH_FIELD_NAME]
-        class_name = model_metadata[CLASS_FIELD_NAME]
+        module_path = model_metadata[Constants.MODULE_PATH_FIELD_NAME]
+        class_name = model_metadata[Constants.CLASS_FIELD_NAME]
 
         return module_path, class_name

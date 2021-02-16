@@ -35,19 +35,18 @@ MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
 
+database_connector = Database(
+    os.environ[DATABASE_URL],
+    os.environ[DATABASE_REPLICA_SET],
+    os.environ[DATABASE_PORT],
+    os.environ[DATABASE_NAME])
+request_validator = UserRequest(database_connector)
+
 
 @app.route("/files", methods=["POST"])
 def create_file():
     url = request.json[URL_FIELD_NAME]
     filename = request.json[FILENAME]
-
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
-    request_validator = UserRequest(database_connector)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -74,12 +73,6 @@ def create_file():
 
 @app.route("/files/<filename>", methods=["GET"])
 def read_files(filename):
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
@@ -104,12 +97,6 @@ def read_files(filename):
 
 @app.route("/files", methods=["GET"])
 def read_files_descriptor():
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
@@ -120,12 +107,6 @@ def read_files_descriptor():
 
 @app.route("/files/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 

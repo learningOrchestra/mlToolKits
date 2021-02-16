@@ -28,18 +28,19 @@ MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
 
 app = Flask(__name__)
 
+database = Database(
+    os.environ[DATABASE_URL],
+    os.environ[DATABASE_REPLICA_SET],
+    os.environ[DATABASE_PORT],
+    os.environ[DATABASE_NAME])
+request_validator = UserRequest(database)
+metadata_handler = Metadata(database)
+
 
 @app.route('/fieldTypes', methods=["PATCH"])
 def change_data_type():
     parent_filename = request.json[PARENT_FILENAME_NAME]
     field_types_names = request.json[FIELD_TYPES_NAMES]
-
-    database = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -49,7 +50,6 @@ def change_data_type():
     if request_errors is not None:
         return request_errors
 
-    metadata_handler = Metadata(database)
     data_type_converter = DataType(database, metadata_handler)
     data_type_converter.convert_existent_file(
         parent_filename, field_types_names)

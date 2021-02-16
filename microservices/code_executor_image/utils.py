@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-from constants import *
+from constants import Constants
 import pandas as pd
 import os
 import pickle
@@ -21,10 +21,10 @@ class Database:
 
     def get_entire_collection(self, filename: str) -> list:
         database_documents_query = {
-            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
-            ID_FIELD_NAME: False
+            Constants.ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
@@ -32,11 +32,11 @@ class Database:
 
     def get_field_from_collection(self, filename: str, field: str) -> list:
         database_documents_query = {
-            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
 
         database_projection_query = {
             field: True,
-            ID_FIELD_NAME: False
+            Constants.ID_FIELD_NAME: False
         }
         return list(self.__database[filename].find(
             filter=database_documents_query,
@@ -53,7 +53,7 @@ class Database:
     def delete_data_in_file(self, filename: str) -> None:
         file_collection = self.__database[filename]
         database_documents_query = {
-            ID_FIELD_NAME: {"$ne": METADATA_DOCUMENT_ID}}
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
 
         file_collection.delete_many(filter=database_documents_query)
 
@@ -96,15 +96,15 @@ class Metadata:
 
         self.__metadata_document = {
             "timeCreated": self.__now_time,
-            ID_FIELD_NAME: METADATA_DOCUMENT_ID,
-            FINISHED_FIELD_NAME: False,
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID,
+            Constants.FINISHED_FIELD_NAME: False,
         }
 
     def create_file(self,
                     filename: str, service_type: str) -> dict:
         metadata = self.__metadata_document.copy()
-        metadata[NAME_FIELD_NAME] = filename
-        metadata[TYPE_PARAM_NAME] = service_type
+        metadata[Constants.NAME_FIELD_NAME] = filename
+        metadata[Constants.TYPE_PARAM_NAME] = service_type
 
         self.__database_connector.insert_one_in_file(
             filename,
@@ -113,12 +113,14 @@ class Metadata:
         return metadata
 
     def read_metadata(self, parent_name: str) -> object:
-        metadata_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        metadata_query = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
         return self.__database_connector.find_one(parent_name, metadata_query)
 
     def update_finished_flag(self, filename: str, flag: bool) -> None:
-        flag_true_query = {FINISHED_FIELD_NAME: flag}
-        metadata_file_query = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        flag_true_query = {Constants.FINISHED_FIELD_NAME: flag}
+        metadata_file_query = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
         self.__database_connector.update_one(filename,
                                              flag_true_query,
                                              metadata_file_query)
@@ -129,22 +131,22 @@ class Metadata:
                                   function_message: str,
                                   exception: str = None) -> None:
         document_id_query = {
-            ID_FIELD_NAME: {
+            Constants.ID_FIELD_NAME: {
                 "$exists": True
             }
         }
-        highest_id_sort = [(ID_FIELD_NAME, -1)]
+        highest_id_sort = [(Constants.ID_FIELD_NAME, -1)]
         highest_id_document = self.__database_connector.find_one(
             executor_name, document_id_query, highest_id_sort)
 
-        highest_id = highest_id_document[ID_FIELD_NAME]
+        highest_id = highest_id_document[Constants.ID_FIELD_NAME]
 
         model_document = {
-            EXCEPTION_FIELD_NAME: exception,
-            FUNCTION_MESSAGE_FIELD_NAME: function_message,
-            DESCRIPTION_FIELD_NAME: description,
-            FUNCTION_PARAMETERS_FIELD_NAME: function_parameters,
-            ID_FIELD_NAME: highest_id + 1
+            Constants.EXCEPTION_FIELD_NAME: exception,
+            Constants.FUNCTION_MESSAGE_FIELD_NAME: function_message,
+            Constants.DESCRIPTION_FIELD_NAME: description,
+            Constants.FUNCTION_PARAMETERS_FIELD_NAME: function_parameters,
+            Constants.ID_FIELD_NAME: highest_id + 1
         }
         self.__database_connector.insert_one_in_file(
             executor_name,
@@ -207,19 +209,19 @@ class ObjectStorage:
 
     @staticmethod
     def get_write_binary_path(filename: str) -> str:
-        return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+        return os.environ[Constants.TRANSFORM_VOLUME_PATH] + "/" + filename
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
-        if service_type == DEFAULT_MODEL_TYPE:
-            return os.environ[MODELS_VOLUME_PATH] + "/" + filename
+        if service_type == Constants.DEFAULT_MODEL_TYPE:
+            return os.environ[Constants.MODELS_VOLUME_PATH] + "/" + filename
 
-        elif service_type == TRANSFORM_TYPE or \
-             service_type == PYTHON_TRANSFORM_TYPE:
-            return os.environ[TRANSFORM_VOLUME_PATH] + "/" + filename
+        elif service_type == Constants.TRANSFORM_TYPE or \
+                service_type == Constants.PYTHON_TRANSFORM_TYPE:
+            return os.environ[Constants.TRANSFORM_VOLUME_PATH] + "/" + filename
 
         else:
-            return os.environ[BINARY_VOLUME_PATH] + "/" + \
+            return os.environ[Constants.BINARY_VOLUME_PATH] + "/" + \
                    service_type + "/" + filename
 
 
@@ -227,7 +229,8 @@ class Data:
     def __init__(self, database: Database, storage: ObjectStorage):
         self.__database = database
         self.__storage = storage
-        self.__METADATA_QUERY = {ID_FIELD_NAME: METADATA_DOCUMENT_ID}
+        self.__METADATA_QUERY = {
+            Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
     def get_dataset_content(self, filename: str) -> object:
         if self.__is_stored_in_volume(filename):
@@ -250,10 +253,10 @@ class Data:
             filename,
             self.__METADATA_QUERY)
 
-        return metadata[TYPE_PARAM_NAME]
+        return metadata[Constants.TYPE_PARAM_NAME]
 
     def __is_stored_in_volume(self, filename) -> bool:
         volume_types = [
-            TRANSFORM_TYPE
+            Constants.TRANSFORM_TYPE
         ]
         return self.get_type(filename) in volume_types
