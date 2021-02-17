@@ -66,9 +66,8 @@ def create_histogram():
     return (
         jsonify({
             MESSAGE_RESULT:
-                MICROSERVICE_URI_GET +
-                histogram_filename +
-                MICROSERVICE_URI_GET_PARAMS}),
+                f'{MICROSERVICE_URI_GET}{histogram_filename}'
+                f'{MICROSERVICE_URI_GET_PARAMS}'}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 

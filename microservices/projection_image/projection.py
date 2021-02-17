@@ -44,11 +44,10 @@ class Projection:
                 .config("spark.jars.packages",
                         "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
-                .master("spark://"
-                        + os.environ[SPARKMASTER_HOST]
-                        + ":"
-                        + str(os.environ[SPARKMASTER_PORT])
-                        )
+                .master(
+                f'spark://{os.environ[SPARKMASTER_HOST]}:'
+                f'{str(os.environ[SPARKMASTER_PORT])}'
+            )
                 .getOrCreate()
         )
 

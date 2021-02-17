@@ -58,11 +58,10 @@ class Model:
                 .config("spark.scheduler.pool", "modelBuilder")
                 .config("spark.scheduler.allocation.file",
                         "./fairscheduler.xml")
-                .master("spark://"
-                        + os.environ[SPARKMASTER_HOST]
-                        + ":"
-                        + str(os.environ[SPARKMASTER_PORT])
-                        )
+                .master(
+                f'spark://{os.environ[SPARKMASTER_HOST]}:'
+                f'{str(os.environ[SPARKMASTER_PORT])}'
+            )
                 .getOrCreate()
         )
 
@@ -224,4 +223,4 @@ class Model:
 
     @staticmethod
     def create_prediction_filename(parent_filename, classifier_name):
-        return parent_filename + classifier_name
+        return f'{parent_filename}{classifier_name}'

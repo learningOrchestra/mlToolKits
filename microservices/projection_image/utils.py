@@ -40,7 +40,7 @@ class Metadata:
 class Database:
     def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, int(database_port))
+            f'{database_url}/?replicaSet={replica_set}', int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find_one(self, filename, query):
@@ -60,20 +60,13 @@ class Database:
         file_collection.update_one(query, new_values_query)
 
     @staticmethod
-    def collection_database_url(
-            database_url, database_name, database_filename,
-            database_replica_set
-    ):
-        return (
-                database_url
-                + "/"
-                + database_name
-                + "."
-                + database_filename
-                + "?replicaSet="
-                + database_replica_set
-                + "&authSource=admin"
-        )
+    def collection_database_url(database_url,
+                                database_name,
+                                database_filename,
+                                database_replica_set
+                                ):
+        return f'{database_url}/{database_name}.{database_filename}' \
+               f'?replicaSet={database_replica_set}&authSource=admin'
 
 
 class UserRequest:

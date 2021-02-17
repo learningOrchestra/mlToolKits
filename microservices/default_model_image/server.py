@@ -53,9 +53,8 @@ def create_default_model() -> jsonify:
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
-                Constants.MICROSERVICE_URI_GET +
-                model_name +
-                Constants.MICROSERVICE_URI_GET_PARAMS}),
+                f'{Constants.MICROSERVICE_URI_GET}{model_name}'
+                f'{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -92,9 +91,8 @@ def update_default_model(filename: str) -> jsonify:
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
-                Constants.MICROSERVICE_URI_GET +
-                filename +
-                Constants.MICROSERVICE_URI_GET_PARAMS}),
+                f'{Constants.MICROSERVICE_URI_GET}{filename}'
+                f'{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 

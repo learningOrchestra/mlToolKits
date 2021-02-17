@@ -13,7 +13,7 @@ class Database:
     def __init__(self, database_url: str, replica_set: str, database_port: int,
                  database_name: str):
         self.__mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, database_port)
+            f'{database_url}/?replicaSet={replica_set}', database_port)
         self.__database = self.__mongo_client[database_name]
 
     def find_one(self, filename: str, query: dict, sort: list = []):
@@ -35,23 +35,6 @@ class Database:
     def delete_file(self, filename: str) -> None:
         file_collection = self.__database[filename]
         file_collection.drop()
-
-    @staticmethod
-    def collection_database_url(
-            database_url: str,
-            database_name: str,
-            database_filename: str,
-            database_replica_set: str) -> str:
-        return (
-                database_url
-                + "/"
-                + database_name
-                + "."
-                + database_filename
-                + "?replicaSet="
-                + database_replica_set
-                + "&authSource=admin"
-        )
 
 
 class Metadata:
@@ -184,7 +167,7 @@ class ObjectStorage:
 
     @staticmethod
     def get_binary_path(filename: str) -> str:
-        return os.environ[Constants.MODELS_VOLUME_PATH] + "/" + filename
+        return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
 
 
 class Data:

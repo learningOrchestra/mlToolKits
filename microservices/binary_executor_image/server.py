@@ -63,14 +63,13 @@ def create_execution() -> jsonify:
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
-                Constants.MICROSERVICE_URI_SWITCHER[service_type] +
-                filename +
-                Constants.MICROSERVICE_URI_GET_PARAMS}),
+                f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
+                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
-@app.route(Constants.MICROSERVICE_URI_PATH + "/<filename>", methods=["PATCH"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["PATCH"])
 def update_execution(filename: str) -> jsonify:
     service_type = request.args.get(Constants.TYPE_FIELD_NAME)
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
@@ -109,14 +108,13 @@ def update_execution(filename: str) -> jsonify:
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
-                Constants.MICROSERVICE_URI_SWITCHER[service_type] +
-                filename +
-                Constants.MICROSERVICE_URI_GET_PARAMS}),
+                f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
+                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
-@app.route(Constants.MICROSERVICE_URI_PATH + "/<filename>", methods=["DELETE"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_default_model(filename: str) -> jsonify:
     service_type = request.args.get(Constants.TYPE_FIELD_NAME)
 

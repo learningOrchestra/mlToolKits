@@ -33,10 +33,10 @@ class Constants:
     MESSAGE_RESULT = "result"
 
     MICROSERVICE_URI_SWITCHER = {
-        "tune": "/api/learningOrchestra/v1/tune",
-        "train": "/api/learningOrchestra/v1/train",
-        "evaluate": "/api/learningOrchestra/v1/evaluate",
-        "predict": "/api/learningOrchestra/v1/predict"
+        "tune": "/api/learningOrchestra/v1/tune/",
+        "train": "/api/learningOrchestra/v1/train/",
+        "evaluate": "/api/learningOrchestra/v1/evaluate/",
+        "predict": "/api/learningOrchestra/v1/predict/"
     }
 
     DEFAULT_MODEL_TYPE = "defaultModel"

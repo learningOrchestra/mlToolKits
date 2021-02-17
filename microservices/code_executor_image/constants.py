@@ -47,7 +47,7 @@ class Constants:
     PYTHON_TRANSFORM_TYPE = "pythonTransform"
 
     MICROSERVICE_URI_SWITCHER = {
-        "pythonTransform": "/api/learningOrchestra/v1/transform/python",
+        "pythonTransform": "/api/learningOrchestra/v1/transform/python/",
 
     }
 

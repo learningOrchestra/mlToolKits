@@ -63,10 +63,8 @@ def create_file():
 
     return (
         jsonify({
-            MESSAGE_RESULT:
-                MICROSERVICE_URI_GET +
-                request.json[FILENAME] +
-                MICROSERVICE_URI_GET_PARAMS}),
+            MESSAGE_RESULT: f'{MICROSERVICE_URI_GET}{request.json[FILENAME]}'
+                            f'{MICROSERVICE_URI_GET_PARAMS}'}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 

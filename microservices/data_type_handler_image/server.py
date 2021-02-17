@@ -55,10 +55,9 @@ def change_data_type():
         parent_filename, field_types_names)
 
     return jsonify({
-        MESSAGE_RESULT:
-            MICROSERVICE_URI_GET +
-            parent_filename +
-            MICROSERVICE_URI_GET_PARAMS}), HTTP_STATUS_CODE_SUCCESS
+        MESSAGE_RESULT: f'{MICROSERVICE_URI_GET}{parent_filename}'
+                        f'{MICROSERVICE_URI_GET_PARAMS}'}),\
+           HTTP_STATUS_CODE_SUCCESS
 
 
 def analyse_request_errors(request_validator, parent_filename,
