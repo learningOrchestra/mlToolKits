@@ -1215,7 +1215,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/codeExecutor/{filename}?type=/p",
+          "url_pattern": "/codeExecutor/{filename}?type=pythonTransform",
           "host": [
             "http://codexecutor:5009"
           ],
