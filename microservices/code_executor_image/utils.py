@@ -240,6 +240,10 @@ class Data:
 
     def __is_stored_in_volume(self, filename) -> bool:
         volume_types = [
+            Constants.TUNE_TYPE,
+            Constants.TRAIN_TYPE,
+            Constants.EVALUATE_TYPE,
+            Constants.PREDICT_TYPE,
             Constants.TRANSFORM_TYPE
         ]
         return self.get_type(filename) in volume_types
