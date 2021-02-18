@@ -107,7 +107,7 @@ def delete_default_model(filename: str) -> jsonify:
         return (
             jsonify(
                 {Constants.MESSAGE_RESULT: str(nonexistent_model_filename)}),
-            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            Constants.HTTP_STATUS_CODE_NOT_FOUND,
         )
 
     storage.delete(filename)
@@ -185,7 +185,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         return (
             jsonify(
                 {Constants.MESSAGE_RESULT: str(nonexistent_model_filename)}),
-            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            Constants.HTTP_STATUS_CODE_NOT_FOUND,
         )
 
     module_path, class_name = data.get_module_and_class_from_a_model(
