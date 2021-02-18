@@ -30,24 +30,23 @@ FIRST_ARGUMENT = 0
 
 app = Flask(__name__)
 
+database_url = os.environ[DATABASE_URL]
+database_replica_set = os.environ[DATABASE_REPLICA_SET]
+database_name = os.environ[DATABASE_NAME]
+database = Database(
+    database_url,
+    database_replica_set,
+    os.environ[DATABASE_PORT],
+    database_name,
+)
+request_validator = UserRequest(database)
+
 
 @app.route("/projections", methods=["POST"])
 def create_projection():
-    database_url = os.environ[DATABASE_URL]
-    database_replica_set = os.environ[DATABASE_REPLICA_SET]
-    database_name = os.environ[DATABASE_NAME]
     parent_filename = request.json[PARENT_FILENAME_NAME]
     projection_filename = request.json[PROJECTION_FILENAME_NAME]
     projection_fields = request.json[FIELDS_NAME]
-
-    database = Database(
-        database_url,
-        database_replica_set,
-        os.environ[DATABASE_PORT],
-        database_name,
-    )
-
-    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -83,9 +82,8 @@ def create_projection():
     return (
         jsonify({
             MESSAGE_RESULT:
-                MICROSERVICE_URI_GET +
-                projection_filename +
-                MICROSERVICE_URI_GET_PARAMS}),
+                f'{MICROSERVICE_URI_GET}{projection_filename}'
+                f'{MICROSERVICE_URI_GET_PARAMS}'}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 

@@ -28,26 +28,25 @@ MESSAGE_INVALID_URL = "invalid url"
 MESSAGE_DUPLICATE_FILE = "duplicate file"
 MESSAGE_DELETED_FILE = "deleted file"
 
-PAGINATE_FILE_LIMIT = 20
+PAGINATE_FILE_LIMIT = 100
 
 MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/dataset/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
 
+database_connector = Database(
+    os.environ[DATABASE_URL],
+    os.environ[DATABASE_REPLICA_SET],
+    os.environ[DATABASE_PORT],
+    os.environ[DATABASE_NAME])
+request_validator = UserRequest(database_connector)
+
 
 @app.route("/files", methods=["POST"])
 def create_file():
     url = request.json[URL_FIELD_NAME]
     filename = request.json[FILENAME]
-
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
-    request_validator = UserRequest(database_connector)
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -64,31 +63,31 @@ def create_file():
 
     return (
         jsonify({
-            MESSAGE_RESULT:
-                MICROSERVICE_URI_GET +
-                request.json[FILENAME] +
-                MICROSERVICE_URI_GET_PARAMS}),
+            MESSAGE_RESULT: f'{MICROSERVICE_URI_GET}{request.json[FILENAME]}'
+                            f'{MICROSERVICE_URI_GET_PARAMS}'}),
         HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
 @app.route("/files/<filename>", methods=["GET"])
 def read_files(filename):
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
-    limit = int(request.args.get("limit"))
-    if limit > PAGINATE_FILE_LIMIT:
-        limit = PAGINATE_FILE_LIMIT
+    limit, skip, query = 20, 0, {}
+
+    request_params = request.args.to_dict()
+    if "limit" in request_params:
+        if int(request_params["limit"]) < PAGINATE_FILE_LIMIT:
+            limit = int(request_params["limit"])
+    if "skip" in request_params:
+        if int(request_params["skip"]) >= 0:
+            skip = int(request_params["skip"])
+    if "query" in request_params:
+        query = request_params["query"]
 
     file_result = database.read_file(
-        filename, request.args.get("skip"), limit, request.args.get("query")
+        filename, skip, limit, query
     )
 
     return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCCESS
@@ -96,12 +95,6 @@ def read_files(filename):
 
 @app.route("/files", methods=["GET"])
 def read_files_descriptor():
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 
@@ -112,12 +105,6 @@ def read_files_descriptor():
 
 @app.route("/files/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    database_connector = Database(
-        os.environ[DATABASE_URL],
-        os.environ[DATABASE_REPLICA_SET],
-        os.environ[DATABASE_PORT],
-        os.environ[DATABASE_NAME])
-
     file_downloader = Csv(database_connector)
     database = Dataset(database_connector, file_downloader)
 

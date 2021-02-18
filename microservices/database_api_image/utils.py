@@ -7,6 +7,8 @@ from contextlib import closing
 import csv
 from pymongo import MongoClient, ASCENDING
 import requests
+import re
+import validators
 
 
 class Database:
@@ -16,7 +18,7 @@ class Database:
 
     def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, int(database_port))
+            f'{database_url}/?replicaSet={replica_set}', int(database_port))
         self.database = self.mongo_client[database_name]
 
     def connection(self, filename):
@@ -78,7 +80,9 @@ class Csv:
                 delimiter=",",
                 quotechar='"',
             )
-            self.file_headers = next(reader)
+            untreated_headers = next(reader)
+            self.file_headers = [re.sub('\W+', '', column) for column in
+                                 untreated_headers]
             for row in reader:
                 self.download_treatment_queue.put(row)
         self.download_treatment_queue.put(self.FINISHED)
@@ -132,9 +136,7 @@ class Csv:
 
 class UserRequest:
     MESSAGE_INVALID_URL = "invalid url"
-    MESSAGE_DUPLICATE_FILE = "duplicate file"
-    URL_CONTENT_TYPE_INDEX = 0
-    URL_CONTENT_TYPE_SEPARATOR = ";"
+    MESSAGE_DUPLICATE_FILE = "duplicated dataset name"
 
     def __init__(self, database_connector):
         self.database = database_connector
@@ -146,18 +148,5 @@ class UserRequest:
             raise Exception(self.MESSAGE_DUPLICATE_FILE)
 
     def csv_url_validator(self, url):
-        response_content_type = requests.head(url).headers.get("content-type")
-
-        if self.URL_CONTENT_TYPE_SEPARATOR in response_content_type:
-            response_content_type = \
-                response_content_type.split(self.URL_CONTENT_TYPE_SEPARATOR)[
-                    self.URL_CONTENT_TYPE_INDEX]
-
-        print(response_content_type, flush=True)
-
-        allowed_contents_type = ["application/x-download",
-                                 "text/csv",
-                                 "text/plain"]
-
-        if response_content_type not in allowed_contents_type:
+        if not validators.url(url):
             raise Exception(self.MESSAGE_INVALID_URL)

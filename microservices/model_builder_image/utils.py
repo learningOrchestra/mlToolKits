@@ -48,7 +48,7 @@ class Metadata:
 class Database:
     def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, int(database_port))
+            f'{database_url}/?replicaSet={replica_set}', int(database_port))
         self.database = self.mongo_client[database_name]
 
     def get_filenames(self):
@@ -72,20 +72,13 @@ class Database:
         file_collection.drop()
 
     @staticmethod
-    def collection_database_url(database_url, database_name,
+    def collection_database_url(database_url,
+                                database_name,
                                 database_filename,
                                 database_replica_set
                                 ):
-        return (
-                database_url
-                + "/"
-                + database_name
-                + "."
-                + database_filename
-                + "?replicaSet="
-                + database_replica_set
-                + "&authSource=admin"
-        )
+        return f'{database_url}/{database_name}.{database_filename}' \
+               f'?replicaSet={database_replica_set}&authSource=admin'
 
 
 class UserRequest:

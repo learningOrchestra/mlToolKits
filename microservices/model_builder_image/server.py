@@ -28,26 +28,24 @@ MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
+database_url = os.environ[DATABASE_URL]
+database_replica_set = os.environ[DATABASE_REPLICA_SET]
+database_name = os.environ[DATABASE_NAME]
+
+database = Database(
+    database_url,
+    database_replica_set,
+    os.environ[DATABASE_PORT],
+    database_name,
+)
+request_validator = UserRequest(database)
 
 
 @app.route("/models", methods=["POST"])
 def create_model():
-    database_url = os.environ[DATABASE_URL]
-    database_replica_set = os.environ[DATABASE_REPLICA_SET]
-    database_name = os.environ[DATABASE_NAME]
-
     train_filename = request.json[TRAINING_FILENAME]
     test_filename = request.json[TEST_FILENAME]
     classifiers_name = request.json[CLASSIFIERS_NAME]
-
-    database = Database(
-        database_url,
-        database_replica_set,
-        os.environ[DATABASE_PORT],
-        database_name,
-    )
-
-    request_validator = UserRequest(database)
 
     request_errors = analyse_request_errors(
         request_validator,

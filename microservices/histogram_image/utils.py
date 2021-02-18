@@ -40,7 +40,7 @@ class Metadata:
 class Database:
     def __init__(self, database_url, replica_set, database_port, database_name):
         self.mongo_client = MongoClient(
-            database_url + '/?replicaSet=' + replica_set, int(database_port))
+            f'{database_url}/?replicaSet={replica_set}', int(database_port))
         self.database = self.mongo_client[database_name]
 
     def find(self, filename, query):
