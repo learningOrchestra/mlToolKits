@@ -115,6 +115,9 @@ class Execution:
             method_result = self.__execute_a_object_method(model_instance,
                                                            self.class_method,
                                                            method_parameters)
+            print(type(method_result), flush=True)
+            print(method_result, flush=True)
+            print(method_result.shape, flush=True)
             self.__storage.save(method_result, self.executor_name,
                                 self.executor_service_type)
             self.__metadata_creator.update_finished_flag(self.executor_name,
