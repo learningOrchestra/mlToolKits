@@ -923,7 +923,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/predict/{name}",
+          "url_pattern": "/files/{name}",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -1215,7 +1215,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/codeExecutor/{filename}?type=pythonTransform",
+          "url_pattern": "/codeExecutor/{filename}?type=/p",
           "host": [
             "http://codexecutor:5009"
           ],
