@@ -11,7 +11,7 @@ import re
 from utils import Database, Metadata
 
 
-class Csv:
+class CsvStorage:
     __MAX_QUEUE_SIZE = 1000
     __file_headers = None
 
@@ -75,7 +75,7 @@ class Csv:
 
 
 class Dataset:
-    def __init__(self, database: Database, file_manager: Csv):
+    def __init__(self, database: Database, file_manager: CsvStorage):
         self.__database_connector = database
         self.__file_manager = file_manager
 

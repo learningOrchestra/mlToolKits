@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from database import Dataset, Csv
+from database import Dataset, CsvStorage
 from utils import Database, UserRequest, Metadata
 from constants import Constants
 import json
@@ -29,7 +29,7 @@ def create_file():
     if request_errors is not None:
         return request_errors
 
-    file_downloader = Csv(database_connector, metadata_creator)
+    file_downloader = CsvStorage(database_connector, metadata_creator)
     database = Dataset(database_connector, file_downloader)
 
     database.add_file(url, filename)
@@ -46,7 +46,7 @@ def create_file():
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["GET"])
 def read_files(filename):
-    file_downloader = Csv(database_connector, metadata_creator)
+    file_downloader = CsvStorage(database_connector, metadata_creator)
     database = Dataset(database_connector, file_downloader)
 
     limit = Constants.LIMIT_DEFAULT_VALUE
@@ -77,7 +77,7 @@ def read_files(filename):
 
 @app.route(Constants.MICROSERVICE_URI_PATH, methods=["GET"])
 def read_files_descriptor():
-    file_downloader = Csv(database_connector, metadata_creator)
+    file_downloader = CsvStorage(database_connector, metadata_creator)
     database = Dataset(database_connector, file_downloader)
 
     return jsonify(
@@ -88,7 +88,7 @@ def read_files_descriptor():
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_file(filename):
-    file_downloader = Csv(database_connector, metadata_creator)
+    file_downloader = CsvStorage(database_connector, metadata_creator)
     database = Dataset(database_connector, file_downloader)
 
     database.delete_file(filename)
