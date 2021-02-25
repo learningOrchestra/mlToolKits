@@ -13,6 +13,7 @@ class Constants:
     MODELS_VOLUME_PATH = "MODELS_VOLUME_PATH"
     BINARY_VOLUME_PATH = "BINARY_VOLUME_PATH"
     TRANSFORM_VOLUME_PATH = "TRANSFORM_VOLUME_PATH"
+    CODE_EXECUTOR_VOLUME_PATH = "CODE_EXECUTOR_VOLUME_PATH"
 
     DELETED_MESSAGE = "deleted file"
 
@@ -33,20 +34,42 @@ class Constants:
 
     MESSAGE_RESULT = "result"
 
-    MICROSERVICE_URI_SWITCHER = {
-        "tune": "/api/learningOrchestra/v1/tune/",
-        "train": "/api/learningOrchestra/v1/train/",
-        "evaluate": "/api/learningOrchestra/v1/evaluate/",
-        "predict": "/api/learningOrchestra/v1/predict/"
-    }
+    MODEL_SCIKITLEARN_TYPE = "model/scikitlearn"
+    MODEL_TENSORFLOW_TYPE = "model/tensorflow"
 
-    DEFAULT_MODEL_TYPE = "defaultModel"
-    TUNE_TYPE = "tune"
-    TRAIN_TYPE = "train"
-    EVALUATE_TYPE = "evaluate"
-    PREDICT_TYPE = "predict"
-    TRANSFORM_TYPE = "transform"
-    PYTHON_TRANSFORM_TYPE = "pythonTransform"
+    TUNE_SCIKITLEARN_TYPE = "tune/scikitlearn"
+    TUNE_TENSORFLOW_TYPE = "tune/tensorflow"
+
+    TRAIN_SCIKITLEARN_TYPE = "train/scikitlearn"
+    TRAIN_TENSORFLOW_TYPE = "train/tensorflow"
+
+    EVALUATE_SCIKITLEARN_TYPE = "evaluate/scikitlearn"
+    EVALUATE_TENSORFLOW_TYPE = "evaluate/tensorflow"
+
+    PREDICT_SCIKITLEARN_TYPE = "predict/scikitlearn"
+    PREDICT_TENSORFLOW_TYPE = "predict/tensorflow"
+
+    PYTHON_FUNCTION_TYPE = "function/python"
+    DATASET_TENSORFLOW_TYPE = "dataset/tensorflow"
+
+    TRANSFORM_SCIKITLEARN_TYPE = "transform/scikitlearn"
+    TRANSFORM_TENSORFLOW_TYPE = "transform/tensorflow"
+
+    EXPLORE_SCIKITLEARN_TYPE = "explore/scikitlearn"
+    EXPLORE_TENSORFLOW_TYPE = "explore/tensorflow"
+
+    API_PATH = "/api/learningOrchestra/v1/"
+
+    MICROSERVICE_URI_SWITCHER = {
+        TUNE_SCIKITLEARN_TYPE: f'{API_PATH}{TUNE_SCIKITLEARN_TYPE}',
+        TUNE_TENSORFLOW_TYPE: f'{API_PATH}{TUNE_TENSORFLOW_TYPE}',
+        TRAIN_SCIKITLEARN_TYPE: f'{API_PATH}{TRAIN_SCIKITLEARN_TYPE}',
+        TRAIN_TENSORFLOW_TYPE: f'{API_PATH}{TRAIN_TENSORFLOW_TYPE}',
+        EVALUATE_SCIKITLEARN_TYPE: f'{API_PATH}{EVALUATE_SCIKITLEARN_TYPE}',
+        EVALUATE_TENSORFLOW_TYPE: f'{API_PATH}{EVALUATE_TENSORFLOW_TYPE}',
+        PREDICT_SCIKITLEARN_TYPE: f'{API_PATH}{PREDICT_SCIKITLEARN_TYPE}',
+        PREDICT_TENSORFLOW_TYPE: f'{API_PATH}{PREDICT_TENSORFLOW_TYPE}',
+    }
 
     MICROSERVICE_URI_PATH = "/binaryExecutor"
     MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"

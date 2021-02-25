@@ -11,5 +11,6 @@ ENV EXPLORE_VOLUME_PATH "/explore"
 ENV TRANSFORM_VOLUME_PATH "/transform"
 ENV BINARY_VOLUME_PATH "/binaries"
 ENV MODELS_VOLUME_PATH "/models"
+ENV CODE_EXECUTOR_VOLUME_PATH "/code_executions"
 
 CMD ["python", "server.py"]

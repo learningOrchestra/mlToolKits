@@ -7,4 +7,5 @@ requests==2.25.1
 pandas
 numpy
 nltk
-sklearn
+scikit-learn
+tensorflow

@@ -3,4 +3,5 @@ flask==1.1.2
 datetime==4.3
 pytz==2020.1
 scikit-learn
+tensorflow
 pandas==1.2.0

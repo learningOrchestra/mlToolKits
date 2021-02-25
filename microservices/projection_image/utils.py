@@ -13,7 +13,7 @@ class Metadata:
         self.metadata_document = {
             "timeCreated": self.now_time,
             "_id": 0,
-            "type": "projection",
+            "type": "transform/projection",
             "finished": False,
         }
 

@@ -237,6 +237,7 @@ services:
       - "database_executor:/transform"
       - "default_model:/models"
       - "binary_executor:/binaries"
+      - "code_executor:/code_executions"
     networks:
       - database
     environment: *default-service-database-env
@@ -284,6 +285,7 @@ services:
       - "default_model:/models"
       - "binary_executor:/binaries"
       - "database_executor:/transform"
+      - "code_executor:/code_executions"
 
   codexecutor:
     build: microservices/code_executor_image
@@ -295,6 +297,7 @@ services:
       - images
     deploy: *default-deploy-manager
     volumes:
+      - "code_executor:/code_executions"
       - "database_executor:/explore"
       - "database_executor:/transform"
       - "default_model:/models"
@@ -313,6 +316,7 @@ volumes:
   database:
   database_api:
   database_executor:
+  code_executor:
   default_model:
   binary_executor:
   portainer:

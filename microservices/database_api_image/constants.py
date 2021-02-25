@@ -17,7 +17,7 @@ class Constants:
     FILENAME_FIELD_NAME = "datasetName"
     URL_FIELD_NAME = "datasetURI"
     TYPE_FIELD_NAME = "type"
-    DATASET_TYPE = "dataset"
+    DATASET_TYPE = "dataset/default"
 
     FIRST_ARGUMENT = 0
 
