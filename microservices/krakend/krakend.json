@@ -439,7 +439,7 @@
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/defaultModel",
+          "url_pattern": "/defaultModel?type=model/scikitlearn",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -455,7 +455,7 @@
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -508,7 +508,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -524,7 +524,7 @@
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/defaultModel",
+          "url_pattern": "/defaultModel?type=model/tensorflow",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -540,7 +540,7 @@
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
             "http://defaultmodel:5007"
           ],
@@ -593,7 +593,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
             "http://defaultmodel:5007"
           ],
