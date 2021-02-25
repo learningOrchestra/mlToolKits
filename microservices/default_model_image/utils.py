@@ -47,17 +47,17 @@ class Metadata:
         self.__metadata_document = {
             "timeCreated": self.__now_time,
             Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID,
-            "type": "defaultModel",
             Constants.FINISHED_FIELD_NAME: False,
         }
 
-    def create_file(self, model_name: str,
+    def create_file(self, model_name: str, service_type: str,
                     module_path: str, class_name: str) -> dict:
         metadata = self.__metadata_document.copy()
         metadata[Constants.MODEL_FIELD_NAME] = model_name
         metadata[Constants.MODULE_PATH_FIELD_NAME] = module_path
         metadata[Constants.CLASS_FIELD_NAME] = class_name
-
+        metadata[Constants.TYPE_PARAM_NAME] = service_type
+        
         self.__database_connector.insert_one_in_file(
             model_name,
             metadata)

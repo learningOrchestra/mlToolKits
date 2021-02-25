@@ -21,6 +21,8 @@ data = Data(database)
 
 @app.route("/defaultModel", methods=["POST"])
 def create_default_model() -> jsonify:
+    service_type = request.args.get(Constants.TYPE_PARAM_NAME)
+
     model_name = request.json[Constants.MODEL_FIELD_NAME]
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
     module_path = request.json[Constants.MODULE_PATH_FIELD_NAME]
@@ -42,6 +44,7 @@ def create_default_model() -> jsonify:
     default_model = DefaultModel(
         database,
         model_name,
+        service_type,
         metadata_creator,
         module_path,
         class_name,
@@ -61,6 +64,7 @@ def create_default_model() -> jsonify:
 
 @app.route("/defaultModel/<filename>", methods=["PATCH"])
 def update_default_model(filename: str) -> jsonify:
+    service_type = request.args.get(Constants.TYPE_PARAM_NAME)
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
     function_parameters = request.json[Constants.FUNCTION_PARAMETERS_NAME]
 
@@ -80,6 +84,7 @@ def update_default_model(filename: str) -> jsonify:
     default_model = DefaultModel(
         database,
         filename,
+        service_type,
         metadata_creator,
         module_path,
         class_name,

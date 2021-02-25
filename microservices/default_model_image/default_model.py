@@ -7,6 +7,7 @@ class DefaultModel:
     def __init__(self,
                  database_connector: Database,
                  model_name: str,
+                 service_type: str,
                  metadata_creator: Metadata,
                  module_path: str,
                  class_name: str,
@@ -15,6 +16,7 @@ class DefaultModel:
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
         self.__storage = storage
+        self.service_type = service_type
         self.model_name = model_name
         self.module_path = module_path
         self.class_name = class_name
@@ -22,7 +24,9 @@ class DefaultModel:
     def create(self,
                description: str,
                class_parameters: dict) -> None:
-        self.__metadata_creator.create_file(self.model_name, self.module_path,
+        self.__metadata_creator.create_file(self.model_name,
+                                            self.service_type,
+                                            self.module_path,
                                             self.class_name)
         self.__thread_pool.submit(self.__pipeline,
                                   class_parameters,

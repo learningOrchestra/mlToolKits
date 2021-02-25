@@ -5,6 +5,7 @@ class Constants:
     MODEL_FIELD_NAME = "modelName"
     FINISHED_FIELD_NAME = "finished"
     DESCRIPTION_FIELD_NAME = "description"
+    TYPE_PARAM_NAME = "type"
 
     HTTP_STATUS_CODE_SUCCESS = 200
     HTTP_STATUS_CODE_SUCCESS_CREATED = 201
