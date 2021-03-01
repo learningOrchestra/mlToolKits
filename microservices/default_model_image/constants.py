@@ -7,6 +7,30 @@ class Constants:
     DESCRIPTION_FIELD_NAME = "description"
     TYPE_PARAM_NAME = "type"
 
+    MODEL_SCIKITLEARN_TYPE = "model/scikitlearn"
+    MODEL_TENSORFLOW_TYPE = "model/tensorflow"
+
+    TUNE_SCIKITLEARN_TYPE = "tune/scikitlearn"
+    TUNE_TENSORFLOW_TYPE = "tune/tensorflow"
+
+    TRAIN_SCIKITLEARN_TYPE = "train/scikitlearn"
+    TRAIN_TENSORFLOW_TYPE = "train/tensorflow"
+
+    EVALUATE_SCIKITLEARN_TYPE = "evaluate/scikitlearn"
+    EVALUATE_TENSORFLOW_TYPE = "evaluate/tensorflow"
+
+    PREDICT_SCIKITLEARN_TYPE = "predict/scikitlearn"
+    PREDICT_TENSORFLOW_TYPE = "predict/tensorflow"
+
+    PYTHON_FUNCTION_TYPE = "function/python"
+    DATASET_TENSORFLOW_TYPE = "dataset/tensorflow"
+
+    TRANSFORM_SCIKITLEARN_TYPE = "transform/scikitlearn"
+    TRANSFORM_TENSORFLOW_TYPE = "transform/tensorflow"
+
+    EXPLORE_SCIKITLEARN_TYPE = "explore/scikitlearn"
+    EXPLORE_TENSORFLOW_TYPE = "explore/tensorflow"
+
     HTTP_STATUS_CODE_SUCCESS = 200
     HTTP_STATUS_CODE_SUCCESS_CREATED = 201
     HTTP_STATUS_CODE_CONFLICT = 409
@@ -17,7 +41,11 @@ class Constants:
     DEFAULT_MODEL_HOST_IP = "DEFAULT_MODEL_HOST_IP"
     DEFAULT_MODEL_HOST_PORT = "DEFAULT_MODEL_HOST_PORT"
 
+    EXPLORE_VOLUME_PATH = "EXPLORE_VOLUME_PATH"
+    TRANSFORM_VOLUME_PATH = "TRANSFORM_VOLUME_PATH"
     MODELS_VOLUME_PATH = "MODELS_VOLUME_PATH"
+    BINARY_VOLUME_PATH = "BINARY_VOLUME_PATH"
+    CODE_EXECUTOR_VOLUME_PATH = "CODE_EXECUTOR_VOLUME_PATH"
 
     DATABASE_URL = "DATABASE_URL"
     DATABASE_PORT = "DATABASE_PORT"
@@ -38,3 +66,4 @@ class Constants:
     MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=20&skip=0"
 
     FIRST_ARGUMENT = 0
+    SECOND_ARGUMENT = 1

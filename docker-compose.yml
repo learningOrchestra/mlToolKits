@@ -267,7 +267,11 @@ services:
       - database
     environment: *default-service-database-env
     volumes:
+      - "code_executor:/code_executions"
+      - "database_executor:/explore"
+      - "database_executor:/transform"
       - "default_model:/models"
+      - "binary_executor:/binaries"
 
   binaryexecutor:
     build: microservices/binary_executor_image

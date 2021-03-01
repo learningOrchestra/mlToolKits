@@ -145,7 +145,6 @@ class Execution:
             exec(function_code, function_parameters, context_variables)
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
-            print(context_variables, flush=True)
             return context_variables["response"], function_message, None
 
         except Exception as error:

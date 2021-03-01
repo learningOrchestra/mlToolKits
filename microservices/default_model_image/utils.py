@@ -7,6 +7,7 @@ import importlib
 from constants import Constants
 import pickle
 import os
+import pandas as pd
 
 
 class Database:
@@ -26,6 +27,17 @@ class Database:
 
     def get_filenames(self) -> list:
         return self.__database.list_collection_names()
+
+    def get_entire_collection(self, filename: str) -> list:
+        database_documents_query = {
+            Constants.ID_FIELD_NAME: {"$ne": Constants.METADATA_DOCUMENT_ID}}
+
+        database_projection_query = {
+            Constants.ID_FIELD_NAME: False
+        }
+        return list(self.__database[filename].find(
+            filter=database_documents_query,
+            projection=database_projection_query))
 
     def update_one(self, filename: str, new_value: dict, query: dict) -> None:
         new_values_query = {"$set": new_value}
@@ -57,7 +69,7 @@ class Metadata:
         metadata[Constants.MODULE_PATH_FIELD_NAME] = module_path
         metadata[Constants.CLASS_FIELD_NAME] = class_name
         metadata[Constants.TYPE_PARAM_NAME] = service_type
-        
+
         self.__database_connector.insert_one_in_file(
             model_name,
             metadata)
@@ -146,16 +158,23 @@ class UserRequest:
 
 
 class ObjectStorage:
-    __WRITE_MODEL_OBJECT_OPTION = "wb"
-    __READ_MODEL_OBJECT_OPTION = "rb"
+    __WRITE_OBJECT_OPTION = "wb"
+    __READ_OBJECT_OPTION = "rb"
 
     def __init__(self, database_connector: Database):
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
 
+    def read(self, filename: str, service_type: str) -> object:
+        binary_instance = open(
+            ObjectStorage.get_read_binary_path(
+                filename, service_type),
+            self.__READ_OBJECT_OPTION)
+        return pickle.load(binary_instance)
+
     def save(self, filename: str, model_instance: object) -> None:
-        model_output = open(ObjectStorage.get_binary_path(filename),
-                            self.__WRITE_MODEL_OBJECT_OPTION)
+        model_output = open(ObjectStorage.get_write_binary_path(filename),
+                            self.__WRITE_OBJECT_OPTION)
         pickle.dump(model_instance, model_output)
         model_output.close()
 
@@ -163,16 +182,31 @@ class ObjectStorage:
         self.__thread_pool.submit(self.__database_connector.delete_file,
                                   filename)
         self.__thread_pool.submit(os.remove,
-                                  ObjectStorage.get_binary_path(filename))
+                                  ObjectStorage.get_write_binary_path(filename))
 
     @staticmethod
-    def get_binary_path(filename: str) -> str:
+    def get_write_binary_path(filename: str) -> str:
         return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
+
+    @staticmethod
+    def get_read_binary_path(filename: str, service_type: str) -> str:
+        if service_type == Constants.MODEL_TENSORFLOW_TYPE or \
+                service_type == Constants.MODEL_SCIKITLEARN_TYPE:
+            return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
+        elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+                service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
+            return f'{os.environ[Constants.TRANSFORM_VOLUME_PATH]}/{filename}'
+        elif service_type == Constants.PYTHON_FUNCTION_TYPE:
+            return f'{os.environ[Constants.CODE_EXECUTOR_VOLUME_PATH]}/{filename}'
+        else:
+            return f'{os.environ[Constants.BINARY_VOLUME_PATH]}/' \
+                   f'{service_type}/{filename}'
 
 
 class Data:
-    def __init__(self, database: Database):
+    def __init__(self, database: Database, storage: ObjectStorage):
         self.__database = database
+        self.__storage = storage
         self.__METADATA_QUERY = {
             Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
@@ -185,3 +219,44 @@ class Data:
         class_name = model_metadata[Constants.CLASS_FIELD_NAME]
 
         return module_path, class_name
+
+    def get_dataset_content(self, filename: str) -> object:
+        if self.__is_stored_in_volume(filename):
+            service_type = self.get_type(filename)
+            return self.__storage.read(filename, service_type)
+        else:
+            dataset = self.__database.get_entire_collection(
+                filename)
+
+            return pd.DataFrame(dataset)
+
+    def get_object_from_dataset(self, filename: str,
+                                object_name: str) -> object:
+        service_type = self.get_type(filename)
+        instance = self.__storage.read(filename, service_type)
+        return instance[object_name]
+
+    def get_type(self, filename):
+        metadata = self.__database.find_one(
+            filename,
+            self.__METADATA_QUERY)
+
+        return metadata[Constants.TYPE_PARAM_NAME]
+
+    def __is_stored_in_volume(self, filename) -> bool:
+        volume_types = [
+            Constants.MODEL_TENSORFLOW_TYPE,
+            Constants.MODEL_SCIKITLEARN_TYPE,
+            Constants.TUNE_TENSORFLOW_TYPE,
+            Constants.TUNE_SCIKITLEARN_TYPE,
+            Constants.TRAIN_TENSORFLOW_TYPE,
+            Constants.TRAIN_SCIKITLEARN_TYPE,
+            Constants.EVALUATE_TENSORFLOW_TYPE,
+            Constants.EVALUATE_SCIKITLEARN_TYPE,
+            Constants.PREDICT_TENSORFLOW_TYPE,
+            Constants.PREDICT_SCIKITLEARN_TYPE,
+            Constants.PYTHON_FUNCTION_TYPE,
+            Constants.TRANSFORM_SCIKITLEARN_TYPE,
+            Constants.TRANSFORM_TENSORFLOW_TYPE,
+        ]
+        return self.get_type(filename) in volume_types

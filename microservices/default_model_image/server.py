@@ -1,5 +1,5 @@
 from flask import jsonify, request, Flask
-from default_model import DefaultModel
+from default_model import DefaultModel, Parameters
 from utils import Database, UserRequest, Metadata, ObjectStorage, Data
 import os
 from typing import Union
@@ -16,7 +16,8 @@ database = Database(
 
 request_validator = UserRequest(database)
 storage = ObjectStorage(database)
-data = Data(database)
+data = Data(database, storage)
+parameters_handler = Parameters(database, data)
 
 
 @app.route("/defaultModel", methods=["POST"])
@@ -43,6 +44,7 @@ def create_default_model() -> jsonify:
 
     default_model = DefaultModel(
         database,
+        parameters_handler,
         model_name,
         service_type,
         metadata_creator,
@@ -83,6 +85,7 @@ def update_default_model(filename: str) -> jsonify:
 
     default_model = DefaultModel(
         database,
+        parameters_handler,
         filename,
         service_type,
         metadata_creator,

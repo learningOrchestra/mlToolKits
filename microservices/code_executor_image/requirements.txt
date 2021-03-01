@@ -9,3 +9,4 @@ numpy
 nltk
 scikit-learn
 tensorflow
+tensorflow-datasets
