@@ -61,51 +61,19 @@ learningOrchestra is designed for data scientists from both engineering and acad
 
 ## Quick-start
 
-Installation instructions:
-1. learningOrchestra runs on Linux hosts. Install [Docker Engine](https://docs.docker.com/engine/install/) on all instances of your cluster. Configure your cluster in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/). Install [Docker Compose](https://docs.docker.com/compose/install/) on your manager instance.
-2. Clone repo on your manager instance. `https://github.com/learningOrchestra/learningOrchestra.git`
-3. `cd learningOrchestra`
-4. Deploy with `sudo ./run.sh`
-
 learningOrchestra provides two options to access its features: a REST API and a Python package.
 
-REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Check the [list of available features](https://learningorchestra.github.io/docs/usage/#rest-api-features) for requests details.
+REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/).
 
 Python package:
-- Python 3 package
-- Install with `pip install learning-orchestra-client`
-- Start your scripts by import the package and providing the IP address of one of the instances of your cluster:
-```
-from learning_orchestra_client import *
-cluster_ip = "xx.xx.xxx.xxx"
-Context(cluster_ip)
-```
-- Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for a list of available features.
+- Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for more details.
 
 ## How do I install learningOrchestra?
 
 :bell: This documentation assumes that the users are familiar with a number of advanced computer science concepts. We have tried to link to learning resources to support beginners, as well as introduce some of the concepts in the [FAQ](#frequently-asked-questions). But if something is still not clear, don't hesitate to [ask for help](#on-using-learningOrchestra).
 
-### Setting up your cluster
+We prrovide a documentation explaining how deploy this software, you can read more in [installation docs](https://learningorchestra.github.io/docs/installation/)
 
-learningOrchestra operates from a [cluster](#what-is-a-cluster) of Docker [containers](#what-is-a-container).
-
-All your hosts must operate under Debian Linux OS and have [Docker Engine](https://docs.docker.com/engine/install/) installed.
-
-Configure your cluster in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/create-swarm/). Install [Docker Compose](https://docs.docker.com/compose/install/) on your manager instance.
-
-You are ready to deploy! :tada:
-
-### Deploy learningOrchestra
-
-Clone this repository on your manager instance.
-- Using HTTP protocol, `git clone https://github.com/learningOrchestra/learningOrchestra.git`
-- Using SSH protocol, `git clone git@github.com:learningOrchestra/learningOrchestra.git`
-- Using GitHub CLI, `gh repo clone learningOrchestra/learningOrchestra`
-
-Move to the root of the directory, `cd learningOrchestra`.
-
-Deploy with `sudo ./run.sh`. The deploy process should take a dozen minutes.
 
 ##### Interrupt learningOrchestra
 
@@ -115,12 +83,19 @@ Run `docker stack rm microservice`.
 
 learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
-The current version of learningOrchestra offers 7 features:
-- The **Dataset download datasets from an URL**. It holds and manage the downloaded data.
-- The **Data type is a transform feature** dedicated to changing the type of data fields.
-- The **Projection is a transform feature** dedicated to make projections from datasets.
-- The **Histogram, t-SNE and PCA APIs are exploration features**. They transform the map the data into new representation spaces so it can be visualized. They can be used on the raw data as well as on the intermediate and final results of the analysis pipeline.
-- The **Builder is the high couple feature**. It includes some preprocessing features and machine learning features to train models, evaluate models and predict information using trained models.
+The current version of learningOrchestra offers 11 services:
+- **Dataset** - Responsible to obtain a dataset. External datasets are stored on MongoDB or on volumes using an Uniform Resource Locator (URL). There is also an alternative to load TensorFlow existing datasets.
+- **Model** - Responsible to load supervised or unsupervised models from existing repositories. It is useful to be used to configure a TensorFlow or Scikit-learn object with
+a tuned and pre-trained neural network using Google or Facebook best practicesand large instances, for example.  On the other hand, it is also useful to load acustomized/optimized neural network developed from scratch by a team of data scientists.
+- **Transform** - Responsible for a catalog of tasks, including embedding, normalization, text enrichment, bucketization, data projection and so forth. Learning Orchestra has its own implementations for some services and implement other transform services from TensorFlow and Scikit-learn.
+- **Explore** - The data scientist must see the pipes steps results of an analytical pipeline, so Learning Orchestra supports data exploration using the catalog of explore capabilities of TensorFlow and Scikit-learn tools, including histogram, clustering, t-SNE,PCA and others. All outputs of this step are plottable.
+- **Tune** - Performs the search for an optimal set of parameters for a given model. It can be made through strategies like grid-search, random search, or Bayesian optimization
+- **Train** - Probably it is the most computational expensive service of an ML pipeline, because the models will be trained for best learn the subjacents patterns on data. Adiversity of algorithms can be executed, like Support Vector Machine (SVM), Random Forest, Bayesian inference, K-Nearest Neighbors (KNN), Deep Neural Networks(DNN), and many others.
+- **Evaluate** - After training a model, it is necessary to evaluate it’s power to generalize tonew unseen data. For that, the model needs to perform inferences or classification on a test dataset to obtain metrics that more accurately describe the capabilities of themodel. Some common metrics are precision, recall, f1-score, accuracy, mean squarederror (MSE), and cross-entropy. This service is useful to describe the generalization power and to detect the need for model calibrations
+- **Predict** - The model can run indefinitely.  Sometimes feedbacks are mandatory toreinforce the train step, so the Evaluate services are called multiple times. This is the main reason for a production pipe and, consequently, a service of such a type
+-  **Builder** - Responsible to execute Spark-ML or TensorFlow entire pipelines in Python, offering an alternative way to use the Learning Orchestra system just as a deployment alternative and not an environment for building ML workflows composed of pipelines.
+- **Observe** - Represents a catalog of collections of Learning Orchestra and a publish/subscribe mechanism. Applications can subscribe to these collections to receive notifications via observers.
+- **Function** - Responsible to wrap a Python function, representing a wildcard for the data scientist when there is no Learning Orchestra support for a specific ML service. It is different from Builder service, since it does not run the entire pipeline. Instead, it runs just a Python function of Scikit-learn or TensorFlow models on a cluster container. It is part of future plans the support of functions written in R language.
 
 The REST API can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a REST API and a Python package.
 
@@ -128,7 +103,7 @@ The REST API can be called on from any computer, including one that is not part 
 
 We recommand using a **GUI REST API** caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Of course, regular `curl` commands from the terminal remain a possibility.
 
-The details for each feature are available in the [documentation](https://learningorchestra.github.io/docs/usage/#rest-api).
+The details for REST API are available in the [open api documentation](https://app.swaggerhub.com/apis-docs/learningOrchestra/learningOrchestra/v1.0).
 
 ### Using the Python package
 
@@ -145,7 +120,7 @@ Check the [package documentation](https://github.com/learningOrchestra/pythonCli
 
 ### Check cluster status
 
-To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:8000` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
+To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:9000` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
 
 The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
@@ -153,25 +128,9 @@ The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
 ### Research background
 
-The [first monograph](https://drive.google.com/file/d/1ZDrTR58pBuobpgwB_AOOFTlfmZEY6uQS/view) (under construction)
+The [first monograph](https://drive.google.com/file/d/1ZDrTR58pBuobpgwB_AOOFTlfmZEY6uQS/view) 
 
-### Future steps
-
-* Increase the catalog of analysis microservice options (clustering,
-sampling, hierarchy and so forth) and the number of existing ML players (Tensorflow,
-WEKA and others).
-* Implement the Load Model step.
-* Decouple the training and the validation steps to enable different pipe
-compositions. Include deep learning option in these steps.
-* Implement the tuning step.
-* Implement the production step for learning alternatives with feedbacks.
-* Conclude the Observer step using Kafka solution.
-* Refactor the REST API to insert or remove tags for a better semantic
-representation.
-* Write other ML pipelines and workflows using larger datasets and from
-different knowledge domains.
-* Build a new set of experiments.
-* Write a final version of the monograph.
+The [second monograph](https://www.overleaf.com/read/spqznyvtyjsy)(under construction)
 
 ### Contributors :sparkles:
 
