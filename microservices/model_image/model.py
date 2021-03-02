@@ -79,7 +79,7 @@ class Parameters:
             self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[Constants.SECOND_ARGUMENT]
 
 
-class DefaultModel:
+class Model:
     def __init__(self,
                  database_connector: Database,
                  parameters_handler: Parameters,

@@ -8,7 +8,7 @@ from constants import Constants
 import pandas as pd
 import os
 import seaborn as sns
-import pickle
+import dill
 
 
 class Database:
@@ -246,7 +246,7 @@ class TransformStorage(ExecutionStorage):
 
         instance_output = open(output_path,
                                self.__WRITE_OBJECT_OPTION)
-        pickle.dump(instance, instance_output)
+        dill.dump(instance, instance_output)
         instance_output.close()
 
     def read(self, filename: str, service_type: str) -> object:
@@ -254,7 +254,7 @@ class TransformStorage(ExecutionStorage):
             TransformStorage.get_read_binary_path(
                 filename, service_type),
             self.__READ_OBJECT_OPTION)
-        return pickle.load(binary_instance)
+        return dill.load(binary_instance)
 
     def delete(self, filename: str) -> None:
         self.__thread_pool.submit(

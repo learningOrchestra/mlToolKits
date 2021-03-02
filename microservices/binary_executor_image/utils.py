@@ -6,7 +6,7 @@ from inspect import signature, getmembers
 import importlib
 from constants import Constants
 import pandas as pd
-import pickle
+import dill
 import os
 
 
@@ -198,7 +198,7 @@ class ObjectStorage:
 
         model_output = open(model_output_path,
                             self.__WRITE_MODEL_OBJECT_OPTION)
-        pickle.dump(instance, model_output)
+        dill.dump(instance, model_output)
         model_output.close()
 
     def delete(self, filename: str, service_type: str) -> None:
@@ -213,7 +213,7 @@ class ObjectStorage:
             ObjectStorage.get_read_binary_path(
                 filename, service_type),
             self.__READ_MODEL_OBJECT_OPTION)
-        return pickle.load(model_binary_instance)
+        return dill.load(model_binary_instance)
 
     @staticmethod
     def get_write_binary_path(filename: str, service_type: str) -> str:

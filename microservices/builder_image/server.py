@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from model_builder import Model
+from builder import Model
 
 from utils import Database, UserRequest, Metadata
 
@@ -8,8 +8,8 @@ HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 HTTP_STATUS_CODE_CONFLICT = 409
 
-MODEL_BUILDER_HOST_IP = "MODEL_BUILDER_HOST_IP"
-MODEL_BUILDER_HOST_PORT = "MODEL_BUILDER_HOST_PORT"
+BUILDER_HOST_IP = "BUILDER_HOST_IP"
+BUILDER_HOST_PORT = "BUILDER_HOST_PORT"
 
 MESSAGE_RESULT = "result"
 
@@ -71,12 +71,12 @@ def create_model():
     )
 
     metadata_creator = Metadata(database, train_filename, test_filename)
-    model_builder = Model(database,
+    builder = Model(database,
                           metadata_creator,
                           database_url_training,
                           database_url_test)
 
-    model_builder.build(
+    builder.build(
         request.json[MODELING_CODE_NAME],
         classifiers_name
     )
@@ -144,6 +144,6 @@ def analyse_request_errors(request_validator, train_filename,
 
 if __name__ == "__main__":
     app.run(
-        host=os.environ[MODEL_BUILDER_HOST_IP],
-        port=int(os.environ[MODEL_BUILDER_HOST_PORT]), debug=True
+        host=os.environ[BUILDER_HOST_IP],
+        port=int(os.environ[BUILDER_HOST_PORT]), debug=True
     )

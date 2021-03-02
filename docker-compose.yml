@@ -178,14 +178,14 @@ services:
       - spark
     environment: *default-service-database-env
 
-  modelbuilder:
-    build: microservices/model_builder_image
-    image: 127.0.0.1:5050/model_builder
+  builder:
+    build: microservices/builder_image
+    image: 127.0.0.1:5050/builder
     ports:
       - "5002:5002"
       - "41100:41100"
     extra_hosts:
-      - "modelbuilder:0.0.0.0"
+      - "builder:0.0.0.0"
     depends_on:
       - databaseprimary
       - images
@@ -235,7 +235,7 @@ services:
     volumes:
       - "database_executor:/explore"
       - "database_executor:/transform"
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
       - "code_executor:/code_executions"
     networks:
@@ -254,9 +254,9 @@ services:
       - database
       - spark
 
-  defaultmodel:
-    build: microservices/default_model_image
-    image: 127.0.0.1:5050/default_model
+  model:
+    build: microservices/model_image
+    image: 127.0.0.1:5050/model
     ports:
       - "5007:5007"
     depends_on:
@@ -270,7 +270,7 @@ services:
       - "code_executor:/code_executions"
       - "database_executor:/explore"
       - "database_executor:/transform"
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
 
   binaryexecutor:
@@ -286,7 +286,7 @@ services:
       - database
     environment: *default-service-database-env
     volumes:
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
       - "database_executor:/transform"
       - "code_executor:/code_executions"
@@ -304,7 +304,7 @@ services:
       - "code_executor:/code_executions"
       - "database_executor:/explore"
       - "database_executor:/transform"
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
     networks:
       - database
@@ -321,6 +321,6 @@ volumes:
   database_api:
   database_executor:
   code_executor:
-  default_model:
+  model:
   binary_executor:
   portainer:

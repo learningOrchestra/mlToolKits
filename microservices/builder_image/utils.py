@@ -1,4 +1,4 @@
-from model_builder import Model
+from builder import Model
 from datetime import datetime
 import pytz
 from pymongo import MongoClient

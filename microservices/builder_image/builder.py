@@ -16,7 +16,7 @@ from pyspark.ml.classification import (
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
 SPARKMASTER_PORT = "SPARKMASTER_PORT"
 SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
-MODEL_BUILDER_HOST_NAME = "MODEL_BUILDER_HOST_NAME"
+BUILDER_HOST_NAME = "BUILDER_HOST_NAME"
 
 
 class Model:
@@ -47,15 +47,15 @@ class Model:
         spark_session = (
             SparkSession
                 .builder
-                .appName("modelBuilder")
+                .appName("builder")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host",
-                        os.environ[MODEL_BUILDER_HOST_NAME])
+                        os.environ[BUILDER_HOST_NAME])
                 .config("spark.jars.packages",
                         "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
                 .config("spark.scheduler.mode", "FAIR")
-                .config("spark.scheduler.pool", "modelBuilder")
+                .config("spark.scheduler.pool", "builder")
                 .config("spark.scheduler.allocation.file",
                         "./fairscheduler.xml")
                 .master(

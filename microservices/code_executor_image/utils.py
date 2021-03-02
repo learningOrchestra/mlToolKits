@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from constants import Constants
 import pandas as pd
 import os
-import pickle
+import dill
 
 
 class Database:
@@ -174,14 +174,14 @@ class ObjectStorage:
             ObjectStorage.get_read_binary_path(
                 filename, service_type),
             self.__READ_OBJECT_OPTION)
-        return pickle.load(binary_instance)
+        return dill.load(binary_instance)
 
     def save(self, instance: dict, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
 
         instance_output = open(output_path,
                                self.__WRITE_OBJECT_OPTION)
-        pickle.dump(instance, instance_output)
+        dill.dump(instance, instance_output)
         instance_output.close()
 
     def delete(self, filename: str) -> None:

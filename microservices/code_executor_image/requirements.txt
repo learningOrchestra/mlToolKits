@@ -4,6 +4,7 @@ datetime==4.3
 pytz==2020.1
 validators==0.18.2
 requests==2.25.1
+dill==0.3.3
 pandas
 numpy
 nltk
