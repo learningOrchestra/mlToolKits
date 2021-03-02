@@ -5,3 +5,4 @@ pytz==2020.1
 pandas==1.2.0
 scikit-learn
 tensorflow
+dill==0.3.3

@@ -54,7 +54,7 @@ class Parameters:
             self.__CLASS_INSTANCE_CHARACTER,
             f'{class_instance_name}=')
 
-        import tensorflow as tf
+        import tensorflow
         exec(class_code, locals(), context_variables)
 
         return context_variables[class_instance_name]
