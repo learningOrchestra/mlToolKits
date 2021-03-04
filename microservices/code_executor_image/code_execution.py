@@ -144,10 +144,9 @@ class Execution:
             self.__execute_function(
                 function,
                 function_parameters)
-
-        print(function_result, flush=True)
-        print(function_error, flush=True)
+        
         if function_result is not None and function_error is None:
+            print("teste..", flush=True)
             self.__storage.save(function_result, self.filename)
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
@@ -174,13 +173,9 @@ class Execution:
         context_variables = {}
 
         try:
-            print("Começando os trabalhos...", flush=True)
             exec(function_code, function_parameters, context_variables)
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
-            print("rolou sem crash", flush=True)
-            print(context_variables["response"], flush=True)
-            print(type(context_variables["response"]), flush=True)
 
             return context_variables["response"], function_message, None
 
@@ -188,5 +183,4 @@ class Execution:
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
             function_error = repr(error)
-            print("ai já deu ruim hein " + str(function_error) , flush=True)
             return None, function_message, function_error
