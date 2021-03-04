@@ -177,6 +177,9 @@ class Execution:
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
             print("rolou sem crash", flush=True)
+            print(context_variables["response"], flush=True)
+            print(type(context_variables["response"]), flush=True)
+
             return context_variables["response"], function_message, None
 
         except Exception as error:
