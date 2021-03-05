@@ -120,10 +120,15 @@ class Execution:
                description: str) -> None:
         self.__metadata_creator.create_file(self.filename, self.service_type)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   function,
                                   function_parameters,
-                                  description)
+                                  description)'''
+
+        self.__pipeline(
+            function,
+            function_parameters,
+            description)
 
     def update(self,
                function: str,
@@ -144,9 +149,8 @@ class Execution:
             self.__execute_function(
                 function,
                 function_parameters)
-        
+
         if function_result is not None and function_error is None:
-            print("teste..", flush=True)
             self.__storage.save(function_result, self.filename)
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
