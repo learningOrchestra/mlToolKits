@@ -120,5 +120,10 @@ docker push $code_executor_repository
 
 
 echo "--------------------------------------------------------------------"
+echo "Updating portainer agent microservice in each cluster node..."
+echo "--------------------------------------------------------------------"
+docker service update --image portainer/agent  microservice_agent
+
+echo "--------------------------------------------------------------------"
 echo "End."
 echo "--------------------------------------------------------------------"
