@@ -2,8 +2,10 @@ pymongo==3.10.1
 flask==1.1.2
 datetime==4.3
 pytz==2020.1
-scikit-learn
-tensorflow
 pandas==1.2.0
 seaborn==0.10.1
 dill==0.3.3
+# Don't set a specific version in dependencies in bellow,
+# they are used directly by user on API request.
+scikit-learn
+tensorflow

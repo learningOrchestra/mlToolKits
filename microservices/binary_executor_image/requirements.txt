@@ -4,5 +4,7 @@ datetime==4.3
 pytz==2020.1
 dill==0.3.3
 pandas==1.2.0
+# Don't set a specific version in dependencies in bellow,
+# they are used directly by user on API request.
 scikit-learn
 tensorflow
