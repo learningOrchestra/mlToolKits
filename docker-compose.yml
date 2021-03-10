@@ -307,6 +307,7 @@ services:
       - "database_executor:/transform"
       - "model:/models"
       - "binary_executor:/binaries"
+      - "database_api:/datasets"
     networks:
       - database
     environment: *default-service-database-env
