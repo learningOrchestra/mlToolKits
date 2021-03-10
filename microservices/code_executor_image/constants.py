@@ -16,6 +16,7 @@ class Constants:
     MODELS_VOLUME_PATH = "MODELS_VOLUME_PATH"
     BINARY_VOLUME_PATH = "BINARY_VOLUME_PATH"
     CODE_EXECUTOR_VOLUME_PATH = "CODE_EXECUTOR_VOLUME_PATH"
+    DATASET_VOLUME_PATH = "DATASET_VOLUME_PATH"
 
     IMAGE_FORMAT = ".png"
 
@@ -54,7 +55,7 @@ class Constants:
     PREDICT_TENSORFLOW_TYPE = "predict/tensorflow"
 
     PYTHON_FUNCTION_TYPE = "function/python"
-    DATASET_TENSORFLOW_TYPE = "dataset/tensorflow"
+    DATASET_GENERIC_TYPE = "dataset/generic"
 
     TRANSFORM_SCIKITLEARN_TYPE = "transform/scikitlearn"
     TRANSFORM_TENSORFLOW_TYPE = "transform/tensorflow"
@@ -65,8 +66,7 @@ class Constants:
     API_PATH = "/api/learningOrchestra/v1/"
 
     MICROSERVICE_URI_SWITCHER = {
-        PYTHON_FUNCTION_TYPE: f'{API_PATH}{PYTHON_FUNCTION_TYPE}',
-        DATASET_TENSORFLOW_TYPE: f'{API_PATH}{DATASET_TENSORFLOW_TYPE}'
+        PYTHON_FUNCTION_TYPE: f'{API_PATH}{PYTHON_FUNCTION_TYPE}'
     }
 
     MICROSERVICE_URI_PATH = "/codeExecutor"

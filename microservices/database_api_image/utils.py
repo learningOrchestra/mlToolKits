@@ -47,7 +47,7 @@ class Metadata:
     def __init__(self, database_conector: Database):
         self.__database_conector = database_conector
 
-    def create_file(self, filename: str, url: str) -> None:
+    def create_file(self, filename: str, url: str, service_type: str) -> None:
         timezone_london = pytz.timezone("Etc/Greenwich")
         london_time = datetime.now(timezone_london)
 
@@ -58,7 +58,7 @@ class Metadata:
             Constants.ROW_ID: Constants.METADATA_ROW_ID,
             Constants.FINISHED: False,
             "fields": "processing",
-            Constants.TYPE_FIELD_NAME: Constants.DATASET_TYPE
+            Constants.TYPE_FIELD_NAME: service_type
         }
         self.__database_conector.insert_one_in_file(filename, metadata_file)
 
@@ -90,6 +90,6 @@ class UserRequest:
         if filename in filenames:
             raise Exception(self.__MESSAGE_DUPLICATE_FILE)
 
-    def csv_url_validator(self, url: str) -> None:
+    def url_validator(self, url: str) -> None:
         if not validators.url(url):
             raise Exception(self.__MESSAGE_INVALID_URL)

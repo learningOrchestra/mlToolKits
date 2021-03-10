@@ -174,7 +174,11 @@ class ObjectStorage:
             ObjectStorage.get_read_binary_path(
                 filename, service_type),
             self.__READ_OBJECT_OPTION)
-        return dill.load(binary_instance)
+
+        if service_type == Constants.DATASET_GENERIC_TYPE:
+            return binary_instance
+        else:
+            return dill.load(binary_instance)
 
     def save(self, instance: dict, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
@@ -196,6 +200,8 @@ class ObjectStorage:
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
+        if service_type == Constants.DATASET_GENERIC_TYPE:
+            return f'{os.environ[Constants.DATASET_GENERIC_TYPE]}/{filename}'
         if service_type == Constants.MODEL_TENSORFLOW_TYPE or \
                 service_type == Constants.MODEL_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'

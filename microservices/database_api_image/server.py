@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from database import Dataset, CsvStorage
+from database import Dataset, Csv, Generic
 from utils import Database, UserRequest, Metadata
 from constants import Constants
 import json
@@ -18,6 +18,7 @@ metadata_creator = Metadata(database_connector)
 
 @app.route(Constants.MICROSERVICE_URI_PATH, methods=["POST"])
 def create_file():
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
     url = request.json[Constants.URL_FIELD_NAME]
     filename = request.json[Constants.FILENAME_FIELD_NAME]
 
@@ -29,8 +30,12 @@ def create_file():
     if request_errors is not None:
         return request_errors
 
-    file_downloader = CsvStorage(database_connector, metadata_creator)
-    database = Dataset(database_connector, file_downloader)
+    if service_type == Constants.DATASET_CSV_TYPE:
+        file_downloader = Csv(database_connector, metadata_creator)
+    else:
+        file_downloader = Generic(database_connector, metadata_creator)
+
+    database = Dataset(file_downloader)
 
     database.add_file(url, filename)
 
@@ -46,8 +51,8 @@ def create_file():
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["GET"])
 def read_files(filename):
-    file_downloader = CsvStorage(database_connector, metadata_creator)
-    database = Dataset(database_connector, file_downloader)
+    file_downloader = Csv(database_connector, metadata_creator)
+    database = Dataset(file_downloader)
 
     limit = Constants.LIMIT_DEFAULT_VALUE
     skip = Constants.SKIP_DEFAULT_VALUE
@@ -77,20 +82,27 @@ def read_files(filename):
 
 @app.route(Constants.MICROSERVICE_URI_PATH, methods=["GET"])
 def read_files_descriptor():
-    file_downloader = CsvStorage(database_connector, metadata_creator)
-    database = Dataset(database_connector, file_downloader)
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
+
+    file_downloader = Csv(database_connector, metadata_creator)
+    database = Dataset(file_downloader)
 
     return jsonify(
-        {Constants.MESSAGE_RESULT: database.get_files(
-            request.args.get(Constants.TYPE_FIELD_NAME))}), \
+        {Constants.MESSAGE_RESULT: database.get_metadata_files(
+            service_type)}), \
            Constants.HTTP_STATUS_CODE_SUCCESS
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_file(filename):
-    file_downloader = CsvStorage(database_connector, metadata_creator)
-    database = Dataset(database_connector, file_downloader)
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
 
+    if service_type == Constants.DATASET_CSV_TYPE:
+        file_downloader = Csv(database_connector, metadata_creator)
+    else:
+        file_downloader = Generic(database_connector, metadata_creator)
+
+    database = Dataset(file_downloader)
     database.delete_file(filename)
 
     return jsonify(
@@ -113,7 +125,7 @@ def analyse_request_errors(request_validator: UserRequest, filename: str,
         )
 
     try:
-        request_validator.csv_url_validator(url)
+        request_validator.url_validator(url)
     except Exception as invalid_url:
         return (
             jsonify({Constants.MESSAGE_RESULT:

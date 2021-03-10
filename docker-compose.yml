@@ -35,6 +35,7 @@ services:
     deploy: *default-deploy-worker
     volumes:
       - "database_api:/database_api"
+      - "database_api:/datasets"
     networks:
       - database
     environment: *default-service-database-env

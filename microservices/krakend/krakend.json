@@ -2,14 +2,14 @@
   "version": 2,
   "endpoints": [
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/default",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/files",
+          "url_pattern": "/files?type=dataset/csv",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -18,14 +18,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/default",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=dataset/default",
+          "url_pattern": "/files?type=dataset/csv",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/default/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -55,14 +55,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/default/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/files/{filename}",
+          "url_pattern": "/files/{filename}?type=csv/dataset",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -71,30 +71,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/tensorflow",
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/codeExecutor?type=dataset/tensorflow",
-          "host": [
-            "http://codexecutor:5009"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/dataset/tensorflow",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/files?type=dataset/tensorflow",
+          "url_pattern": "/files?type=dataset/generic",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -103,7 +87,23 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/tensorflow/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=dataset/generic",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -124,16 +124,16 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/tensorflow/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/codeExecutor?type=dataset/tensorflow",
+          "url_pattern": "/files?type=dataset/generic",
           "host": [
-            "http://codexecutor:5009"
+            "http://databaseapi:5000"
           ],
           "extra_config": {}
         }

@@ -12,5 +12,6 @@ ENV TRANSFORM_VOLUME_PATH "/transform"
 ENV BINARY_VOLUME_PATH "/binaries"
 ENV MODELS_VOLUME_PATH "/models"
 ENV CODE_EXECUTOR_VOLUME_PATH "/code_executions"
+ENV DATASET_VOLUME_PATH = "/datasets"
 
 CMD ["python", "server.py"]
