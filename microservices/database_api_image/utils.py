@@ -57,7 +57,7 @@ class Metadata:
             "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             Constants.ROW_ID: Constants.METADATA_ROW_ID,
             Constants.FINISHED: False,
-            "fields": "processing",
+            "fields": [],
             Constants.TYPE_FIELD_NAME: service_type
         }
         self.__database_conector.insert_one_in_file(filename, metadata_file)
