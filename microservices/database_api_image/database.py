@@ -66,6 +66,7 @@ class Generic(Storage):
 
         self.__metadata_creator.create_file(
             filename, url, Constants.DATASET_GENERIC_TYPE)
+        self.__metadata_creator.update_finished_flag(filename, True)
 
     def delete_file(self, filename: str) -> None:
         self.__database_connector.delete_file(filename)
