@@ -60,6 +60,7 @@ class Generic(Storage):
     def save_file(self, filename: str, url: str) -> None:
         with requests.get(url, stream=True) as response:
             response.raise_for_status()
+            print(self.__get_file_path(filename), flush=True)
             with open(self.__get_file_path(filename), 'wb') as file:
                 for chunk in response.iter_content(chunk_size=8192):
                     file.write(chunk)
@@ -72,7 +73,7 @@ class Generic(Storage):
         os.remove(self.__get_file_path(filename))
 
     def __get_file_path(self, filename: str) -> str:
-        return f'/{os.environ[Constants.DATASET_VOLUME_PATH]}/{filename}'
+        return f'{os.environ[Constants.DATASET_VOLUME_PATH]}/{filename}'
 
 
 class Csv(Storage):
