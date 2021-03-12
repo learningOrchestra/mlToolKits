@@ -56,19 +56,26 @@ class Generic(Storage):
         super().__init__(database_connector)
         self.__metadata_creator = metadata_creator
         self.__database_connector = database_connector
+        self.__thread_pool = ThreadPoolExecutor()
 
     def save_file(self, filename: str, url: str) -> None:
+        self.__metadata_creator.create_file(
+            filename, url, Constants.DATASET_GENERIC_TYPE)
+        self.__thread_pool.submit(self.__save_file, filename, url)
+
+    def delete_file(self, filename: str) -> None:
+        self.__thread_pool.submit(self.__delete_file, filename)
+
+    def __save_file(self, filename: str, url: str) -> None:
         with requests.get(url, stream=True) as response:
             response.raise_for_status()
             with open(self.__get_file_path(filename), 'wb') as file:
                 for chunk in response.iter_content(chunk_size=8192):
                     file.write(chunk)
 
-        self.__metadata_creator.create_file(
-            filename, url, Constants.DATASET_GENERIC_TYPE)
         self.__metadata_creator.update_finished_flag(filename, True)
 
-    def delete_file(self, filename: str) -> None:
+    def __delete_file(self, filename: str) -> None:
         self.__database_connector.delete_file(filename)
         os.remove(self.__get_file_path(filename))
 
