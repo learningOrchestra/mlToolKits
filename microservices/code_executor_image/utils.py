@@ -201,7 +201,7 @@ class ObjectStorage:
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
         if service_type == Constants.DATASET_GENERIC_TYPE:
-            return f'{os.environ[Constants.DATASET_GENERIC_TYPE]}/{filename}'
+            return f'{os.environ[Constants.DATASET_VOLUME_PATH]}/{filename}'
         if service_type == Constants.MODEL_TENSORFLOW_TYPE or \
                 service_type == Constants.MODEL_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
