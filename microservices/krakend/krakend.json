@@ -131,7 +131,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/files?type=dataset/generic",
+          "url_pattern": "/files/{filename}?type=dataset/generic",
           "host": [
             "http://databaseapi:5000"
           ],
