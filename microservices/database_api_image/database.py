@@ -72,7 +72,7 @@ class Generic(Storage):
         os.remove(self.__get_file_path(filename))
 
     def __get_file_path(self, filename: str) -> str:
-        return f'{os.environ[Constants.DATASET_VOLUME_PATH]}/{filename}'
+        return f'/{os.environ[Constants.DATASET_VOLUME_PATH]}/{filename}'
 
 
 class Csv(Storage):
