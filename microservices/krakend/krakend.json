@@ -62,7 +62,7 @@
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/files/{filename}?type=csv/dataset",
+          "url_pattern": "/files/{filename}?type=dataset/csv",
           "host": [
             "http://databaseapi:5000"
           ],
