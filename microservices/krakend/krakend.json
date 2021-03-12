@@ -130,7 +130,7 @@
       "backend": [
         {
           "encoding": "no-op",
-          "method": "POST",
+          "method": "DELETE",
           "url_pattern": "/files?type=dataset/generic",
           "host": [
             "http://databaseapi:5000"
