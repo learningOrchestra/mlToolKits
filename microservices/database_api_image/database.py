@@ -58,17 +58,11 @@ class Generic(Storage):
         self.__database_connector = database_connector
 
     def save_file(self, filename: str, url: str) -> None:
-        print("before", flush=True)
-        print(os.listdir(os.environ[Constants.DATASET_VOLUME_PATH]), flush=True)
-
         with requests.get(url, stream=True) as response:
             response.raise_for_status()
             with open(self.__get_file_path(filename), 'wb') as file:
                 for chunk in response.iter_content(chunk_size=8192):
                     file.write(chunk)
-
-        print("after", flush=True)
-        print(os.listdir(os.environ[Constants.DATASET_VOLUME_PATH]), flush=True)
 
         self.__metadata_creator.create_file(
             filename, url, Constants.DATASET_GENERIC_TYPE)
