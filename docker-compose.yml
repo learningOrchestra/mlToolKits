@@ -32,7 +32,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-worker
+    deploy: *default-deploy-manager
     volumes:
       - "database_api:/datasets"
     networks:
