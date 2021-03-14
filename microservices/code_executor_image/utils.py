@@ -247,6 +247,7 @@ class Data:
 
     def __is_stored_in_volume(self, filename) -> bool:
         volume_types = [
+            Constants.DATASET_GENERIC_TYPE,
             Constants.MODEL_TENSORFLOW_TYPE,
             Constants.MODEL_SCIKITLEARN_TYPE,
             Constants.TUNE_TENSORFLOW_TYPE,
