@@ -168,4 +168,9 @@ class Execution:
         model_method = getattr(class_instance, method)
 
         treated_parameters = self.__parameters_handler.treat(parameters)
-        return model_method(**treated_parameters)
+        method_result = model_method(**treated_parameters)
+
+        if method_result is None:
+            return model_method
+
+        return method_result
