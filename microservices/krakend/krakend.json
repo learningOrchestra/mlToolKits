@@ -441,7 +441,7 @@
           "method": "POST",
           "url_pattern": "/defaultModel?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
@@ -457,7 +457,7 @@
           "method": "PATCH",
           "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
@@ -510,7 +510,7 @@
           "method": "DELETE",
           "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
@@ -526,7 +526,7 @@
           "method": "POST",
           "url_pattern": "/defaultModel?type=model/tensorflow",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
@@ -542,7 +542,7 @@
           "method": "PATCH",
           "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
@@ -595,7 +595,7 @@
           "method": "DELETE",
           "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
