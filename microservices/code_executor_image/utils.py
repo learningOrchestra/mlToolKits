@@ -196,7 +196,7 @@ class ObjectStorage:
 
     @staticmethod
     def get_write_binary_path(filename: str) -> str:
-        return f'{os.environ[Constants.TRANSFORM_VOLUME_PATH]}/{filename}'
+        return f'{os.environ[Constants.CODE_EXECUTOR_VOLUME_PATH]}/{filename}'
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
