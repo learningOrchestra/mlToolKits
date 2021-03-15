@@ -252,6 +252,7 @@ class Data:
                 name,
                 self.__METADATA_QUERY)
 
+            print(instance_metadata, flush=True)
             name = instance_metadata[Constants.PARENT_NAME_FIELD_NAME]
 
         model_metadata = self.__database.find_one(
