@@ -242,10 +242,20 @@ class Data:
         self.__METADATA_QUERY = {
             Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
-    def get_module_and_class_from_a_model(self,
-                                          model_name: str) -> tuple:
+    def get_module_and_class_from_a_instance(self,
+                                             name: str) -> tuple:
+
+        model_types = [Constants.MODEL_TENSORFLOW_TYPE,
+                       Constants.MODEL_SCIKITLEARN_TYPE]
+        while self.get_type(name) not in model_types:
+            instance_metadata = self.__database.find_one(
+                name,
+                self.__METADATA_QUERY)
+
+            name = instance_metadata[Constants.PARENT_NAME_FIELD_NAME]
+
         model_metadata = self.__database.find_one(
-            model_name,
+            name,
             self.__METADATA_QUERY)
 
         module_path = model_metadata[Constants.MODULE_PATH_FIELD_NAME]

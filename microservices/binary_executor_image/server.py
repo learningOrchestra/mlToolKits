@@ -55,7 +55,7 @@ def create_execution() -> jsonify:
         storage
     )
 
-    module_path, class_name = data.get_module_and_class_from_a_model(
+    module_path, class_name = data.get_module_and_class_from_a_instance(
         parent_name)
     train_model.create(
         module_path, class_name, method_parameters, description)
@@ -84,7 +84,7 @@ def update_execution(filename: str) -> jsonify:
     if request_errors is not None:
         return request_errors
 
-    module_path, function = data.get_module_and_class_from_a_model(
+    module_path, function = data.get_module_and_class_from_a_instance(
         filename)
     model_name = data.get_model_name_from_a_child(filename)
     method_name = data.get_class_method_from_a_executor_name(filename)
@@ -159,13 +159,13 @@ def analyse_post_request_errors(request_validator: UserRequest,
         request_validator.existent_filename_validator(
             parent_name
         )
-    except Exception as invalid_model_name:
+    except Exception as invalid_parent_name:
         return (
-            jsonify({Constants.MESSAGE_RESULT: str(invalid_model_name)}),
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_parent_name)}),
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    module_path, class_name = data.get_module_and_class_from_a_model(
+    module_path, class_name = data.get_module_and_class_from_a_instance(
         parent_name)
 
     try:
