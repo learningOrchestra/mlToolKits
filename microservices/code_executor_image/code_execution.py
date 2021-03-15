@@ -161,7 +161,7 @@ class Execution:
                                                           function_error)
 
     def __execute_function(self, function: str,
-                           parameters: dict) -> (dict, str, str):
+                           parameters: dict) -> (object, str, str):
         # This function returns a tuple with 3 items, the first item is a dict
         # defined inside of executed function, the second item is the the output
         # caught in executed function and the last item is the the exception

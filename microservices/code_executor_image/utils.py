@@ -180,7 +180,7 @@ class ObjectStorage:
         else:
             return dill.load(binary_instance)
 
-    def save(self, instance: dict, filename: str) -> None:
+    def save(self, instance: object, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
 
         instance_output = open(output_path,
