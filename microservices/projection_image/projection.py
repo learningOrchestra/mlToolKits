@@ -36,6 +36,7 @@ class Projection:
         spark_session = (
             SparkSession
                 .builder
+                .appName(projection_filename)
                 .config("spark.mongodb.input.uri", self.database_url_input)
                 .config("spark.mongodb.output.uri", self.database_url_output)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
