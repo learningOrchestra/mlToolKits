@@ -61,6 +61,6 @@ class Projection:
         projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode(
             "append").save()
 
-        spark_session.stop()
+        # spark_session.stop()
 
         self.metadata_creator.update_finished_flag(projection_filename, True)
