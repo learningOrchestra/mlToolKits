@@ -40,6 +40,7 @@ class Projection:
                 .config("spark.mongodb.output.uri", self.database_url_output)
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
+                .config("spark.scheduler.mode", "FAIR")
                 .config("spark.jars.packages",
                         "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
@@ -47,7 +48,7 @@ class Projection:
                 f'spark://{os.environ[SPARKMASTER_HOST]}:'
                 f'{str(os.environ[SPARKMASTER_PORT])}'
             )
-                .getOrCreate()
+                .newSession()
         )
 
         dataframe = spark_session.read.format(
@@ -61,6 +62,6 @@ class Projection:
         projection_dataframe.write.format(self.MONGO_SPARK_SOURCE).mode(
             "append").save()
 
-        # spark_session.stop()
+        spark_session.stop()
 
         self.metadata_creator.update_finished_flag(projection_filename, True)
