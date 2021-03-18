@@ -231,9 +231,11 @@ class Builder:
                          spark_session: SparkSession) -> dataframe:
         print("file_processor", flush=True)
         print(database_url, flush=True)
-        file = spark_session.read.format("mongo").option(
-            "uri", database_url).load()
+        file = spark_session.read.format(
+            "com.mongodb.spark.sql.DefaultSource").option(
+            "spark.mongodb.input.uri", database_url).load()
 
+        print("passou do read file", flush=True)
         file_without_metadata = file.filter(
             file[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID
         )
