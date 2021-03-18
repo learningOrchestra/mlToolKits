@@ -1,6 +1,6 @@
 from flask import jsonify, request, Flask
 import os
-from builder import Model
+from builder import Builder
 
 from utils import Database, UserRequest, Metadata
 
@@ -40,6 +40,9 @@ database = Database(
 )
 request_validator = UserRequest(database)
 
+metadata_creator = Metadata(database)
+builder = Builder(database, metadata_creator)
+
 
 @app.route("/models", methods=["POST"])
 def create_model():
@@ -70,15 +73,11 @@ def create_model():
         database_replica_set,
     )
 
-    metadata_creator = Metadata(database, train_filename, test_filename)
-    builder = Model(database,
-                          metadata_creator,
-                          database_url_training,
-                          database_url_test)
-
     builder.build(
         request.json[MODELING_CODE_NAME],
-        classifiers_name
+        classifiers_name, train_filename,
+        test_filename, database_url_training,
+        database_url_test
     )
 
     return (
@@ -96,8 +95,8 @@ def create_prediction_files_uri(classifiers_list, test_filename):
     for classifier in classifiers_list:
         classifiers_uri.append(
             MICROSERVICE_URI_GET +
-            Model.create_prediction_filename(test_filename,
-                                             classifier) +
+            Builder.create_prediction_filename(test_filename,
+                                               classifier) +
             MICROSERVICE_URI_GET_PARAMS)
 
     return classifiers_uri

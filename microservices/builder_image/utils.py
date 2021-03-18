@@ -1,33 +1,31 @@
-from builder import Model
+from builder import Builder
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
 
 
 class Metadata:
-    def __init__(self, database, train_filename, test_filename):
+    def __init__(self, database):
         self.database_connector = database
-        timezone_london = pytz.timezone("Etc/Greenwich")
-        london_time = datetime.now(timezone_london)
-        self.now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
+        self.timezone_london = pytz.timezone("Etc/Greenwich")
 
         self.metadata_document = {
-            "parentDatasetName": [train_filename, test_filename],
-            "timeCreated": self.now_time,
             "_id": 0,
             "type": "builder",
             "finished": False,
         }
 
-        self.train_filename = train_filename
-        self.test_filename = test_filename
+    def create_file(self, classifier_name, train_filename, test_filename):
+        london_time = datetime.now(self.timezone_london)
+        now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
 
-    def create_file(self, classifier_name):
         metadata = self.metadata_document.copy()
+        metadata["parentDatasetName"] = [train_filename, test_filename]
+        metadata["timeCreated"] = now_time
         metadata["classifier"] = classifier_name
         metadata["datasetName"] = \
-            Model.create_prediction_filename(
-                self.test_filename,
+            Builder.create_prediction_filename(
+                test_filename,
                 classifier_name)
 
         self.database_connector.delete_file(metadata["datasetName"])
@@ -109,7 +107,7 @@ class UserRequest:
         filenames = self.database.get_filenames()
 
         for classifier_name in classifier_list:
-            prediction_filename = Model.create_prediction_filename(
+            prediction_filename = Builder.create_prediction_filename(
                 test_filename, classifier_name)
             if prediction_filename in filenames:
                 raise Exception(self.MESSAGE_INVALID_PREDICTION_NAME)

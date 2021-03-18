@@ -38,7 +38,8 @@ class Projection:
         )
 
     def create(self, parent_filename: str, projection_filename: str,
-               fields: list, database_url_input: str, database_url_output: str):
+               fields: list, database_url_input: str,
+               database_url_output: str) -> None:
         self.__metadata_creator.create_file(
             projection_filename,
             parent_filename,
@@ -49,7 +50,8 @@ class Projection:
                                   database_url_input, database_url_output)
 
     def __execute_spark_job(self, projection_filename: str, fields: list,
-                            database_url_input: str, database_url_output: str):
+                            database_url_input: str,
+                            database_url_output: str) -> None:
         dataframe = self.__spark_session.read.format(
             self.__MONGO_SPARK_SOURCE).option(
             "spark.mongodb.input.uri", database_url_input).load()
@@ -62,7 +64,5 @@ class Projection:
         projection_dataframe.write.format(
             self.__MONGO_SPARK_SOURCE).mode("append").option(
             "spark.mongodb.output.uri", database_url_output).save()
-
-        # spark_session.stop()
 
         self.__metadata_creator.update_finished_flag(projection_filename, True)

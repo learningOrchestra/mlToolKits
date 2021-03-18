@@ -4,13 +4,15 @@ import time
 import numpy as np  # Don't remove, the pyparsk uses the lib.
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from concurrent.futures import ThreadPoolExecutor
-
+from utils import Metadata, Database
+from pyspark.sql import dataframe
 from pyspark.ml.classification import (
     LogisticRegression,
     DecisionTreeClassifier,
     RandomForestClassifier,
     GBTClassifier,
     NaiveBayes,
+
 )
 
 SPARKMASTER_HOST = "SPARKMASTER_HOST"
@@ -19,32 +21,17 @@ SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
 BUILDER_HOST_NAME = "BUILDER_HOST_NAME"
 
 
-class Model:
+class Builder:
     METADATA_DOCUMENT_ID = 0
     DOCUMENT_ID_NAME = "_id"
 
-    def __init__(self, database_connector, metadata_creator,
-                 database_url_training,
-                 database_url_test):
-        self.database = database_connector
-        self.database_url_training = database_url_training
-        self.database_url_test = database_url_test
-        self.metadata_creator = metadata_creator
+    def __init__(self, database_connector: Database,
+                 metadata_creator: Metadata):
+        self.__database = database_connector
+        self.__metadata_creator = metadata_creator
+        self.__thread_pool = ThreadPoolExecutor()
 
-        self.thread_pool = ThreadPoolExecutor()
-
-    def build(self, modeling_code, classifiers_list):
-        classifiers_metadata = {}
-
-        for classifier_name in classifiers_list:
-            classifiers_metadata[classifier_name] = \
-                self.metadata_creator.create_file(classifier_name)
-
-        self.thread_pool.submit(self.pipeline, modeling_code,
-                                classifiers_metadata)
-
-    def pipeline(self, modeling_code, classifiers_metadata):
-        spark_session = (
+        self.__spark_session = (
             SparkSession
                 .builder
                 .appName("builder")
@@ -65,10 +52,34 @@ class Model:
                 .getOrCreate()
         )
 
+    def build(self, modeling_code: str, classifiers_list: list,
+              train_filename: str, test_filename: str,
+              database_url_training: str, dataset_url_test: str) -> None:
+        classifiers_metadata = {}
+
+        for classifier_name in classifiers_list:
+            classifiers_metadata[classifier_name] = \
+                self.__metadata_creator.create_file(classifier_name,
+                                                    train_filename,
+                                                    test_filename)
+
+        '''self.__thread_pool.submit(self.__pipeline, modeling_code,
+                                  classifiers_metadata,
+                                  database_url_training, dataset_url_test)'''
+
+        self.__pipeline(modeling_code,
+                        classifiers_metadata,
+                        database_url_training, dataset_url_test)
+
+    def __pipeline(self, modeling_code: str, classifiers_metadata: dict,
+                   database_url_training: str, database_url_test: str) -> None:
+
         (features_training, features_testing, features_evaluation) = \
-            self.modeling_code_processing(
+            self.__modeling_code_processing(
                 modeling_code,
-                spark_session)
+                self.__spark_session,
+                database_url_training,
+                database_url_test)
 
         classifier_switcher = {
             "LR": LogisticRegression(),
@@ -82,8 +93,8 @@ class Model:
         for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
             classifier_threads.append(
-                self.thread_pool.submit(
-                    Model.classifier_processing,
+                self.__thread_pool.submit(
+                    Builder.__classifier_processing,
                     classifier,
                     features_training,
                     features_testing,
@@ -94,19 +105,21 @@ class Model:
 
         for classifier in classifier_threads:
             testing_prediction, metadata_document = classifier.result()
-            self.save_classifier_result(
+            self.__save_classifier_result(
                 testing_prediction,
                 metadata_document
             )
 
-        spark_session.stop()
-
-    def modeling_code_processing(self, modeling_code, spark_session):
-        training_df = self.file_processor(
-            self.database_url_training,
+    def __modeling_code_processing(self, modeling_code: str,
+                                   spark_session: SparkSession,
+                                   database_url_training: str,
+                                   database_url_test: str) -> \
+            (object, object, object):
+        training_df = self.__file_processor(
+            database_url_training,
             spark_session)
-        testing_df = self.file_processor(
-            self.database_url_test,
+        testing_df = self.__file_processor(
+            database_url_test,
             spark_session)
 
         preprocessing_variables = locals()
@@ -118,14 +131,13 @@ class Model:
 
         return features_training, features_testing, features_evaluation
 
-    @staticmethod
-    def classifier_processing(
-            classifier,
-            features_training,
-            features_testing,
-            features_evaluation,
-            metadata_document
-    ):
+    def __classifier_processing(self,
+                                classifier: object,
+                                features_training: dataframe,
+                                features_testing: dataframe,
+                                features_evaluation: dataframe,
+                                metadata_document: dict
+                                ) -> (object, dict):
 
         classifier.featuresCol = "features"
 
@@ -160,8 +172,9 @@ class Model:
 
         return testing_prediction, metadata_document
 
-    def save_classifier_result(self, predicted_df, filename_metadata):
-        self.database.update_one(
+    def __save_classifier_result(self, predicted_df: dataframe,
+                                 filename_metadata: dict) -> None:
+        self.__database.update_one(
             filename_metadata["datasetName"],
             filename_metadata,
             {self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID})
@@ -177,13 +190,14 @@ class Model:
             del row_dict["features"]
             del row_dict["rawPrediction"]
 
-            self.database.insert_one_in_file(filename_metadata["datasetName"],
-                                             row_dict)
+            self.__database.insert_one_in_file(filename_metadata["datasetName"],
+                                               row_dict)
 
-        self.metadata_creator.update_finished_flag(
+        self.__metadata_creator.update_finished_flag(
             filename_metadata["datasetName"], True)
 
-    def file_processor(self, database_url, spark_session):
+    def __file_processor(self, database_url: str,
+                         spark_session: SparkSession) -> dataframe:
         file = spark_session.read.format("mongo").option(
             "uri", database_url).load()
 
@@ -205,22 +219,23 @@ class Model:
 
         return processed_file
 
-    @staticmethod
-    def fields_from_dataframe(dataframe, is_string):
+    def __fields_from_dataframe(self, dataframe_object: dataframe,
+                                is_string: bool) -> list:
         text_fields = []
-        first_row = dataframe.first()
+        first_row = dataframe_object.first()
 
         if is_string:
-            for column in dataframe.schema.names:
+            for column in dataframe_object.schema.names:
                 if type(first_row[column]) == str:
                     text_fields.append(column)
         else:
-            for column in dataframe.schema.names:
+            for column in dataframe_object.schema.names:
                 if type(first_row[column]) != str:
                     text_fields.append(column)
 
         return text_fields
 
     @staticmethod
-    def create_prediction_filename(parent_filename, classifier_name):
+    def create_prediction_filename(parent_filename: str,
+                                   classifier_name: str) -> str:
         return f'{parent_filename}{classifier_name}'
