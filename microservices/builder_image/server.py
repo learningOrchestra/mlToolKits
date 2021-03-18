@@ -95,8 +95,8 @@ def create_prediction_files_uri(classifiers_list, test_filename):
     for classifier in classifiers_list:
         classifiers_uri.append(
             MICROSERVICE_URI_GET +
-            Builder.create_prediction_filename(test_filename,
-                                               classifier) +
+            Database.create_prediction_filename(test_filename,
+                                                classifier) +
             MICROSERVICE_URI_GET_PARAMS)
 
     return classifiers_uri

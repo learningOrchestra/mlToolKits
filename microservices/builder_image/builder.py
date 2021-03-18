@@ -234,8 +234,3 @@ class Builder:
                     text_fields.append(column)
 
         return text_fields
-
-    @staticmethod
-    def create_prediction_filename(parent_filename: str,
-                                   classifier_name: str) -> str:
-        return f'{parent_filename}{classifier_name}'
