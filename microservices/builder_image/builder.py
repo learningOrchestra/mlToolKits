@@ -56,6 +56,7 @@ class Builder:
               train_filename: str, test_filename: str,
               database_url_training: str, dataset_url_test: str) -> None:
         classifiers_metadata = {}
+        print("0", flush=True)
 
         for classifier_name in classifiers_list:
             classifiers_metadata[classifier_name] = \
@@ -73,6 +74,7 @@ class Builder:
 
     def __pipeline(self, modeling_code: str, classifiers_metadata: dict,
                    database_url_training: str, database_url_test: str) -> None:
+        print("1", flush=True)
 
         (features_training, features_testing, features_evaluation) = \
             self.__modeling_code_processing(
@@ -80,6 +82,7 @@ class Builder:
                 self.__spark_session,
                 database_url_training,
                 database_url_test)
+        print("2", flush=True)
 
         classifier_switcher = {
             "LR": LogisticRegression(),
@@ -109,6 +112,7 @@ class Builder:
                 testing_prediction,
                 metadata_document
             )'''
+        print("3", flush=True)
 
         for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
@@ -120,10 +124,15 @@ class Builder:
                 features_evaluation,
                 metadata,
             )
+            print("4", flush=True)
+
             self.__save_classifier_result(
                 testing_prediction,
                 metadata_document
             )
+            print("5", flush=True)
+
+    print("6", flush=True)
 
     def __modeling_code_processing(self,
                                    modeling_code: str,
