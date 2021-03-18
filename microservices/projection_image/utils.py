@@ -6,19 +6,19 @@ from pymongo import MongoClient
 class Metadata:
     def __init__(self, database):
         self.database_connector = database
-        timezone_london = pytz.timezone("Etc/Greenwich")
-        london_time = datetime.now(timezone_london)
-        self.now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
-
+        self.timezone_london = pytz.timezone("Etc/Greenwich")
         self.metadata_document = {
-            "timeCreated": self.now_time,
             "_id": 0,
             "type": "transform/projection",
             "finished": False,
         }
 
     def create_file(self, projection_filename, parent_filename, fields):
+        london_time = datetime.now(self.timezone_london)
+        now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
+
         metadata = self.metadata_document.copy()
+        metadata["timeCreated"] = now_time
         metadata["datasetName"] = projection_filename
         metadata["parentDatasetName"] = parent_filename
         metadata["fields"] = fields

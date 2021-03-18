@@ -40,6 +40,8 @@ database = Database(
     database_name,
 )
 request_validator = UserRequest(database)
+metadata_creator = Metadata(database)
+projection = Projection(metadata_creator)
 
 
 @app.route("/projections", methods=["POST"])
@@ -71,13 +73,9 @@ def create_projection():
         database_replica_set,
     )
 
-    metadata_creator = Metadata(database)
-    projection = Projection(metadata_creator, database_url_input,
-                            database_url_output)
-
     projection.create(
         parent_filename, projection_filename,
-        projection_fields)
+        projection_fields, database_url_input, database_url_output)
 
     return (
         jsonify({
