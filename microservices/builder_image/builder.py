@@ -132,7 +132,7 @@ class Builder:
             )
             print("5", flush=True)
 
-    print("6", flush=True)
+        print("6", flush=True)
 
     def __modeling_code_processing(self,
                                    modeling_code: str,
@@ -140,6 +140,8 @@ class Builder:
                                    database_url_training: str,
                                    database_url_test: str) -> \
             (object, object, object):
+
+        print("teste", flush=True)
         training_df = self.__file_processor(
             database_url_training,
             spark_session)
@@ -147,8 +149,12 @@ class Builder:
             database_url_test,
             spark_session)
 
+        print("teste2", flush=True)
+
         preprocessing_variables = locals()
         exec(modeling_code, globals(), preprocessing_variables)
+
+        print("teste3", flush=True)
 
         features_training = preprocessing_variables["features_training"]
         features_testing = preprocessing_variables["features_testing"]
@@ -223,6 +229,8 @@ class Builder:
 
     def __file_processor(self, database_url: str,
                          spark_session: SparkSession) -> dataframe:
+        print("file_processor", flush=True)
+        print(database_url, flush=True)
         file = spark_session.read.format("mongo").option(
             "uri", database_url).load()
 
