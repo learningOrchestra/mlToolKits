@@ -42,7 +42,7 @@ class Builder:
                         "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
                         )
                 .config("spark.scheduler.mode", "FAIR")
-                .config("spark.scheduler.pool", "builder")
+                .config("spark.scheduler.pool", "builder/sparkml")
                 .config("spark.scheduler.allocation.file",
                         "./fairscheduler.xml")
                 .master(
@@ -90,11 +90,11 @@ class Builder:
         }
         classifier_threads = []
 
-        for name, metadata in classifiers_metadata.items():
+        '''for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
             classifier_threads.append(
                 self.__thread_pool.submit(
-                    Builder.__classifier_processing,
+                    self.__classifier_processing,
                     classifier,
                     features_training,
                     features_testing,
@@ -108,9 +108,25 @@ class Builder:
             self.__save_classifier_result(
                 testing_prediction,
                 metadata_document
+            )'''
+
+        for name, metadata in classifiers_metadata.items():
+            classifier = classifier_switcher[name]
+
+            testing_prediction, metadata_document = self.__classifier_processing(
+                classifier,
+                features_training,
+                features_testing,
+                features_evaluation,
+                metadata,
+            )
+            self.__save_classifier_result(
+                testing_prediction,
+                metadata_document
             )
 
-    def __modeling_code_processing(self, modeling_code: str,
+    def __modeling_code_processing(self,
+                                   modeling_code: str,
                                    spark_session: SparkSession,
                                    database_url_training: str,
                                    database_url_test: str) -> \
