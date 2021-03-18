@@ -11,7 +11,7 @@ class Metadata:
 
         self.metadata_document = {
             "_id": 0,
-            "type": "builder",
+            "type": "builder/sparkml",
             "finished": False,
         }
 

@@ -363,7 +363,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -379,14 +379,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=builder",
+          "url_pattern": "/files?type=builder/sparkml",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -395,7 +395,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -416,7 +416,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [

@@ -34,7 +34,7 @@ class Builder:
         self.__spark_session = (
             SparkSession
                 .builder
-                .appName("builder")
+                .appName("builder/sparkml")
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host",
                         os.environ[BUILDER_HOST_NAME])
