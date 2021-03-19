@@ -35,6 +35,7 @@ class Builder:
             SparkSession
                 .builder
                 .appName("builder/sparkml")
+                .config("spark.driver.bindAddress", os.environ[BUILDER_HOST_NAME])
                 .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
                 .config("spark.driver.host",
                         os.environ[BUILDER_HOST_NAME])
