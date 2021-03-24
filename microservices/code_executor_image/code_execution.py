@@ -149,7 +149,7 @@ class Execution:
                 function,
                 function_parameters)
 
-        if function_result is not None and function_error is None:
+        if function_error is None:
             self.__storage.save(function_result, self.filename)
             self.__metadata_creator.update_finished_flag(self.filename,
                                                          flag=True)
