@@ -106,6 +106,9 @@ class Model:
                                             self.service_type,
                                             self.module_path,
                                             self.class_name)
+        '''self.__thread_pool.submit(self.__pipeline,
+                                  class_parameters,
+                                  description)'''
         self.__thread_pool.submit(self.__pipeline,
                                   class_parameters,
                                   description)
@@ -121,20 +124,20 @@ class Model:
 
     def __pipeline(self,
                    class_parameters: dict, description: str) -> None:
-        try:
-            module = importlib.import_module(self.module_path)
-            class_reference = getattr(module, self.class_name)
-            class_instance = self.__create_a_class_instance(class_reference,
-                                                            class_parameters)
-            self.__storage.save(self.model_name, class_instance)
-            self.__metadata_creator.update_finished_flag(self.model_name,
-                                                         flag=True)
-        except Exception as exception:
+        #try:
+        module = importlib.import_module(self.module_path)
+        class_reference = getattr(module, self.class_name)
+        class_instance = self.__create_a_class_instance(class_reference,
+                                                        class_parameters)
+        self.__storage.save(self.model_name, class_instance)
+        self.__metadata_creator.update_finished_flag(self.model_name,
+                                                     flag=True)
+        '''except Exception as exception:
             self.__metadata_creator.create_model_document(self.model_name,
                                                           description,
                                                           class_parameters,
                                                           repr(exception))
-            return
+            return'''
 
         self.__metadata_creator.create_model_document(self.model_name,
                                                       description,
