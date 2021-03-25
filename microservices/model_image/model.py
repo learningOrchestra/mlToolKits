@@ -63,6 +63,8 @@ class Parameters:
         return self.__CLASS_INSTANCE_CHARACTER in value
 
     def __is_dataset(self, value: str) -> bool:
+        print(value, flush=True)
+        print(type(value), flush=True)
         return self.__DATASET_KEY_CHARACTER in value
 
     def __get_dataset_name_from_value(self, value: str) -> str:
