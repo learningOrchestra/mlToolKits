@@ -59,13 +59,13 @@ class Parameters:
 
         return context_variables[class_instance_name]
 
-    def __is_a_class_instance(self, value: str) -> bool:
+    def __is_a_class_instance(self, value: object) -> bool:
         if type(value) != str:
             return False
         else:
             return self.__CLASS_INSTANCE_CHARACTER in value
 
-    def __is_dataset(self, value: str) -> bool:
+    def __is_dataset(self, value: object) -> bool:
         if type(value) != str:
             return False
         else:
