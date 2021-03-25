@@ -60,7 +60,10 @@ class Parameters:
         return context_variables[class_instance_name]
 
     def __is_a_class_instance(self, value: str) -> bool:
-        return self.__CLASS_INSTANCE_CHARACTER in value
+        if type(value) != str:
+            return False
+        else:
+            return self.__CLASS_INSTANCE_CHARACTER in value
 
     def __is_dataset(self, value: str) -> bool:
         if type(value) != str:
