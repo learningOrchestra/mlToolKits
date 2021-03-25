@@ -109,9 +109,9 @@ class Model:
         '''self.__thread_pool.submit(self.__pipeline,
                                   class_parameters,
                                   description)'''
-        self.__thread_pool.submit(self.__pipeline,
-                                  class_parameters,
-                                  description)
+        self.__pipeline(
+            class_parameters,
+            description)
 
     def update(self,
                description: str,
@@ -124,7 +124,7 @@ class Model:
 
     def __pipeline(self,
                    class_parameters: dict, description: str) -> None:
-        #try:
+        # try:
         module = importlib.import_module(self.module_path)
         class_reference = getattr(module, self.class_name)
         class_instance = self.__create_a_class_instance(class_reference,
