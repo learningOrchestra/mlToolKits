@@ -150,5 +150,6 @@ class Model:
                                   class_reference,
                                   class_parameters: dict) -> object:
         treated_parameters = self.__parameters_handler.treat(class_parameters)
+        print(class_parameters, flush=True)
         print(treated_parameters, flush=True)
         return class_reference(**treated_parameters)
