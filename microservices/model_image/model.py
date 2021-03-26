@@ -32,6 +32,8 @@ class Parameters:
         print("__treat_value " + str(value), flush=True)
         print(value)
         if self.__is_dataset(value):
+            print(str(value) + " Is a dataset")
+            print(str(value) + " " + str(type(value)))
             dataset_name = self.__get_dataset_name_from_value(
                 value)
 
@@ -45,6 +47,9 @@ class Parameters:
                     dataset_name)
 
         elif self.__is_a_class_instance(value):
+            print(str(value) + " Is a class instance")
+            print(str(value) + " " + str(type(value)))
+
             return self.__get_a_class_instance(value)
 
     def __get_a_class_instance(self, class_code: str) -> object:
