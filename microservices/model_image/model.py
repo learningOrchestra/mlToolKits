@@ -30,7 +30,6 @@ class Parameters:
 
     def __treat_value(self, value: object) -> object:
         print("__treat_value " + str(value), flush=True)
-        print(value)
         if self.__is_dataset(value):
             print(str(value) + " Is a dataset")
             print(str(value) + " " + str(type(value)))
