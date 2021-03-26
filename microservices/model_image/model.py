@@ -28,7 +28,7 @@ class Parameters:
 
         return parameters
 
-    def __treat_value(self, value: str) -> object:
+    def __treat_value(self, value: object) -> object:
         print("__treat_value " + str(value), flush=True)
         print(value)
         if self.__is_dataset(value):
@@ -51,6 +51,10 @@ class Parameters:
             print(str(value) + " " + str(type(value)))
 
             return self.__get_a_class_instance(value)
+
+        else:
+            print(str(value) + " " + str(type(value)))
+            return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
         class_instance_name = "class_instance"
