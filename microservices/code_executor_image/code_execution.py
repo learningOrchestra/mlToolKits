@@ -44,7 +44,7 @@ class Parameters:
 
         return parameters
 
-    def __treat_value(self, value: str) -> object:
+    def __treat_value(self, value: object) -> object:
         if self.__is_dataset(value):
             dataset_name = self.__get_dataset_name_from_value(
                 value)
@@ -61,6 +61,9 @@ class Parameters:
         elif self.__is_a_class_instance(value):
             return self.__get_a_class_instance(value)
 
+        else:
+            return value
+
     def __get_a_class_instance(self, class_code: str) -> object:
         class_instance_name = "class_instance"
         class_instance = None
@@ -75,11 +78,17 @@ class Parameters:
 
         return context_variables[class_instance_name]
 
-    def __is_a_class_instance(self, value: str) -> bool:
-        return self.__CLASS_INSTANCE_CHARACTER in value
+    def __is_a_class_instance(self, value: object) -> bool:
+        if type(value) != str:
+            return False
+        else:
+            return self.__CLASS_INSTANCE_CHARACTER in value
 
-    def __is_dataset(self, value: str) -> bool:
-        return self.__DATASET_KEY_CHARACTER in value
+    def __is_dataset(self, value: object) -> bool:
+        if type(value) != str:
+            return False
+        else:
+            return self.__DATASET_KEY_CHARACTER in value
 
     def __get_dataset_name_from_value(self, value: str) -> str:
         dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,

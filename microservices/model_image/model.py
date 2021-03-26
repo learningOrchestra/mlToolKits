@@ -29,10 +29,7 @@ class Parameters:
         return parameters
 
     def __treat_value(self, value: object) -> object:
-        print("__treat_value " + str(value), flush=True)
         if self.__is_dataset(value):
-            print(str(value) + " Is a dataset")
-            print(str(value) + " " + str(type(value)))
             dataset_name = self.__get_dataset_name_from_value(
                 value)
 
@@ -46,13 +43,9 @@ class Parameters:
                     dataset_name)
 
         elif self.__is_a_class_instance(value):
-            print(str(value) + " Is a class instance")
-            print(str(value) + " " + str(type(value)))
-
             return self.__get_a_class_instance(value)
 
         else:
-            print(str(value) + " " + str(type(value)))
             return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
@@ -160,6 +153,4 @@ class Model:
                                   class_reference,
                                   class_parameters: dict) -> object:
         treated_parameters = self.__parameters_handler.treat(class_parameters)
-        print(class_parameters, flush=True)
-        print(treated_parameters, flush=True)
         return class_reference(**treated_parameters)
