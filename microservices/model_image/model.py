@@ -29,7 +29,7 @@ class Parameters:
         return parameters
 
     def __treat_value(self, value: str) -> object:
-        print("__treat_value " + value, flush=True)
+        print("__treat_value " + str(value), flush=True)
         print(value)
         if self.__is_dataset(value):
             dataset_name = self.__get_dataset_name_from_value(
