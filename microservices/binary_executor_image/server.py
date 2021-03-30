@@ -165,6 +165,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
+    '''
     module_path, class_name = data.get_module_and_class_from_a_instance(
         parent_name)
 
@@ -192,6 +193,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
             jsonify({Constants.MESSAGE_RESULT: str(invalid_method_parameters)}),
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
+    '''
 
     return None
 
