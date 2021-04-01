@@ -1,6 +1,7 @@
 class Constants:
     MODULE_PATH_FIELD_NAME = "modulePath"
     CLASS_FIELD_NAME = "class"
+    MODEL_NAME_FIELD_NAME = "modelName"
     PARENT_NAME_FIELD_NAME = "parentName"
     NAME_FIELD_NAME = "name"
     FINISHED_FIELD_NAME = "finished"

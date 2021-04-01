@@ -24,6 +24,7 @@ parameters_handler = Parameters(database, data)
 def create_execution() -> jsonify:
     service_type = request.args.get(Constants.TYPE_FIELD_NAME)
 
+    model_name = request.json[Constants.MODEL_NAME_FIELD_NAME]
     parent_name = request.json[Constants.PARENT_NAME_FIELD_NAME]
     filename = request.json[Constants.NAME_FIELD_NAME]
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
@@ -34,6 +35,7 @@ def create_execution() -> jsonify:
         request_validator,
         data,
         filename,
+        model_name,
         parent_name,
         class_method,
         method_parameters)
@@ -56,7 +58,7 @@ def create_execution() -> jsonify:
     )
 
     module_path, class_name = data.get_module_and_class_from_a_instance(
-        parent_name)
+        model_name)
     train_model.create(
         module_path, class_name, method_parameters, description)
 
@@ -141,6 +143,7 @@ def delete_default_model(filename: str) -> jsonify:
 def analyse_post_request_errors(request_validator: UserRequest,
                                 data: Data,
                                 filename: str,
+                                model_name: str,
                                 parent_name: str,
                                 class_method: str,
                                 method_parameters: dict) \
@@ -165,9 +168,19 @@ def analyse_post_request_errors(request_validator: UserRequest,
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-    '''
+    try:
+        request_validator.existent_filename_validator(
+            model_name
+        )
+    except Exception as invalid_parent_name:
+        return (
+            jsonify({Constants.MESSAGE_RESULT: str(invalid_parent_name)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+        )
+
+
     module_path, class_name = data.get_module_and_class_from_a_instance(
-        parent_name)
+        model_name)
 
     try:
         request_validator.valid_method_class_validator(
@@ -193,7 +206,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
             jsonify({Constants.MESSAGE_RESULT: str(invalid_method_parameters)}),
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
-    '''
+
 
     return None
 
