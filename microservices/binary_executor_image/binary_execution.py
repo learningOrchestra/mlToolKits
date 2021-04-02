@@ -160,7 +160,7 @@ class Execution:
                                                          flag=True)
 
         except Exception as exception:
-            print(exception)
+            print(exception, flush=True)
             self.__metadata_creator.create_execution_document(
                 self.executor_name,
                 description,
