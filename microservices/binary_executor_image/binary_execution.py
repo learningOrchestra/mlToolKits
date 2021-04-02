@@ -127,10 +127,15 @@ class Execution:
                                             self.class_method,
                                             self.executor_service_type)
 
-        self.__thread_pool.submit(self.__pipeline,
+        '''self.__thread_pool.submit(self.__pipeline,
                                   module_path,
                                   method_parameters,
-                                  description)
+                                  description)'''
+
+        self.__pipeline(
+            module_path,
+            method_parameters,
+            description)
 
     def update(self,
                module_path: str,
