@@ -160,7 +160,8 @@ class Execution:
                                                          flag=True)
 
         except Exception as exception:
-            print(exception, flush=True)
+            import traceback
+            traceback.print_exc()
             self.__metadata_creator.create_execution_document(
                 self.executor_name,
                 description,
