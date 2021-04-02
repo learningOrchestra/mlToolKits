@@ -6,6 +6,7 @@ from constants import Constants
 import pandas as pd
 import os
 import dill
+import inspect
 
 
 class Database:
@@ -169,24 +170,49 @@ class ObjectStorage:
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
-    def read(self, filename: str, service_type: str) -> object:
-        binary_instance = open(
-            ObjectStorage.get_read_binary_path(
-                filename, service_type),
-            self.__READ_OBJECT_OPTION)
+    def __is_tensorflow_type(self, service_type: str) -> bool:
+        tensorflow_types = [
+            Constants.MODEL_TENSORFLOW_TYPE,
+            Constants.TUNE_TENSORFLOW_TYPE,
+            Constants.TRAIN_TENSORFLOW_TYPE,
+            Constants.TRANSFORM_TENSORFLOW_TYPE,
+            Constants.PREDICT_TENSORFLOW_TYPE,
+            Constants.EVALUATE_TENSORFLOW_TYPE,
+            "tensorflow"
+        ]
 
-        if service_type == Constants.DATASET_GENERIC_TYPE:
-            return binary_instance
+        if service_type in tensorflow_types:
+            return True
         else:
-            return dill.load(binary_instance)
+            return False
+
+    def read(self, filename: str, service_type: str) -> object:
+        binary_path = ObjectStorage.get_read_binary_path(
+            filename, service_type)
+
+        if self.__is_tensorflow_type(service_type):
+            from tensorflow import keras
+            return keras.models.load_model(binary_path)
+        else:
+            binary_instance = open(
+                binary_path,
+                self.__READ_OBJECT_OPTION)
+            if service_type == Constants.DATASET_GENERIC_TYPE:
+                return binary_instance
+            else:
+                return dill.load(binary_instance)
 
     def save(self, instance: object, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
-
-        instance_output = open(output_path,
-                               self.__WRITE_OBJECT_OPTION)
-        dill.dump(instance, instance_output)
-        instance_output.close()
+        object_type = inspect.getmodule(instance).__name__.split(".")[0]
+        print(object_type, flush=True)
+        if self.__is_tensorflow_type(object_type):
+            instance.save(output_path)
+        else:
+            instance_output = open(output_path,
+                                   self.__WRITE_OBJECT_OPTION)
+            dill.dump(instance, instance_output)
+            instance_output.close()
 
     def delete(self, filename: str) -> None:
         self.__thread_pool.submit(

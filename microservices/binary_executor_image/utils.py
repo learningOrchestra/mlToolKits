@@ -190,16 +190,48 @@ class ObjectStorage:
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
+    def __is_tensorflow_type(self, service_type: str) -> bool:
+        tensorflow_types = [
+            Constants.MODEL_TENSORFLOW_TYPE,
+            Constants.TUNE_TENSORFLOW_TYPE,
+            Constants.TRAIN_TENSORFLOW_TYPE,
+            Constants.TRANSFORM_TENSORFLOW_TYPE,
+            Constants.DATASET_TENSORFLOW_TYPE,
+            Constants.PREDICT_TENSORFLOW_TYPE,
+            Constants.EVALUATE_TENSORFLOW_TYPE,
+        ]
+
+        if service_type in tensorflow_types:
+            return True
+        else:
+            return False
+
     def save(self, instance: object, filename: str, service_type: str) -> None:
         model_output_path = ObjectStorage.get_write_binary_path(
             filename, service_type)
         if not os.path.exists(os.path.dirname(model_output_path)):
             os.makedirs(os.path.dirname(model_output_path))
 
-        model_output = open(model_output_path,
-                            self.__WRITE_MODEL_OBJECT_OPTION)
-        dill.dump(instance, model_output)
-        model_output.close()
+        if self.__is_tensorflow_type(service_type):
+            instance.save(model_output_path)
+        else:
+            model_output = open(model_output_path,
+                                self.__WRITE_MODEL_OBJECT_OPTION)
+            dill.dump(instance, model_output)
+            model_output.close()
+
+    def read(self, filename, service_type: str) -> object:
+        binary_path = ObjectStorage.get_read_binary_path(
+            filename, service_type)
+
+        if self.__is_tensorflow_type(service_type):
+            from tensorflow import keras
+            return keras.models.load_model(binary_path)
+        else:
+            model_binary_instance = open(
+                binary_path,
+                self.__READ_MODEL_OBJECT_OPTION)
+            return dill.load(model_binary_instance)
 
     def delete(self, filename: str, service_type: str) -> None:
         self.__thread_pool.submit(self.__database_connector.delete_file,
@@ -207,13 +239,6 @@ class ObjectStorage:
         self.__thread_pool.submit(
             os.remove,
             ObjectStorage.get_write_binary_path(filename, service_type))
-
-    def read(self, filename, service_type: str) -> object:
-        model_binary_instance = open(
-            ObjectStorage.get_read_binary_path(
-                filename, service_type),
-            self.__READ_MODEL_OBJECT_OPTION)
-        return dill.load(model_binary_instance)
 
     @staticmethod
     def get_write_binary_path(filename: str, service_type: str) -> str:
