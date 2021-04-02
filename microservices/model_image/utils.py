@@ -184,15 +184,14 @@ class ObjectStorage:
     def read(self, filename: str, service_type: str) -> object:
         binary_path = ObjectStorage.get_read_binary_path(
             filename, service_type)
-
-        if self.__is_tensorflow_type(service_type):
-            from tensorflow import keras
-            return keras.models.load_model(binary_path)
-        else:
+        try:
             model_binary_instance = open(
                 binary_path,
                 self.__READ_OBJECT_OPTION)
             return dill.load(model_binary_instance)
+        except Exception:
+            from tensorflow import keras
+            return keras.models.load_model(binary_path)
 
     def save(self, filename: str, instance: object, service_type) -> None:
         model_output_path = ObjectStorage.get_write_binary_path(

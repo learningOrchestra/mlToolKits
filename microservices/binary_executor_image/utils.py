@@ -224,14 +224,14 @@ class ObjectStorage:
         binary_path = ObjectStorage.get_read_binary_path(
             filename, service_type)
 
-        if self.__is_tensorflow_type(service_type):
-            from tensorflow import keras
-            return keras.models.load_model(binary_path)
-        else:
+        try:
             model_binary_instance = open(
                 binary_path,
                 self.__READ_MODEL_OBJECT_OPTION)
             return dill.load(model_binary_instance)
+        except Exception:
+            from tensorflow import keras
+            return keras.models.load_model(binary_path)
 
     def delete(self, filename: str, service_type: str) -> None:
         self.__thread_pool.submit(self.__database_connector.delete_file,
