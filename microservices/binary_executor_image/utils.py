@@ -196,8 +196,9 @@ class ObjectStorage:
         if not os.path.exists(os.path.dirname(model_output_path)):
             os.makedirs(os.path.dirname(model_output_path))
 
-        try: # To tensorflow objects with own serialization method
-            instance.save(model_output_path)
+        try:
+            from tensorflow import keras
+            keras.models.save_model(instance, model_output_path)
         except Exception:
             import traceback
             traceback.print_exc()
