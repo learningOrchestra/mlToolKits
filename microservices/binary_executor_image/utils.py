@@ -199,6 +199,8 @@ class ObjectStorage:
         try: # To tensorflow objects with own serialization method
             instance.save(model_output_path)
         except Exception:
+            import traceback
+            traceback.print_exc()
             model_output = open(model_output_path,
                                 self.__WRITE_MODEL_OBJECT_OPTION)
             dill.dump(instance, model_output)
