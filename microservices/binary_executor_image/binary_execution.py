@@ -181,12 +181,14 @@ class Execution:
 
     def __execute_a_object_method(self, class_instance: object, method: str,
                                   parameters: dict) -> object:
-        model_method = getattr(class_instance, method)
+        class_method = getattr(class_instance, method)
 
         treated_parameters = self.__parameters_handler.treat(parameters)
-        method_result = model_method(**treated_parameters)
+        method_result = class_method(**treated_parameters)
 
-        if method_result is None:
-            return model_method
+        if self.executor_service_type == Constants.TRAIN_TENSORFLOW_TYPE or \
+                self.executor_service_type == Constants.TRAIN_SCIKITLEARN_TYPE or \
+                method_result is None:
+            return class_method
 
         return method_result
