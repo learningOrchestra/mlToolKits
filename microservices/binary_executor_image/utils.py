@@ -190,31 +190,15 @@ class ObjectStorage:
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
-    def __is_tensorflow_type(self, service_type: str) -> bool:
-        tensorflow_types = [
-            Constants.MODEL_TENSORFLOW_TYPE,
-            Constants.TUNE_TENSORFLOW_TYPE,
-            Constants.TRAIN_TENSORFLOW_TYPE,
-            Constants.TRANSFORM_TENSORFLOW_TYPE,
-            Constants.DATASET_TENSORFLOW_TYPE,
-            Constants.PREDICT_TENSORFLOW_TYPE,
-            Constants.EVALUATE_TENSORFLOW_TYPE,
-        ]
-
-        if service_type in tensorflow_types:
-            return True
-        else:
-            return False
-
     def save(self, instance: object, filename: str, service_type: str) -> None:
         model_output_path = ObjectStorage.get_write_binary_path(
             filename, service_type)
         if not os.path.exists(os.path.dirname(model_output_path)):
             os.makedirs(os.path.dirname(model_output_path))
 
-        if self.__is_tensorflow_type(service_type):
+        try: # To tensorflow objects with own serialization method
             instance.save(model_output_path)
-        else:
+        except Exception:
             model_output = open(model_output_path,
                                 self.__WRITE_MODEL_OBJECT_OPTION)
             dill.dump(instance, model_output)
