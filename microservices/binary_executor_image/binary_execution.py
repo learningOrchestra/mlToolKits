@@ -189,6 +189,6 @@ class Execution:
         if self.executor_service_type == Constants.TRAIN_TENSORFLOW_TYPE or \
                 self.executor_service_type == Constants.TRAIN_SCIKITLEARN_TYPE or \
                 method_result is None:
-            return class_method
+            return class_instance
 
         return method_result
