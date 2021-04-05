@@ -170,22 +170,6 @@ class ObjectStorage:
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
-    def __is_tensorflow_type(self, service_type: str) -> bool:
-        tensorflow_types = [
-            Constants.MODEL_TENSORFLOW_TYPE,
-            Constants.TUNE_TENSORFLOW_TYPE,
-            Constants.TRAIN_TENSORFLOW_TYPE,
-            Constants.TRANSFORM_TENSORFLOW_TYPE,
-            Constants.PREDICT_TENSORFLOW_TYPE,
-            Constants.EVALUATE_TENSORFLOW_TYPE,
-            "tensorflow"
-        ]
-
-        if service_type in tensorflow_types:
-            return True
-        else:
-            return False
-
     def read(self, filename: str, service_type: str) -> object:
         binary_path = ObjectStorage.get_read_binary_path(
             filename, service_type)
@@ -200,11 +184,11 @@ class ObjectStorage:
 
     def save(self, instance: object, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
-        object_type = inspect.getmodule(instance).__name__.split(".")[0]
-        print(object_type, flush=True)
-        if self.__is_tensorflow_type(object_type):
-            instance.save(output_path)
-        else:
+
+        try:
+            from tensorflow import keras
+            keras.models.save_model(instance, output_path)
+        except Exception:
             instance_output = open(output_path,
                                    self.__WRITE_OBJECT_OPTION)
             dill.dump(instance, instance_output)
