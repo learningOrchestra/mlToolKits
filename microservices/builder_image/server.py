@@ -144,5 +144,5 @@ def analyse_request_errors(request_validator, train_filename,
 if __name__ == "__main__":
     app.run(
         host=os.environ[BUILDER_HOST_IP],
-        port=int(os.environ[BUILDER_HOST_PORT]), debug=True
+        port=int(os.environ[BUILDER_HOST_PORT])
     )
