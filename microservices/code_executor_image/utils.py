@@ -6,7 +6,8 @@ from constants import Constants
 import pandas as pd
 import os
 import dill
-import inspect
+import traceback
+from tensorflow import keras
 
 
 class Database:
@@ -179,16 +180,16 @@ class ObjectStorage:
                 self.__READ_OBJECT_OPTION)
             return dill.load(model_binary_instance)
         except Exception:
-            from tensorflow import keras
+            traceback.print_exc()
             return keras.models.load_model(binary_path)
 
     def save(self, instance: object, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
 
         try:
-            from tensorflow import keras
             keras.models.save_model(instance, output_path)
         except Exception:
+            traceback.print_exc()
             instance_output = open(output_path,
                                    self.__WRITE_OBJECT_OPTION)
             dill.dump(instance, instance_output)

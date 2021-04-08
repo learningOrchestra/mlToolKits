@@ -2,6 +2,8 @@ import importlib
 from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database, ObjectStorage, Data
 from constants import Constants
+import traceback
+import tensorflow
 
 
 class Parameters:
@@ -57,7 +59,6 @@ class Parameters:
             self.__CLASS_INSTANCE_CHARACTER,
             f'{class_instance_name}=')
 
-        import tensorflow
         exec(class_code, locals(), context_variables)
 
         return context_variables[class_instance_name]
@@ -141,6 +142,7 @@ class Model:
             self.__metadata_creator.update_finished_flag(self.model_name,
                                                          flag=True)
         except Exception as exception:
+            traceback.print_exc()
             self.__metadata_creator.create_model_document(self.model_name,
                                                           description,
                                                           class_parameters,

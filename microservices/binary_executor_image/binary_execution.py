@@ -2,6 +2,7 @@ import importlib
 from concurrent.futures import ThreadPoolExecutor
 from utils import Database, Data, Metadata, ObjectStorage
 from constants import Constants
+import traceback
 
 
 class Parameters:
@@ -127,15 +128,10 @@ class Execution:
                                             self.class_method,
                                             self.executor_service_type)
 
-        '''self.__thread_pool.submit(self.__pipeline,
+        self.__thread_pool.submit(self.__pipeline,
                                   module_path,
                                   method_parameters,
-                                  description)'''
-
-        self.__pipeline(
-            module_path,
-            method_parameters,
-            description)
+                                  description)
 
     def update(self,
                module_path: str,
@@ -165,7 +161,6 @@ class Execution:
                                                          flag=True)
 
         except Exception as exception:
-            import traceback
             traceback.print_exc()
             self.__metadata_creator.create_execution_document(
                 self.executor_name,
@@ -181,7 +176,6 @@ class Execution:
 
     def __execute_a_object_method(self, class_instance: object, method: str,
                                   parameters: dict) -> object:
-        print(type(class_instance), flush=True)
         class_method = getattr(class_instance, method)
 
         treated_parameters = self.__parameters_handler.treat(parameters)
@@ -190,7 +184,6 @@ class Execution:
         if self.executor_service_type == Constants.TRAIN_TENSORFLOW_TYPE or \
                 self.executor_service_type == Constants.TRAIN_SCIKITLEARN_TYPE or \
                 method_result is None:
-            print(type(class_instance), flush=True)
             return class_instance
 
         return method_result

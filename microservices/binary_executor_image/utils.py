@@ -8,6 +8,8 @@ from constants import Constants
 import pandas as pd
 import dill
 import os
+from tensorflow import keras
+import traceback
 
 
 class Database:
@@ -197,10 +199,8 @@ class ObjectStorage:
             os.makedirs(os.path.dirname(model_output_path))
 
         try:
-            from tensorflow import keras
             keras.models.save_model(instance, model_output_path)
         except Exception:
-            import traceback
             traceback.print_exc()
             model_output = open(model_output_path,
                                 self.__WRITE_MODEL_OBJECT_OPTION)
@@ -217,7 +217,7 @@ class ObjectStorage:
                 self.__READ_MODEL_OBJECT_OPTION)
             return dill.load(model_binary_instance)
         except Exception:
-            from tensorflow import keras
+            traceback.print_exc()
             return keras.models.load_model(binary_path)
 
     def delete(self, filename: str, service_type: str) -> None:

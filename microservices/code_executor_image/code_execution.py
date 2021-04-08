@@ -5,6 +5,8 @@ from io import StringIO
 import sys
 import validators
 import requests
+import tensorflow
+import traceback
 
 
 class Function:
@@ -73,7 +75,6 @@ class Parameters:
             self.__CLASS_INSTANCE_CHARACTER,
             f'{class_instance_name}=')
 
-        import tensorflow
         exec(class_code, locals(), context_variables)
 
         return context_variables[class_instance_name]
@@ -133,10 +134,6 @@ class Execution:
                                   function,
                                   function_parameters,
                                   description)
-        self.__pipeline(
-            function,
-            function_parameters,
-            description)
 
     def update(self,
                function: str,
@@ -192,6 +189,7 @@ class Execution:
             return context_variables["response"], function_message, None
 
         except Exception as error:
+            traceback.print_exc()
             function_message = redirected_output.getvalue()
             sys.stdout = old_stdout
             function_error = repr(error)

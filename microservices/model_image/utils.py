@@ -8,6 +8,8 @@ from constants import Constants
 import dill
 import os
 import pandas as pd
+from tensorflow import keras
+import traceback
 
 
 class Database:
@@ -190,7 +192,7 @@ class ObjectStorage:
                 self.__READ_OBJECT_OPTION)
             return dill.load(model_binary_instance)
         except Exception:
-            from tensorflow import keras
+            traceback.print_exc()
             return keras.models.load_model(binary_path)
 
     def save(self, filename: str, instance: object, service_type) -> None:

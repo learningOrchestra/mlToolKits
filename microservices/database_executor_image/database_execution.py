@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from utils import Database, ExecutionStorage, Metadata, Data
 import importlib
 from constants import Constants
+import traceback
 
 
 class Parameters:
@@ -165,6 +166,7 @@ class Execution:
                                                          flag=True)
 
         except Exception as exception:
+            traceback.print_exc()
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,
