@@ -1,48 +1,6 @@
-from model_builder import Model
 from datetime import datetime
 import pytz
 from pymongo import MongoClient
-
-
-class Metadata:
-    def __init__(self, database, train_filename, test_filename):
-        self.database_connector = database
-        timezone_london = pytz.timezone("Etc/Greenwich")
-        london_time = datetime.now(timezone_london)
-        self.now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
-
-        self.metadata_document = {
-            "parentDatasetName": [train_filename, test_filename],
-            "timeCreated": self.now_time,
-            "_id": 0,
-            "type": "builder",
-            "finished": False,
-        }
-
-        self.train_filename = train_filename
-        self.test_filename = test_filename
-
-    def create_file(self, classifier_name):
-        metadata = self.metadata_document.copy()
-        metadata["classifier"] = classifier_name
-        metadata["datasetName"] = \
-            Model.create_prediction_filename(
-                self.test_filename,
-                classifier_name)
-
-        self.database_connector.delete_file(metadata["datasetName"])
-        self.database_connector.insert_one_in_file(
-            metadata["datasetName"],
-            metadata)
-
-        return metadata
-
-    def update_finished_flag(self, filename, flag):
-        flag_true_query = {"finished": flag}
-        metadata_file_query = {"_id": 0}
-        self.database_connector.update_one(filename,
-                                           flag_true_query,
-                                           metadata_file_query)
 
 
 class Database:
@@ -80,6 +38,50 @@ class Database:
         return f'{database_url}/{database_name}.{database_filename}' \
                f'?replicaSet={database_replica_set}&authSource=admin'
 
+    @staticmethod
+    def create_prediction_filename(parent_filename: str,
+                                   classifier_name: str) -> str:
+        return f'{parent_filename}{classifier_name}'
+
+
+class Metadata:
+    def __init__(self, database):
+        self.database_connector = database
+        self.timezone_london = pytz.timezone("Etc/Greenwich")
+
+        self.metadata_document = {
+            "_id": 0,
+            "type": "builder/sparkml",
+            "finished": False,
+        }
+
+    def create_file(self, classifier_name, train_filename, test_filename):
+        london_time = datetime.now(self.timezone_london)
+        now_time = london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
+
+        metadata = self.metadata_document.copy()
+        metadata["parentDatasetName"] = [train_filename, test_filename]
+        metadata["timeCreated"] = now_time
+        metadata["classifier"] = classifier_name
+        metadata["datasetName"] = \
+            Database.create_prediction_filename(
+                test_filename,
+                classifier_name)
+
+        self.database_connector.delete_file(metadata["datasetName"])
+        self.database_connector.insert_one_in_file(
+            metadata["datasetName"],
+            metadata)
+
+        return metadata
+
+    def update_finished_flag(self, filename, flag):
+        flag_true_query = {"finished": flag}
+        metadata_file_query = {"_id": 0}
+        self.database_connector.update_one(filename,
+                                           flag_true_query,
+                                           metadata_file_query)
+
 
 class UserRequest:
     MESSAGE_INVALID_FILENAME = "invalid input dataset name"
@@ -109,7 +111,7 @@ class UserRequest:
         filenames = self.database.get_filenames()
 
         for classifier_name in classifier_list:
-            prediction_filename = Model.create_prediction_filename(
+            prediction_filename = Database.create_prediction_filename(
                 test_filename, classifier_name)
             if prediction_filename in filenames:
                 raise Exception(self.MESSAGE_INVALID_PREDICTION_NAME)

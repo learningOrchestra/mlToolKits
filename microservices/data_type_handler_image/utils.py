@@ -16,7 +16,7 @@ class Metadata:
             "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00"),
             "_id": 0,
             "finished": False,
-            "type": "dataType"
+            "type": "transform/dataType"
         }
         self.database_connector.insert_one_in_file(filename, metadata_file)
 

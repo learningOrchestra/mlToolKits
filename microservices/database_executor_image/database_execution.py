@@ -2,10 +2,12 @@ from concurrent.futures import ThreadPoolExecutor
 from utils import Database, ExecutionStorage, Metadata, Data
 import importlib
 from constants import Constants
+import traceback
 
 
 class Parameters:
     __DATASET_KEY_CHARACTER = "$"
+    __CLASS_INSTANCE_CHARACTER = "#"
     __DATASET_WITH_OBJECT_KEY_CHARACTER = "."
     __REMOVE_KEY_CHARACTER = ""
 
@@ -17,23 +19,61 @@ class Parameters:
         parameters = method_parameters.copy()
 
         for name, value in parameters.items():
-            if self.__is_dataset(value):
-                dataset_name = self.__get_dataset_name_from_value(
-                    value)
-                if self.__has_dot_in_dataset_name(value):
-                    object_name = self.__get_name_after_dot_from_value(value)
-
-                    parameters[name] = self.__data.get_object_from_dataset(
-                        dataset_name, object_name)
-
-                else:
-                    parameters[name] = self.__data.get_dataset_content(
-                        dataset_name)
+            if type(value) is list:
+                new_value = []
+                for item in value:
+                    new_value.append(self.__treat_value(item))
+                parameters[name] = new_value
+            else:
+                parameters[name] = self.__treat_value(value)
 
         return parameters
 
-    def __is_dataset(self, value: str) -> bool:
-        return self.__DATASET_KEY_CHARACTER in value
+    def __treat_value(self, value: object) -> object:
+        if self.__is_dataset(value):
+            dataset_name = self.__get_dataset_name_from_value(
+                value)
+
+            if self.__has_dot_in_dataset_name(value):
+                object_name = self.__get_name_after_dot_from_value(value)
+                return self.__data.get_object_from_dataset(
+                    dataset_name, object_name)
+
+            else:
+                return self.__data.get_dataset_content(
+                    dataset_name)
+
+        elif self.__is_a_class_instance(value):
+            return self.__get_a_class_instance(value)
+
+        else:
+            return value
+
+    def __get_a_class_instance(self, class_code: str) -> object:
+        class_instance_name = "class_instance"
+        class_instance = None
+        context_variables = {}
+
+        class_code = class_code.replace(
+            self.__CLASS_INSTANCE_CHARACTER,
+            f'{class_instance_name}=')
+
+        import tensorflow
+        exec(class_code, locals(), context_variables)
+
+        return context_variables[class_instance_name]
+
+    def __is_a_class_instance(self, value: object) -> bool:
+        if type(value) != str:
+            return False
+        else:
+            return self.__CLASS_INSTANCE_CHARACTER in value
+
+    def __is_dataset(self, value: object) -> bool:
+        if type(value) != str:
+            return False
+        else:
+            return self.__DATASET_KEY_CHARACTER in value
 
     def __get_dataset_name_from_value(self, value: str) -> str:
         dataset_name = value.replace(self.__DATASET_KEY_CHARACTER,
@@ -126,6 +166,7 @@ class Execution:
                                                          flag=True)
 
         except Exception as exception:
+            traceback.print_exc()
             self.__metadata_creator.create_execution_document(
                 self.filename,
                 description,

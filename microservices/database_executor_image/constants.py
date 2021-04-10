@@ -17,6 +17,7 @@ class Constants:
     TRANSFORM_VOLUME_PATH = "TRANSFORM_VOLUME_PATH"
     MODELS_VOLUME_PATH = "MODELS_VOLUME_PATH"
     BINARY_VOLUME_PATH = "BINARY_VOLUME_PATH"
+    CODE_EXECUTOR_VOLUME_PATH = "CODE_EXECUTOR_VOLUME_PATH"
 
     IMAGE_FORMAT = ".png"
 
@@ -39,18 +40,37 @@ class Constants:
 
     MESSAGE_RESULT = "result"
 
-    EXPLORE_TYPE = "explore"
-    TRANSFORM_TYPE = "transform"
-    DEFAULT_MODEL_TYPE = "defaultModel"
-    TUNE_TYPE = "tune"
-    TRAIN_TYPE = "train"
-    EVALUATE_TYPE = "evaluate"
-    PREDICT_TYPE = "predict"
-    PYTHON_TRANSFORM_TYPE = "pythonTransform"
+    MODEL_SCIKITLEARN_TYPE = "model/scikitlearn"
+    MODEL_TENSORFLOW_TYPE = "model/tensorflow"
+
+    TUNE_SCIKITLEARN_TYPE = "tune/scikitlearn"
+    TUNE_TENSORFLOW_TYPE = "tune/tensorflow"
+
+    TRAIN_SCIKITLEARN_TYPE = "train/scikitlearn"
+    TRAIN_TENSORFLOW_TYPE = "train/tensorflow"
+
+    EVALUATE_SCIKITLEARN_TYPE = "evaluate/scikitlearn"
+    EVALUATE_TENSORFLOW_TYPE = "evaluate/tensorflow"
+
+    PREDICT_SCIKITLEARN_TYPE = "predict/scikitlearn"
+    PREDICT_TENSORFLOW_TYPE = "predict/tensorflow"
+
+    PYTHON_FUNCTION_TYPE = "function/python"
+    DATASET_TENSORFLOW_TYPE = "dataset/tensorflow"
+
+    TRANSFORM_SCIKITLEARN_TYPE = "transform/scikitlearn"
+    TRANSFORM_TENSORFLOW_TYPE = "transform/tensorflow"
+
+    EXPLORE_SCIKITLEARN_TYPE = "explore/scikitlearn"
+    EXPLORE_TENSORFLOW_TYPE = "explore/tensorflow"
+
+    API_PATH = "/api/learningOrchestra/v1/"
 
     MICROSERVICE_URI_SWITCHER = {
-        "explore": "/api/learningOrchestra/v1/explore/",
-        "transform": "/api/learningOrchestra/v1/transform/",
+        EXPLORE_TENSORFLOW_TYPE: f'{API_PATH}{EXPLORE_TENSORFLOW_TYPE}',
+        EXPLORE_SCIKITLEARN_TYPE: f'{API_PATH}{EXPLORE_SCIKITLEARN_TYPE}',
+        TRANSFORM_TENSORFLOW_TYPE: f'{API_PATH}{TRANSFORM_TENSORFLOW_TYPE}',
+        TRANSFORM_SCIKITLEARN_TYPE: f'{API_PATH}{TRANSFORM_SCIKITLEARN_TYPE}',
 
     }
 

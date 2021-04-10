@@ -27,7 +27,6 @@ transform_storage = TransformStorage(database)
 @app.route(Constants.MICROSERVICE_URI_PATH, methods=["POST"])
 def create_execution() -> jsonify:
     service_type = request.args.get(Constants.TYPE_PARAM_NAME)
-    tool_type = request.args.get(Constants.TOOL_PARAM_NAME)
 
     filename = request.json[Constants.NAME_FIELD_NAME]
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
@@ -51,9 +50,11 @@ def create_execution() -> jsonify:
         return request_errors
 
     storage = None
-    if service_type == Constants.EXPLORE_TYPE:
+    if service_type == Constants.EXPLORE_TENSORFLOW_TYPE or \
+            service_type == Constants.EXPLORE_SCIKITLEARN_TYPE:
         storage = explore_storage
-    elif service_type == Constants.TRANSFORM_TYPE:
+    elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+            service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
         storage = transform_storage
 
     data = Data(database, storage)
@@ -74,14 +75,15 @@ def create_execution() -> jsonify:
     execution.create(class_method_name, method_parameters, description)
 
     response_params = None
-    if service_type == Constants.TRANSFORM_TYPE:
+    if service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+            service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
         response_params = Constants.MICROSERVICE_URI_GET_PARAMS
 
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
                 f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
-                f'{tool_type}/{filename}{response_params}'}),
+                f'{filename}{response_params}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -89,15 +91,16 @@ def create_execution() -> jsonify:
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["PATCH"])
 def update_execution(filename: str) -> jsonify:
     service_type = request.args.get(Constants.TYPE_PARAM_NAME)
-    tool_type = request.args.get(Constants.TOOL_PARAM_NAME)
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
     class_method_name = request.json[Constants.METHOD_FIELD_NAME]
     method_parameters = request.json[Constants.METHOD_PARAMETERS_FIELD_NAME]
 
     storage = None
-    if service_type == Constants.EXPLORE_TYPE:
+    if service_type == Constants.EXPLORE_TENSORFLOW_TYPE or \
+            service_type == Constants.EXPLORE_SCIKITLEARN_TYPE:
         storage = explore_storage
-    elif service_type == Constants.TRANSFORM_TYPE:
+    elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+            Constants.TRANSFORM_SCIKITLEARN_TYPE:
         storage = transform_storage
 
     data = Data(database, storage)
@@ -132,14 +135,15 @@ def update_execution(filename: str) -> jsonify:
     execution.update(class_method_name, method_parameters, description)
 
     response_params = None
-    if service_type == Constants.TRANSFORM_TYPE:
+    if service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+            service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
         response_params = Constants.MICROSERVICE_URI_GET_PARAMS
 
     return (
         jsonify({
             Constants.MESSAGE_RESULT:
                 f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
-                f'{tool_type}/{filename}{response_params}'}),
+                f'{filename}{response_params}'}),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -178,9 +182,11 @@ def delete_default_model(filename: str) -> jsonify:
         )
 
     storage = None
-    if service_type == Constants.EXPLORE_TYPE:
+    if service_type == Constants.EXPLORE_TENSORFLOW_TYPE or \
+            service_type == Constants.EXPLORE_SCIKITLEARN_TYPE:
         storage = explore_storage
-    elif service_type == Constants.TRANSFORM_TYPE:
+    elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+            service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
         storage = transform_storage
 
     storage.delete(filename)

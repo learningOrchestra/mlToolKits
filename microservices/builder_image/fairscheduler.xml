@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <allocations>
-  <pool name="modelBuilder">
+  <pool name="builder/sparkml">
     <schedulingMode>FAIR</schedulingMode>
     <weight>1</weight>
     <minShare>2</minShare>

@@ -32,9 +32,9 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-worker
+    deploy: *default-deploy-manager
     volumes:
-      - "database_api:/database_api"
+      - "database_api:/datasets"
     networks:
       - database
     environment: *default-service-database-env
@@ -178,14 +178,14 @@ services:
       - spark
     environment: *default-service-database-env
 
-  modelbuilder:
-    build: microservices/model_builder_image
-    image: 127.0.0.1:5050/model_builder
+  builder:
+    build: microservices/builder_image
+    image: 127.0.0.1:5050/builder
     ports:
       - "5002:5002"
       - "41100:41100"
     extra_hosts:
-      - "modelbuilder:0.0.0.0"
+      - "builder:0.0.0.0"
     depends_on:
       - databaseprimary
       - images
@@ -235,8 +235,9 @@ services:
     volumes:
       - "database_executor:/explore"
       - "database_executor:/transform"
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
+      - "code_executor:/code_executions"
     networks:
       - database
     environment: *default-service-database-env
@@ -253,9 +254,9 @@ services:
       - database
       - spark
 
-  defaultmodel:
-    build: microservices/default_model_image
-    image: 127.0.0.1:5050/default_model
+  model:
+    build: microservices/model_image
+    image: 127.0.0.1:5050/model
     ports:
       - "5007:5007"
     depends_on:
@@ -266,7 +267,11 @@ services:
       - database
     environment: *default-service-database-env
     volumes:
-      - "default_model:/models"
+      - "code_executor:/code_executions"
+      - "database_executor:/explore"
+      - "database_executor:/transform"
+      - "model:/models"
+      - "binary_executor:/binaries"
 
   binaryexecutor:
     build: microservices/binary_executor_image
@@ -281,9 +286,10 @@ services:
       - database
     environment: *default-service-database-env
     volumes:
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
       - "database_executor:/transform"
+      - "code_executor:/code_executions"
 
   codexecutor:
     build: microservices/code_executor_image
@@ -295,10 +301,12 @@ services:
       - images
     deploy: *default-deploy-manager
     volumes:
+      - "code_executor:/code_executions"
       - "database_executor:/explore"
       - "database_executor:/transform"
-      - "default_model:/models"
+      - "model:/models"
       - "binary_executor:/binaries"
+      - "database_api:/datasets"
     networks:
       - database
     environment: *default-service-database-env
@@ -313,6 +321,7 @@ volumes:
   database:
   database_api:
   database_executor:
-  default_model:
+  code_executor:
+  model:
   binary_executor:
   portainer:

@@ -1,25 +1,9 @@
+import importlib
 from concurrent.futures import ThreadPoolExecutor
-from utils import Database, Data, ObjectStorage, Metadata
+from utils import Metadata, Database, ObjectStorage, Data
 from constants import Constants
-from io import StringIO
-import sys
-import validators
-import requests
-import tensorflow
 import traceback
-
-
-class Function:
-    def treat(self, function: str) -> str:
-        if self.__is_url(function):
-            function = self.__get_data_from_url(function)
-        return function
-
-    def __is_url(self, value: str) -> bool:
-        return validators.url(value)
-
-    def __get_data_from_url(self, url: str) -> str:
-        return requests.get(url, allow_redirects=True).text
+import tensorflow
 
 
 class Parameters:
@@ -105,92 +89,72 @@ class Parameters:
             self.__DATASET_WITH_OBJECT_KEY_CHARACTER)[Constants.SECOND_ARGUMENT]
 
 
-class Execution:
+class Model:
     def __init__(self,
                  database_connector: Database,
-                 filename: str,
-                 service_type: str,
-                 storage: ObjectStorage,
-                 metadata_creator: Metadata,
                  parameters_handler: Parameters,
-                 function_handler: Function
-                 ):
+                 model_name: str,
+                 service_type: str,
+                 metadata_creator: Metadata,
+                 module_path: str,
+                 class_name: str,
+                 storage: ObjectStorage):
         self.__metadata_creator = metadata_creator
+        self.__parameters_handler = parameters_handler
         self.__thread_pool = ThreadPoolExecutor()
         self.__database_connector = database_connector
         self.__storage = storage
-        self.__parameters_handler = parameters_handler
-        self.__function_handler = function_handler
-        self.filename = filename
         self.service_type = service_type
+        self.model_name = model_name
+        self.module_path = module_path
+        self.class_name = class_name
 
     def create(self,
-               function: str,
-               function_parameters: dict,
-               description: str) -> None:
-        self.__metadata_creator.create_file(self.filename, self.service_type)
-
+               description: str,
+               class_parameters: dict) -> None:
+        self.__metadata_creator.create_file(self.model_name,
+                                            self.service_type,
+                                            self.module_path,
+                                            self.class_name)
         self.__thread_pool.submit(self.__pipeline,
-                                  function,
-                                  function_parameters,
+                                  class_parameters,
                                   description)
 
     def update(self,
-               function: str,
-               function_parameters: dict,
-               description: str) -> None:
-        self.__metadata_creator.update_finished_flag(self.filename, False)
+               description: str,
+               class_parameters: dict) -> None:
+        self.__metadata_creator.update_finished_flag(self.model_name, False)
 
         self.__thread_pool.submit(self.__pipeline,
-                                  function,
-                                  function_parameters,
+                                  class_parameters,
                                   description)
 
     def __pipeline(self,
-                   function: str,
-                   function_parameters: dict,
-                   description: str) -> None:
-        function_result, function_message, function_error = \
-            self.__execute_function(
-                function,
-                function_parameters)
-
-        if function_error is None:
-            self.__storage.save(function_result, self.filename)
-            self.__metadata_creator.update_finished_flag(self.filename,
-                                                         flag=True)
-
-        self.__metadata_creator.create_execution_document(self.filename,
-                                                          description,
-                                                          function_parameters,
-                                                          function_message,
-                                                          function_error)
-
-    def __execute_function(self, function: str,
-                           parameters: dict) -> (object, str, str):
-        # This function returns a tuple with 3 items, the first item is a dict
-        # defined inside of executed function, the second item is the the output
-        # caught in executed function and the last item is the the exception
-        # message, in case of a threw exception in executed function.
-
-        function_parameters = self.__parameters_handler.treat(parameters)
-        function_code = self.__function_handler.treat(function)
-
-        old_stdout = sys.stdout
-        redirected_output = sys.stdout = StringIO()
-
-        context_variables = {}
-
+                   class_parameters: dict, description: str) -> None:
         try:
-            exec(function_code, function_parameters, context_variables)
-            function_message = redirected_output.getvalue()
-            sys.stdout = old_stdout
-
-            return context_variables["response"], function_message, None
-
-        except Exception as error:
+            module = importlib.import_module(self.module_path)
+            class_reference = getattr(module, self.class_name)
+            class_instance = self.__create_a_class_instance(class_reference,
+                                                            class_parameters)
+            self.__storage.save(self.model_name,
+                                class_instance,
+                                self.service_type)
+            self.__metadata_creator.update_finished_flag(self.model_name,
+                                                         flag=True)
+        except Exception as exception:
             traceback.print_exc()
-            function_message = redirected_output.getvalue()
-            sys.stdout = old_stdout
-            function_error = repr(error)
-            return None, function_message, function_error
+            self.__metadata_creator.create_model_document(self.model_name,
+                                                          description,
+                                                          class_parameters,
+                                                          repr(exception))
+            return
+
+        self.__metadata_creator.create_model_document(self.model_name,
+                                                      description,
+                                                      class_parameters)
+
+    def __create_a_class_instance(self,
+                                  class_reference,
+                                  class_parameters: dict) -> object:
+        treated_parameters = self.__parameters_handler.treat(class_parameters)
+        return class_reference(**treated_parameters)

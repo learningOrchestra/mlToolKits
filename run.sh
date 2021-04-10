@@ -63,12 +63,12 @@ echo "--------------------------------------------------------------------"
 docker push $projection_repository
 
 
-model_builder_repository=127.0.0.1:5050/model_builder
+builder_repository=127.0.0.1:5050/builder
 
 echo "--------------------------------------------------------------------"
-echo "Pushing modelBuilder microservice image..."
+echo "Pushing builder microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $model_builder_repository
+docker push $builder_repository
 
 
 data_type_handler_repository=127.0.0.1:5050/data_type_handler
@@ -87,12 +87,12 @@ echo "--------------------------------------------------------------------"
 docker push $histogram_repository
 
 
-default_model_repository=127.0.0.1:5050/default_model
+model_repository=127.0.0.1:5050/model
 
 echo "--------------------------------------------------------------------"
-echo "Pushing defaultModel microservice image..."
+echo "Pushing model microservice image..."
 echo "--------------------------------------------------------------------"
-docker push $default_model_repository
+docker push $model_repository
 
 
 binary_executor_repository=127.0.0.1:5050/binary_executor
@@ -118,6 +118,11 @@ echo "Pushing codeExecutor microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $code_executor_repository
 
+
+echo "--------------------------------------------------------------------"
+echo "Updating portainer agent microservice in each cluster node..."
+echo "--------------------------------------------------------------------"
+docker service update --image portainer/agent  microservice_agent
 
 echo "--------------------------------------------------------------------"
 echo "End."

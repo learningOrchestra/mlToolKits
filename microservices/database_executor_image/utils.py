@@ -8,7 +8,9 @@ from constants import Constants
 import pandas as pd
 import os
 import seaborn as sns
-import pickle
+import dill
+import traceback
+from tensorflow import keras
 
 
 class Database:
@@ -241,20 +243,29 @@ class TransformStorage(ExecutionStorage):
         self.__database_connector = database_connector
         self.__thread_pool = ThreadPoolExecutor()
 
+    def read(self, filename: str, service_type: str) -> object:
+        binary_path = TransformStorage.get_read_binary_path(
+            filename, service_type)
+        try:
+            binary_instance = open(
+                binary_path,
+                self.__READ_OBJECT_OPTION)
+            return dill.load(binary_instance)
+        except Exception:
+            traceback.print_exc()
+            return keras.models.load_model(binary_path)
+
     def save(self, instance: object, filename: str) -> None:
         output_path = TransformStorage.get_write_binary_path(filename)
 
-        instance_output = open(output_path,
-                               self.__WRITE_OBJECT_OPTION)
-        pickle.dump(instance, instance_output)
-        instance_output.close()
-
-    def read(self, filename: str, service_type: str) -> object:
-        binary_instance = open(
-            TransformStorage.get_read_binary_path(
-                filename, service_type),
-            self.__READ_OBJECT_OPTION)
-        return pickle.load(binary_instance)
+        try:
+            keras.models.save_model(instance, output_path)
+        except Exception:
+            traceback.print_exc()
+            instance_output = open(output_path,
+                                   self.__WRITE_OBJECT_OPTION)
+            dill.dump(instance, instance_output)
+            instance_output.close()
 
     def delete(self, filename: str) -> None:
         self.__thread_pool.submit(
@@ -268,13 +279,14 @@ class TransformStorage(ExecutionStorage):
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
-        if service_type == Constants.DEFAULT_MODEL_TYPE:
+        if service_type == Constants.MODEL_TENSORFLOW_TYPE or \
+                service_type == Constants.MODEL_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
-
-        elif service_type == Constants.TRANSFORM_TYPE or \
-                service_type == Constants.PYTHON_TRANSFORM_TYPE:
+        elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+                service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.TRANSFORM_VOLUME_PATH]}/{filename}'
-
+        elif service_type == Constants.PYTHON_FUNCTION_TYPE:
+            return f'{os.environ[Constants.CODE_EXECUTOR_VOLUME_PATH]}/{filename}'
         else:
             return f'{os.environ[Constants.BINARY_VOLUME_PATH]}/' \
                    f'{service_type}/{filename}'
@@ -357,10 +369,18 @@ class Data:
 
     def __is_stored_in_volume(self, filename) -> bool:
         volume_types = [
-            Constants.TUNE_TYPE,
-            Constants.TRAIN_TYPE,
-            Constants.EVALUATE_TYPE,
-            Constants.PREDICT_TYPE,
-            Constants.TRANSFORM_TYPE
+            Constants.MODEL_TENSORFLOW_TYPE,
+            Constants.MODEL_SCIKITLEARN_TYPE,
+            Constants.TUNE_TENSORFLOW_TYPE,
+            Constants.TUNE_SCIKITLEARN_TYPE,
+            Constants.TRAIN_TENSORFLOW_TYPE,
+            Constants.TRAIN_SCIKITLEARN_TYPE,
+            Constants.EVALUATE_TENSORFLOW_TYPE,
+            Constants.EVALUATE_SCIKITLEARN_TYPE,
+            Constants.PREDICT_TENSORFLOW_TYPE,
+            Constants.PREDICT_SCIKITLEARN_TYPE,
+            Constants.PYTHON_FUNCTION_TYPE,
+            Constants.TRANSFORM_SCIKITLEARN_TYPE,
+            Constants.TRANSFORM_TENSORFLOW_TYPE,
         ]
         return self.get_type(filename) in volume_types

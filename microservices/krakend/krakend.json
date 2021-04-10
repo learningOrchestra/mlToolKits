@@ -2,14 +2,14 @@
   "version": 2,
   "endpoints": [
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/files",
+          "url_pattern": "/files?type=dataset/csv",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -18,30 +18,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
-      "method": "DELETE",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "DELETE",
-          "url_pattern": "/files/{filename}",
-          "host": [
-            "http://databaseapi:5000"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/dataset",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=dataset",
+          "url_pattern": "/files?type=dataset/csv",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -50,7 +34,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -71,14 +55,83 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/dataset/{filename}",
-      "method": "PUT",
+      "endpoint": "/api/learningOrchestra/v1/dataset/csv/{filename}",
+      "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
-          "method": "PUT",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}?type=dataset/csv",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/files?type=dataset/generic",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=dataset/generic",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
           "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/dataset/generic/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/files/{filename}?type=dataset/generic",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -126,7 +179,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=projection",
+          "url_pattern": "/files?type=transform/projection",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -166,22 +219,6 @@
           "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/transform/dataType",
-      "method": "POST",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "POST",
-          "url_pattern": "/fieldTypes",
-          "host": [
-            "http://datatypehandler:5003"
           ],
           "extra_config": {}
         }
@@ -211,7 +248,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=dataType",
+          "url_pattern": "/files?type=transform/dataType",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -251,134 +288,6 @@
           "url_pattern": "/files/{filename}",
           "host": [
             "http://databaseapi:5000"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/tsne",
-      "method": "POST",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "POST",
-          "url_pattern": "/images",
-          "host": [
-            "http://tsne:5005"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/tsne",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/images",
-          "host": [
-            "http://tsne:5005"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/tsne/{filename}",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/images/{filename}",
-          "host": [
-            "http://tsne:5005"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/tsne/{filename}",
-      "method": "DELETE",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "DELETE",
-          "url_pattern": "/images/{filename}",
-          "host": [
-            "http://tsne:5005"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/pca",
-      "method": "POST",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "POST",
-          "url_pattern": "/images",
-          "host": [
-            "http://pca:5006"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/pca",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/images",
-          "host": [
-            "http://pca:5006"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/pca/{filename}",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "GET",
-          "url_pattern": "/images/{filename}",
-          "host": [
-            "http://pca:5006"
-          ],
-          "extra_config": {}
-        }
-      ]
-    },
-    {
-      "endpoint": "/api/learningOrchestra/v1/explore/pca/{filename}",
-      "method": "DELETE",
-      "output_encoding": "no-op",
-      "backend": [
-        {
-          "encoding": "no-op",
-          "method": "DELETE",
-          "url_pattern": "/images/{filename}",
-          "host": [
-            "http://pca:5006"
           ],
           "extra_config": {}
         }
@@ -408,7 +317,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=histogram",
+          "url_pattern": "/files?type=explore/histogram",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -454,7 +363,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
@@ -463,21 +372,21 @@
           "method": "POST",
           "url_pattern": "/models",
           "host": [
-            "http://modelbuilder:5002"
+            "http://builder:5002"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=builder",
+          "url_pattern": "/files?type=builder/sparkml",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -486,7 +395,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -507,7 +416,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/builder/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/builder/sparkml/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
@@ -522,47 +431,47 @@
         }
       ]
     },
-     {
-      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn",
+    {
+      "endpoint": "/api/learningOrchestra/v1/model/scikitlearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/defaultModel",
+          "url_pattern": "/defaultModel?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitlearn/{modelName}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitlearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=defaultModel",
+          "url_pattern": "/files?type=model/scikitlearn",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -571,7 +480,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitlearn/{modelName}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -592,62 +501,62 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/scikitLearn/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/scikitlearn/{modelName}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/defaultModel/{modelName}",
+          "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://defaultmodel:5007"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/model/tensorflow",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/binaryExecutor?type=train",
+          "url_pattern": "/defaultModel?type=model/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/binaryExecutor/{name}?type=train",
+          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://model:5007"
           ],
           "extra_config": {}
         }
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/model/tensorflow",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=train",
+          "url_pattern": "/files?type=model/tensorflow",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -656,7 +565,92 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{modelName}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
+          "host": [
+            "http://model:5007"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/scikitlearn",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/binaryExecutor?type=train/scikitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/scikitlearn/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}?type=train/scikitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/scikitlearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=train/scikitlearn",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/train/scikitlearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -677,14 +671,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/train/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/scikitlearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/binaryExecutor/{name}?type=train",
+          "url_pattern": "/binaryExecutor/{name}?type=train/scikitlearn",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -693,14 +687,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/train/tensorflow",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/binaryExecutor?type=tune",
+          "url_pattern": "/binaryExecutor?type=train/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -709,14 +703,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/tensorflow/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/binaryExecutor/{name}?type=tune",
+          "url_pattern": "/binaryExecutor/{name}?type=train/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -725,14 +719,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/train/tensorflow",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=tune",
+          "url_pattern": "/files?type=train/tensorflow",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -741,7 +735,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/tensorflow/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -762,14 +756,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/tune/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/train/tensorflow/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/binaryExecutor/{name}?type=tune",
+          "url_pattern": "/binaryExecutor/{name}?type=train/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -778,14 +772,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitlearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/binaryExecutor?type=evaluate",
+          "url_pattern": "/binaryExecutor?type=tune/scikitlearn",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -794,14 +788,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitlearn/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/binaryExecutor/{name}?type=evaluate",
+          "url_pattern": "/binaryExecutor/{name}?type=tune/scikitlearn",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -810,14 +804,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitlearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=evaluate",
+          "url_pattern": "/files?type=tune/scikitlearn",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -826,7 +820,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitlearn/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -847,14 +841,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/scikitlearn/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/binaryExecutor/{name}?type=evaluate",
+          "url_pattern": "/binaryExecutor/{name}?type=tune/scikitlearn",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -863,14 +857,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/tune/tensorflow",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/binaryExecutor?type=predict",
+          "url_pattern": "/binaryExecutor?type=tune/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -879,14 +873,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/tensorflow/{name}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/binaryExecutor/{name}?type=predict",
+          "url_pattern": "/binaryExecutor/{name}?type=tune/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -895,14 +889,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/tune/tensorflow",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=predict",
+          "url_pattern": "/files?type=tune/tensorflow",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -911,7 +905,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/tensorflow/{name}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -932,14 +926,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/predict/scikitLearn/{name}",
+      "endpoint": "/api/learningOrchestra/v1/tune/tensorflow/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/binaryExecutor/{name}?type=predict",
+          "url_pattern": "/binaryExecutor/{name}?type=tune/tensorflow",
           "host": [
             "http://binaryexecutor:5008"
           ],
@@ -948,14 +942,354 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitlearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/databaseExecutor?type=explore&tool=scikitLearn",
+          "url_pattern": "/binaryExecutor?type=evaluate/sckitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitlearn/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}?type=evaluate/sckitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitlearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=evaluate/sckitlearn",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitlearn/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/scikitlearn/{name}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/binaryExecutor/{name}?type=evaluate/sckitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/tensorflow",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/binaryExecutor?type=evaluate/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/tensorflow/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}?type=evaluate/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/tensorflow",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=evaluate/tensorflow",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/tensorflow/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/evaluate/tensorflow/{name}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/binaryExecutor/{name}?type=evaluate/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitlearn",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/binaryExecutor?type=predict/scikitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitlearn/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}?type=predict/scikitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitlearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=predict/scikitlearn",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitlearn/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/scikitlearn/{name}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/binaryExecutor/{name}?type=predict/scikitlearn",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/tensorflow",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/binaryExecutor?type=predict/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/tensorflow/{name}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/binaryExecutor/{name}?type=predict/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/tensorflow",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=predict/tensorflow",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/tensorflow/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{name}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/predict/tensorflow/{name}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/binaryExecutor/{name}?type=predict/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/databaseExecutor?type=explore/scikitlearn",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -964,14 +1298,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn/{filename}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore/scikitlearn",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -980,14 +1314,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=explore",
+          "url_pattern": "/files?type=explore/scikitlearn",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -996,7 +1330,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -1008,7 +1342,7 @@
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor/{filename}type=explore/scikitlearn",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -1017,7 +1351,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}/metadata",
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn/{filename}/metadata",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -1038,14 +1372,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/explore/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/databaseExecutor/{filename}?type=explore&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore/scikitlearn",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -1054,14 +1388,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/databaseExecutor?type=transform&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor?type=explore/tensorflow",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -1070,14 +1404,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow/{filename}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/databaseExecutor/{filename}?type=transform&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore/tensorflow",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -1086,14 +1420,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn",
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=transform",
+          "url_pattern": "/files?type=explore/tensorflow",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -1102,7 +1436,28 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/databaseExecutor/{filename}type=explore/tensorflow",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow/{filename}/metadata",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -1123,14 +1478,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/scikitLearn/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/explore/tensorflow/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/databaseExecutor/{filename}?type=transform&tool=scikitLearn",
+          "url_pattern": "/databaseExecutor/{filename}?type=explore/tensorflow",
           "host": [
             "http://databasexecutor:5006"
           ],
@@ -1138,15 +1493,185 @@
         }
       ]
     },
-        {
-      "endpoint": "/api/learningOrchestra/v1/transform/python",
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitlearn",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/codeExecutor?type=pythonTransform",
+          "url_pattern": "/databaseExecutor?type=transform/scikitlearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitlearn/{filename}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform/scikitlearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitlearn",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=transform/scikitlearn",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitlearn/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/scikitlearn/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform/scikitlearn",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/tensorflow",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/databaseExecutor?type=transform/tensorflow",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/tensorflow/{filename}",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "PATCH",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform/tensorflow",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/tensorflow",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files?type=transform/tensorflow",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/tensorflow/{filename}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "querystring_params": [
+        "skip",
+        "limit",
+        "query"
+      ],
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/files/{filename}",
+          "host": [
+            "http://databaseapi:5000"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/transform/tensorflow/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/databaseExecutor/{filename}?type=transform/tensorflow",
+          "host": [
+            "http://databasexecutor:5006"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/function/python",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/codeExecutor?type=function/python",
           "host": [
             "http://codexecutor:5009"
           ],
@@ -1155,14 +1680,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/python/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/function/python/{filename}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/codeExecutor/{filename}?type=pythonTransform",
+          "url_pattern": "/codeExecutor/{filename}?type=function/python",
           "host": [
             "http://codexecutor:5009"
           ],
@@ -1171,14 +1696,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/python",
+      "endpoint": "/api/learningOrchestra/v1/function/python",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=pythonTransform",
+          "url_pattern": "/files?type=function/python",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -1187,7 +1712,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/python/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/function/python/{filename}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -1208,14 +1733,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/transform/python/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/function/python/{filename}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/codeExecutor/{filename}?type=pythonTransform",
+          "url_pattern": "/codeExecutor/{filename}?type=function/python",
           "host": [
             "http://codexecutor:5009"
           ],

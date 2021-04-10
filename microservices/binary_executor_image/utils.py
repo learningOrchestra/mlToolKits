@@ -6,8 +6,10 @@ from inspect import signature, getmembers
 import importlib
 from constants import Constants
 import pandas as pd
-import pickle
+import dill
 import os
+from tensorflow import keras
+import traceback
 
 
 class Database:
@@ -196,10 +198,27 @@ class ObjectStorage:
         if not os.path.exists(os.path.dirname(model_output_path)):
             os.makedirs(os.path.dirname(model_output_path))
 
-        model_output = open(model_output_path,
-                            self.__WRITE_MODEL_OBJECT_OPTION)
-        pickle.dump(instance, model_output)
-        model_output.close()
+        try:
+            keras.models.save_model(instance, model_output_path)
+        except Exception:
+            traceback.print_exc()
+            model_output = open(model_output_path,
+                                self.__WRITE_MODEL_OBJECT_OPTION)
+            dill.dump(instance, model_output)
+            model_output.close()
+
+    def read(self, filename, service_type: str) -> object:
+        binary_path = ObjectStorage.get_read_binary_path(
+            filename, service_type)
+
+        try:
+            model_binary_instance = open(
+                binary_path,
+                self.__READ_MODEL_OBJECT_OPTION)
+            return dill.load(model_binary_instance)
+        except Exception:
+            traceback.print_exc()
+            return keras.models.load_model(binary_path)
 
     def delete(self, filename: str, service_type: str) -> None:
         self.__thread_pool.submit(self.__database_connector.delete_file,
@@ -208,13 +227,6 @@ class ObjectStorage:
             os.remove,
             ObjectStorage.get_write_binary_path(filename, service_type))
 
-    def read(self, filename, service_type: str) -> object:
-        model_binary_instance = open(
-            ObjectStorage.get_read_binary_path(
-                filename, service_type),
-            self.__READ_MODEL_OBJECT_OPTION)
-        return pickle.load(model_binary_instance)
-
     @staticmethod
     def get_write_binary_path(filename: str, service_type: str) -> str:
         return f'{os.environ[Constants.BINARY_VOLUME_PATH]}/' \
@@ -222,13 +234,14 @@ class ObjectStorage:
 
     @staticmethod
     def get_read_binary_path(filename: str, service_type: str) -> str:
-        if service_type == Constants.DEFAULT_MODEL_TYPE:
+        if service_type == Constants.MODEL_TENSORFLOW_TYPE or \
+                service_type == Constants.MODEL_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.MODELS_VOLUME_PATH]}/{filename}'
-
-        elif service_type == Constants.TRANSFORM_TYPE or \
-                service_type == Constants.PYTHON_TRANSFORM_TYPE:
+        elif service_type == Constants.TRANSFORM_TENSORFLOW_TYPE or \
+                service_type == Constants.TRANSFORM_SCIKITLEARN_TYPE:
             return f'{os.environ[Constants.TRANSFORM_VOLUME_PATH]}/{filename}'
-
+        elif service_type == Constants.PYTHON_FUNCTION_TYPE:
+            return f'{os.environ[Constants.CODE_EXECUTOR_VOLUME_PATH]}/{filename}'
         else:
             return f'{os.environ[Constants.BINARY_VOLUME_PATH]}/' \
                    f'{service_type}/{filename}'
@@ -241,10 +254,20 @@ class Data:
         self.__METADATA_QUERY = {
             Constants.ID_FIELD_NAME: Constants.METADATA_DOCUMENT_ID}
 
-    def get_module_and_class_from_a_model(self,
-                                          model_name: str) -> tuple:
+    def get_module_and_class_from_a_instance(self,
+                                             name: str) -> tuple:
+
+        model_types = [Constants.MODEL_TENSORFLOW_TYPE,
+                       Constants.MODEL_SCIKITLEARN_TYPE]
+        while self.get_type(name) not in model_types:
+            instance_metadata = self.__database.find_one(
+                name,
+                self.__METADATA_QUERY)
+
+            name = instance_metadata[Constants.PARENT_NAME_FIELD_NAME]
+
         model_metadata = self.__database.find_one(
-            model_name,
+            name,
             self.__METADATA_QUERY)
 
         module_path = model_metadata[Constants.MODULE_PATH_FIELD_NAME]
@@ -310,11 +333,19 @@ class Data:
 
     def __is_stored_in_volume(self, filename: str) -> bool:
         volume_types = [
-            Constants.TUNE_TYPE,
-            Constants.TRAIN_TYPE,
-            Constants.EVALUATE_TYPE,
-            Constants.PREDICT_TYPE,
-            Constants.TRANSFORM_TYPE
+            Constants.MODEL_TENSORFLOW_TYPE,
+            Constants.MODEL_SCIKITLEARN_TYPE,
+            Constants.TUNE_TENSORFLOW_TYPE,
+            Constants.TUNE_SCIKITLEARN_TYPE,
+            Constants.TRAIN_TENSORFLOW_TYPE,
+            Constants.TRAIN_SCIKITLEARN_TYPE,
+            Constants.EVALUATE_TENSORFLOW_TYPE,
+            Constants.EVALUATE_SCIKITLEARN_TYPE,
+            Constants.PREDICT_TENSORFLOW_TYPE,
+            Constants.PREDICT_SCIKITLEARN_TYPE,
+            Constants.PYTHON_FUNCTION_TYPE,
+            Constants.TRANSFORM_SCIKITLEARN_TYPE,
+            Constants.TRANSFORM_TENSORFLOW_TYPE,
         ]
 
         return self.get_type(filename) in volume_types

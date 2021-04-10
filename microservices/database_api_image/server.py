@@ -1,52 +1,26 @@
 from flask import jsonify, request, Flask
 import os
-from database import Dataset
-from utils import Database, Csv, UserRequest
-from concurrent.futures import ThreadPoolExecutor
-
-HTTP_STATUS_CODE_SUCCESS = 200
-HTTP_STATUS_CODE_SUCCESS_CREATED = 201
-HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
-HTTP_STATUS_CODE_CONFLICT = 409
-
-DATABASE_API_HOST = "DATABASE_API_HOST"
-DATABASE_API_PORT = "DATABASE_API_PORT"
-
-MESSAGE_RESULT = "result"
-
-DATABASE_URL = "DATABASE_URL"
-DATABASE_PORT = "DATABASE_PORT"
-DATABASE_NAME = "DATABASE_NAME"
-DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
-
-FILENAME = "datasetName"
-URL_FIELD_NAME = "datasetURI"
-
-FIRST_ARGUMENT = 0
-
-MESSAGE_INVALID_URL = "invalid url"
-MESSAGE_DUPLICATE_FILE = "duplicate file"
-MESSAGE_DELETED_FILE = "deleted file"
-
-PAGINATE_FILE_LIMIT = 100
-
-MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/dataset/"
-MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
+from database import Dataset, Csv, Generic
+from utils import Database, UserRequest, Metadata
+from constants import Constants
+import json
 
 app = Flask(__name__)
 
 database_connector = Database(
-    os.environ[DATABASE_URL],
-    os.environ[DATABASE_REPLICA_SET],
-    os.environ[DATABASE_PORT],
-    os.environ[DATABASE_NAME])
+    os.environ[Constants.DATABASE_URL],
+    os.environ[Constants.DATABASE_REPLICA_SET],
+    int(os.environ[Constants.DATABASE_PORT]),
+    os.environ[Constants.DATABASE_NAME])
 request_validator = UserRequest(database_connector)
+metadata_creator = Metadata(database_connector)
 
 
-@app.route("/files", methods=["POST"])
+@app.route(Constants.MICROSERVICE_URI_PATH, methods=["POST"])
 def create_file():
-    url = request.json[URL_FIELD_NAME]
-    filename = request.json[FILENAME]
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
+    url = request.json[Constants.URL_FIELD_NAME]
+    filename = request.json[Constants.FILENAME_FIELD_NAME]
 
     request_errors = analyse_request_errors(
         request_validator,
@@ -56,87 +30,112 @@ def create_file():
     if request_errors is not None:
         return request_errors
 
-    file_downloader = Csv(database_connector)
-    database = Dataset(database_connector, file_downloader)
+    if service_type == Constants.DATASET_CSV_TYPE:
+        file_downloader = Csv(database_connector, metadata_creator)
+    else:
+        file_downloader = Generic(database_connector, metadata_creator)
+
+    database = Dataset(file_downloader)
 
     database.add_file(url, filename)
 
     return (
         jsonify({
-            MESSAGE_RESULT: f'{MICROSERVICE_URI_GET}{request.json[FILENAME]}'
-                            f'{MICROSERVICE_URI_GET_PARAMS}'}),
-        HTTP_STATUS_CODE_SUCCESS_CREATED,
+            Constants.MESSAGE_RESULT:
+                f'{Constants.MICROSERVICE_URI_GET}'
+                f'{request.json[Constants.FILENAME_FIELD_NAME]}'
+                f'{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
+        Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
 
-@app.route("/files/<filename>", methods=["GET"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["GET"])
 def read_files(filename):
-    file_downloader = Csv(database_connector)
-    database = Dataset(database_connector, file_downloader)
+    file_downloader = Csv(database_connector, metadata_creator)
+    database = Dataset(file_downloader)
 
-    limit, skip, query = 20, 0, {}
+    limit = Constants.LIMIT_DEFAULT_VALUE
+    skip = Constants.SKIP_DEFAULT_VALUE
+    query = Constants.QUERY_DEFAULT_VALUE
 
     request_params = request.args.to_dict()
-    if "limit" in request_params:
-        if int(request_params["limit"]) < PAGINATE_FILE_LIMIT:
-            limit = int(request_params["limit"])
-    if "skip" in request_params:
-        if int(request_params["skip"]) >= 0:
-            skip = int(request_params["skip"])
-    if "query" in request_params:
-        query = request_params["query"]
+    if Constants.LIMIT_PARAM_NAME in request_params:
+        limit = int(request_params[Constants.LIMIT_PARAM_NAME])
+        if limit > Constants.LIMIT_PARAM_MAX:
+            limit = Constants.LIMIT_PARAM_MAX
+
+    if Constants.SKIP_PARAM_NAME in request_params:
+        skip = int(request_params[Constants.SKIP_PARAM_NAME])
+        if skip < Constants.SKIP_PARAM_MIN:
+            skip = Constants.SKIP_PARAM_MIN
+
+    if Constants.QUERY_PARAM_NAME in request_params:
+        query = json.loads(request_params[Constants.QUERY_PARAM_NAME])
 
     file_result = database.read_file(
         filename, skip, limit, query
     )
 
-    return jsonify({MESSAGE_RESULT: file_result}), HTTP_STATUS_CODE_SUCCESS
+    return jsonify({Constants.MESSAGE_RESULT: file_result}), \
+           Constants.HTTP_STATUS_CODE_SUCCESS
 
 
-@app.route("/files", methods=["GET"])
+@app.route(Constants.MICROSERVICE_URI_PATH, methods=["GET"])
 def read_files_descriptor():
-    file_downloader = Csv(database_connector)
-    database = Dataset(database_connector, file_downloader)
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
+
+    file_downloader = Csv(database_connector, metadata_creator)
+    database = Dataset(file_downloader)
 
     return jsonify(
-        {MESSAGE_RESULT: database.get_files(
-            request.args.get("type"))}), HTTP_STATUS_CODE_SUCCESS
+        {Constants.MESSAGE_RESULT: database.get_metadata_files(
+            service_type)}), \
+           Constants.HTTP_STATUS_CODE_SUCCESS
 
 
-@app.route("/files/<filename>", methods=["DELETE"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_file(filename):
-    file_downloader = Csv(database_connector)
-    database = Dataset(database_connector, file_downloader)
+    service_type = request.args.get(Constants.TYPE_FIELD_NAME)
 
-    thread_pool = ThreadPoolExecutor()
-    thread_pool.submit(database.delete_file, filename)
+    if service_type == Constants.DATASET_CSV_TYPE:
+        file_downloader = Csv(database_connector, metadata_creator)
+    else:
+        file_downloader = Generic(database_connector, metadata_creator)
+
+    database = Dataset(file_downloader)
+    database.delete_file(filename)
 
     return jsonify(
-        {MESSAGE_RESULT: MESSAGE_DELETED_FILE}), HTTP_STATUS_CODE_SUCCESS
+        {Constants.MESSAGE_RESULT:
+             Constants.MESSAGE_DELETED_FILE}), \
+           Constants.HTTP_STATUS_CODE_SUCCESS
 
 
-def analyse_request_errors(request_validator, filename, url):
+def analyse_request_errors(request_validator: UserRequest, filename: str,
+                           url: str):
     try:
         request_validator.filename_validator(
             filename
         )
     except Exception as invalid_filename:
         return (
-            jsonify({MESSAGE_RESULT: invalid_filename.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_CONFLICT,
+            jsonify({Constants.MESSAGE_RESULT:
+                         str(invalid_filename)}),
+            Constants.HTTP_STATUS_CODE_CONFLICT,
         )
 
     try:
-        request_validator.csv_url_validator(url)
+        request_validator.url_validator(url)
     except Exception as invalid_url:
         return (
-            jsonify({MESSAGE_RESULT: invalid_url.args[FIRST_ARGUMENT]}),
-            HTTP_STATUS_CODE_NOT_ACCEPTABLE,
+            jsonify({Constants.MESSAGE_RESULT:
+                         str(invalid_url)}),
+            Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
     return None
 
 
 if __name__ == "__main__":
-    app.run(host=os.environ[DATABASE_API_HOST],
-            port=int(os.environ[DATABASE_API_PORT]), debug=True)
+    app.run(host=os.environ[Constants.DATABASE_API_HOST],
+            port=int(os.environ[Constants.DATABASE_API_PORT]))

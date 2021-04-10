@@ -17,7 +17,7 @@ class Metadata:
             "parentDatasetName": parent_filename,
             "fields": fields,
             "datasetName": histogram_filename,
-            "type": "histogram",
+            "type": "explore/histogram",
             self.DOCUMENT_ID_NAME: self.METADATA_DOCUMENT_ID,
             "finished": False,
             "timeCreated": london_time.strftime("%Y-%m-%dT%H:%M:%S-00:00")
