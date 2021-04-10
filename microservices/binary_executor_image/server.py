@@ -76,18 +76,20 @@ def update_execution(filename: str) -> jsonify:
     service_type = request.args.get(Constants.TYPE_FIELD_NAME)
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
     method_parameters = request.json[Constants.METHOD_PARAMETERS_FIELD_NAME]
+    model_name = request.json[Constants.MODEL_NAME_FIELD_NAME]
 
     request_errors = analyse_patch_request_errors(
         request_validator,
         data,
         filename,
+        model_name,
         method_parameters)
 
     if request_errors is not None:
         return request_errors
 
     module_path, function = data.get_module_and_class_from_a_instance(
-        filename)
+        model_name)
     model_name = data.get_model_name_from_a_child(filename)
     method_name = data.get_class_method_from_a_executor_name(filename)
 
@@ -214,6 +216,7 @@ def analyse_post_request_errors(request_validator: UserRequest,
 def analyse_patch_request_errors(request_validator: UserRequest,
                                  data: Data,
                                  filename: str,
+                                 model_name: str,
                                  method_parameters: dict) \
         -> Union[tuple, None]:
     try:
@@ -228,7 +231,7 @@ def analyse_patch_request_errors(request_validator: UserRequest,
         )
 
     module_path, class_name = data.get_module_and_class_from_a_executor_name(
-        filename)
+        model_name)
 
     class_method = data.get_class_method_from_a_executor_name(filename)
     try:
