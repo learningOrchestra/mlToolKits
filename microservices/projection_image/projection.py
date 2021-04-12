@@ -52,7 +52,6 @@ class Projection:
     def __execute_spark_job(self, projection_filename: str, fields: list,
                             database_url_input: str,
                             database_url_output: str) -> None:
-        print(database_url_input, flush=True)
         dataframe = self.__spark_session.read.format(
             self.__MONGO_SPARK_SOURCE).option(
             "spark.mongodb.input.uri", database_url_input).load()

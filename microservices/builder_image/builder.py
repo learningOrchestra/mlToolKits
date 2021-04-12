@@ -56,7 +56,6 @@ class Builder:
               train_filename: str, test_filename: str,
               database_url_training: str, dataset_url_test: str) -> None:
         classifiers_metadata = {}
-        print("0", flush=True)
 
         for classifier_name in classifiers_list:
             classifiers_metadata[classifier_name] = \
@@ -64,17 +63,12 @@ class Builder:
                                                     train_filename,
                                                     test_filename)
 
-        '''self.__thread_pool.submit(self.__pipeline, modeling_code,
+        self.__thread_pool.submit(self.__pipeline, modeling_code,
                                   classifiers_metadata,
-                                  database_url_training, dataset_url_test)'''
-
-        self.__pipeline(modeling_code,
-                        classifiers_metadata,
-                        database_url_training, dataset_url_test)
+                                  database_url_training, dataset_url_test)
 
     def __pipeline(self, modeling_code: str, classifiers_metadata: dict,
                    database_url_training: str, database_url_test: str) -> None:
-        print("1", flush=True)
 
         (features_training, features_testing, features_evaluation) = \
             self.__modeling_code_processing(
@@ -82,7 +76,6 @@ class Builder:
                 self.__spark_session,
                 database_url_training,
                 database_url_test)
-        print("2", flush=True)
 
         classifier_switcher = {
             "LR": LogisticRegression(),
@@ -93,7 +86,7 @@ class Builder:
         }
         classifier_threads = []
 
-        '''for name, metadata in classifiers_metadata.items():
+        for name, metadata in classifiers_metadata.items():
             classifier = classifier_switcher[name]
             classifier_threads.append(
                 self.__thread_pool.submit(
@@ -111,28 +104,7 @@ class Builder:
             self.__save_classifier_result(
                 testing_prediction,
                 metadata_document
-            )'''
-        print("3", flush=True)
-
-        for name, metadata in classifiers_metadata.items():
-            classifier = classifier_switcher[name]
-
-            testing_prediction, metadata_document = self.__classifier_processing(
-                classifier,
-                features_training,
-                features_testing,
-                features_evaluation,
-                metadata,
             )
-            print("4", flush=True)
-
-            self.__save_classifier_result(
-                testing_prediction,
-                metadata_document
-            )
-            print("5", flush=True)
-
-        print("6", flush=True)
 
     def __modeling_code_processing(self,
                                    modeling_code: str,
@@ -141,7 +113,6 @@ class Builder:
                                    database_url_test: str) -> \
             (object, object, object):
 
-        print("teste", flush=True)
         training_df = self.__file_processor(
             database_url_training,
             spark_session)
@@ -149,12 +120,8 @@ class Builder:
             database_url_test,
             spark_session)
 
-        print("teste2", flush=True)
-
         preprocessing_variables = locals()
         exec(modeling_code, globals(), preprocessing_variables)
-
-        print("teste3", flush=True)
 
         features_training = preprocessing_variables["features_training"]
         features_testing = preprocessing_variables["features_testing"]
@@ -229,13 +196,10 @@ class Builder:
 
     def __file_processor(self, database_url: str,
                          spark_session: SparkSession) -> dataframe:
-        print("file_processor", flush=True)
-        print(database_url, flush=True)
         file = spark_session.read.format(
             "com.mongodb.spark.sql.DefaultSource").option(
             "spark.mongodb.input.uri", database_url).load()
 
-        print("passou do read file", flush=True)
         file_without_metadata = file.filter(
             file[self.DOCUMENT_ID_NAME] != self.METADATA_DOCUMENT_ID
         )
