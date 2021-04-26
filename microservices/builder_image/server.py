@@ -29,7 +29,7 @@ MODELING_CODE_NAME = "modelingCode"
 CLASSIFIERS_NAME = "classifiersList"
 FIRST_ARGUMENT = 0
 
-MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/"
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/sparkml/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
