@@ -54,6 +54,7 @@ spark_session = SparkSession.builder.appName("builder/sparkml"). \
     config("spark.jars.packages",
            "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
            ). \
+    config("spark.cores.max", 3). \
     config("spark.scheduler.mode", "FAIR"). \
     config("spark.scheduler.pool", "builder/sparkml"). \
     config("spark.scheduler.allocation.file",
