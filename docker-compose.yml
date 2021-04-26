@@ -154,7 +154,13 @@ services:
     environment:
       - SPARK_MASTER=sparkmaster
       - SPARK_ROLE=slave
-    deploy: *default-deploy-worker
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.role==worker"
     networks:
       - spark
       - database

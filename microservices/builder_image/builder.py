@@ -1,5 +1,5 @@
+import pyspark.sql
 from pyspark.sql import SparkSession
-import os
 import time
 import numpy as np  # Don't remove, the pyparsk uses the lib.
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
@@ -12,13 +12,7 @@ from pyspark.ml.classification import (
     RandomForestClassifier,
     GBTClassifier,
     NaiveBayes,
-
 )
-
-SPARKMASTER_HOST = "SPARKMASTER_HOST"
-SPARKMASTER_PORT = "SPARKMASTER_PORT"
-SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
-BUILDER_HOST_NAME = "BUILDER_HOST_NAME"
 
 
 class Builder:
@@ -26,31 +20,12 @@ class Builder:
     DOCUMENT_ID_NAME = "_id"
 
     def __init__(self, database_connector: Database,
-                 metadata_creator: Metadata):
+                 metadata_creator: Metadata,
+                 spark_session: pyspark.sql.SparkSession):
         self.__database = database_connector
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
-
-        self.__spark_session = (
-            SparkSession
-                .builder
-                .appName("builder/sparkml")
-                .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-                .config("spark.driver.host",
-                        os.environ[BUILDER_HOST_NAME])
-                .config("spark.jars.packages",
-                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
-                        )
-                .config("spark.scheduler.mode", "FAIR")
-                .config("spark.scheduler.pool", "builder/sparkml")
-                .config("spark.scheduler.allocation.file",
-                        "./fairscheduler.xml")
-                .master(
-                f'spark://{os.environ[SPARKMASTER_HOST]}:'
-                f'{str(os.environ[SPARKMASTER_PORT])}'
-            )
-                .getOrCreate()
-        )
+        self.__spark_session = spark_session
 
     def build(self, modeling_code: str, classifiers_list: list,
               train_filename: str, test_filename: str,
