@@ -56,7 +56,7 @@ spark_session = SparkSession.builder. \
            "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
            ). \
     config("spark.cores.max", 3). \
-    config("spark.executor.cores", 3). \
+    config("spark.executor.cores", 2). \
     config("spark.executor.memory", "512m"). \
     config("spark.scheduler.mode", "FAIR"). \
     config("spark.scheduler.pool", "transform/projection"). \
