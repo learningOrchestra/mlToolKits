@@ -182,11 +182,13 @@ class ObjectStorage:
             return dill.load(binary_instance)
         except Exception:
             traceback.print_exc()
-            try:
-                return keras.models.load_model(binary_path)
-            except Exception:
-                traceback.print_exc()
-                return binary_instance
+
+        try:
+            return keras.models.load_model(binary_path)
+        except Exception:
+            traceback.print_exc()
+
+        return binary_instance
 
     def save(self, instance: object, filename: str) -> None:
         output_path = ObjectStorage.get_write_binary_path(filename)
