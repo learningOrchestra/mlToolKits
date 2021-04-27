@@ -51,6 +51,7 @@ class Parameters:
             return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
+        global tensorflow
         class_instance_name = "class_instance"
         class_instance = None
         context_variables = {}
