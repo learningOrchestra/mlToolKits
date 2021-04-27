@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database, ObjectStorage, Data
 from constants import Constants
 import traceback
-import tensorflow
 
 
 class Parameters:
@@ -51,7 +50,7 @@ class Parameters:
             return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
-        global tensorflow
+        import tensorflow
         class_instance_name = "class_instance"
         class_instance = None
         context_variables = {}
