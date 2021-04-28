@@ -174,11 +174,11 @@ class ObjectStorage:
     def read(self, filename: str, service_type: str) -> object:
         binary_path = ObjectStorage.get_read_binary_path(
             filename, service_type)
-        binary_instance = open(
-            binary_path,
-            self.__READ_OBJECT_OPTION)
 
         try:
+            binary_instance = open(
+                binary_path,
+                self.__READ_OBJECT_OPTION)
             return dill.load(binary_instance)
         except Exception:
             traceback.print_exc()

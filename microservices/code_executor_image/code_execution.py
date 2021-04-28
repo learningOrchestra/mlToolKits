@@ -5,7 +5,6 @@ from io import StringIO
 import sys
 import validators
 import requests
-import tensorflow
 import traceback
 
 
@@ -67,6 +66,7 @@ class Parameters:
             return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
+        import tensorflow
         class_instance_name = "class_instance"
         class_instance = None
         context_variables = {}
