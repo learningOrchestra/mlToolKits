@@ -1,12 +1,6 @@
-from pyspark.sql import SparkSession
-import os
+import pyspark.sql.session
 from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata
-
-SPARKMASTER_HOST = "SPARKMASTER_HOST"
-SPARKMASTER_PORT = "SPARKMASTER_PORT"
-SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
-PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 
 class Projection:
@@ -17,25 +11,11 @@ class Projection:
     __database_url_output = None
     __MAX_NUMBER_THREADS = 3
 
-    def __init__(self, metadata_creator: Metadata):
+    def __init__(self, metadata_creator: Metadata,
+                 spark_session: pyspark.sql.session.SparkSession):
         self.__metadata_creator = metadata_creator
         self.__thread_pool = ThreadPoolExecutor()
-        self.__spark_session = (
-            SparkSession
-                .builder
-                .appName("transform/projection")
-                .config("spark.driver.port", os.environ[SPARK_DRIVER_PORT])
-                .config("spark.driver.host", os.environ[PROJECTION_HOST_NAME])
-                .config("spark.scheduler.mode", "FAIR")
-                .config("spark.jars.packages",
-                        "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
-                        )
-                .master(
-                f'spark://{os.environ[SPARKMASTER_HOST]}:'
-                f'{str(os.environ[SPARKMASTER_PORT])}'
-            )
-                .getOrCreate()
-        )
+        self.__spark_session = spark_session
 
     def create(self, parent_filename: str, projection_filename: str,
                fields: list, database_url_input: str,

@@ -2,6 +2,12 @@ from flask import jsonify, request, Flask
 import os
 from projection import Projection
 from utils import Database, UserRequest, Metadata
+from pyspark.sql import SparkSession
+
+SPARKMASTER_HOST = "SPARKMASTER_HOST"
+SPARKMASTER_PORT = "SPARKMASTER_PORT"
+SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
+PROJECTION_HOST_NAME = "PROJECTION_HOST_NAME"
 
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
 HTTP_STATUS_CODE_CONFLICT = 409
@@ -41,7 +47,26 @@ database = Database(
 )
 request_validator = UserRequest(database)
 metadata_creator = Metadata(database)
-projection = Projection(metadata_creator)
+
+spark_session = SparkSession.builder. \
+    appName("transform/projection"). \
+    config("spark.driver.port", os.environ[SPARK_DRIVER_PORT]). \
+    config("spark.driver.host", os.environ[PROJECTION_HOST_NAME]). \
+    config("spark.jars.packages",
+           "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
+           ). \
+    config("spark.cores.max", 3). \
+    config("spark.executor.cores", 1). \
+    config("spark.executor.memory", "512m"). \
+    config("spark.scheduler.mode", "FAIR"). \
+    config("spark.scheduler.pool", "transform/projection"). \
+    config("spark.scheduler.allocation.file",
+           "./fairscheduler.xml"). \
+    master(
+    f'spark://{os.environ[SPARKMASTER_HOST]}:'
+    f'{str(os.environ[SPARKMASTER_PORT])}'
+). \
+    getOrCreate()
 
 
 @app.route("/projections", methods=["POST"])
@@ -73,6 +98,7 @@ def create_projection():
         database_replica_set,
     )
 
+    projection = Projection(metadata_creator, spark_session)
     projection.create(
         parent_filename, projection_filename,
         projection_fields, database_url_input, database_url_output)

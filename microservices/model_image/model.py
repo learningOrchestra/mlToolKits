@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 from utils import Metadata, Database, ObjectStorage, Data
 from constants import Constants
 import traceback
-import tensorflow
 
 
 class Parameters:
@@ -51,6 +50,7 @@ class Parameters:
             return value
 
     def __get_a_class_instance(self, class_code: str) -> object:
+        import tensorflow
         class_instance_name = "class_instance"
         class_instance = None
         context_variables = {}
@@ -116,6 +116,7 @@ class Model:
                                             self.service_type,
                                             self.module_path,
                                             self.class_name)
+
         self.__thread_pool.submit(self.__pipeline,
                                   class_parameters,
                                   description)
@@ -141,6 +142,7 @@ class Model:
                                 self.service_type)
             self.__metadata_creator.update_finished_flag(self.model_name,
                                                          flag=True)
+
         except Exception as exception:
             traceback.print_exc()
             self.__metadata_creator.create_model_document(self.model_name,

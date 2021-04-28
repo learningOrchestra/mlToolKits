@@ -1,7 +1,7 @@
 from flask import jsonify, request, Flask
 import os
 from builder import Builder
-
+from pyspark.sql import SparkSession
 from utils import Database, UserRequest, Metadata
 
 HTTP_STATUS_CODE_SUCCESS_CREATED = 201
@@ -18,13 +18,18 @@ DATABASE_PORT = "DATABASE_PORT"
 DATABASE_NAME = "DATABASE_NAME"
 DATABASE_REPLICA_SET = "DATABASE_REPLICA_SET"
 
+SPARKMASTER_HOST = "SPARKMASTER_HOST"
+SPARKMASTER_PORT = "SPARKMASTER_PORT"
+SPARK_DRIVER_PORT = "SPARK_DRIVER_PORT"
+BUILDER_HOST_NAME = "BUILDER_HOST_NAME"
+
 TRAINING_FILENAME = "trainDatasetName"
 TEST_FILENAME = "testDatasetName"
 MODELING_CODE_NAME = "modelingCode"
 CLASSIFIERS_NAME = "classifiersList"
 FIRST_ARGUMENT = 0
 
-MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/"
+MICROSERVICE_URI_GET = "/api/learningOrchestra/v1/builder/sparkml/"
 MICROSERVICE_URI_GET_PARAMS = "?query={}&limit=10&skip=0"
 
 app = Flask(__name__)
@@ -41,7 +46,25 @@ database = Database(
 request_validator = UserRequest(database)
 
 metadata_creator = Metadata(database)
-builder = Builder(database, metadata_creator)
+
+spark_session = SparkSession.builder.appName("builder/sparkml"). \
+    config("spark.driver.port", os.environ[SPARK_DRIVER_PORT]). \
+    config("spark.driver.host",
+           os.environ[BUILDER_HOST_NAME]). \
+    config("spark.jars.packages",
+           "org.mongodb.spark:mongo-spark-connector_2.11:2.4.2",
+           ). \
+    config("spark.cores.max", 3). \
+    config("spark.executor.cores", 1). \
+    config("spark.executor.memory", "512m"). \
+    config("spark.scheduler.mode", "FAIR"). \
+    config("spark.scheduler.pool", "builder/sparkml"). \
+    config("spark.scheduler.allocation.file",
+           "./fairscheduler.xml"). \
+    master(
+    f'spark://{os.environ[SPARKMASTER_HOST]}:'
+    f'{str(os.environ[SPARKMASTER_PORT])}'
+).getOrCreate()
 
 
 @app.route("/models", methods=["POST"])
@@ -72,6 +95,7 @@ def create_model():
         test_filename,
         database_replica_set,
     )
+    builder = Builder(database, metadata_creator, spark_session)
 
     builder.build(
         request.json[MODELING_CODE_NAME],
