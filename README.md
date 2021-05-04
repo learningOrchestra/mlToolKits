@@ -66,7 +66,7 @@ The cluster configuration is related with the Machine Learning model, but the Le
 
 ## Using the Learning Orchestra system
 
- The Learning Orchestra high level services are organized into interoperable API [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and tools to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
+ The Learning Orchestra high level services are organized into interoperable API microservices. They offer access to third-party libraries, frameworks and tools to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
 There are 11 Machine Learning services in the API:
 - **Dataset:** Responsible to obtain a dataset. External datasets are stored on MongoDB or on volumes using an URL. Dataset service enables the use of csv format datasets or generic format datasets. 
