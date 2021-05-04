@@ -22,26 +22,17 @@ The Learning Orchestra system is a Machine Learning tool alternative to reduce t
 <!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Quick-start](#quick-start)
-- [Learning Orchestra deployment](#how-do-i-install-learningorchestra)
-	- [Cluster Configuration](#setting-up-your-cluster)
-	- [Deployment issues](#deploy-learningorchestra)
-- [Using the Learning Orchestra system](#how-do-i-use-learningorchestra)
-	- [The REST API](#using-the-rest-api)
-	- [The Python package](#using-the-python-package)
-	- [The cluster status](#check-cluster-status)
-- [About Learning Orchestra](#about-learningorchestra)
+- [Learning Orchestra deployment](#learning-orchestra-deployment)
+	- [Cluster Configuration](#the-cluster-configuration)
+- [Using the Learning Orchestra system](#using-the-learning-orchestra-system)
+	- [The REST API](#the-rest-api)
+	- [The Python package](#the-python-package)
+	- [The cluster status](#the-cluster-status)
+- [About Learning Orchestra](#about-learning-orchestra)
 	- [Research background](#research-background)
-	- [Future steps](#future-steps)
 	- [Contributors :sparkles:](#contributors-sparkles)
 - [Frequently Asked Questions](#frequently-asked-questions)
-	- [Using the Learning Orchestra system](#on-using-learningorchestra)
-	- [The languages and existing ML solutions used by Learning Orchestra](#on-the-languages-and-frameworks-used-by-learningorchestra)
-	- [How to contribute with Learning Orchestra?](#on-contributing-to-learningorchestra)
-- [Requirements](#requirements)
-- [Deployment](#deployment)
-- [Cluster State](#cluster-state)
-- [REST API](#rest-api)
-	- [Spark Microservices](#spark-microservices)
+
 
 <!-- /TOC -->
 
@@ -71,10 +62,6 @@ You just need to run `docker stack rm microservice`.
 
 The cluster configuration is related with the Machine Learning model, but the Learning Orchestra requires a small size cluster for simple pipeline settings. We have deployed the Learning Orchestra system over a cluster with only three virtual machines and it run models, like Titanic, IMDb and MNIST. Several technologies are used by Learning Orchestra on each virtual machine. Details about them at [requirements](https://learningorchestra.github.io/docs/installation/#requirements)
 
-
-### Deployment issues
-
-Details about deployment at [deployment](https://learningorchestra.github.io/docs/installation/#deployment)
 
 
 ## Using the Learning Orchestra system
@@ -174,8 +161,6 @@ See the [contributors list](#contributors-sparkles).
 
 The Learning Orchestra system was developed by undergraduate students on their final projects, thus it is a voluntary initiative. The collaborators are also voluntary. The system is free and open source. 
 
-### Using the Learning Orchestra system
-
 ###### I have a question/a feature request/some feedback, how do I contact you?
 Use the [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) of this repo.
 
@@ -217,24 +202,22 @@ If the network connections between cluster instances fail, the Learning Orchestr
 
 You just run `docker stack rm microservice` in the manager instance of the Docker swarm cluster.
 
-### The languages and existing ML solutions used by Learning Orchestra
+###### The languages and existing ML solutions used by Learning Orchestra
 
 There is an interoperable REST API. There is a Python client.
 
 The Learning Orchestra uses the Scikit-learn, TensorFlow and Spark MLlib solutions. 
 
-### How to contribute with Learning Orchestra?
-
 ###### Method X is very useful and should be included, why is it not there?
 
 You can suggest new features by creating an issue in [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues). New contributors are also welcome [new contributors](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
 
-##### I want to contribute, where do I start?
+###### I want to contribute, where do I start?
 
 The [contributing guide](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
 
 If you are new with the open source initiative, consider the material [FirstTimersOnly](https://www.firsttimersonly.com/).
 
-##### I'm not a developer, can I contribute?
+###### I'm not a developer, can I contribute?
 
 Yes. Currently, we need help in many directions, including documentation, text review, new pipeline use cases, videos and so forth. Please, check our [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) for open tasks.
