@@ -145,6 +145,9 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Frequently Asked Questions
 
+##### How do I cite Learning Orchestra in my paper?
+Through this [link](https://www.monografias.ufop.br/handle/35400000/3015).
+
 ###### Where can I find the documentation?
 
 The documentation [here](https://learningorchestra.github.io/docs).
