@@ -115,7 +115,7 @@ The Learning Orchestra is developed by undergraduate students and developers wor
 Two undergraduate final reports:
 
 - **Gabriel final report:** [link](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS).
-- **Gustavo final report:** [link](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS).
+- **Gustavo final report:** [link](https://www.researchgate.net/publication/351330792_LEARNING_ORCHESTRA_WEB_UMA_ALTERNATIVA_PARA_CONSTRUCAO_VISUAL_DE_WORKFLOWS_SOBRE_APRENDIZADO_DE_MAQUINA).
 
 
 ### Contributors :sparkles:
