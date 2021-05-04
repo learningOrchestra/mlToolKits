@@ -150,7 +150,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 ## Frequently Asked Questions
 
 ##### How do I cite Learning Orchestra in my paper?
-Through this [link](https://www.monografias.ufop.br/handle/35400000/3015).
+As a final report of an undergraduate student. See [link](https://www.monografias.ufop.br/handle/35400000/3015).
 
 ###### Where can I find the documentation?
 
