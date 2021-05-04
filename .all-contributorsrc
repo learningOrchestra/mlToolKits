@@ -76,6 +76,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gustavofariaa",
+      "name": "Gustavo Amorim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35354850?v=4",
+      "profile": "https://github.com/gustavofariaa",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
