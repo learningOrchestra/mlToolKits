@@ -69,7 +69,7 @@ You just need to run `docker stack rm microservice`.
 
 ### The cluster configuration
 
-The cluster configuration is related with the Machine Learning model, but the Learning Orchestra requires a small size cluster for simple pipeline settings. We have deployed the Learning Orchestra system over a cluster with only three virtual machines and it run models, like Titanic, IMDb and MNIST. Several technologies are used by Learning Orchestra on each virtual machine. Details about them at [requirements] (https://learningorchestra.github.io/docs/installation/#requirements)
+The cluster configuration is related with the Machine Learning model, but the Learning Orchestra requires a small size cluster for simple pipeline settings. We have deployed the Learning Orchestra system over a cluster with only three virtual machines and it run models, like Titanic, IMDb and MNIST. Several technologies are used by Learning Orchestra on each virtual machine. Details about them at [requirements](https://learningorchestra.github.io/docs/installation/#requirements)
 
 
 ### Deployment issues
