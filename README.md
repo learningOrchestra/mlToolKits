@@ -1,4 +1,4 @@
-**Wondering how to combine your various library and infrastructure needs for your latest data mining project? Just pick the bricks to build your pipeline and learningOrchestra will take care of the rest.**
+**How to combine Scikit-learn, TensorFlow and Spark MLlib into a single Machine Learning flow? How to combine the design of pipelines composed of well defined pipe flows (train, tune, explore, predict and more) and the imperative programming paradigm (Python, for instance)?**
 
 <p align="center">
     <img src="./learning-orchestra.png">
@@ -10,47 +10,33 @@
 
 # learningOrchestra
 
-## Introduction
-
-### Context
-
 Nowadays, **data science relies on a wide range of computer science skills**, from data management to algorithm design, from code optimization to cloud infrastructures. Data scientists are expected to have expertise in these diverse fields, especially when working in small teams or for academia.
 
-This situation can constitute a barrier to the actual extraction of new knowledge from collected data,
-which is why the last two decades have seen more efforts to facilitate and streamline the development of
-data mining workflows. The tools created can be sorted into two categories: **high-level** tools facilitate
-the building of **automatic data processing pipelines** (e.g. [Weka](https://www.cs.waikato.ac.nz/ml/weka/))
-while **low-level** ones support the setup of appropriate physical and virtual infrastructure (e.g. [Spark](https://spark.apache.org/)).
+The data scientist activity normally works in an iterative process composed of the following activities: gathering available data, performing exploratory data analysis, cleaning/enriching those data, building models, validating their predictions, and deploying results.
 
-However, this landscape is still missing a tool that **encompasses all steps and needs of a typical data science project**. This is where learningOrchestra comes in.
+The data scientist iterative process simplification and streamline is fundamental, so many efforts were done in the last recent years. From low level services, like cloud deployment, container configuration and container orchestrator tuning aspects, to high level services, like train, explore, transform, tune, predict and other Machine Learning configurations, these services are being reimplemented to become more and more fast and simple. 
 
-### The learningOrchestra system
+The Learning Orchestra system is a Machine Learning tool alternative to reduce this gap. It implements a single API for multiple programming languages to address the high level services demands mentioned before. Three existing Machine Learning solutions (Scikit-learn, TensorFlow and Spark MLlib) can be used transparently via its API; this way, the data scientists can develop interoperable Machine Learning flows. It implements a single script to address the low level services mentioned before, thus it can be deployed over scalable containers on top of virtual machines clusters of cloud environments using few configuration steps. 
 
-learningOrchestra aims to facilitate the development of complex data mining workflows by **seamlessly interfacing different data science tools and services**. From a single interoperable Application Programming Interface (API), users can **design their analytical pipelines and deploy them in an environment with the appropriate capabilities**.
-
-learningOrchestra is designed for data scientists from both engineering and academia backgrounds, so that they can **focus on the discovery of new knowledge** in their data rather than library or maintenance issues.
 
 <!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [Introduction](#introduction)
-	- [Context](#context)
-	- [The learningOrchestra system](#the-learningorchestra-system)
 - [Quick-start](#quick-start)
-- [How do I install learningOrchestra?](#how-do-i-install-learningorchestra)
-	- [Setting up your cluster](#setting-up-your-cluster)
-	- [Deploy learningOrchestra](#deploy-learningorchestra)
-- [How do I use learningOrchestra?](#how-do-i-use-learningorchestra)
-	- [Using the REST API](#using-the-rest-api)
-	- [Using the Python package](#using-the-python-package)
-	- [Check cluster status](#check-cluster-status)
-- [About learningOrchestra](#about-learningorchestra)
+- [Learning Orchestra deployment](#how-do-i-install-learningorchestra)
+	- [Cluster Configuration](#setting-up-your-cluster)
+	- [Deployment issues](#deploy-learningorchestra)
+- [Using the Learning Orchestra system](#how-do-i-use-learningorchestra)
+	- [The REST API](#using-the-rest-api)
+	- [The Python package](#using-the-python-package)
+	- [The cluster status](#check-cluster-status)
+- [About Learning Orchestra](#about-learningorchestra)
 	- [Research background](#research-background)
 	- [Future steps](#future-steps)
 	- [Contributors :sparkles:](#contributors-sparkles)
 - [Frequently Asked Questions](#frequently-asked-questions)
-	- [On using learningOrchestra](#on-using-learningorchestra)
-	- [On the languages and frameworks used by learningOrchestra](#on-the-languages-and-frameworks-used-by-learningorchestra)
-	- [On contributing to learningOrchestra](#on-contributing-to-learningorchestra)
+	- [Using the Learning Orchestra system](#on-using-learningorchestra)
+	- [The languages and existing ML solutions used by Learning Orchestra](#on-the-languages-and-frameworks-used-by-learningorchestra)
+	- [How to contribute with Learning Orchestra?](#on-contributing-to-learningorchestra)
 - [Requirements](#requirements)
 - [Deployment](#deployment)
 - [Cluster State](#cluster-state)
@@ -61,74 +47,88 @@ learningOrchestra is designed for data scientists from both engineering and acad
 
 ## Quick-start
 
-learningOrchestra provides two options to access its features: a REST API and a Python package.
+The Learning Orchestra system provides two options to access its high level Machine Learning services: a REST API and a Python package.
 
-REST API: We recommand using a GUI REST API caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/).
+REST API: We recommand the utilization of a REST API caller tool, like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/).
 
 Python package:
 - Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for more details.
 
-## How do I install learningOrchestra?
+## Learning Orchestra deployment
 
-:bell: This documentation assumes that the users are familiar with a number of advanced computer science concepts. We have tried to link to learning resources to support beginners, as well as introduce some of the concepts in the [FAQ](#frequently-asked-questions). But if something is still not clear, don't hesitate to [ask for help](#on-using-learningOrchestra).
+:bell: This documentation assumes that the data scientist is familiar with a number of computer science technologies. We mentioned extra materials for a better reader understanding and some extra concepts explanations at [ask for help](#on-using-learningOrchestra). There are the frequently asked questions in the [FAQ](#frequently-asked-questions). 
 
-We prrovide a documentation explaining how deploy this software, you can read more in [installation docs](https://learningorchestra.github.io/docs/installation/)
+The documentation about how to deploy the Learning Orchestra system at [installation docs](https://learningorchestra.github.io/docs/installation/)
 
 
 ##### Interrupt learningOrchestra
 
-Run `docker stack rm microservice`.
+You just need to run `docker stack rm microservice`.
 
-## How do I use learningOrchestra?
 
-learningOrchestra is organised into interoperable [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and software to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
 
-The current version of learningOrchestra offers 11 services:
-- **Dataset** - Responsible to obtain a dataset. External datasets are stored on MongoDB or on volumes using an Uniform Resource Locator (URL). There is also an alternative to load TensorFlow existing datasets.
-- **Model** - Responsible to load supervised or unsupervised models from existing repositories. It is useful to be used to configure a TensorFlow or Scikit-learn object with
-a tuned and pre-trained neural network using Google or Facebook best practicesand large instances, for example.  On the other hand, it is also useful to load acustomized/optimized neural network developed from scratch by a team of data scientists.
-- **Transform** - Responsible for a catalog of tasks, including embedding, normalization, text enrichment, bucketization, data projection and so forth. Learning Orchestra has its own implementations for some services and implement other transform services from TensorFlow and Scikit-learn.
-- **Explore** - The data scientist must see the pipes steps results of an analytical pipeline, so Learning Orchestra supports data exploration using the catalog of explore capabilities of TensorFlow and Scikit-learn tools, including histogram, clustering, t-SNE,PCA and others. All outputs of this step are plottable.
-- **Tune** - Performs the search for an optimal set of parameters for a given model. It can be made through strategies like grid-search, random search, or Bayesian optimization
-- **Train** - Probably it is the most computational expensive service of an ML pipeline, because the models will be trained for best learn the subjacents patterns on data. Adiversity of algorithms can be executed, like Support Vector Machine (SVM), Random Forest, Bayesian inference, K-Nearest Neighbors (KNN), Deep Neural Networks(DNN), and many others.
-- **Evaluate** - After training a model, it is necessary to evaluate it’s power to generalize tonew unseen data. For that, the model needs to perform inferences or classification on a test dataset to obtain metrics that more accurately describe the capabilities of themodel. Some common metrics are precision, recall, f1-score, accuracy, mean squarederror (MSE), and cross-entropy. This service is useful to describe the generalization power and to detect the need for model calibrations
-- **Predict** - The model can run indefinitely.  Sometimes feedbacks are mandatory toreinforce the train step, so the Evaluate services are called multiple times. This is the main reason for a production pipe and, consequently, a service of such a type
--  **Builder** - Responsible to execute Spark-ML or TensorFlow entire pipelines in Python, offering an alternative way to use the Learning Orchestra system just as a deployment alternative and not an environment for building ML workflows composed of pipelines.
-- **Observe** - Represents a catalog of collections of Learning Orchestra and a publish/subscribe mechanism. Applications can subscribe to these collections to receive notifications via observers.
-- **Function** - Responsible to wrap a Python function, representing a wildcard for the data scientist when there is no Learning Orchestra support for a specific ML service. It is different from Builder service, since it does not run the entire pipeline. Instead, it runs just a Python function of Scikit-learn or TensorFlow models on a cluster container. It is part of future plans the support of functions written in R language.
+### The cluster configuration
 
-The REST API can be called on from any computer, including one that is not part of the cluster learningOrchestra is deployed on. learningOrchestra provides two options to access its features: a REST API and a Python package.
+The cluster configuration is related with the Machine Learning model, but the Learning Orchestra requires a small size cluster for simple pipeline settings. We have deployed the Learning Orchestra system over a cluster with only three virtual machines and it run models, like Titanic, IMDb and MNIST. Several technologies are used by Learning Orchestra on each virtual machine. Details about them at [requirements] (https://learningorchestra.github.io/docs/installation/#requirements)
 
-### Using the REST API
 
-We recommand using a **GUI REST API** caller like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/). Of course, regular `curl` commands from the terminal remain a possibility.
+### Deployment issues
 
-The details for REST API are available in the [open api documentation](https://app.swaggerhub.com/apis-docs/learningOrchestra/learningOrchestra/v1.0).
+Details about deployment at [deployment](https://learningorchestra.github.io/docs/installation/#deployment)
 
-### Using the Python package
 
-**learning-orchestra-client** is a Python 3 package available through the Python Package Index. Install it with `pip install learning-orchestra-client`.
+## Using the Learning Orchestra system
 
-All your scripts must import the package and create a link to the cluster by providing the IP address to an instance of your cluster. Preface your scripts with the following code:
+ The Learning Orchestra high level services are organized into interoperable API [microservices](#what-are-microservices). They offer access to third-party libraries, frameworks and tools to **gather data**, **clean data**, **train machine learning models**, **tune machine learning models**, **evaluate machine learning models** and **visualize data and results**.
+
+There are 11 Machine Learning services in the API:
+- **Dataset:** Responsible to obtain a dataset. External datasets are stored on MongoDB or on volumes using an URL. Dataset service enables the use of csv format datasets or generic format datasets. 
+- **Model:** Responsible for loading machine learning models from existing repositories. It is useful to be used to configure a TensorFlow or Scikit-learn object with a tuned and pre-trained models, like the pre-trained deep learning models provided by Google or Facebook, trained on huge instances, for example. On the other hand, it is also useful to load a customized/optimized neural network developed from scratch by a data scientist team.
+- **Transform:** Responsible for a catalog of tasks, including embedding, normalization, text enrichment, bucketization, data projection and so forth. Learning Orchestra has its own implementations for some services and implement other transform services from TensorFlow and Scikit-learn. 
+- **Explore:** The data scientist must perform exploratory analysis to understand their data and see the results of their executed actions. So, Learning Orchestra supports data exploration using the catalog provided by TensorFlow and Scikit-learn tools, including histogram, clustering, t-SNE, PCA, and others. All outputs of this step are plottable. 
+- **Tune:** Performs the search for an optimal set of hyperparameters for a given model. It can be made through strategies like grid-search, random search, or Bayesian optimization.
+- **Train:** Probably it is the most computational expensive service of an ML pipeline, because the models will be trained for best learn the subjacents patterns on data. A diversity of algorithms can be executed, like Support Vector Machine (SVM), Random Forest, Bayesian inference, K-Nearest Neighbors (KNN), Deep Neural Networks (DNN), and many others.
+- **Evaluate:** After training a model, it is necessary to evaluate it's power to generalize to new unseen data. For that, the model needs to perform inferences or classification on a test dataset to obtain metrics that more accurately describe the capabilities of the model. Some common metrics are precision, recall, f1-score, accuracy, mean squared error (MSE), and cross-entropy. This service is useful to describe the generalization power and to detect the need for model calibrations. 
+- **Predict:** The model can run indefinitely. Sometimes feedbacks are mandatory to reinforce the train step, so the Evaluate services are called multiple times. This is the main reason for a production pipe and, consequently, a service of such a type.
+- **Builder:** Responsible to execute Spark-ML entire pipelines in Python, offering an alternative way to use the Learning Orchestra system just as a deployment alternative and not an environment for building ML workflows composed of pipelines.  
+- **Observe:** Represents a catalog of collections of Learning Orchestra and a publish/subscribe mechanism. Applications can subscribe to these collections to receive notifications via observers. 
+- **Function:** Responsible to wrap a Python function, representing a wildcard for the data scientist when there is no Learning Orchestra support for a specific ML service. It is different from Builder service, since it does not run the entire pipeline. Instead, it runs just a Python function of Scikit-learn or TensorFlow models on a cluster container. It is part of future plans the support of functions written in R language.
+
+ 
+
+### The REST API
+
+The REST API can be called by any client developed with any programming language or by an API caller, like [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/product/api-client/). Besides the REST API, there is a Python client to simplify even more the services explained before. The data scientist can choose one of these options.
+
+Details about the REST API at [open api documentation](https://app.swaggerhub.com/apis-docs/learningOrchestra/learningOrchestra/v1.0).
+
+### The Python package
+
+**learning-orchestra-client** is a Python 3 package available at the Python Package Index. You must install it with `pip install learning-orchestra-client`.
+
+All the Python scripts must import the package and communicate with the Learning Orchestra backend (the cluster IP address). The following code snippet must be inserted:
 ```
 from learning_orchestra_client import *
 cluster_ip = "xx.xx.xxx.xxx"
 Context(cluster_ip)
 ```
 
-Check the [package documentation](https://github.com/learningOrchestra/pythonClient) for a list of available features and an example use case.
+Details about the Learning Orchestra Python client at [package documentation](https://github.com/learningOrchestra/pythonClient).
 
-### Check cluster status
+### The cluster status
 
-To check the deployed microservices and machines of your cluster, run `CLUSTER_IP:9000` where *CLUSTER_IP* is replaced by the external IP of a machine in your cluster.
+To check the deployed microservices and machines of your cluster, see [cluster-state](https://learningorchestra.github.io/docs/installation/#cluster-state).
 
-The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
-
-## About learningOrchestra
+## About Learning Orchestra
 
 ### Research background
 
-You can read the project monograph [here](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS).
+The Learning Orchestra is developed by undergraduate students and developers worldwide. 
+
+Two undergraduate final reports:
+
+- **Gabriel final report:** [link](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS).
+- **Gustavo final report:** [link](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS).
 
 
 ### Contributors :sparkles:
@@ -160,93 +160,81 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ###### Where can I find the documentation?
 
-Find the user documentation [here](https://learningorchestra.github.io/docs).
+The documentation [here](https://learningorchestra.github.io/docs).
 
-###### What is the website linked to the repo?
+###### Which is the website linked to the repo?
 
-The repo is linked to the user documentation.
+There is no website.
 
-###### Who is doing this?
+###### Who is conductiong the Learning Orchestra system?
 
 See the [contributors list](#contributors-sparkles).
 
-###### Do you get money from learningOrchestra? How do you fund the project?
+###### How do you fund the project?
 
-We use collaborative resources to develop this software.
+The Learning Orchestra system was developed by undergraduate students on their final projects, thus it is a voluntary initiative. The collaborators are also voluntary. The system is free and open source. 
 
-### On using learningOrchestra
+### Using the Learning Orchestra system
 
 ###### I have a question/a feature request/some feedback, how do I contact you?
-Please use the [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) of this repo.
+Use the [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) of this repo.
 
 ###### Can I copy your code for my project?
 
-This project is distributed under the open source [GPL-3 license](https://github.com/learningOrchestra/learningOrchestra/blob/master/LICENSE).
+This solution is distributed under the open source [GPL-3 license](https://github.com/learningOrchestra/learningOrchestra/blob/master/LICENSE).
 
-You can copy, modify and distribute the code in the repository as long as you understand the license limitations (no liability, no warranty) and respect the license conditions (license and copyright notice, state changes, disclose source, same license.)
+You can copy, modify and distribute the code of the repository as long as you understand the license limitations (no liability, no warranty) and respect the license conditions (license and copyright notice, state changes, disclose source, same license.)
 
-###### How do I cite learningOrchestra in my paper?
+###### How do I cite Learning Orchestra in my paper?
 
-In discussion.
+As a final report of an undergraduate student. See [link] (). 
 
-###### Where can I find data?
+###### Where can I find datasets to explore the Learning Orchestra system?
 
 [Kaggle](https://www.kaggle.com/) is a good data source for beginners.
 
-###### My computer runs on Windows/OSX, can I still use learningOrchestra?
+###### I am using Windows/OSX operating systems. Can I still use the Learning Orchestra?
 
-You can use the microservices that run on a cluster where learningOrchestra is deployed, but not deploy learningOrchestra.
+The REST API can be called by any client, including the previous explained Learning Orchestra Python client.
 
-To use the microservices, through the REST APIs and a request client or through the Python client package, refer to the [usage instructions](#how-do-i-use-learningorchestra) above.
+The Learning Orchestra backend must be deployed on Linux based clusters, precisely with Debian 10 distribution. 
 
-###### I have a single computer, can I still use learningOrchestra?
+###### I have a single computer, can I still use the Learning Orchestra?
 
-Theoretically, you can, if your machine has 12 Gb of RAM, a quad-core processor and 100 Gb of disk. However, your single machine won't be able to cope with the computing demanding for a real-life sized dataset.
+Theoretically you can. Always a Linux Debian 10 distribution. 
 
-###### What happens if learningOrchestra is killed while using a microservice?
+###### What happens if Learning Orchestra is killed while using a microservice?
 
-If your cluster fails while a microservice is processing data, the task may be lost. Some fails might corrupt the database systems.
+If your cluster failed while a microservice is processing a dataset, the task is lost and it must be manually re-submitted. Some fails might corrupt the storage system.
 
-If no processing was in progress when your cluster fails, the learningOrchestra will automatically re-deploy and reboot the affected microservices.
+The Docker technology re-deploy the containers when they fail. 
 
-###### What happens if my instances loose the connection to each other?
+###### What happens if my instances loose the connections?
 
-If the connection between cluster instances is shutdown, learningOrchestra will try to re-deploy the microservices from the lost instances on the remaining active instances of the cluster.
+If the network connections between cluster instances fail, the Learning Orchestra tries to re-deploy the microservices on different instances.
 
-###### How do I interrupt learningOrchestra?
+###### How do I interrupt the Learning Orchestra?
 
-Run `docker stack rm microservice` in manager instance of docker swarm cluster.
+You just run `docker stack rm microservice` in the manager instance of the Docker swarm cluster.
 
-### On the languages and frameworks used by learningOrchestra
+### The languages and existing ML solutions used by Learning Orchestra
 
-###### What is a container?
+There is an interoperable REST API. There is a Python client.
 
-Containers are a software that package code and everything needed to run this code together, so that the code can be run simply in any environment. They also isolate the code from the rest of the machine. They are [often compared to shipping containers](https://www.ctl.io/developers/blog/post/docker-and-shipping-containers-a-useful-but-imperfect-analogy).
+The Learning Orchestra uses the Scikit-learn, TensorFlow and Spark MLlib solutions. 
 
-###### What is a cluster?
-
-A computer cluster is a set of loosely or tightly connected computers that work together so that, in many respects, they can be viewed as a single system. (From [Wikipedia](https://en.wikipedia.org/wiki/Computer_cluster))
-
-###### What are microservices?
-
-Microservices - also known as the microservice architecture - is an architectural style that structures an application as a collection of services that are: highly maintainable and testable, loosely coupled, independently deployable, organized around business capabilities, owned by small team.
-
-[An overview of microservice architecture](https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9)
+### How to contribute with Learning Orchestra?
 
 ###### Method X is very useful and should be included, why is it not there?
 
-learningOrchestra is still in development. We try to prioritize the most handy methods/process, but we have a limited team.
-
-You can suggest new features by creating an issue in [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues). We also welcome [new contributors](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
-
-### On contributing to learningOrchestra
+You can suggest new features by creating an issue in [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues). New contributors are also welcome [new contributors](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
 
 ##### I want to contribute, where do I start?
 
-The [contributing guide](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md) is a good place to start.
+The [contributing guide](https://github.com/learningOrchestra/learningOrchestra/blob/master/CONTRIBUTING.md).
 
-If you are new to open source, consider giving the resources of [FirstTimersOnly](https://www.firsttimersonly.com/) a look.
+If you are new with the open source initiative, consider the material [FirstTimersOnly](https://www.firsttimersonly.com/).
 
 ##### I'm not a developer, can I contribute?
 
-Yes. Currently, we need help improving the documentation and spreading the word about the learningOrchestra project. Check our [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) for open tasks.
+Yes. Currently, we need help in many directions, including documentation, text review, new pipeline use cases, videos and so forth. Please, check our [**Issues** page](https://github.com/learningOrchestra/learningOrchestra/issues) for open tasks.
