@@ -128,9 +128,8 @@ The same can be done to check Spark cluster state with `CLUSTER_IP:8080`.
 
 ### Research background
 
-The [first monograph](https://drive.google.com/file/d/1ZDrTR58pBuobpgwB_AOOFTlfmZEY6uQS/view) 
+The [monograph](https://www.researchgate.net/publication/351235985_LEARNING_ORCHESTRA_BUILDING_MACHINE_LEARNING_WORKFLOWS_ON_SCALABLE_CONTAINERS) 
 
-The [second monograph](https://www.overleaf.com/read/spqznyvtyjsy)(under construction)
 
 ### Contributors :sparkles:
 
