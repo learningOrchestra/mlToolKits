@@ -149,7 +149,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Frequently Asked Questions
 
-##### How do I cite Learning Orchestra in my paper?
+###### How do I cite Learning Orchestra in my paper?
 As a final report of an undergraduate student. See [link](https://www.monografias.ufop.br/handle/35400000/3015).
 
 ###### Where can I find the documentation?
@@ -176,10 +176,6 @@ Use the [**Issues** page](https://github.com/learningOrchestra/learningOrchestra
 This solution is distributed under the open source [GPL-3 license](https://github.com/learningOrchestra/learningOrchestra/blob/master/LICENSE).
 
 You can copy, modify and distribute the code of the repository as long as you understand the license limitations (no liability, no warranty) and respect the license conditions (license and copyright notice, state changes, disclose source, same license.)
-
-###### How do I cite Learning Orchestra in my paper?
-
-As a final report of an undergraduate student. See [link] (). 
 
 ###### Where can I find datasets to explore the Learning Orchestra system?
 
