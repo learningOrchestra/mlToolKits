@@ -21,8 +21,6 @@ app = Flask(__name__)
 
 @app.route("/observer/<filename>", methods=["POST"])
 def create_collection_watcher(filename: str) -> jsonify:
-    db.insert_one_in_file(filename, {'a': 'test'})
-
     pipeline = [
         {
             '$match': {
@@ -48,9 +46,7 @@ def create_collection_watcher(filename: str) -> jsonify:
 
     except errors.InvalidName:
         # response invalid name
-        return (
-            jsonify()
-        )
+        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER)
 
 
 @app.route("/observer/<filename>", methods=["GET"])
@@ -58,7 +54,7 @@ def get_collection_data(filename: str) -> jsonify:
     try:
         cursor = db.get_cursor(collection_name=filename)
     except KeyError:
-        return error_response()
+        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
 
     change = cursor.next()
     return successful_response(result=change)
@@ -69,7 +65,7 @@ def delete_collection_watcher(filename: str) -> jsonify:
     try:
         cursor = db.get_cursor(collection_name=filename)
     except KeyError:
-        return error_response()
+        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
 
     cursor.close()
     return successful_response(
@@ -79,12 +75,12 @@ def delete_collection_watcher(filename: str) -> jsonify:
     )
 
 
-def error_response() -> jsonify:
+def error_response(subject: str = '') -> jsonify:
     return (
         jsonify(
             {
                 Constants.MESSAGE_RESULT: str(
-                    Constants.MESSAGE_RESPONSE_COLLECTION_NOT_FOUND
+                    subject + Constants.MESSAGE_RESPONSE_NOT_FOUND
                 )
             }
         ),

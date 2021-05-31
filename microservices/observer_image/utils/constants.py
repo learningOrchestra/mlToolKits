@@ -19,4 +19,6 @@ class Constants:
     HTTP_STATUS_CODE_CONFLICT = 409
     HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 
-    MESSAGE_RESPONSE_COLLECTION_NOT_FOUND = "database name not found"
+    MESSAGE_RESPONSE_OBSERVER = "observer name"
+    MESSAGE_RESPONSE_DATABASE = "database name"
+    MESSAGE_RESPONSE_NOT_FOUND = " not found"
