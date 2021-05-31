@@ -122,7 +122,7 @@ docker push $code_executor_repository
 observer_repository=127.0.0.1:5050/observer
 
 echo "--------------------------------------------------------------------"
-echo "Pushing codeExecutor microservice image..."
+echo "Pushing observer microservice image..."
 echo "--------------------------------------------------------------------"
 docker push $observer_repository
 
