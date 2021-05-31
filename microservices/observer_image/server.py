@@ -1,8 +1,8 @@
 from flask import jsonify, Flask
 import os
 from pymongo import errors
-from microservices.observer_image.utils.constants import Constants
-from microservices.observer_image.utils.database import Database
+from utils.constants import Constants
+from utils.database import Database
 
 database_url = os.environ[Constants.DATABASE_URL]
 database_replica_set = os.environ[Constants.DATABASE_REPLICA_SET]
