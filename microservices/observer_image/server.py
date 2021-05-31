@@ -29,7 +29,7 @@ def create_collection_watcher(filename: str) -> jsonify:
             }
         },
         {
-            '$set': {
+            '$addFields': {
                 'clusterTime': {'$dateToString': {'date': '$clusterTime'}},
                 'fullDocument._id': {'$toString': '$fullDocument._id'},
                 'documentKey._id': {'$toString': '$documentKey._id'}
