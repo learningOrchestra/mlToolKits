@@ -317,6 +317,18 @@ services:
       - database
     environment: *default-service-database-env
 
+  observer:
+    build: microservices/observer_image
+    image: 127.0.0.1:5050/observer
+    ports:
+      - "5010:5010"
+    depends_on:
+      - databaseprimary
+    deploy: *default-deploy-worker
+    networks:
+      - database
+    environment: *default-service-database-env
+
 networks:
   database:
   spark:

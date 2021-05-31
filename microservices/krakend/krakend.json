@@ -1733,16 +1733,48 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/function/python/{filename}",
+      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "POST",
+          "url_pattern": "/observer/{name}?type=function/python",
+          "host": [
+            "http://observer:5010"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/observer/{name}?type=function/python",
+          "host": [
+            "http://observer:5010"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/codeExecutor/{filename}?type=function/python",
+          "url_pattern": "/observer/{name}?type=function/python",
           "host": [
-            "http://codexecutor:5009"
+            "http://observer:5010"
           ],
           "extra_config": {}
         }
