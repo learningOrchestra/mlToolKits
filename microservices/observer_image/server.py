@@ -37,6 +37,9 @@ def create_collection_watcher(filename: str) -> jsonify:
         },
     ]
 
+    print("------------------------------------------------",flush=True)
+    print(pipeline,flush=True)
+    print("------------------------------------------------",flush=True)
     try:
         cursor_name = db.watch(collection_name=filename, pipeline=pipeline)
 
