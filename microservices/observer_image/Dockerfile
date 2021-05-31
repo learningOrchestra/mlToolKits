@@ -1,15 +1,12 @@
-FROM spark_task
+FROM python:3.7-slim
 
-WORKDIR /usr/src/builder
-COPY . /usr/src/builder
+WORKDIR /usr/src/observer
+COPY . /usr/src/observer
 
 RUN pip install -r requirements.txt
 
-ENV BUILDER_HOST_NAME "builder"
-ENV BUILDER_HOST_PORT 5002
-ENV BUILDER_HOST_IP "0.0.0.0"
-ENV SPARKMASTER_HOST "sparkmaster"
-ENV SPARKMASTER_PORT 7077
-ENV SPARK_DRIVER_PORT 41100
+ENV MICROSERVICE_NAME "observer"
+ENV MICROSERVICE_PORT 5010
+ENV MICROSERVICE_IP "0.0.0.0"
 
 CMD ["python", "server.py"]
