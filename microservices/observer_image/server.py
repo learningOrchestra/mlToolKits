@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from flask import jsonify, Flask, request
 import os
@@ -42,10 +42,8 @@ def create_collection_watcher(filename: str) -> jsonify:
     try:
         cursor_name = db.watch(collection_name=filename, pipeline=pipeline)
 
-        return successful_response(result={
-            cursor_name: cursor_name
-        })
-    except errors.InvalidName:
+        return successful_response(cursor_name)
+    except:
         return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
 
 
@@ -100,11 +98,7 @@ def delete_collection_watcher(filename: str) -> jsonify:
                               observer_index)
 
     cursor.close()
-    return successful_response(
-        {
-            Constants.MESSAGE_RESULT: Constants.DELETED_MESSAGE
-        }
-    )
+    return successful_response(Constants.DELETED_MESSAGE)
 
 
 def error_response(subject: str = '') -> jsonify:
@@ -120,7 +114,7 @@ def error_response(subject: str = '') -> jsonify:
     )
 
 
-def successful_response(result: dict) -> jsonify:
+def successful_response(result: Union[dict, str]) -> jsonify:
 
     return (
         jsonify(
