@@ -25,29 +25,23 @@ class Database:
             full_document='updateLookup'
         )
 
-        if f'{collection_name}' in self.cursors_array is list:
-            size_of_cursors = len(self.cursors_array[f'{collection_name}'])
-            cursor_name = f'{collection_name}-{size_of_cursors}'
-            self.cursors_array[f'{collection_name}'].append(
-                cursor)
-            return cursor_name
+        if collection_name in self.cursors_array.keys():
+            cursorId = f'{collection_name}::' \
+                       f'{len(self.cursors_array[collection_name])}'
+            self.cursors_array[collection_name].append(cursor)
+        else:
+            self.cursors_array[f'{collection_name}'] = [cursor]
+            cursorId = "collection_name::0"
 
-        cursor_name = f'{collection_name}-{0}'
-        self.cursors_array[f'{collection_name}'] = [
-            cursor
-        ]
+        return cursorId
 
-        return cursor_name
-
-    def remove_watch(self, collection_name: str):
-        col_name, index = collection_name.split('-')
-        cursor = self.cursors_array[f'{col_name}'][int(index)]
+    def remove_watch(self, collection_name: str, observer_index: int):
+        cursor = self.cursors_array[collection_name][observer_index]
         cursor.close()
 
-    def get_cursor(self, collection_name: str) \
+    def get_cursor(self, collection_name: str, observer_index: int) \
             -> CollectionChangeStream:
-        col_name, index = collection_name.split('-')
-        return self.cursors_array[f'{col_name}'][int(index)]
+        return self.cursors_array[collection_name][observer_index]
 
     def insert_one_in_file(self, filename: str, json_object: dict) -> None:
         file_collection = self.database[filename]

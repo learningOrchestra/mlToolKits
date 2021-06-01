@@ -1,4 +1,6 @@
-from flask import jsonify, Flask
+from typing import Optional
+
+from flask import jsonify, Flask, request
 import os
 from pymongo import errors
 from utils.constants import Constants
@@ -37,27 +39,38 @@ def create_collection_watcher(filename: str) -> jsonify:
         },
     ]
 
-    print("------------------------------------------------",flush=True)
-    print(pipeline,flush=True)
-    print("------------------------------------------------",flush=True)
     try:
         cursor_name = db.watch(collection_name=filename, pipeline=pipeline)
 
         return successful_response(result={
             cursor_name: cursor_name
         })
-
     except errors.InvalidName:
-        # response invalid name
-        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER)
+        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
 
 
 @app.route("/observer/<filename>", methods=["GET"])
 def get_collection_data(filename: str) -> jsonify:
+    args = request.args
+    observer_index = try_get_args(args,[
+        'index',
+        'observer_index',
+        'observer'
+    ])
+
+    if observer_index is None:
+        observer_index = '0'
+
+    observer_index = int(observer_index)
+
     try:
-        cursor = db.get_cursor(collection_name=filename)
+        cursor = db.get_cursor(collection_name=filename,
+                               observer_index=observer_index)
     except KeyError:
         return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
+    except IndexError:
+        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
+                              observer_index)
 
     change = cursor.next()
     return successful_response(result=change)
@@ -65,10 +78,26 @@ def get_collection_data(filename: str) -> jsonify:
 
 @app.route("/observer/<filename>", methods=["DELETE"])
 def delete_collection_watcher(filename: str) -> jsonify:
+    args = request.args
+    observer_index = try_get_args(args, [
+        'index',
+        'observer_index',
+        'observer'
+    ])
+
+    if observer_index is None:
+        observer_index = '0'
+
+    observer_index = int(observer_index)
+
     try:
-        cursor = db.get_cursor(collection_name=filename)
+        cursor = db.get_cursor(collection_name=filename,
+                               observer_index=observer_index)
     except KeyError:
         return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
+    except IndexError:
+        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
+                              observer_index)
 
     cursor.close()
     return successful_response(
@@ -101,6 +130,14 @@ def successful_response(result: dict) -> jsonify:
         ),
         Constants.HTTP_STATUS_CODE_SUCCESS_FULFIlLED
     )
+
+def try_get_args(args: dict, args_list: []) -> Optional[str]:
+    for arg in args_list:
+        observer_index = args.get(arg)
+        if(observer_index is not None):
+            return observer_index
+
+    return None
 
 if __name__ == '__main__':
     app.run(
