@@ -20,10 +20,6 @@ class Database:
     def watch(self, collection_name: str, pipeline: []) -> str:
         collection = self.database[collection_name]
 
-        print("------------------------------------------------")
-        print(pipeline)
-        print("------------------------------------------------")
-
         cursor = collection.watch(
             pipeline=pipeline,
             full_document='updateLookup'
