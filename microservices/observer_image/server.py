@@ -21,7 +21,7 @@ db = Database(
 app = Flask(__name__)
 
 
-@app.route(f'{Constants.MICROSERVICE_URI_PATH}', methods=['GET', 'POST'])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}', methods=["POST"])
 def create_collection_watcher() -> jsonify:
     filename = request.json[Constants.REQUEST_JSON_FILENAME]
     observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
