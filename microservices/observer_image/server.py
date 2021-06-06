@@ -27,6 +27,8 @@ def create_collection_watcher(filename:str) -> jsonify:
     observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
     timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
 
+    print("a1")
+
     if observe_type == '' or observe_type == '1' or observe_type == 'wait':
         observe_pipeline = {
             '$match': {
@@ -52,6 +54,7 @@ def create_collection_watcher(filename:str) -> jsonify:
         return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'observe_type=' +
                               observe_type)
 
+    print("a2")
     pipeline = [
         observe_pipeline,
         {
@@ -63,6 +66,7 @@ def create_collection_watcher(filename:str) -> jsonify:
         },
     ]
 
+    print(pipeline)
     if timeout == '' or timeout is None:
         timeout = 0
     else:
@@ -72,6 +76,7 @@ def create_collection_watcher(filename:str) -> jsonify:
             return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'timeout='
                                   + timeout)
 
+    print("a3")
     try:
         cursor_name = db.watch(collection_name=filename,
                                pipeline=pipeline,
