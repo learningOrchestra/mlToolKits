@@ -21,15 +21,39 @@ db = Database(
 app = Flask(__name__)
 
 
-@app.route("/observer/<filename>", methods=["POST"])
-def create_collection_watcher(filename: str) -> jsonify:
-    pipeline = [
-        {
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}', methods=["POST"])
+def create_collection_watcher() -> jsonify:
+    filename = request.json[Constants.REQUEST_JSON_FILENAME]
+    observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
+    timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
+
+    if observe_type is '' or observe_type is '1' or observe_type is 'wait':
+        observe_pipeline = {
             '$match': {
-                '$or': [{'operationType': 'update'},
-                        {'operationType': 'insert'}]
+                '$and':
+                    [
+                        {'operationType': 'update'},
+                        {'fullDocument.finished': {'$eq': True}}
+                    ]
             }
-        },
+        }
+    elif observe_type is '2' or observe_type is 'observe':
+        observe_pipeline = {
+            '$match': {
+                '$or': [
+                    {'operationType': 'update'},
+                    {'operationType': 'insert'},
+                    {'operationType': 'replace'},
+                    {'operationType': 'delete'}
+                ]
+            }
+        }
+    else:
+        return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'type=' +
+                              observe_type)
+
+    pipeline = [
+        observe_pipeline,
         {
             '$addFields': {
                 'clusterTime': {'$dateToString': {'date': '$clusterTime'}},
@@ -39,15 +63,27 @@ def create_collection_watcher(filename: str) -> jsonify:
         },
     ]
 
+    if timeout is '':
+        timeout = 0
+    else:
+        try:
+            timeout = int(timeout)
+        except:
+            return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'timeout='
+                                  + timeout)
+
     try:
-        cursor_name = db.watch(collection_name=filename, pipeline=pipeline)
+        cursor_name = db.watch(collection_name=filename,
+                               pipeline=pipeline,
+                               timeout=timeout)
 
-        return successful_response(cursor_name)
+        return successful_response(Constants.API_PATH + cursor_name)
     except:
-        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
+        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
+                              filename)
 
 
-@app.route("/observer/<filename>", methods=["GET"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["GET"])
 def get_collection_data(filename: str) -> jsonify:
     args = request.args
     observer_index = try_get_args(args,[
@@ -65,7 +101,8 @@ def get_collection_data(filename: str) -> jsonify:
         cursor = db.get_cursor(collection_name=filename,
                                observer_index=observer_index)
     except KeyError:
-        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
+        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
+                              filename)
     except IndexError:
         return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
                               observer_index)
@@ -74,7 +111,7 @@ def get_collection_data(filename: str) -> jsonify:
     return successful_response(result=change)
 
 
-@app.route("/observer/<filename>", methods=["DELETE"])
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_collection_watcher(filename: str) -> jsonify:
     args = request.args
     observer_index = try_get_args(args, [
@@ -92,7 +129,8 @@ def delete_collection_watcher(filename: str) -> jsonify:
         cursor = db.get_cursor(collection_name=filename,
                                observer_index=observer_index)
     except KeyError:
-        return error_response(Constants.MESSAGE_RESPONSE_DATABASE)
+        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
+                              filename)
     except IndexError:
         return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
                               observer_index)
@@ -106,7 +144,7 @@ def error_response(subject: str = '') -> jsonify:
         jsonify(
             {
                 Constants.MESSAGE_RESULT: str(
-                    subject + Constants.MESSAGE_RESPONSE_NOT_FOUND
+                    Constants.MESSAGE_RESPONSE_INVALID + subject
                 )
             }
         ),

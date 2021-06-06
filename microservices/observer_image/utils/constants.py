@@ -13,12 +13,22 @@ class Constants:
     MESSAGE_RESULT = "result"
     DELETED_MESSAGE = "deleted observer"
 
+    API_PATH = "/api/learningOrchestra/v1/"
+
     HTTP_STATUS_CODE_SUCCESS_CREATED = 201
     HTTP_STATUS_CODE_SUCCESS_FULFIlLED = 200
     HTTP_STATUS_CODE_BAD_REQUEST = 400
     HTTP_STATUS_CODE_CONFLICT = 409
     HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 
-    MESSAGE_RESPONSE_OBSERVER = "observer index"
-    MESSAGE_RESPONSE_DATABASE = "database name"
-    MESSAGE_RESPONSE_NOT_FOUND = " not found"
+    REQUEST_JSON_OBSERVE_TYPE = 'type'
+    REQUEST_JSON_TIMEOUT = 'timeout'
+    REQUEST_JSON_FILENAME = 'filename'
+
+    MESSAGE_RESPONSE_OBSERVER = "observer index "
+    MESSAGE_RESPONSE_DATABASE = "database name "
+    MESSAGE_RESPONSE_FILENAME = "database name "
+    MESSAGE_RESPONSE_QUERY = "query parameter "
+    MESSAGE_RESPONSE_INVALID = "invalid "
+
+    MICROSERVICE_URI_PATH = "/observer"

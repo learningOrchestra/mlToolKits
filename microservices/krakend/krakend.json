@@ -1760,6 +1760,7 @@
           "host": [
             "http://observer:5010"
           ],
+          "timeout" : "0s",
           "extra_config": {}
         }
       ]
