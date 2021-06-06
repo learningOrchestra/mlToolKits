@@ -63,7 +63,7 @@ def create_collection_watcher(filename:str) -> jsonify:
         },
     ]
 
-    if timeout == '':
+    if timeout == '' or timeout is None:
         timeout = 0
     else:
         try:
