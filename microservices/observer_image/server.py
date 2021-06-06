@@ -27,7 +27,7 @@ def create_collection_watcher(filename:str) -> jsonify:
     observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
     timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
 
-    if observe_type is '' or observe_type is '1' or observe_type is 'wait':
+    if observe_type == '' or observe_type == '1' or observe_type == 'wait':
         observe_pipeline = {
             '$match': {
                 '$and':
@@ -37,7 +37,7 @@ def create_collection_watcher(filename:str) -> jsonify:
                     ]
             }
         }
-    elif observe_type is '2' or observe_type is 'observe':
+    elif observe_type == '2' or observe_type == 'observe':
         observe_pipeline = {
             '$match': {
                 '$or': [
@@ -49,7 +49,7 @@ def create_collection_watcher(filename:str) -> jsonify:
             }
         }
     else:
-        return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'type=' +
+        return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'observe_type=' +
                               observe_type)
 
     pipeline = [
@@ -63,7 +63,7 @@ def create_collection_watcher(filename:str) -> jsonify:
         },
     ]
 
-    if timeout is '':
+    if timeout == '':
         timeout = 0
     else:
         try:
