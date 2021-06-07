@@ -55,17 +55,17 @@ class Database:
         if "cursor" in cursor_data:
             return cursor_data["cursor"].next()
 
-        print('a3')
+        print('a3',flush=True)
         with collection.watch(
             pipeline=pipeline,
             full_document='updateLookup',
             max_await_time_ms=timeout
         ) as stream:
 
-            print('a4')
+            print('a4',flush=True)
             change = stream.next()
 
-            print('a5')
+            print('a5',flush=True)
             collection["cursor"] = stream
             return change
 
