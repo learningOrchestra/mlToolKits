@@ -20,8 +20,6 @@ class Database:
 
     def submit(self, collection_name: str, pipeline: [], timeout: int=0) -> str:
         if collection_name not in self.database.list_collection_names():
-            print("\nCOL!!!-------------\n")
-            print(self.database.list_collection_names(),flush=True)
             raise KeyError
 
         if collection_name in self.cursors_array.keys():

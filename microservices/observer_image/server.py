@@ -63,7 +63,6 @@ def create_collection_watcher() -> jsonify:
         },
     ]
 
-    print(pipeline,flush=True)
     if timeout == '' or timeout is None:
         timeout = 0
     else:
