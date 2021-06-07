@@ -27,6 +27,7 @@ def create_collection_watcher() -> jsonify:
     observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
     timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
 
+    print("OBSERVE TYPE = " + observe_type, flush=True)
     if observe_type == '' or observe_type == '1' or observe_type == 'wait':
         observe_pipeline = {
             '$match': {
@@ -94,6 +95,7 @@ def get_collection_data(filename: str) -> jsonify:
         'observer'
     ])
 
+    print("OBSERVER INDEX = " + observer_index,flush=True)
     if observer_index is None:
         observer_index = '0'
 
