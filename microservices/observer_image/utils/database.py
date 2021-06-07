@@ -19,7 +19,9 @@ class Database:
         self.cursors_array = dict()
 
     def submit(self, collection_name: str, pipeline: [], timeout: int=0) -> str:
-        if collection_name not in self.database:
+        if collection_name not in self.database.list_collection_names():
+            print("\nCOL!!!-------------\n")
+            print(self.database.list_collection_names(),flush=True)
             raise KeyError
 
         if collection_name in self.cursors_array.keys():
@@ -40,19 +42,18 @@ class Database:
 
     def watch(self, collection_name: str, observer_index: int=0):
         try:
-            collection = self.database[collection_name][observer_index]
+            collection = self.database[collection_name]
         except KeyError:
             raise KeyError('collection not found')
-        except IndexError:
-            raise IndexError('observer index not found')
 
-        timeout = collection["timeout"]
-        pipeline = collection["pipeline"]
+        cursor_data = self.cursors_array[collection_name][observer_index]
+        timeout = cursor_data["timeout"]
+        pipeline = cursor_data["pipeline"]
         timeout = timeout * self.__TIMEOUT_TIME_MULTIPLICATION \
             if timeout>0 else None
 
-        if "cursor" in collection:
-            return collection["cursor"].next()
+        if "cursor" in cursor_data:
+            return cursor_data["cursor"].next()
 
         with collection.watch(
             pipeline=pipeline,

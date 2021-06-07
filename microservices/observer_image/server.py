@@ -27,8 +27,6 @@ def create_collection_watcher(filename:str) -> jsonify:
     observe_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
     timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
 
-    print("a1",flush=True)
-
     if observe_type == '' or observe_type == '1' or observe_type == 'wait':
         observe_pipeline = {
             '$match': {
@@ -54,7 +52,6 @@ def create_collection_watcher(filename:str) -> jsonify:
         return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'observe_type=' +
                               observe_type)
 
-    print("a2",flush=True)
     pipeline = [
         observe_pipeline,
         {
@@ -76,7 +73,6 @@ def create_collection_watcher(filename:str) -> jsonify:
             return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'timeout='
                                   + timeout)
 
-    print("a3",flush=True)
     try:
         cursor_name = db.submit(collection_name=filename,
                                pipeline=pipeline,
@@ -106,7 +102,7 @@ def get_collection_data(filename: str) -> jsonify:
         change = db.watch(collection_name=filename,
                           observer_index=observer_index)
 
-        return successful_response(result=change)
+        return successful_response(result=change['fullDocument'])
     except KeyError:
         return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
                               filename)

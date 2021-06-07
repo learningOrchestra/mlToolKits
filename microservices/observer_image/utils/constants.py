@@ -27,7 +27,7 @@ class Constants:
 
     MESSAGE_RESPONSE_OBSERVER = "observer index "
     MESSAGE_RESPONSE_DATABASE = "database name "
-    MESSAGE_RESPONSE_FILENAME = "database name "
+    MESSAGE_RESPONSE_FILENAME = "collection name "
     MESSAGE_RESPONSE_QUERY = "query parameter "
     MESSAGE_RESPONSE_INVALID = "invalid "
 
