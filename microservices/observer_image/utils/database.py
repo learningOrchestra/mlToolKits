@@ -22,18 +22,17 @@ class Database:
         if collection_name not in self.database.list_collection_names():
             raise KeyError
 
+        collection_data = {
+            "pipeline":pipeline,
+            "timeout":timeout
+        }
+
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}?index=' \
                        f'{len(self.cursors_array[collection_name])}'
-            self.cursors_array[collection_name].append({
-                "pipeline":pipeline,
-                "timeout":timeout
-            })
+            self.cursors_array[collection_name].append(collection_data)
         else:
-            self.cursors_array[f'{collection_name}'] = [{
-                "pipeline":pipeline,
-                "timeout":timeout
-            }]
+            self.cursors_array[f'{collection_name}'] = [collection_data]
             cursorId = f'{collection_name}?index=0'
 
         return cursorId
@@ -44,6 +43,9 @@ class Database:
         except KeyError:
             raise KeyError('collection not found')
 
+        if observer_index >= len(self.cursors_array[collection_name]):
+            raise IndexError('invalid observer index')
+
         cursor_data = self.cursors_array[collection_name][observer_index]
         timeout = cursor_data["timeout"]
         pipeline = cursor_data["pipeline"]
@@ -53,12 +55,17 @@ class Database:
         if "cursor" in cursor_data:
             return cursor_data["cursor"].next()
 
+        print('a3')
         with collection.watch(
             pipeline=pipeline,
             full_document='updateLookup',
             max_await_time_ms=timeout
         ) as stream:
+
+            print('a4')
             change = stream.next()
+
+            print('a5')
             collection["cursor"] = stream
             return change
 
