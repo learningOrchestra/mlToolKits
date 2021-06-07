@@ -78,7 +78,8 @@ def create_collection_watcher(filename:str) -> jsonify:
                                pipeline=pipeline,
                                timeout=timeout)
 
-        return successful_response(Constants.API_PATH + cursor_name)
+        return successful_response(Constants.MICROSERVICE_URI_PATH +
+                                   cursor_name)
     except:
         return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
                               filename)
