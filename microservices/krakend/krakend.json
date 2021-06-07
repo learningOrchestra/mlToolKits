@@ -1733,7 +1733,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
+      "endpoint": "/api/learningOrchestra/v1/observer",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
