@@ -95,7 +95,7 @@ def get_collection_data(filename: str) -> jsonify:
         'observer'
     ])
 
-    print("OBSERVER INDEX = " + observer_index,flush=True)
+    print(args,flush=True)
     if observer_index is None:
         observer_index = '0'
 
