@@ -25,6 +25,7 @@ class Database:
             cursor = collection.watch(
                 pipeline=pipeline,
                 full_document='updateLookup',
+                max_await_time_ms=1 * self.__TIMEOUT_TIME_MULTIPLICATION
             )
         else:
             cursor = collection.watch(
