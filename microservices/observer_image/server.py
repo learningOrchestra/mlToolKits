@@ -78,7 +78,7 @@ def create_collection_watcher(filename:str) -> jsonify:
 
     print("a3",flush=True)
     try:
-        cursor_name = db.watch(collection_name=filename,
+        cursor_name = db.submit(collection_name=filename,
                                pipeline=pipeline,
                                timeout=timeout)
 
@@ -103,17 +103,16 @@ def get_collection_data(filename: str) -> jsonify:
     observer_index = int(observer_index)
 
     try:
-        cursor = db.get_cursor(collection_name=filename,
-                               observer_index=observer_index)
+        change = db.watch(collection_name=filename,
+                          observer_index=observer_index)
+
+        return successful_response(result=change)
     except KeyError:
         return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
                               filename)
     except IndexError:
         return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
                               observer_index)
-
-    change = cursor.next()
-    return successful_response(result=change)
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
@@ -131,8 +130,8 @@ def delete_collection_watcher(filename: str) -> jsonify:
     observer_index = int(observer_index)
 
     try:
-        cursor = db.get_cursor(collection_name=filename,
-                               observer_index=observer_index)
+        cursor = db.remove_watch(collection_name=filename,
+                                 observer_index=observer_index)
     except KeyError:
         return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
                               filename)
