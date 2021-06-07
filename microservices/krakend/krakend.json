@@ -1740,7 +1740,7 @@
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/observer/{name}?type=function/python",
+          "url_pattern": "/observer?type=function/python",
           "host": [
             "http://observer:5010"
           ],
@@ -1752,6 +1752,7 @@
       "endpoint": "/api/learningOrchestra/v1/observer/{name}",
       "method": "GET",
       "output_encoding": "no-op",
+      "timeout" : "60000s",
       "backend": [
         {
           "encoding": "no-op",
@@ -1760,7 +1761,6 @@
           "host": [
             "http://observer:5010"
           ],
-          "timeout" : "0s",
           "extra_config": {}
         }
       ]
