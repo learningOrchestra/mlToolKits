@@ -111,6 +111,7 @@ def get_collection_data(filename: str) -> jsonify:
         change = db.watch(collection_name=filename,
                           observer_index=observer_index)
 
+        print("what",flush=True)
         return successful_response(result=change['fullDocument'])
     except KeyError:
         print(f'ERROR {Constants.MESSAGE_RESPONSE_FILENAME}',flush=True)
