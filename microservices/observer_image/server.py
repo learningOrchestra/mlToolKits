@@ -110,9 +110,6 @@ def get_collection_data(filename: str) -> jsonify:
     try:
         change = db.watch(collection_name=filename,
                           observer_index=observer_index)
-
-        print("what",flush=True)
-        return successful_response(result=change['fullDocument'])
     except KeyError:
         print(f'ERROR {Constants.MESSAGE_RESPONSE_FILENAME}',flush=True)
         return error_response(f'{Constants.MESSAGE_RESPONSE_FILENAME} '
@@ -121,6 +118,9 @@ def get_collection_data(filename: str) -> jsonify:
         print(f'ERROR {Constants.MESSAGE_RESPONSE_OBSERVER}', flush=True)
         return error_response(f'{Constants.MESSAGE_RESPONSE_OBSERVER} '
                               f'{observer_index}')
+
+    print(change, flush=True)
+    return successful_response(result=change)
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
