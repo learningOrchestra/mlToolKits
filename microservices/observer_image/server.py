@@ -5,6 +5,7 @@ import os
 from pymongo import errors
 from utils.constants import Constants
 from utils.database import Database
+from utils.utils import Utils
 
 database_url = os.environ[Constants.DATABASE_URL]
 database_replica_set = os.environ[Constants.DATABASE_REPLICA_SET]
@@ -50,8 +51,8 @@ def create_collection_watcher() -> jsonify:
             }
         }
     else:
-        return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'observe_type=' +
-                              observe_type)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_QUERY} '
+                              f'observe_type={observe_type}')
 
     pipeline = [
         observe_pipeline,
@@ -70,26 +71,27 @@ def create_collection_watcher() -> jsonify:
         try:
             timeout = int(timeout)
         except:
-            return error_response(Constants.MESSAGE_RESPONSE_QUERY + 'timeout='
-                                  + timeout)
+            return error_response(f'{Constants.MESSAGE_RESPONSE_QUERY} '
+                                  f'timeout={timeout}')
+
 
     try:
         cursor_name = db.submit(collection_name=filename,
                                pipeline=pipeline,
                                timeout=timeout)
 
-        return successful_response(Constants.API_PATH +
-                                   Constants.MICROSERVICE_URI_PATH + '/' +
-                                   cursor_name)
+        return successful_response(f'{Constants.API_PATH} '
+                                   f'{Constants.MICROSERVICE_URI_PATH}/'
+                                   f'{cursor_name}')
     except:
-        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
-                              filename)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_FILENAME} '
+                              f'{filename}')
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["GET"])
 def get_collection_data(filename: str) -> jsonify:
     args = request.args
-    observer_index = try_get_args(args,[
+    observer_index = Utils.try_get_args(args,[
         'index',
         'observer_index',
         'observer'
@@ -109,19 +111,19 @@ def get_collection_data(filename: str) -> jsonify:
 
         return successful_response(result=change['fullDocument'])
     except KeyError:
-        print("ERROR " + Constants.MESSAGE_RESPONSE_FILENAME,flush=True)
-        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
-                              filename)
+        print(f'ERROR {Constants.MESSAGE_RESPONSE_FILENAME}',flush=True)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_FILENAME} '
+                              f'{filename}')
     except IndexError:
-        print("ERROR " + Constants.MESSAGE_RESPONSE_OBSERVER, flush=True)
-        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
-                              observer_index)
+        print(f'ERROR {Constants.MESSAGE_RESPONSE_OBSERVER}', flush=True)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_OBSERVER} '
+                              f'{observer_index}')
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>', methods=["DELETE"])
 def delete_collection_watcher(filename: str) -> jsonify:
     args = request.args
-    observer_index = try_get_args(args, [
+    observer_index = Utils.try_get_args(args, [
         'index',
         'observer_index',
         'observer'
@@ -136,11 +138,11 @@ def delete_collection_watcher(filename: str) -> jsonify:
         cursor = db.remove_watch(collection_name=filename,
                                  observer_index=observer_index)
     except KeyError:
-        return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
-                              filename)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_FILENAME} '
+                              f'{filename}')
     except IndexError:
-        return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
-                              observer_index)
+        return error_response(f'{Constants.MESSAGE_RESPONSE_OBSERVER} '
+                              f'{observer_index}')
 
     cursor.close()
     return successful_response(Constants.DELETED_MESSAGE)
@@ -151,7 +153,7 @@ def error_response(subject: str = '') -> jsonify:
         jsonify(
             {
                 Constants.MESSAGE_RESULT: str(
-                    Constants.MESSAGE_RESPONSE_INVALID + subject
+                    f'{Constants.MESSAGE_RESPONSE_INVALID} {subject}'
                 )
             }
         ),
@@ -169,14 +171,6 @@ def successful_response(result: Union[dict, str]) -> jsonify:
         ),
         Constants.HTTP_STATUS_CODE_SUCCESS_FULFIlLED
     )
-
-def try_get_args(args: dict, args_list: []) -> Optional[str]:
-    for arg in args_list:
-        observer_index = args.get(arg)
-        if(observer_index is not None):
-            return observer_index
-
-    return None
 
 if __name__ == '__main__':
     app.run(
