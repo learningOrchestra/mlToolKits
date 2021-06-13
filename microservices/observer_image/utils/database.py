@@ -67,8 +67,7 @@ class Database:
 
         collection["cursor"] = collection.watch(
             pipeline=pipeline,
-            full_document='updateLookup',
-            max_await_time_ms=timeout
+            full_document='updateLookup'
         ).next()
 
         return collection["cursor"]
