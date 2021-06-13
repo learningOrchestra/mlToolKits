@@ -55,21 +55,12 @@ class Database:
         if "cursor" in cursor_data:
             return cursor_data["cursor"].next()
 
-        print('a3')
-        print(pipeline,flush=True)
-        print("\n\n")
-        with collection.watch(
+        collection["cursor"] = collection.watch(
             pipeline=pipeline,
-            full_document='default',
-            max_await_time_ms=timeout
-        ) as stream:
+            full_document='updateLookup'
+        ).next()
 
-            print('a4',flush=True)
-            change = stream.next()
-
-            print('a5',flush=True)
-            collection["cursor"] = stream
-            return change
+        return collection["cursor"]
 
 
     def remove_watch(self, collection_name: str, observer_index: int):
