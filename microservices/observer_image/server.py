@@ -109,9 +109,11 @@ def get_collection_data(filename: str) -> jsonify:
 
         return successful_response(result=change['fullDocument'])
     except KeyError:
+        print("ERROR " + Constants.MESSAGE_RESPONSE_FILENAME,flush=True)
         return error_response(Constants.MESSAGE_RESPONSE_FILENAME +
                               filename)
     except IndexError:
+        print("ERROR " + Constants.MESSAGE_RESPONSE_OBSERVER, flush=True)
         return error_response(Constants.MESSAGE_RESPONSE_OBSERVER +
                               observer_index)
 
