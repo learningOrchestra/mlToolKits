@@ -48,11 +48,13 @@ class Database:
         if observer_index >= len(self.cursors_array[collection_name]):
             raise IndexError('invalid observer index')
 
-        metadata_query = {"_id": 0}
-        dataset_metadata = collection.find_one(metadata_query)
-
-        if dataset_metadata["finished"]:
-            return dataset_metadata
+        try:
+            metadata_query = {"_id": 0}
+            dataset_metadata = collection.find_one(metadata_query)
+            if dataset_metadata["finished"]:
+                return dataset_metadata
+        except:
+            pass
 
         cursor_data = self.cursors_array[collection_name][observer_index]
         timeout = cursor_data["timeout"]

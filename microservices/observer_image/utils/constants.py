@@ -25,10 +25,10 @@ class Constants:
     REQUEST_JSON_TIMEOUT = 'timeout'
     REQUEST_JSON_FILENAME = 'filename'
 
-    MESSAGE_RESPONSE_OBSERVER = "observer index "
-    MESSAGE_RESPONSE_DATABASE = "database name "
-    MESSAGE_RESPONSE_FILENAME = "collection name "
-    MESSAGE_RESPONSE_QUERY = "query parameter "
-    MESSAGE_RESPONSE_INVALID = "invalid "
+    MESSAGE_RESPONSE_OBSERVER = "observer index"
+    MESSAGE_RESPONSE_DATABASE = "database name"
+    MESSAGE_RESPONSE_FILENAME = "collection name"
+    MESSAGE_RESPONSE_QUERY = "query parameter"
+    MESSAGE_RESPONSE_INVALID = "invalid"
 
     MICROSERVICE_URI_PATH = "/observer"
