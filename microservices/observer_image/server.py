@@ -65,6 +65,7 @@ def create_collection_watcher() -> jsonify:
         },
     ]
 
+    print('a1',flush=True)
     if timeout == '' or timeout is None:
         timeout = 0
     else:
@@ -75,12 +76,13 @@ def create_collection_watcher() -> jsonify:
                                   f'timeout={timeout}')
 
 
+    print('a2',flush=True)
     try:
         cursor_name = db.submit(collection_name=filename,
                                pipeline=pipeline,
                                timeout=timeout)
 
-        return successful_response(f'{Constants.API_PATH} '
+        return successful_response(f'{Constants.API_PATH}'
                                    f'{Constants.MICROSERVICE_URI_PATH}/'
                                    f'{cursor_name}')
     except:

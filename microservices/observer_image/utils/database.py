@@ -27,6 +27,7 @@ class Database:
             "timeout":timeout
         }
 
+        print('a3', flush=True)
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}?index=' \
                        f'{len(self.cursors_array[collection_name])}'
@@ -35,6 +36,7 @@ class Database:
             self.cursors_array[f'{collection_name}'] = [collection_data]
             cursorId = f'{collection_name}?index=0'
 
+        print('a4', flush=True)
         return cursorId
 
     def watch(self, collection_name: str, observer_index: int=0):
