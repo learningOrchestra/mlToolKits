@@ -66,13 +66,13 @@ class Database:
             return cursor_data["cursor"].next()
 
         print("----------->a1",flush=True)
-        collection["cursor"] = collection.watch(
+        aux = collection.watch(
             pipeline=pipeline,
             full_document='updateLookup'
         )
         print("----------->a2",flush=True)
-
-        return collection["cursor"].next()
+        collection["cursor"] = aux
+        return aux.next()
 
 
     def remove_watch(self, collection_name: str, observer_index: int):
