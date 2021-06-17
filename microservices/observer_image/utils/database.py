@@ -66,20 +66,19 @@ class Database:
             return cursor_data["cursor"].next()
 
         print("----------->a1",flush=True)
-        aux = collection.watch(
+        cursor_data["cursor"] = collection.watch(
             pipeline=pipeline,
             full_document='updateLookup'
         )
         print("----------->a2",flush=True)
-        collection["cursor"] = aux
-        return aux.next()
+        return cursor_data["cursor"].next()
 
 
     def remove_watch(self, collection_name: str, observer_index: int):
-        collection = self.cursors_array[collection_name][observer_index]
+        cursor_data = self.cursors_array[collection_name][observer_index]
 
-        if "cursor" in collection:
-            collection["cursor"].close()
+        if "cursor" in cursor_data:
+            cursor_data["cursor"].close()
 
         self.cursors_array.pop(collection_name)
 
