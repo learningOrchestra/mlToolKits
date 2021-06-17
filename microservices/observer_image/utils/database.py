@@ -65,11 +65,12 @@ class Database:
         if "cursor" in cursor_data:
             return cursor_data["cursor"].next()
 
+        print("----------->a1",flush=True)
         collection["cursor"] = collection.watch(
             pipeline=pipeline,
             full_document='updateLookup'
         ).next()
-
+        print("----------->a2",flush=True)
         return collection["cursor"]
 
 
