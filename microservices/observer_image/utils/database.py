@@ -69,9 +69,10 @@ class Database:
         collection["cursor"] = collection.watch(
             pipeline=pipeline,
             full_document='updateLookup'
-        ).next()
+        )
         print("----------->a2",flush=True)
-        return collection["cursor"]
+
+        return collection["cursor"].next()
 
 
     def remove_watch(self, collection_name: str, observer_index: int):
