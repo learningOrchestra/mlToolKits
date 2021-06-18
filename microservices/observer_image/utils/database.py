@@ -26,11 +26,9 @@ class Database:
         if pipeline is None:
             pipeline = []
 
-        print('p1.1', flush=True)
         if collection_name not in self.database.list_collection_names():
             raise KeyError('collection not found')
 
-        print('p1.2', flush=True)
         if observer_type == '' or observer_type == Constants.OBSERVER_TYPE_WAIT:
             pipeline = [Constants.MONGO_WAIT_PIPELINE,
                         Constants.MONGO_FIELDS_PIPELINE]
@@ -47,14 +45,12 @@ class Database:
             max_await_time_ms=timeout
         )
 
-        print('p1.3', flush=True)
         if observer_name == '':
             observer_name = self.__get_default_observer_name(collection_name)
         elif collection_name in self.cursors_array.keys():
             if observer_name in self.cursors_array[collection_name].keys():
                 return f'{collection_name}/{observer_name}'
 
-        print('p1.4', flush=True)
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}/{observer_name}'
             self.cursors_array[collection_name][observer_name] = \
@@ -67,7 +63,6 @@ class Database:
                  }
             cursorId = f'{collection_name}/{observer_name}'
 
-        print('p1.5', flush=True)
         return cursorId
 
     def watch(self, collection_name: str, observer_name: str):

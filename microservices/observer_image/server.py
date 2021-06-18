@@ -41,7 +41,6 @@ def create_collection_watcher() -> jsonify:
     except:
         return error_response('invalid timeout attribute value')
 
-    print('p1',flush=True)
     try:
         cursor_name = db.submit(collection_name=filename,
                                 observer_type=observer_type,
@@ -49,13 +48,10 @@ def create_collection_watcher() -> jsonify:
                                 observer_name=observer_name,
                                 pipeline=pipeline)
 
-        print('p2', flush=True)
 
         return successful_response(f'{Constants.MICROSERVICE_URI_PATH}/'
                                    f'{cursor_name}')
     except Exception as e:
-
-        print('p3', flush=True)
         return error_response(str(e))
 
 
