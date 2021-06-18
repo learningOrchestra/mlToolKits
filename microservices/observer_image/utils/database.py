@@ -20,20 +20,23 @@ class Database:
 
     def submit(self, collection_name: str, pipeline: [], timeout: int=0) -> str:
         if collection_name not in self.database.list_collection_names():
-            raise KeyError
+            raise KeyError('collection not found')
 
-        collection_data = {
-            "pipeline":pipeline,
-            "timeout":timeout
-        }
+        collection = self.database[collection_name]
+
+        cursor = collection.watch(
+            pipeline=pipeline,
+            full_document='updateLookup',
+            max_await_time_ms=timeout
+        )
 
         print('a3', flush=True)
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}?index=' \
                        f'{len(self.cursors_array[collection_name])}'
-            self.cursors_array[collection_name].append(collection_data)
+            self.cursors_array[collection_name].append(cursor)
         else:
-            self.cursors_array[f'{collection_name}'] = [collection_data]
+            self.cursors_array[f'{collection_name}'] = [cursor]
             cursorId = f'{collection_name}?index=0'
 
         print('a4', flush=True)
@@ -68,7 +71,8 @@ class Database:
         print("----------->a1",flush=True)
         cursor_data["cursor"] = collection.watch(
             pipeline=pipeline,
-            full_document='updateLookup'
+            full_document='updateLookup',
+            max_await_time_ms=timeout
         )
         print("----------->a2",flush=True)
         return cursor_data["cursor"].next()
