@@ -50,7 +50,7 @@ class Database:
         print('p1.3', flush=True)
         if observer_name == '':
             observer_name = self.__get_default_observer_name(collection_name)
-        elif collection_name in self.cursors_array.keys()
+        elif collection_name in self.cursors_array.keys():
             if observer_name in self.cursors_array[collection_name].keys():
                 return f'{collection_name}/{observer_name}'
 
