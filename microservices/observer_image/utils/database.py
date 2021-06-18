@@ -44,10 +44,10 @@ class Database:
         if observer_name == '':
             observer_name = self.__get_default_observer_name(collection_name)
         elif observer_name in self.cursors_array[collection_name].keys():
-            return f'{collection_name}?index={observer_name}'
+            return f'{collection_name}/{observer_name}'
 
         if collection_name in self.cursors_array.keys():
-            cursorId = f'{collection_name}?index={observer_name}'
+            cursorId = f'{collection_name}/{observer_name}'
             self.cursors_array[collection_name][observer_name] = \
                 { 'cursor':cursor, 'type':observer_type}
         else:
@@ -56,7 +56,7 @@ class Database:
                     observer_name:{'cursor':cursor,
                                    'type':observer_type}
                  }
-            cursorId = f'{collection_name}?index={observer_name}'
+            cursorId = f'{collection_name}/{observer_name}'
 
         return cursorId
 
