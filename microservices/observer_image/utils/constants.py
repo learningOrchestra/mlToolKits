@@ -13,8 +13,6 @@ class Constants:
     MESSAGE_RESULT = "result"
     DELETED_MESSAGE = "deleted observer"
 
-    API_PATH = "/api/learningOrchestra/v1"
-
     HTTP_STATUS_CODE_SUCCESS_CREATED = 201
     HTTP_STATUS_CODE_SUCCESS_FULFILLED = 200
     HTTP_STATUS_CODE_BAD_REQUEST = 400

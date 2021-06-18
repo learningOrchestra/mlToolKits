@@ -51,8 +51,7 @@ def create_collection_watcher() -> jsonify:
 
         print('p2', flush=True)
 
-        return successful_response(f'{Constants.API_PATH}'
-                                   f'{Constants.MICROSERVICE_URI_PATH}/'
+        return successful_response(f'{Constants.MICROSERVICE_URI_PATH}/'
                                    f'{cursor_name}')
     except Exception as e:
 
