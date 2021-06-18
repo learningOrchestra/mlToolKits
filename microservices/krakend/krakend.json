@@ -1749,18 +1749,15 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
+      "endpoint": "/api/learningOrchestra/v1/observer/{name}/{observer_name}",
       "method": "GET",
       "output_encoding": "no-op",
-      "querystring_params": [
-        "index"
-      ],
       "timeout" : "60000s",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/observer/{name}?type=function/python",
+          "url_pattern": "/observer/{name}/{observer_name}?type=function/python",
           "host": [
             "http://observer:5010"
           ],
@@ -1769,14 +1766,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/observer/{name}",
+      "endpoint": "/api/learningOrchestra/v1/observer/{name}/{observer_name}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/observer/{name}?type=function/python",
+          "url_pattern": "/observer/{name}/{observer_name}?type=function/python",
           "host": [
             "http://observer:5010"
           ],
