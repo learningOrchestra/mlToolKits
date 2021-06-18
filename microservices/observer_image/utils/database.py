@@ -96,13 +96,22 @@ class Database:
         self.cursors_array[collection_name].pop(observer_name)
 
     def __get_default_observer_name(self, collection_name: str) -> str:
-        observer_name = f'{Constants.DEFAULT_OBSERVER_NAME_PREFIX}' \
-                        f'{len(self.cursors_array[collection_name])}'
+        if collection_name not in self.cursors_array:
+            index = 0
+            skip = True
+        else:
+            index = len(self.cursors_array[collection_name])
+            skip = False
+
+        observer_name = f'{Constants.DEFAULT_OBSERVER_NAME_PREFIX}{index}'
+        if skip:
+            return observer_name
+
         cn = 0
         while observer_name in self.cursors_array[collection_name].keys():
             cn += 1
             observer_name = f'{Constants.DEFAULT_OBSERVER_NAME_PREFIX}' \
-                            f'{len(self.cursors_array[collection_name]) + cn}'
+                            f'{index+cn}'
 
         return observer_name
 
