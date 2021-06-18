@@ -36,10 +36,12 @@ class Database:
             cursorId = f'{collection_name}?index=' \
                        f'{len(self.cursors_array[collection_name])}'
             self.cursors_array[collection_name].append({'cursor':cursor,
-                                                        'type':submit_type})
+                                                        'type':submit_type,
+                                                        'pipe':pipeline})
         else:
             self.cursors_array[f'{collection_name}'] = [{'cursor':cursor,
-                                                        'type':submit_type}]
+                                                        'type':submit_type,
+                                                        'pipe':pipeline}]
             cursorId = f'{collection_name}?index=0'
 
         print('a4', flush=True)
@@ -66,6 +68,7 @@ class Database:
             except:
                 pass
 
+        print(cursor_data['pipe'],flush=True)
         return cursor_data["cursor"].next()['fullDocument']
 
 
