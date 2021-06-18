@@ -16,19 +16,50 @@ class Constants:
     API_PATH = "/api/learningOrchestra/v1"
 
     HTTP_STATUS_CODE_SUCCESS_CREATED = 201
-    HTTP_STATUS_CODE_SUCCESS_FULFIlLED = 200
+    HTTP_STATUS_CODE_SUCCESS_FULFILLED = 200
     HTTP_STATUS_CODE_BAD_REQUEST = 400
     HTTP_STATUS_CODE_CONFLICT = 409
     HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
 
     REQUEST_JSON_OBSERVE_TYPE = 'observe_type'
     REQUEST_JSON_TIMEOUT = 'timeout'
+    REQUEST_OBSERVER_NAME = 'observer_name'
     REQUEST_JSON_FILENAME = 'filename'
-
-    MESSAGE_RESPONSE_OBSERVER = "observer index"
-    MESSAGE_RESPONSE_DATABASE = "database name"
-    MESSAGE_RESPONSE_FILENAME = "collection name"
-    MESSAGE_RESPONSE_QUERY = "query parameter"
-    MESSAGE_RESPONSE_INVALID = "invalid"
+    REQUEST_JSON_CUSTOM_PIPELINE = 'pipeline'
 
     MICROSERVICE_URI_PATH = "/observer"
+
+    MONGO_WAIT_PIPELINE = \
+        {
+            '$match': {
+                '$and':
+                    [
+                        {'operationType': 'update'},
+                        {'fullDocument.finished': {'$eq': True}}
+                    ]
+            }
+        }
+    MONGO_OBSERVE_PIPELINE = \
+        {
+            '$match': {
+                '$or': [
+                    {'operationType': 'update'},
+                    {'operationType': 'insert'},
+                    {'operationType': 'replace'},
+                    {'operationType': 'delete'}
+                ]
+            }
+        }
+    MONGO_FIELDS_PIPELINE = \
+        {
+            '$addFields': {
+                'clusterTime': {'$dateToString': {'date': '$clusterTime',
+                                                  'format': '%d/%m/%G'}}
+            }
+        }
+
+    DEFAULT_OBSERVER_NAME_PREFIX = 'observer_'
+
+    OBSERVER_TYPE_WAIT = 'wait'
+    OBSERVER_TYPE_OBSERVE = 'observe'
+    OBSERVER_TYPE_CUSTOM = 'custom'
