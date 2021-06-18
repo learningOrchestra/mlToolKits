@@ -23,18 +23,25 @@ app = Flask(__name__)
 def create_collection_watcher() -> jsonify:
     filename = request.json[Constants.REQUEST_JSON_FILENAME]
     observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
-    timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
-    observer_name = request.json[Constants.REQUEST_OBSERVER_NAME]
-    pipeline = request.json[Constants.REQUEST_JSON_CUSTOM_PIPELINE]
 
-    if timeout == '' or timeout is None:
+    try:
+        timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
+    except:
         timeout = 0
-    else:
-        try:
-            timeout = int(timeout)
-        except:
-            return error_response('invalid timeout attribute value')
+    try:
+        observer_name = request.json[Constants.REQUEST_OBSERVER_NAME]
+    except:
+        observer_name = ''
+    try:
+        pipeline = request.json[Constants.REQUEST_JSON_CUSTOM_PIPELINE]
+    except:
+        pipeline = []
+    try:
+        timeout = int(timeout)
+    except:
+        return error_response('invalid timeout attribute value')
 
+    print('p1',flush=True)
     try:
         cursor_name = db.submit(collection_name=filename,
                                 observer_type=observer_type,
@@ -42,10 +49,14 @@ def create_collection_watcher() -> jsonify:
                                 observer_name=observer_name,
                                 pipeline=pipeline)
 
+        print('p2', flush=True)
+
         return successful_response(f'{Constants.API_PATH}'
                                    f'{Constants.MICROSERVICE_URI_PATH}/'
                                    f'{cursor_name}')
     except Exception as e:
+
+        print('p3', flush=True)
         return error_response(str(e))
 
 
