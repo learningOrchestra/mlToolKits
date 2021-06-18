@@ -3,6 +3,7 @@ learning_orchestra_client/hello.py
 learning_orchestra_client/test.py
 learning_orchestra_client/build/
 learning_orchestra_client/dist/
+learningOrchestra/microservices/observer_image/__pycache__/
 learning_orchestra_client/learning_orchestra_client.egg-info
 learning_orchestra_client/learning_orchestra_client/__pycache__/__init__.cpython-38.pyc
 .gitignore

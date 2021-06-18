@@ -18,7 +18,8 @@ class Database:
         self.database = self.mongo_client[database_name]
         self.cursors_array = dict()
 
-    def submit(self, collection_name: str, pipeline: [], timeout: int=0) -> str:
+    def submit(self, collection_name: str, pipeline: [], timeout: int=0,
+               submit_type:str='wait') -> str:
         if collection_name not in self.database.list_collection_names():
             raise KeyError('collection not found')
 
@@ -34,9 +35,11 @@ class Database:
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}?index=' \
                        f'{len(self.cursors_array[collection_name])}'
-            self.cursors_array[collection_name].append(cursor)
+            self.cursors_array[collection_name].append({'cursor':cursor,
+                                                        'type':submit_type})
         else:
-            self.cursors_array[f'{collection_name}'] = [cursor]
+            self.cursors_array[f'{collection_name}'] = [{'cursor':cursor,
+                                                        'type':submit_type}]
             cursorId = f'{collection_name}?index=0'
 
         print('a4', flush=True)
@@ -51,40 +54,27 @@ class Database:
         if observer_index >= len(self.cursors_array[collection_name]):
             raise IndexError('invalid observer index')
 
-        try:
-            metadata_query = {"_id": 0}
-            dataset_metadata = collection.find_one(metadata_query)
-            if dataset_metadata["finished"]:
-                return dataset_metadata
-        except:
-            pass
-
         cursor_data = self.cursors_array[collection_name][observer_index]
-        timeout = cursor_data["timeout"]
-        pipeline = cursor_data["pipeline"]
-        timeout = timeout * self.__TIMEOUT_TIME_MULTIPLICATION \
-            if timeout>0 else None
 
-        if "cursor" in cursor_data:
-            return cursor_data["cursor"].next()
+        if (cursor_data['type'] == 'wait' or cursor_data['type'] == '1' or
+            cursor_data['type'] == ''):
+            try:
+                metadata_query = {"_id": 0}
+                dataset_metadata = collection.find_one(metadata_query)
+                if dataset_metadata["finished"]:
+                    return dataset_metadata
+            except:
+                pass
 
-        print("----------->a1",flush=True)
-        cursor_data["cursor"] = collection.watch(
-            pipeline=pipeline,
-            full_document='updateLookup',
-            max_await_time_ms=timeout
-        )
-        print("----------->a2",flush=True)
-        return cursor_data["cursor"].next()
+        return cursor_data["cursor"].next()['fullDocument']
 
 
     def remove_watch(self, collection_name: str, observer_index: int):
         cursor_data = self.cursors_array[collection_name][observer_index]
 
-        if "cursor" in cursor_data:
-            cursor_data["cursor"].close()
-
-        self.cursors_array.pop(collection_name)
+        cursor_data["cursor"].close()
+        #TODO - implementar uma maneira de fazer o management dos observer index
+        #self.cursors_array[collection_name].pop(observer_index)
 
     def get_observer_data(self, collection_name: str, observer_index: int) \
             -> dict:
