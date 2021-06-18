@@ -2,7 +2,7 @@ from typing import Union
 
 from pymongo import MongoClient, errors
 from pymongo.change_stream import CollectionChangeStream
-from constants import Constants
+from utils.constants import Constants
 
 
 class Database:
