@@ -27,7 +27,7 @@ class Constants:
     REQUEST_JSON_FILENAME = 'filename'
     REQUEST_JSON_CUSTOM_PIPELINE = 'pipeline'
 
-    MICROSERVICE_URI_PATH = "/observer"
+    MICROSERVICE_URI_PATH = "/api/learningOrchestra/v1/observer"
 
     MONGO_WAIT_PIPELINE = \
         {
