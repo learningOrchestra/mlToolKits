@@ -18,12 +18,15 @@ class Constants:
     HTTP_STATUS_CODE_BAD_REQUEST = 400
     HTTP_STATUS_CODE_CONFLICT = 409
     HTTP_STATUS_CODE_NOT_ACCEPTABLE = 406
+    HTTP_STATUS_CODE_TIMED_OUT = 408
 
     REQUEST_JSON_OBSERVE_TYPE = 'observe_type'
     REQUEST_JSON_TIMEOUT = 'timeout'
     REQUEST_OBSERVER_NAME = 'observer_name'
     REQUEST_JSON_FILENAME = 'filename'
     REQUEST_JSON_CUSTOM_PIPELINE = 'pipeline'
+    REQUEST_JSON_NEW_OBSERVER_NAME = 'new_observer'
+    REQUEST_JSON_NEW_COLLECTION_NAME = 'new_collection'
 
     MICROSERVICE_URI_PATH = "/api/learningOrchestra/v1/observer"
 

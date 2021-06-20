@@ -22,9 +22,14 @@ app = Flask(__name__)
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}', methods=["POST"])
 def create_collection_watcher() -> jsonify:
-    filename = request.json[Constants.REQUEST_JSON_FILENAME]
-    observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
-
+    try:
+        filename = request.json[Constants.REQUEST_JSON_FILENAME]
+    except:
+        return error_response('missing filename value')
+    try:
+        observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
+    except:
+        return error_response('missing observer_type value')
     try:
         timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
     except:
@@ -40,7 +45,7 @@ def create_collection_watcher() -> jsonify:
     try:
         timeout = int(timeout)
     except:
-        return error_response('invalid timeout attribute value')
+        return error_response('invalid timeout value')
 
     try:
         cursor_name = db.submit(collection_name=filename,
@@ -52,6 +57,8 @@ def create_collection_watcher() -> jsonify:
 
         return successful_response(f'{Constants.MICROSERVICE_URI_PATH}/'
                                    f'{cursor_name}')
+    except KeyError as ke:
+        return error_response(str(ke),Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE)
     except Exception as e:
         return error_response(str(e))
 
@@ -62,13 +69,58 @@ def get_collection_data(filename: str, observer_name: str) -> jsonify:
     try:
         change = db.watch(collection_name=filename,
                       observer_name=observer_name)
+    except ValueError as ve:
+        return error_response(str(ve),Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE)
     except Exception as e:
         return error_response(str(e))
 
     if change is None:
-        return error_response('observer timed out', code=408)
+        return error_response('observer timed out',
+                              code=Constants.HTTP_STATUS_CODE_TIMED_OUT)
 
     return successful_response(result=change)
+
+
+@app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>/<observer_name>',
+           methods=["PATCH"])
+def update_collection_watcher(filename: str, observer_name: str) -> jsonify:
+    try:
+        observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
+    except:
+        observer_type = None
+    try:
+        timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
+    except:
+        timeout = None
+    try:
+        pipeline = request.json[Constants.REQUEST_JSON_CUSTOM_PIPELINE]
+    except:
+        pipeline = None
+    try:
+        new_observer = request.json[Constants.REQUEST_JSON_NEW_OBSERVER_NAME]
+    except:
+        new_observer = None
+    try:
+        new_collection = \
+            request.json[Constants.REQUEST_JSON_NEW_COLLECTION_NAME]
+    except:
+        new_collection = None
+    try:
+        if timeout is not None:
+            timeout = int(timeout)
+    except:
+        return error_response('invalid timeout value')
+    try:
+        cursor_name = db.update_watch(filename,observer_name,new_collection,
+                                      new_observer, observer_type,timeout,
+                                      pipeline)
+    except ValueError as ve:
+        return error_response(str(ve),Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE)
+    except Exception as e:
+        return error_response(str(e))
+
+    return successful_response(f'{Constants.MICROSERVICE_URI_PATH}/'
+                               f'{cursor_name}')
 
 
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>/<observer_name>',
@@ -77,6 +129,8 @@ def delete_collection_watcher(filename: str, observer_name: str) -> jsonify:
     try:
         db.remove_watch(collection_name=filename,
                         observer_name=observer_name)
+    except ValueError as ve:
+        return error_response(str(ve),Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE)
     except Exception as e:
         return error_response(str(e))
 
