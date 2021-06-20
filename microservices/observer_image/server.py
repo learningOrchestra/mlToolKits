@@ -88,6 +88,7 @@ def update_collection_watcher(filename: str, observer_name: str) -> jsonify:
         observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
         if(observer_type == ""):
             observer_type = None
+
     except:
         observer_type = None
     try:

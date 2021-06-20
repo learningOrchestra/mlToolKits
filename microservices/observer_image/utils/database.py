@@ -33,14 +33,7 @@ class Database:
         if collection_name not in self.database.list_collection_names():
             raise KeyError('collection not found')
 
-        if observer_type == '' or observer_type == Constants.OBSERVER_TYPE_WAIT:
-            pipeline = [Constants.MONGO_WAIT_PIPELINE,
-                        Constants.MONGO_FIELDS_PIPELINE]
-        elif observer_type == Constants.OBSERVER_TYPE_OBSERVE:
-            pipeline = [Constants.MONGO_OBSERVE_PIPELINE,
-                        Constants.MONGO_FIELDS_PIPELINE]
-        elif observer_type != Constants.OBSERVER_TYPE_CUSTOM:
-            raise ValueError(f'invalid observer_type value')
+        pipeline = self.__check_observer_type(observer_type,pipeline)
 
         collection = self.database[collection_name]
         cursor = collection.watch(
@@ -72,7 +65,6 @@ class Database:
             cursorId = f'{collection_name}/{observer_name}'
 
         return cursorId
-
 
     def watch(self, collection_name: str, observer_name: str):
         self.__check_parameters(collection_name, observer_name)
@@ -132,13 +124,15 @@ class Database:
         except KeyError:
             pass
 
-        if pipeline is not None and \
-                cursor_type == Constants.OBSERVER_TYPE_CUSTOM:
+        if ( pipeline is not None and
+             cursor_type == Constants.OBSERVER_TYPE_CUSTOM ) or \
+                cursor_type != cursor_data['type']:
+
+            cursor_pipeline = self.__check_observer_type(cursor_type,pipeline)
             self.remove_watch(collection_name, observer_name, True)
             return self.submit(cursor_collection,cursor_type,cursor_timeout,
-                               cursor_name, pipeline, updating=True)
+                               cursor_name, cursor_pipeline, updating=True)
         else:
-            cursor_data['type'] = cursor_type
             cursor_data['timeout'] = cursor_timeout
             self.remove_watch(collection_name, observer_name, True)
 
@@ -194,6 +188,21 @@ class Database:
         if observer_name not in self.cursors_array[collection_name].keys():
             raise KeyError(f'invalid observer name for collection '
                            f'{collection_name}')
+
+
+    def __check_observer_type(self, observer_type: str, pipeline=None):
+        if pipeline is None:
+            pipeline = []
+        if observer_type == '' or observer_type == Constants.OBSERVER_TYPE_WAIT:
+            pipeline = [Constants.MONGO_WAIT_PIPELINE,
+                        Constants.MONGO_FIELDS_PIPELINE]
+        elif observer_type == Constants.OBSERVER_TYPE_OBSERVE:
+            pipeline = [Constants.MONGO_OBSERVE_PIPELINE,
+                        Constants.MONGO_FIELDS_PIPELINE]
+        elif observer_type != Constants.OBSERVER_TYPE_CUSTOM:
+            raise ValueError(f'invalid observer_type value')
+
+        return pipeline
 
 
     def get_observer_data(self, collection_name: str, observer_name: int) \
