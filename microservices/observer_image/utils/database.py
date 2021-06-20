@@ -4,7 +4,7 @@ from pymongo import MongoClient, errors
 from pymongo.change_stream import CollectionChangeStream
 from utils.constants import Constants
 
-from microservices.observer_image.utils.utils import Utils
+from utils.utils import Utils
 
 
 class Database:
