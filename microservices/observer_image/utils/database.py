@@ -200,7 +200,7 @@ class Database:
             pipeline = [Constants.MONGO_OBSERVE_PIPELINE,
                         Constants.MONGO_FIELDS_PIPELINE]
         elif observer_type != Constants.OBSERVER_TYPE_CUSTOM:
-            raise ValueError(f'invalid observer_type value')
+            raise ValueError(f'invalid observe_type value')
 
         return pipeline
 
