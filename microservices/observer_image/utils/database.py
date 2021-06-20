@@ -178,7 +178,7 @@ class Database:
             raise ValueError(f'this collection does not '
                            f'exist in the database')
         if collection_name not in self.cursors_array.keys():
-            raise KeyError(f'the collection {collection_name} has no '
+            raise ValueError(f'the collection {collection_name} has no '
                            f'observers assigned to it')
         if observer_name not in self.cursors_array[collection_name].keys():
             raise KeyError(f'invalid observer name for collection '
