@@ -38,6 +38,7 @@ def create_collection_watcher() -> jsonify:
         pipeline = []
     try:
         timeout = int(timeout)
+        timeout *= 1000
     except:
         return error_response('invalid timeout attribute value')
 
@@ -64,6 +65,9 @@ def get_collection_data(filename: str, observer_name: str) -> jsonify:
     except Exception as e:
         return error_response(str(e))
 
+    if change is None:
+        return error_response('observer timed out', code=408)
+
     return successful_response(result=change)
 
 
@@ -79,14 +83,15 @@ def delete_collection_watcher(filename: str, observer_name: str) -> jsonify:
     return successful_response(Constants.DELETED_MESSAGE)
 
 
-def error_response(subject: str = '') -> jsonify:
+def error_response(subject: str = '',
+                   code: int=Constants.HTTP_STATUS_CODE_BAD_REQUEST) -> jsonify:
     return (
         jsonify(
             {
                 Constants.MESSAGE_RESULT: str(subject)
             }
         ),
-        Constants.HTTP_STATUS_CODE_BAD_REQUEST
+        code
     )
 
 

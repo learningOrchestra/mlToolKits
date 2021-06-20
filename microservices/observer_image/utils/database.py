@@ -4,6 +4,8 @@ from pymongo import MongoClient, errors
 from pymongo.change_stream import CollectionChangeStream
 from utils.constants import Constants
 
+from microservices.observer_image.utils.utils import Utils
+
 
 class Database:
     __TIMEOUT_TIME_MULTIPLICATION = 1000
@@ -41,8 +43,7 @@ class Database:
         collection = self.database[collection_name]
         cursor = collection.watch(
             pipeline=pipeline,
-            full_document='updateLookup',
-            max_await_time_ms=timeout
+            full_document='updateLookup'
         )
 
         if observer_name == '':
@@ -59,7 +60,8 @@ class Database:
             self.cursors_array[f'{collection_name}'] = \
                 {
                     observer_name:{'cursor':cursor,
-                                   'type':observer_type}
+                                   'type':observer_type,
+                                   'timeout':timeout}
                  }
             cursorId = f'{collection_name}/{observer_name}'
 
@@ -80,7 +82,11 @@ class Database:
             except:
                 pass
 
-        return cursor_data["cursor"].next()['fullDocument']
+        helper = Utils()
+        return helper.call_cursor_with_timeout(
+            cursor_data["cursor"],
+            cursor_data["timeout"]
+        )['fullDocument']
 
 
     def remove_watch(self, collection_name: str, observer_name: str):
