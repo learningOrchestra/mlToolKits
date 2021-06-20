@@ -25,8 +25,6 @@ class Constants:
     REQUEST_JSON_OBSERVER_NAME = 'observer_name'
     REQUEST_JSON_FILENAME = 'filename'
     REQUEST_JSON_CUSTOM_PIPELINE = 'pipeline'
-    REQUEST_JSON_NEW_OBSERVER_NAME = 'new_observer'
-    REQUEST_JSON_NEW_COLLECTION_NAME = 'new_collection'
 
     MICROSERVICE_URI_PATH = "/api/learningOrchestra/v1/observer"
 

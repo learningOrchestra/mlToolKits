@@ -107,7 +107,7 @@ class Database:
                      pipeline:[]=None) -> str:
 
         self.__check_parameters(collection_name, observer_name)
-        cursor_data = self.remove_watch(collection_name, observer_name, True)
+        cursor_data = self.cursors_array[collection_name][observer_name]
 
         cursor_name = observer_new_name \
             if observer_new_name is not None \
@@ -129,12 +129,14 @@ class Database:
 
         if pipeline is not None and \
                 cursor_type == Constants.OBSERVER_TYPE_CUSTOM:
+            self.remove_watch(collection_name, observer_name, True)
             return self.submit(cursor_collection,cursor_type,cursor_timeout,
                                cursor_name, pipeline, updating=True)
         else:
             cursor_data['type'] = cursor_type
             cursor_data['timeout'] = cursor_timeout
             self.cursors_array[cursor_collection][cursor_name] = cursor_data
+            self.remove_watch(collection_name, observer_name, True)
             return  f'{cursor_collection}/{cursor_name}'
 
 
