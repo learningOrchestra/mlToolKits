@@ -35,7 +35,7 @@ def create_collection_watcher() -> jsonify:
     except:
         timeout = 0
     try:
-        observer_name = request.json[Constants.REQUEST_OBSERVER_NAME]
+        observer_name = request.json[Constants.REQUEST_JSON_OBSERVER_NAME]
     except:
         observer_name = ''
     try:
@@ -86,23 +86,33 @@ def get_collection_data(filename: str, observer_name: str) -> jsonify:
 def update_collection_watcher(filename: str, observer_name: str) -> jsonify:
     try:
         observer_type = request.json[Constants.REQUEST_JSON_OBSERVE_TYPE]
+        if(observer_type == ""):
+            observer_type = None
     except:
         observer_type = None
     try:
         timeout = request.json[Constants.REQUEST_JSON_TIMEOUT]
+        if(timeout == ""):
+            timeout = None
     except:
         timeout = None
     try:
         pipeline = request.json[Constants.REQUEST_JSON_CUSTOM_PIPELINE]
+        if (pipeline == ""):
+            pipeline = None
     except:
         pipeline = None
     try:
-        new_observer = request.json[Constants.REQUEST_JSON_NEW_OBSERVER_NAME]
+        new_observer = request.json[Constants.REQUEST_JSON_OBSERVER_NAME]
+        if (new_observer == ""):
+            new_observer = None
     except:
         new_observer = None
     try:
         new_collection = \
-            request.json[Constants.REQUEST_JSON_NEW_COLLECTION_NAME]
+            request.json[Constants.REQUEST_JSON_FILENAME]
+        if (new_collection == ""):
+            new_collection = None
     except:
         new_collection = None
     try:

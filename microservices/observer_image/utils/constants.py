@@ -22,7 +22,7 @@ class Constants:
 
     REQUEST_JSON_OBSERVE_TYPE = 'observe_type'
     REQUEST_JSON_TIMEOUT = 'timeout'
-    REQUEST_OBSERVER_NAME = 'observer_name'
+    REQUEST_JSON_OBSERVER_NAME = 'observer_name'
     REQUEST_JSON_FILENAME = 'filename'
     REQUEST_JSON_CUSTOM_PIPELINE = 'pipeline'
     REQUEST_JSON_NEW_OBSERVER_NAME = 'new_observer'

@@ -107,11 +107,6 @@ class Database:
                      pipeline:[]=None) -> str:
 
         self.__check_parameters(collection_name, observer_name)
-        try:
-            self.__check_parameters(collection_new_name,observer_new_name)
-        except KeyError:
-            pass
-
         cursor_data = self.remove_watch(collection_name, observer_name, True)
 
         cursor_name = observer_new_name \
@@ -126,6 +121,11 @@ class Database:
         cursor_timeout = timeout \
             if timeout is not None \
             else cursor_data['timeout']
+
+        try:
+            self.__check_parameters(cursor_collection,cursor_name)
+        except KeyError:
+            pass
 
         if pipeline is not None and \
                 cursor_type == Constants.OBSERVER_TYPE_CUSTOM:
