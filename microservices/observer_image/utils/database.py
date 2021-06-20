@@ -83,10 +83,15 @@ class Database:
                 pass
 
         helper = Utils()
-        return helper.call_cursor_with_timeout(
+        result = helper.call_cursor_with_timeout(
             cursor_data["cursor"],
             cursor_data["timeout"]
-        )['fullDocument']
+        )
+
+        if result is None:
+            return None
+
+        return result['fullDocument']
 
 
     def remove_watch(self, collection_name: str, observer_name: str):
