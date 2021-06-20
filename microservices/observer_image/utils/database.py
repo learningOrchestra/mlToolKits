@@ -136,7 +136,13 @@ class Database:
             cursor_data['type'] = cursor_type
             cursor_data['timeout'] = cursor_timeout
             self.remove_watch(collection_name, observer_name, True)
-            self.cursors_array[cursor_collection][cursor_name] = cursor_data
+
+            if cursor_collection not in self.cursors_array.keys():
+                self.cursors_array[cursor_collection] = \
+                    { cursor_name: cursor_data }
+            else:
+                self.cursors_array[cursor_collection][cursor_name] = cursor_data
+
             return  f'{cursor_collection}/{cursor_name}'
 
 
@@ -178,7 +184,7 @@ class Database:
             raise ValueError(f'this collection does not '
                            f'exist in the database')
         if collection_name not in self.cursors_array.keys():
-            raise ValueError(f'the collection {collection_name} has no '
+            raise KeyError(f'the collection {collection_name} has no '
                            f'observers assigned to it')
         if observer_name not in self.cursors_array[collection_name].keys():
             raise KeyError(f'invalid observer name for collection '
