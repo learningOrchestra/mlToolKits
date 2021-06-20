@@ -38,7 +38,6 @@ def create_collection_watcher() -> jsonify:
         pipeline = []
     try:
         timeout = int(timeout)
-        timeout *= 1000
     except:
         return error_response('invalid timeout attribute value')
 
