@@ -14,13 +14,16 @@ class Utils:
                           name='call_mongo_watcher')
         process.start()
 
+        print(f"waiting timeout = {timeout}",flush=True)
         if timeout <= 0:
             process.join()
         else:
             process.join(timeout=timeout)
 
+        print(f"finished timeout = {timeout}",flush=True)
+        process.terminate()
+
         if process.exitcode is None:
-            process.terminate()
             return None
 
         result = self.__MONGO_NEXT_RESULT

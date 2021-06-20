@@ -83,6 +83,7 @@ class Database:
                 pass
 
         helper = Utils()
+        print(f"waiting!!", flush=True)
         return helper.call_cursor_with_timeout(
             cursor_data["cursor"],
             cursor_data["timeout"]
