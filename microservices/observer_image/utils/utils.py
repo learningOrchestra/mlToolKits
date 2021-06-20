@@ -10,8 +10,11 @@ class Utils:
     def call_cursor_with_timeout(self,cursor: CollectionChangeStream,
                                  timeout: int = 0):
 
+        print(f"waiting2!! {timeout}", flush=True)
         process = Process(target=self.__call_mongo_watcher(cursor),
                           name='call_mongo_watcher')
+
+        print(f"waiting3!! {timeout}", flush=True)
         process.start()
 
         print(f"waiting timeout = {timeout}",flush=True)
