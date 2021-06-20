@@ -28,10 +28,14 @@ class Utils:
             process.join(timeout=timeout)
 
         print(f"finished timeout = {timeout}",flush=True)
+
         process.terminate()
+        print(f"error?",flush=True)
 
         if process.exitcode is None:
             return None
+
+        print(f"timeout?",flush=True)
 
         result = self.__MONGO_NEXT_RESULT
         self.__MONGO_NEXT_RESULT = None
