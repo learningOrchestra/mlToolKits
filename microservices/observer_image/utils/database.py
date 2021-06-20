@@ -106,7 +106,12 @@ class Database:
                      observer_type:str=None, timeout: int=None,
                      pipeline:[]=None) -> str:
 
-        self.__check_parameters(collection_name, observer_name)
+        try:
+            self.__check_parameters(collection_name, observer_name)
+        except ValueError:
+            raise ValueError(f'the collection specified in the url does not '
+                             f'exist in the database')
+
         cursor_data = self.cursors_array[collection_name][observer_name]
 
         cursor_name = observer_new_name \
