@@ -1,3 +1,4 @@
+import traceback
 from typing import Optional, Union
 
 from flask import jsonify, Flask, request
@@ -58,9 +59,10 @@ def create_collection_watcher() -> jsonify:
 @app.route(f'{Constants.MICROSERVICE_URI_PATH}/<filename>/<observer_name>',
            methods=["GET"])
 def get_collection_data(filename: str, observer_name: str) -> jsonify:
+    change = db.watch(collection_name=filename,
+                      observer_name=observer_name)
     try:
-        change = db.watch(collection_name=filename,
-                          observer_name=observer_name)
+        pass
     except Exception as e:
         return error_response(str(e))
 
