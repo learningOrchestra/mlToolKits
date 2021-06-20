@@ -32,6 +32,7 @@ class Utils:
         print(f"error?",flush=True)
 
         if process.exitcode is None:
+            print(f"error2?", flush=True)
             process.terminate()
             return None
 
