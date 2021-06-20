@@ -24,9 +24,7 @@ class Utils:
         else:
             process.join(timeout=timeout)
 
-        print("e1",flush=True)
         process.terminate()
-        print("e2",flush=True)
         if process.exitcode is None:
             return None
 

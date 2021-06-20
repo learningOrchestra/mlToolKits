@@ -55,7 +55,7 @@ class Database:
         if collection_name in self.cursors_array.keys():
             cursorId = f'{collection_name}/{observer_name}'
             self.cursors_array[collection_name][observer_name] = \
-                { 'cursor':cursor, 'type':observer_type}
+                { 'cursor':cursor, 'type':observer_type, 'timeout':timeout }
         else:
             self.cursors_array[f'{collection_name}'] = \
                 {
