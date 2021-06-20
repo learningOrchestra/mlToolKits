@@ -29,12 +29,13 @@ class Utils:
 
         print(f"finished timeout = {timeout}",flush=True)
 
-        process.terminate()
         print(f"error?",flush=True)
 
         if process.exitcode is None:
+            process.terminate()
             return None
 
+        process.terminate()
         print(f"timeout?",flush=True)
 
         result = self.__MONGO_NEXT_RESULT
