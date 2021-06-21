@@ -1731,6 +1731,22 @@
           "extra_config": {}
         }
       ]
+    },
+    {
+      "endpoint": "/api/learningOrchestra/v1/function/python/{filename}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "DELETE",
+          "url_pattern": "/codeExecutor/{filename}?type=function/python",
+          "host": [
+            "http://codexecutor:5009"
+          ],
+          "extra_config": {}
+        }
+      ]
     }
   ],
   "extra_config": {
