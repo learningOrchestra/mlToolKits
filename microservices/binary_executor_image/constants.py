@@ -10,6 +10,9 @@ class Constants:
     METHOD_PARAMETERS_FIELD_NAME = "methodParameters"
     TYPE_FIELD_NAME = "type"
     EXCEPTION_FIELD_NAME = "exception"
+    MONITORING_PATH_FIELD_NAME = "monitoring_path"
+    EXTRA_RESULTS = "extra_results"
+    MONITORING_NICKNAME_FIELD_NAME = "nickname"
 
     MODELS_VOLUME_PATH = "MODELS_VOLUME_PATH"
     BINARY_VOLUME_PATH = "BINARY_VOLUME_PATH"
@@ -59,6 +62,8 @@ class Constants:
     EXPLORE_SCIKITLEARN_TYPE = "explore/scikitlearn"
     EXPLORE_TENSORFLOW_TYPE = "explore/tensorflow"
 
+    MONITORING_TENSORFLOW_TYPE = "monitoring/tensorflow"
+
     API_PATH = "/api/learningOrchestra/v1/"
 
     MICROSERVICE_URI_SWITCHER = {
@@ -70,6 +75,7 @@ class Constants:
         EVALUATE_TENSORFLOW_TYPE: f'{API_PATH}{EVALUATE_TENSORFLOW_TYPE}',
         PREDICT_SCIKITLEARN_TYPE: f'{API_PATH}{PREDICT_SCIKITLEARN_TYPE}',
         PREDICT_TENSORFLOW_TYPE: f'{API_PATH}{PREDICT_TENSORFLOW_TYPE}',
+        MONITORING_TENSORFLOW_TYPE: f'{API_PATH}{MONITORING_TENSORFLOW_TYPE}',
     }
 
     MICROSERVICE_URI_PATH = "/binaryExecutor"

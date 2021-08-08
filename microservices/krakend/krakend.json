@@ -1282,6 +1282,22 @@
       ]
     },
     {
+      "endpoint": "/api/learningOrchestra/v1/monitoring/tensorflow/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "encoding": "no-op",
+          "method": "GET",
+          "url_pattern": "/binaryexecutor/monitoring/tensorflow",
+          "host": [
+            "http://binaryexecutor:5008"
+          ],
+          "extra_config": {}
+        }
+      ]
+    },
+    {
       "endpoint": "/api/learningOrchestra/v1/explore/scikitlearn",
       "method": "POST",
       "output_encoding": "no-op",

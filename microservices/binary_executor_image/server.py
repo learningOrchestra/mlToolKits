@@ -1,8 +1,8 @@
 from flask import jsonify, request, Flask
 import os
 from binary_execution import Execution, Parameters
-from utils import UserRequest, Database, ObjectStorage, Data, Metadata
-from typing import Union
+from utils import UserRequest, Database, ObjectStorage, Data, Metadata, ProcessController, find_url
+from typing import Union, Tuple
 from constants import Constants
 
 app = Flask(__name__)
@@ -18,6 +18,7 @@ storage = ObjectStorage(database)
 data = Data(database, storage)
 metadata_creator = Metadata(database)
 parameters_handler = Parameters(database, data)
+process_controller = ProcessController()
 
 
 @app.route(Constants.MICROSERVICE_URI_PATH, methods=["POST"])
@@ -30,6 +31,9 @@ def create_execution() -> jsonify:
     description = request.json[Constants.DESCRIPTION_FIELD_NAME]
     class_method = request.json[Constants.METHOD_FIELD_NAME]
     method_parameters = request.json[Constants.METHOD_PARAMETERS_FIELD_NAME]
+    monitoring_path = request.json[Constants.MONITORING_PATH_FIELD_NAME]
+
+    print(f'{model_name}, {parent_name}, {filename}, {description}, {class_method}, {method_parameters}', flush=True)
 
     request_errors = analyse_post_request_errors(
         request_validator,
@@ -40,8 +44,18 @@ def create_execution() -> jsonify:
         class_method,
         method_parameters)
 
+    print(f'{request_errors}', flush=True)
+
     if request_errors is not None:
         return request_errors
+
+    monitoring_response = None
+    if monitoring_path is not None:
+        process_nickname, url = init_monitoring(filename, monitoring_path)
+        monitoring_response = {
+            process_nickname: process_nickname,
+            url: url,
+        }
 
     parent_name_service_type = data.get_type(parent_name)
 
@@ -57,6 +71,8 @@ def create_execution() -> jsonify:
         storage
     )
 
+    print(f'{train_model}', flush=True)
+
     module_path, class_name = data.get_module_and_class_from_a_instance(
         model_name)
     train_model.create(
@@ -66,7 +82,9 @@ def create_execution() -> jsonify:
         jsonify({
             Constants.MESSAGE_RESULT:
                 f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
-                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
+                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}',
+            Constants.EXTRA_RESULTS: monitoring_response if monitoring_response is not None else {}
+        }),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -113,7 +131,9 @@ def update_execution(filename: str) -> jsonify:
         jsonify({
             Constants.MESSAGE_RESULT:
                 f'{Constants.MICROSERVICE_URI_SWITCHER[service_type]}'
-                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}'}),
+                f'{filename}{Constants.MICROSERVICE_URI_GET_PARAMS}',
+            Constants.EXTRA_RESULTS: {}
+        }),
         Constants.HTTP_STATUS_CODE_SUCCESS_CREATED,
     )
 
@@ -137,9 +157,38 @@ def delete_default_model(filename: str) -> jsonify:
 
     return (
         jsonify({
-            Constants.MESSAGE_RESULT: Constants.DELETED_MESSAGE}),
+            Constants.MESSAGE_RESULT: Constants.DELETED_MESSAGE,
+            Constants.EXTRA_RESULTS: {}
+        }),
         Constants.HTTP_STATUS_CODE_SUCCESS,
     )
+
+
+@app.route(Constants.MONITORING_TENSORFLOW_TYPE, methods=['GET'])
+def get_monitoring() -> jsonify:
+    monitoring_nickname = request.json[Constants.MONITORING_NICKNAME_FIELD_NAME]
+    url = process_controller.get_url(monitoring_nickname)
+    if url is None:
+        return (
+            jsonify({Constants.MESSAGE_RESULT: {}}),
+            Constants.HTTP_STATUS_CODE_NOT_FOUND
+        )
+
+    return (
+        jsonify({
+            Constants.MESSAGE_RESULT: url,
+        }),
+        Constants.HTTP_STATUS_CODE_SUCCESS
+    )
+
+
+def init_monitoring(filename, monitoring_path) -> Tuple[str, str]:
+    process, process_nickname = process_controller.create_process(
+        ['tensorboard', '--logdir', f'{monitoring_path}', '--bind_all'],
+        process_nickname=f'{filename}_monitoring', monitoring_path=monitoring_path)
+    url = find_url(process)
+    process_controller.add_url(process_nickname, url)
+    return process_nickname, url
 
 
 def analyse_post_request_errors(request_validator: UserRequest,
@@ -180,7 +229,6 @@ def analyse_post_request_errors(request_validator: UserRequest,
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
 
-
     module_path, class_name = data.get_module_and_class_from_a_instance(
         model_name)
 
@@ -208,7 +256,6 @@ def analyse_post_request_errors(request_validator: UserRequest,
             jsonify({Constants.MESSAGE_RESULT: str(invalid_method_parameters)}),
             Constants.HTTP_STATUS_CODE_NOT_ACCEPTABLE,
         )
-
 
     return None
 
