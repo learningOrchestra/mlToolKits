@@ -22,7 +22,7 @@ RUN curl -L -O https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE
     tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && \
     rm -rf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-RUN curl -s http://mirror.synyx.de/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION.tgz | tar -xz -C $SPARK_INSTALL && \
+RUN curl -s https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION.tgz | tar -xz -C $SPARK_INSTALL && \
     cd $SPARK_INSTALL && ln -s spark-$SPARK_VERSION-bin-hadoop$HADOOP_VERSION spark
 
 WORKDIR $SPARK_HOME
