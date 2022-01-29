@@ -66,9 +66,6 @@ spec:
         - name: database-executor-volume
           persistentVolumeClaim:
             claimName: database-executor-volume
-        - name: database-executor-volume
-          persistentVolumeClaim:
-            claimName: database-executor-volume
         - name: model-volume
           persistentVolumeClaim:
             claimName: model-volume

@@ -23,7 +23,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: model
+      app: model-pod
   replicas: 1
   template:
     metadata:
@@ -61,9 +61,6 @@ spec:
         - name: code-executor-volume
           persistentVolumeClaim:
             claimName: code-executor-volume
-        - name: database-executor-volume
-          persistentVolumeClaim:
-            claimName: database-executor-volume
         - name: database-executor-volume
           persistentVolumeClaim:
             claimName: database-executor-volume

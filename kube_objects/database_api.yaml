@@ -49,7 +49,6 @@ spec:
           volumeMounts:
             - mountPath: /datasets
               name: database-api-volume
-      restartPolicy: OnFailure
       volumes:
         - name: database-api-volume
           persistentVolumeClaim:
