@@ -15,8 +15,6 @@ spec:
       targetPort: 5004
   selector:
     io.kompose.service: histogram
-status:
-  loadBalancer: {}
 
 ---
 
@@ -56,4 +54,3 @@ spec:
             - containerPort: 5004
           resources: {}
       restartPolicy: OnFailure
-    status: {}

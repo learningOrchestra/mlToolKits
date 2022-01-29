@@ -15,9 +15,6 @@ spec:
       targetPort: 5000
   selector:
     io.kompose.service: databaseapi
-status:
-  loadBalancer: {}
-
 
 ---
 
@@ -64,7 +61,6 @@ spec:
         - name: database-api
           persistentVolumeClaim:
             claimName: database-api
-    status: {}
 
 ---
 
@@ -81,6 +77,3 @@ spec:
   resources:
     requests:
       storage: 100Mi
-status: {}
-
-

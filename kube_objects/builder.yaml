@@ -18,8 +18,6 @@ spec:
       targetPort: 41100
   selector:
     io.kompose.service: builder
-status:
-  loadBalancer: {}
 
 ---
 
@@ -61,6 +59,3 @@ spec:
             - containerPort: 41100
           resources: {}
       restartPolicy: OnFailure
-    status: {}
-
-

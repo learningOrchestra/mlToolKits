@@ -15,8 +15,6 @@ spec:
       targetPort: 5009
   selector:
     io.kompose.service: codexecutor
-status:
-  loadBalancer: {}
 
 ---
 
@@ -88,7 +86,6 @@ spec:
         - name: database-api
           persistentVolumeClaim:
             claimName: database-api
-    status: {}
 
 ---
 
@@ -105,4 +102,3 @@ spec:
   resources:
     requests:
       storage: 100Mi
-status: {}

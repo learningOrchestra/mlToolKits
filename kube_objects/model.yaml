@@ -15,8 +15,6 @@ spec:
       targetPort: 5007
   selector:
     io.kompose.service: model
-status:
-  loadBalancer: {}
 
 ---
 
@@ -83,7 +81,6 @@ spec:
         - name: binary-executor
           persistentVolumeClaim:
             claimName: binary-executor
-    status: {}
 
 ---
 
@@ -100,4 +97,3 @@ spec:
   resources:
     requests:
       storage: 100Mi
-status: {}

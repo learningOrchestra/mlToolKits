@@ -1,44 +1,34 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: binaryexecutor
-  name: binaryexecutor
+    app: binary-executor-service
+  name: binary-executor-service
 spec:
-  
   ports:
     - name: "5008"
       port: 5008
       targetPort: 5008
   selector:
-    io.kompose.service: binaryexecutor
-status:
-  loadBalancer: {}
+    app: binary-executor-pod
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: binaryexecutor
+  name: binary-executor-deployment
+  labels:
+    app: binary-executor-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: gatewayapi
+      app: binary-executor-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.service: binaryexecutor
-      name: binaryexecutor
+        app: binary-executor-pod
+      name: binary-executor-pod
     spec:
       containers:
         - env:
@@ -51,49 +41,44 @@ spec:
             - name: DATABASE_URL
               value: mongodb://root:owl45#21@databaseprimary,databasesecondary
           image: learningorchestra/binary_executor
-          name: binaryexecutor
+          name: binary-executor-container
           ports:
             - containerPort: 5008
           resources: {}
           volumeMounts:
             - mountPath: /models
-              name: model
+              name: model-volume
             - mountPath: /binaries
-              name: binary-executor
+              name: binary-executor-volume
             - mountPath: /transform
-              name: database-executor
+              name: database-executor-volume
             - mountPath: /code_executions
-              name: code-executor
-      restartPolicy: OnFailure
+              name: code-executor-volume
       volumes:
-        - name: model
+        - name: model-volume
           persistentVolumeClaim:
-            claimName: model
-        - name: binary-executor
+            claimName: model-volume
+        - name: binary-executor-volume
           persistentVolumeClaim:
-            claimName: binary-executor
-        - name: database-executor
+            claimName: binary-executor-volume
+        - name: database-executor-volume
           persistentVolumeClaim:
-            claimName: database-executor
-        - name: code-executor
+            claimName: database-executor-volume
+        - name: code-executor-volume
           persistentVolumeClaim:
-            claimName: code-executor
-    status: {}
+            claimName: code-executor-volume
 
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  creationTimestamp: null
   labels:
-    io.kompose.service: binary-executor
-  name: binary-executor
+    app: binary-executor-volume
+  name: binary-executor-volume
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi
-status: {}
-

@@ -21,8 +21,6 @@ spec:
       targetPort: 8080
   selector:
     io.kompose.service: sparkmaster
-status:
-  loadBalancer: {}
 
 ---
 
@@ -59,4 +57,3 @@ spec:
             - containerPort: 8080
           resources: {}
       restartPolicy: OnFailure
-    status: {}

@@ -15,9 +15,6 @@ spec:
       targetPort: 27017
   selector:
     io.kompose.service: databaseprimary
-status:
-  loadBalancer: {}
-
 
 ---
 
@@ -66,4 +63,3 @@ spec:
         - name: database
           persistentVolumeClaim:
             claimName: database
-    status: {}

@@ -17,8 +17,6 @@ spec:
     protocol: TCP
   selector:
     io.kompose.service: gatewayapi
-status:
-  loadBalancer: {}
 
 ---
 

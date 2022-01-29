@@ -18,8 +18,6 @@ spec:
       targetPort: 41352
   selector:
     io.kompose.service: sparkworker
-status:
-  loadBalancer: {}
 
 ---
 
@@ -64,4 +62,3 @@ spec:
             - containerPort: 41352
           resources: {}
       restartPolicy: OnFailure
-    status: {}

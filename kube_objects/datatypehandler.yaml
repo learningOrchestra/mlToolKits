@@ -15,8 +15,6 @@ spec:
       targetPort: 5003
   selector:
     io.kompose.service: datatypehandler
-status:
-  loadBalancer: {}
 
 ---
 
@@ -56,4 +54,3 @@ spec:
             - containerPort: 5003
           resources: {}
       restartPolicy: OnFailure
-    status: {}
