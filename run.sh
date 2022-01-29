@@ -6,39 +6,18 @@ echo "Building the learningOrchestra microservice images..."
 echo "--------------------------------------------------------------------"
 
 docker build --tag spark_task microservices/spark_task_image
-docker push 127.0.0.1:5050/spark_task
+docker push learningorchestra/spark_task
 
 docker-compose build
 
-echo "--------------------------------------------------------------------"
-echo "Adding the microservice images in docker daemon security exception..."
-echo "--------------------------------------------------------------------"
-
-echo '{
-  "insecure-registries" : ["myregistry:5050"]
-}
-' > /etc/docker/daemon.json
 
 echo "--------------------------------------------------------------------"
-echo "Restarting docker service..."
+echo "Pushing the microservice images in  repository..."
 echo "--------------------------------------------------------------------"
 
-service docker restart
-
-echo "--------------------------------------------------------------------"
-echo "Deploying learningOrchestra in swarm cluster..."
-echo "--------------------------------------------------------------------"
-
-docker stack deploy --compose-file=docker-compose.yml microservice
-
-echo "--------------------------------------------------------------------"
-echo "Pushing the microservice images in local repository..."
-echo "--------------------------------------------------------------------"
-
-sleep 30
 
 
-database_api_repository=127.0.0.1:5050/database_api
+database_api_repository=learningorchestra/database_api
 
 
 echo "--------------------------------------------------------------------"
@@ -47,7 +26,7 @@ echo "--------------------------------------------------------------------"
 docker push $database_api_repository
 
 
-spark_repository=127.0.0.1:5050/spark
+spark_repository=learningorchestra/spark
 
 echo "--------------------------------------------------------------------"
 echo "Pushing spark image..."
@@ -55,7 +34,7 @@ echo "--------------------------------------------------------------------"
 docker push $spark_repository
 
 
-projection_repository=127.0.0.1:5050/projection
+projection_repository=learningorchestra/projection
 
 echo "--------------------------------------------------------------------"
 echo "Pushing projection microservice image..."
@@ -63,7 +42,7 @@ echo "--------------------------------------------------------------------"
 docker push $projection_repository
 
 
-builder_repository=127.0.0.1:5050/builder
+builder_repository=learningorchestra/builder
 
 echo "--------------------------------------------------------------------"
 echo "Pushing builder microservice image..."
@@ -71,7 +50,7 @@ echo "--------------------------------------------------------------------"
 docker push $builder_repository
 
 
-data_type_handler_repository=127.0.0.1:5050/data_type_handler
+data_type_handler_repository=learningorchestra/data_type_handler
 
 echo "--------------------------------------------------------------------"
 echo "Pushing dataTypeHandler microservice image..."
@@ -79,7 +58,7 @@ echo "--------------------------------------------------------------------"
 docker push $data_type_handler_repository
 
 
-histogram_repository=127.0.0.1:5050/histogram
+histogram_repository=learningorchestra/histogram
 
 echo "--------------------------------------------------------------------"
 echo "Pushing histogram microservice image..."
@@ -87,7 +66,7 @@ echo "--------------------------------------------------------------------"
 docker push $histogram_repository
 
 
-model_repository=127.0.0.1:5050/model
+model_repository=learningorchestra/model
 
 echo "--------------------------------------------------------------------"
 echo "Pushing model microservice image..."
@@ -95,7 +74,7 @@ echo "--------------------------------------------------------------------"
 docker push $model_repository
 
 
-binary_executor_repository=127.0.0.1:5050/binary_executor
+binary_executor_repository=learningorchestra/binary_executor
 
 echo "--------------------------------------------------------------------"
 echo "Pushing binaryExecutor microservice image..."
@@ -103,7 +82,7 @@ echo "--------------------------------------------------------------------"
 docker push $binary_executor_repository
 
 
-database_executor_repository=127.0.0.1:5050/database_executor
+database_executor_repository=learningorchestra/database_executor
 
 echo "--------------------------------------------------------------------"
 echo "Pushing databaseExecutor microservice image..."
@@ -111,7 +90,7 @@ echo "--------------------------------------------------------------------"
 docker push $database_executor_repository
 
 
-code_executor_repository=127.0.0.1:5050/code_executor
+code_executor_repository=learningorchestra/code_executor
 
 echo "--------------------------------------------------------------------"
 echo "Pushing codeExecutor microservice image..."
@@ -119,10 +98,13 @@ echo "--------------------------------------------------------------------"
 docker push $code_executor_repository
 
 
+gatewayapi_repository=learningorchestra/gatewayapi
+
 echo "--------------------------------------------------------------------"
-echo "Updating portainer agent microservice in each cluster node..."
+echo "Pushing gatewayapi microservice image..."
 echo "--------------------------------------------------------------------"
-docker service update --image portainer/agent  microservice_agent
+docker push $gatewayapi_repository
+
 
 echo "--------------------------------------------------------------------"
 echo "End."

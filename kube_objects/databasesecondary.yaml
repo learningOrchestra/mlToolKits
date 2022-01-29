@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: databasesecondary
+  name: databasesecondary
+spec:
+  ports:
+    - name: "27018"
+      port: 27018
+      targetPort: 27017
+  selector:
+    io.kompose.service: databasesecondary
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: databasesecondary
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: databasesecondary
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/database: "true"
+        io.kompose.service: databasesecondary
+      name: databasesecondary
+    spec:
+      containers:
+        - env:
+            - name: MONGODB_ADVERTISED_HOSTNAME
+              value: databasesecondary
+            - name: MONGODB_PRIMARY_HOST
+              value: databaseprimary
+            - name: MONGODB_PRIMARY_PORT_NUMBER
+              value: "27017"
+            - name: MONGODB_PRIMARY_ROOT_PASSWORD
+              value: owl45#21
+            - name: MONGODB_REPLICA_SET_KEY
+              value: replicasetkey
+            - name: MONGODB_REPLICA_SET_MODE
+              value: secondary
+            - name: MONGODB_REPLICA_SET_NAME
+              value: replica_set
+          image: bitnami/mongodb:3.6.17-ol-7-r26
+          name: databasesecondary
+          ports:
+            - containerPort: 27017
+          resources: {}
+      restartPolicy: OnFailure
+    status: {}

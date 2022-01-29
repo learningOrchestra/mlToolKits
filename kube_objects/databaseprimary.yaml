@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: databaseprimary
+  name: databaseprimary
+spec:
+  ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+  selector:
+    io.kompose.service: databaseprimary
+status:
+  loadBalancer: {}
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: databaseprimary
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: databaseprimary
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/database: "true"
+        io.kompose.service: databaseprimary
+      name: databaseprimary
+    spec:
+      containers:
+        - env:
+            - name: MONGODB_ADVERTISED_HOSTNAME
+              value: databaseprimary
+            - name: MONGODB_REPLICA_SET_KEY
+              value: replicasetkey
+            - name: MONGODB_REPLICA_SET_MODE
+              value: primary
+            - name: MONGODB_REPLICA_SET_NAME
+              value: replica_set
+            - name: MONGODB_ROOT_PASSWORD
+              value: owl45#21
+          image: bitnami/mongodb:3.6.17-ol-7-r26
+          name: databaseprimary
+          ports:
+            - containerPort: 27017
+          resources: {}
+          volumeMounts:
+            - mountPath: /bitnami
+              name: database
+      restartPolicy: OnFailure
+      volumes:
+        - name: database
+          persistentVolumeClaim:
+            claimName: database
+    status: {}

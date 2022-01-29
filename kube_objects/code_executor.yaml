@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: codexecutor
+  name: codexecutor
+spec:
+  ports:
+    - name: "5009"
+      port: 5009
+      targetPort: 5009
+  selector:
+    io.kompose.service: codexecutor
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codexecutor
+spec:
+  selector:
+    matchLabels:
+      io.kompose.service: codexecutor
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/database: "true"
+        io.kompose.service: codexecutor
+      name: codexecutor
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_NAME
+              value: database
+            - name: DATABASE_PORT
+              value: "27017"
+            - name: DATABASE_REPLICA_SET
+              value: replica_set
+            - name: DATABASE_URL
+              value: mongodb://root:owl45#21@databaseprimary,databasesecondary
+          image: learningorchestra/code_executor
+          name: codexecutor
+          ports:
+            - containerPort: 5009
+          resources: {}
+          volumeMounts:
+            - mountPath: /code_executions
+              name: code-executor
+            - mountPath: /explore
+              name: database-executor
+            - mountPath: /transform
+              name: database-executor
+            - mountPath: /models
+              name: model
+            - mountPath: /binaries
+              name: binary-executor
+            - mountPath: /datasets
+              name: database-api
+      restartPolicy: OnFailure
+      volumes:
+        - name: code-executor
+          persistentVolumeClaim:
+            claimName: code-executor
+        - name: database-executor
+          persistentVolumeClaim:
+            claimName: database-executor
+        - name: database-executor
+          persistentVolumeClaim:
+            claimName: database-executor
+        - name: model
+          persistentVolumeClaim:
+            claimName: model
+        - name: binary-executor
+          persistentVolumeClaim:
+            claimName: binary-executor
+        - name: database-api
+          persistentVolumeClaim:
+            claimName: database-api
+    status: {}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: code-executor
+  name: code-executor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
