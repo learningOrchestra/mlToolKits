@@ -1,42 +1,35 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: datatypehandler
-  name: datatypehandler
+    app: data-type-handler-service
+  name: data-type-handler-service
 spec:
   ports:
     - name: "5003"
       port: 5003
       targetPort: 5003
   selector:
-    io.kompose.service: datatypehandler
+    app: data-type-handler-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: datatypehandler
+  name: data-type-handler-deployment
+  labels:
+    app: data-type-handler-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: datatypehandler
+      app: data-type-handler-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.service: datatypehandler
-      name: datatypehandler
+        app: data-type-handler-pod
+      name: data-type-handler-pod
     spec:
       containers:
         - env:
@@ -47,10 +40,9 @@ spec:
             - name: DATABASE_REPLICA_SET
               value: replica_set
             - name: DATABASE_URL
-              value: mongodb://root:owl45#21@databaseprimary,databasesecondary
+              value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
           image: learningorchestra/data_type_handler
-          name: datatypehandler
+          name: data-type-handler-container
           ports:
             - containerPort: 5003
           resources: {}
-      restartPolicy: OnFailure

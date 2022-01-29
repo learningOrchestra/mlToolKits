@@ -11,7 +11,7 @@
           "method": "POST",
           "url_pattern": "/files?type=dataset/csv",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -27,7 +27,7 @@
           "method": "GET",
           "url_pattern": "/files?type=dataset/csv",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -48,7 +48,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -64,7 +64,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}?type=dataset/csv",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -80,7 +80,7 @@
           "method": "POST",
           "url_pattern": "/files?type=dataset/generic",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -96,7 +96,7 @@
           "method": "GET",
           "url_pattern": "/files?type=dataset/generic",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -117,7 +117,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -133,7 +133,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}?type=dataset/generic",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -149,7 +149,7 @@
           "method": "POST",
           "url_pattern": "/projections",
           "host": [
-            "http://projection:5001"
+            "http://projection-service:5001"
           ],
           "extra_config": {}
         }
@@ -165,7 +165,7 @@
           "method": "PATCH",
           "url_pattern": "/projections",
           "host": [
-            "http://projection:5001"
+            "http://projection-service:5001"
           ],
           "extra_config": {}
         }
@@ -181,7 +181,7 @@
           "method": "GET",
           "url_pattern": "/files?type=transform/projection",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -202,7 +202,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -218,7 +218,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -234,7 +234,7 @@
           "method": "PATCH",
           "url_pattern": "/fieldTypes",
           "host": [
-            "http://datatypehandler:5003"
+            "http://data-type-handler-service:5003"
           ],
           "extra_config": {}
         }
@@ -250,7 +250,7 @@
           "method": "GET",
           "url_pattern": "/files?type=transform/dataType",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -271,7 +271,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -287,7 +287,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -303,7 +303,7 @@
           "method": "POST",
           "url_pattern": "/histograms",
           "host": [
-            "http://histogram:5004"
+            "http://histogram-service:5004"
           ],
           "extra_config": {}
         }
@@ -319,7 +319,7 @@
           "method": "GET",
           "url_pattern": "/files?type=explore/histogram",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -340,7 +340,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -356,7 +356,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -372,7 +372,7 @@
           "method": "POST",
           "url_pattern": "/models",
           "host": [
-            "http://builder:5002"
+            "http://builder-service:5002"
           ],
           "extra_config": {}
         }
@@ -388,7 +388,7 @@
           "method": "GET",
           "url_pattern": "/files?type=builder/sparkml",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -409,7 +409,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -425,7 +425,7 @@
           "method": "DELETE",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -441,7 +441,7 @@
           "method": "POST",
           "url_pattern": "/defaultModel?type=model/scikitlearn",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -457,7 +457,7 @@
           "method": "PATCH",
           "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -473,7 +473,7 @@
           "method": "GET",
           "url_pattern": "/files?type=model/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -494,7 +494,7 @@
           "method": "GET",
           "url_pattern": "/files/{modelName}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -510,7 +510,7 @@
           "method": "DELETE",
           "url_pattern": "/defaultModel/{modelName}?type=model/scikitlearn",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -526,7 +526,7 @@
           "method": "POST",
           "url_pattern": "/defaultModel?type=model/tensorflow",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -542,7 +542,7 @@
           "method": "PATCH",
           "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -558,7 +558,7 @@
           "method": "GET",
           "url_pattern": "/files?type=model/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -579,7 +579,7 @@
           "method": "GET",
           "url_pattern": "/files/{modelName}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -595,7 +595,7 @@
           "method": "DELETE",
           "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
           "host": [
-            "http://model:5007"
+            "http://model-service:5007"
           ],
           "extra_config": {}
         }
@@ -611,7 +611,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=train/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -627,7 +627,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=train/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -643,7 +643,7 @@
           "method": "GET",
           "url_pattern": "/files?type=train/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -664,7 +664,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -680,7 +680,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=train/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -696,7 +696,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=train/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -712,7 +712,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=train/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -728,7 +728,7 @@
           "method": "GET",
           "url_pattern": "/files?type=train/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -749,7 +749,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -765,7 +765,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=train/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -781,7 +781,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=tune/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -797,7 +797,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=tune/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -813,7 +813,7 @@
           "method": "GET",
           "url_pattern": "/files?type=tune/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -834,7 +834,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -850,7 +850,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=tune/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -866,7 +866,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=tune/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -882,7 +882,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=tune/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -898,7 +898,7 @@
           "method": "GET",
           "url_pattern": "/files?type=tune/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -919,7 +919,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -935,7 +935,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=tune/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -951,7 +951,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=evaluate/sckitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -967,7 +967,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=evaluate/sckitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -983,7 +983,7 @@
           "method": "GET",
           "url_pattern": "/files?type=evaluate/sckitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1004,7 +1004,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1020,7 +1020,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=evaluate/sckitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1036,7 +1036,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=evaluate/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1052,7 +1052,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=evaluate/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1068,7 +1068,7 @@
           "method": "GET",
           "url_pattern": "/files?type=evaluate/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1089,7 +1089,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1105,7 +1105,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=evaluate/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1121,7 +1121,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=predict/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1137,7 +1137,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=predict/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1153,7 +1153,7 @@
           "method": "GET",
           "url_pattern": "/files?type=predict/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1174,7 +1174,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1190,7 +1190,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=predict/scikitlearn",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1206,7 +1206,7 @@
           "method": "POST",
           "url_pattern": "/binaryExecutor?type=predict/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1222,7 +1222,7 @@
           "method": "PATCH",
           "url_pattern": "/binaryExecutor/{name}?type=predict/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1238,7 +1238,7 @@
           "method": "GET",
           "url_pattern": "/files?type=predict/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1259,7 +1259,7 @@
           "method": "GET",
           "url_pattern": "/files/{name}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1275,7 +1275,7 @@
           "method": "DELETE",
           "url_pattern": "/binaryExecutor/{name}?type=predict/tensorflow",
           "host": [
-            "http://binaryexecutor:5008"
+            "http://binary-executor-service:5008"
           ],
           "extra_config": {}
         }
@@ -1291,7 +1291,7 @@
           "method": "POST",
           "url_pattern": "/databaseExecutor?type=explore/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1307,7 +1307,7 @@
           "method": "PATCH",
           "url_pattern": "/databaseExecutor/{filename}?type=explore/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1323,7 +1323,7 @@
           "method": "GET",
           "url_pattern": "/files?type=explore/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1344,7 +1344,7 @@
           "method": "GET",
           "url_pattern": "/databaseExecutor/{filename}type=explore/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1365,7 +1365,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1381,7 +1381,7 @@
           "method": "DELETE",
           "url_pattern": "/databaseExecutor/{filename}?type=explore/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1397,7 +1397,7 @@
           "method": "POST",
           "url_pattern": "/databaseExecutor?type=explore/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1413,7 +1413,7 @@
           "method": "PATCH",
           "url_pattern": "/databaseExecutor/{filename}?type=explore/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1429,7 +1429,7 @@
           "method": "GET",
           "url_pattern": "/files?type=explore/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1450,7 +1450,7 @@
           "method": "GET",
           "url_pattern": "/databaseExecutor/{filename}type=explore/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1471,7 +1471,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1487,7 +1487,7 @@
           "method": "DELETE",
           "url_pattern": "/databaseExecutor/{filename}?type=explore/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1503,7 +1503,7 @@
           "method": "POST",
           "url_pattern": "/databaseExecutor?type=transform/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1519,7 +1519,7 @@
           "method": "PATCH",
           "url_pattern": "/databaseExecutor/{filename}?type=transform/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1535,7 +1535,7 @@
           "method": "GET",
           "url_pattern": "/files?type=transform/scikitlearn",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1556,7 +1556,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1572,7 +1572,7 @@
           "method": "DELETE",
           "url_pattern": "/databaseExecutor/{filename}?type=transform/scikitlearn",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1588,7 +1588,7 @@
           "method": "POST",
           "url_pattern": "/databaseExecutor?type=transform/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1604,7 +1604,7 @@
           "method": "PATCH",
           "url_pattern": "/databaseExecutor/{filename}?type=transform/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1620,7 +1620,7 @@
           "method": "GET",
           "url_pattern": "/files?type=transform/tensorflow",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1641,7 +1641,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1657,7 +1657,7 @@
           "method": "DELETE",
           "url_pattern": "/databaseExecutor/{filename}?type=transform/tensorflow",
           "host": [
-            "http://databasexecutor:5006"
+            "http://database-executor-service:5006"
           ],
           "extra_config": {}
         }
@@ -1673,7 +1673,7 @@
           "method": "POST",
           "url_pattern": "/codeExecutor?type=function/python",
           "host": [
-            "http://codexecutor:5009"
+            "http://code-executor:5009"
           ],
           "extra_config": {}
         }
@@ -1689,7 +1689,7 @@
           "method": "PATCH",
           "url_pattern": "/codeExecutor/{filename}?type=function/python",
           "host": [
-            "http://codexecutor:5009"
+            "http://code-executor:5009"
           ],
           "extra_config": {}
         }
@@ -1705,7 +1705,7 @@
           "method": "GET",
           "url_pattern": "/files?type=function/python",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1726,7 +1726,7 @@
           "method": "GET",
           "url_pattern": "/files/{filename}",
           "host": [
-            "http://databaseapi:5000"
+            "http://database-api-service:5000"
           ],
           "extra_config": {}
         }
@@ -1742,7 +1742,7 @@
           "method": "DELETE",
           "url_pattern": "/codeExecutor/{filename}?type=function/python",
           "host": [
-            "http://codexecutor:5009"
+            "http://code-executor:5009"
           ],
           "extra_config": {}
         }
@@ -1769,5 +1769,5 @@
   "timeout": "10s",
   "cache_ttl": "300s",
   "output_encoding": "json",
-  "name": "gatewayapi"
+  "name": "gateway-api-service"
 }

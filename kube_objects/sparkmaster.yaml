@@ -1,12 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: sparkmaster
+    app: sparkmaster
   name: sparkmaster
 spec:
   ports:
@@ -20,40 +16,35 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    io.kompose.service: sparkmaster
+    app: sparkmaster-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sparkmaster
+  name: sparkmaster-deployment
+  labels:
+    app: sparkmaster-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: sparkmaster
+      app: sparkmaster-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.network/spark: "true"
-        io.kompose.service: sparkmaster
-      name: sparkmaster
+        app: sparkmaster-pod
+      name: sparkmaster-pod
     spec:
       containers:
         - env:
             - name: SPARK_ROLE
               value: master
           image: learningorchestra/spark
-          name: sparkmaster
+          name: sparkmaster-container
           ports:
             - containerPort: 4040
             - containerPort: 7077
             - containerPort: 8080
           resources: {}
-      restartPolicy: OnFailure

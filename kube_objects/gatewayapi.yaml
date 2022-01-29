@@ -1,13 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: gatewayapi
-  name: gatewayapi
+    app: gateway-api-service
+  name: gateway-api-service
 spec:
   type: NodePort
   ports:
@@ -16,29 +12,29 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    io.kompose.service: gatewayapi
+    app: gateway-api-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: krakend-deployment
+  name: gateway-api-deployment
+  labels:
+    app: gateway-api-deployment
 spec:
   selector:
     matchLabels:
-      app: gatewayapi
+      app: gateway-api-pod
   replicas: 2
   template:
     metadata:
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.network/spark: "true"
-        io.kompose.service: gatewayapi
+        app: gateway-api-pod
     spec:
       containers:
-      - name: gatewayapi
-        image: learningorchestra/gatewayapi
+      - name: gateway-api-container
+        image: learningorchestra/gateway-api
         ports:
         - containerPort: 8080
         imagePullPolicy: Never

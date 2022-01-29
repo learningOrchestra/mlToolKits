@@ -39,7 +39,7 @@ spec:
             - name: DATABASE_REPLICA_SET
               value: replica_set
             - name: DATABASE_URL
-              value: mongodb://root:owl45#21@databaseprimary,databasesecondary
+              value: mongodb://root:owl45#21@databa-seprimary-service,database-secondary-service
           image: learningorchestra/binary_executor
           name: binary-executor-container
           ports:

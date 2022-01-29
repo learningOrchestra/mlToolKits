@@ -1,42 +1,35 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: histogram
-  name: histogram
+    app: histogram-service
+  name: histogram-service
 spec:
   ports:
     - name: "5004"
       port: 5004
       targetPort: 5004
   selector:
-    io.kompose.service: histogram
+    app: histogram-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: histogram
+  name: histogram-deployment
+  labels:
+    app: histogram-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: histogram
+      app: histogram-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.service: histogram
-      name: histogram
+        app: histogram-pod
+      name: histogram-pod
     spec:
       containers:
         - env:
@@ -47,10 +40,9 @@ spec:
             - name: DATABASE_REPLICA_SET
               value: replica_set
             - name: DATABASE_URL
-              value: mongodb://root:owl45#21@databaseprimary,databasesecondary
+              value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
           image: learningorchestra/histogram
-          name: histogram
+          name: histogram-container
           ports:
             - containerPort: 5004
           resources: {}
-      restartPolicy: OnFailure

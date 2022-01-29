@@ -1,49 +1,42 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: databasearbiter
-  name: databasearbiter
+    app: database-arbiter-service
+  name: database-arbiter-service
 spec:
   ports:
     - name: "27019"
       port: 27019
       targetPort: 27017
   selector:
-    io.kompose.service: databasearbiter
+    app: database-arbiter-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: databasearbiter
+  name: database-arbiter-deployment
+  labels:
+    app: database-arbiter-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: databasearbiter
+      app: database-arbiter-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.service: databasearbiter
-      name: databasearbiter
+        app: database-arbiter-pod
+      name: database-arbiter-pod
     spec:
       containers:
         - env:
             - name: MONGODB_ADVERTISED_HOSTNAME
-              value: databasearbiter
+              value: database-arbiter-service
             - name: MONGODB_PRIMARY_HOST
-              value: databaseprimary
+              value: database-primary-service
             - name: MONGODB_PRIMARY_PORT_NUMBER
               value: "27017"
             - name: MONGODB_PRIMARY_ROOT_PASSWORD
@@ -55,8 +48,7 @@ spec:
             - name: MONGODB_REPLICA_SET_NAME
               value: replica_set
           image: bitnami/mongodb:3.6.17-ol-7-r26
-          name: databasearbiter
+          name: database-arbiter-container
           ports:
             - containerPort: 27017
           resources: {}
-      restartPolicy: OnFailure

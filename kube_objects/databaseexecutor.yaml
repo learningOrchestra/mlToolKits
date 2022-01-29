@@ -1,42 +1,35 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.1 (a9d05d509)
-  creationTimestamp: null
   labels:
-    io.kompose.service: databasexecutor
-  name: databasexecutor
+    app: database-executor-service
+  name: database-executor-service
 spec:
   ports:
     - name: "5006"
       port: 5006
       targetPort: 5006
   selector:
-    io.kompose.service: databasexecutor
+    app: database-executor-pod
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: databasexecutor
+  name: database-executor-deployment
+  labels:
+    app: database-executor-deployment
 spec:
   selector:
     matchLabels:
-      io.kompose.service: databasexecutor
+      app: database-executor-pod
   replicas: 1
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.1 (a9d05d509)
-      creationTimestamp: null
       labels:
-        io.kompose.network/database: "true"
-        io.kompose.service: databasexecutor
-      name: databasexecutor
+        app: database-executor-pod
+      name: database-executor-pod
     spec:
       containers:
         - env:
@@ -47,50 +40,48 @@ spec:
             - name: DATABASE_REPLICA_SET
               value: replica_set
             - name: DATABASE_URL
-              value: mongodb://root:owl45#21@databaseprimary,databasesecondary
+              value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
           image: learningorchestra/database_executor
-          name: databasexecutor
+          name: database-executor-container
           ports:
             - containerPort: 5006
           resources: {}
           volumeMounts:
             - mountPath: /explore
-              name: database-executor
+              name: database-executor-volume
             - mountPath: /transform
-              name: database-executor
+              name: database-executor-volume
             - mountPath: /models
-              name: model
+              name: model-volume
             - mountPath: /binaries
-              name: binary-executor
+              name: binary-executor-volume
             - mountPath: /code_executions
-              name: code-executor
-      restartPolicy: OnFailure
+              name: code-executor-volume
       volumes:
-        - name: database-executor
+        - name: database-executor-volume
           persistentVolumeClaim:
-            claimName: database-executor
-        - name: database-executor
+            claimName: database-executor-volume
+        - name: database-executor-volume
           persistentVolumeClaim:
-            claimName: database-executor
+            claimName: database-executor-volume
         - name: model
           persistentVolumeClaim:
-            claimName: model
-        - name: binary-executor
+            claimName: model-volume
+        - name: binary-executor-volume
           persistentVolumeClaim:
-            claimName: binary-executor
-        - name: code-executor
+            claimName: binary-executor-volume
+        - name: code-executor-volume
           persistentVolumeClaim:
-            claimName: code-executor
+            claimName: code-executor-volume
 
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  creationTimestamp: null
   labels:
-    io.kompose.service: database-executor
-  name: database-executor
+    app: database-executor-volume
+  name: database-executor-volume
 spec:
   accessModes:
     - ReadWriteOnce

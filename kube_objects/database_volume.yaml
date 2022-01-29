@@ -1,10 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  creationTimestamp: null
   labels:
-    io.kompose.service: database
-  name: database
+    app: database-volume
+  name: database-volume
 spec:
   accessModes:
     - ReadWriteOnce
