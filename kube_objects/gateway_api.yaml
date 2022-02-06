@@ -37,6 +37,5 @@ spec:
         image: learningorchestra/gateway-api
         ports:
         - containerPort: 8080
-        imagePullPolicy: Never
         command: [ "/usr/bin/krakend" ]
         args: [ "run", "-d", "-c", "/etc/krakend/krakend.json", "-p", "8080" ]
