@@ -81,7 +81,7 @@ metadata:
   name: database-executor-volume
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 100Mi
+      storage: 1Gi
