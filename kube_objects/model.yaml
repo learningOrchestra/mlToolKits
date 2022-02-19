@@ -70,18 +70,3 @@ spec:
         - name: binary-executor-volume
           persistentVolumeClaim:
             claimName: binary-executor-volume
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app: model-volume
-  name: model-volume
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi

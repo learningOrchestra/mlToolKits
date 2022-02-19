@@ -75,18 +75,3 @@ spec:
         - name: database-api-volume
           persistentVolumeClaim:
             claimName: database-api-volume
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app: code-executor-volume
-  name: code-executor-volume
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 1Gi

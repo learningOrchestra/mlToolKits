@@ -1,0 +1,135 @@
+kind: StorageClass
+apiVersion: v1
+metadata:
+  name: learning-orchestra-storage-class
+provisioner: oracle.com/oci-fss
+parameters:
+  mntTargetId: ocid1.mounttarget.oc1.sa_saopaulo_1.aaaaaa4np2s5fjvam5zhkllqojxwiottmewxgylpobqxk3dpfuys2ylefuyqaaaa
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+ name: learning-orchestra-persistent-volume
+spec:
+ storageClassName: learning-orchestra-storage-class
+ capacity:
+  storage: 100Gi
+ accessModes:
+  - ReadWriteMany
+ mountOptions:
+  - nosuid
+ nfs:
+  server: 10.0.20.122
+  path: "/learningOrchestraNFS"
+  readOnly: false
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: binary-executor-volume
+  name: binary-executor-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: code-executor-volume
+  name: code-executor-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: database-api-volume
+  name: database-api-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: database-executor-volume
+  name: database-executor-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: database-volume
+  name: database-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: model-volume
+  name: model-volume
+spec:
+  storageClassName: learning-orchestra-storage-class
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: learning-orchestra-persistent-volume
+
+  
+
+
+
+
+
