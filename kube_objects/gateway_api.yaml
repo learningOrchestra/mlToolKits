@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: gateway-api-container
-        image: learningorchestra/gateway-api
+        image: learningorchestra/gatewayapi:latest
         ports:
         - containerPort: 8080
         command: [ "/usr/bin/krakend" ]

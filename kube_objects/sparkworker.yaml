@@ -47,7 +47,7 @@ spec:
               value: sparkmaster
             - name: SPARK_ROLE
               value: slave
-          image: learningorchestra/spark
+          image: learningorchestra/spark:latest
           name: sparkworker
           ports:
             - containerPort: 8081

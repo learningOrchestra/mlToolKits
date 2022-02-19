@@ -44,7 +44,7 @@ spec:
               value: replica_set
             - name: DATABASE_URL
               value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
-          image: learningorchestra/builder
+          image: learningorchestra/builder:latest
           name: builder-container
           ports:
             - containerPort: 5002

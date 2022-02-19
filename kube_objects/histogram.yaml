@@ -41,7 +41,7 @@ spec:
               value: replica_set
             - name: DATABASE_URL
               value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
-          image: learningorchestra/histogram
+          image: learningorchestra/histogram:latest
           name: histogram-container
           ports:
             - containerPort: 5004
