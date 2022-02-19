@@ -44,7 +44,7 @@ spec:
               value: replica_set
             - name: DATABASE_URL
               value: mongodb://root:owl45#21@database-primary-service,database-secondary-service
-          image: learningorchestra/projection:latest
+          image: docker.io/learningorchestra/projection:latest
           name: projection-container
           ports:
             - containerPort: 5001

@@ -41,7 +41,7 @@ spec:
         - env:
             - name: SPARK_ROLE
               value: master
-          image: learningorchestra/spark:latest
+          image: docker.io/learningorchestra/spark:latest
           name: sparkmaster-container
           ports:
             - containerPort: 4040
