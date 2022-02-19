@@ -1,5 +1,5 @@
 kind: StorageClass
-apiVersion: v1
+apiVersion: storage.k8s.io/v1
 metadata:
   name: learning-orchestra-storage-class
 provisioner: oracle.com/oci-fss
@@ -127,7 +127,7 @@ spec:
       storage: 1Gi
   volumeName: learning-orchestra-persistent-volume
 
-  
+
 
 
 
