@@ -1,7 +1,7 @@
 **The Learning Orchestra is a Machine Learning INTEGRATION tool**
 
 <p align="center">
-    <img src="./Learning_Orchestra_Architecture_Layers.png">
+    <img src="./Learning_Orchestra_Architecture_fev_2022.png">
     <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" href="https://shields.io/" alt="build-passing">
     <img src="https://img.shields.io/github/v/tag/learningOrchestra/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="tag">
     <img src="https://img.shields.io/github/last-commit/learningOrchestra/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="last-commit">
