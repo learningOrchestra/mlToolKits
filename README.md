@@ -23,7 +23,7 @@ The data scientist can deploy the Learning Orchestra ML toolkits layer alone or 
 	- [Cluster Configuration](#the-cluster-configuration)
 - [Using the Learning Orchestra system](#using-the-learning-orchestra-system)
 	- [The REST API](#the-rest-api)
-	- [The Python package](#the-python-package)
+	- [The Python client](#the-python-client)
 	- [The cluster status](#the-cluster-status)
 - [About Learning Orchestra](#about-learning-orchestra)
 	- [Research background](#research-background)
