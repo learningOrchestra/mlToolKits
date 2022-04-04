@@ -1,19 +1,15 @@
 **The Learning Orchestra is a Machine Learning INTEGRATION tool**
 
 <p align="center">
-    <!-- <img src="./Learning_Orchestra_Architecture_feb_2022.png">  -->
     <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" href="https://shields.io/" alt="build-passing">
     <img src="https://img.shields.io/github/v/tag/learningOrchestra/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="tag">
     <img src="https://img.shields.io/github/last-commit/learningOrchestra/learningOrchestra?style=flat-square" href="https://github.com/riibeirogabriel/learningOrchestra/tags" alt="last-commit">
     <img src="https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square" href="#contributors-" alt="All Contributors">
 </p>
 
-# Learning Orchestra ML Toolkits Layer
+# Learning Orchestra
 
-<!--As we can see on figure above,--> The Learning Orchestra tool integrates different services from different layers and the core layer is the ML toolkits layer. The data scientist can use existing ML toolkits, like Tensorflow, Scikit-learn, Pytorch, MXNet or XGBoost, using a single REST API or the Learning Orchestra Python client. The idea is to facilitate and streamline the data scientist development process. Deployment issues from these ML toolkits are solved by Learning Orchestra. Furthermore, it enables the development of stateful steps of a ML pipeline using these ML toolkits, which means that the data scientist can run a transform step and save its output transparently into a container over a cluster of virtual machines from AWS or Google cloud environments. The next ML pipeline step, for instance a training step, can import the previous saved data and perform its execution transparently. This Learning Orchestra behavior is a fundamental advantage against other ML pipeline tools, since it enables re-executions of some steps of a pipeline and not always the entire pipeline. 
-
-The data scientist can deploy the Learning Orchestra ML toolkits layer alone or in conjunction with other layers, like AutoML, Training, Monitoring and so forth. The idea is to give flexibility for the data scientist, since a specific tuning or distributed training tool is not always necessary. The ML toolkits layer is sufficient for developing the entire ML pipeline as we will see, but sometimes the data scientist requires some extra services, like AutoML. 
-
+The Learning Orchestra tool integrates different services from different layers and the core layer is the ML toolkits layer. The data scientist can use existing ML toolkits, like Tensorflow, Scikit-learn, using a single REST API or the Learning Orchestra Python client. The idea is to facilitate and streamline the data scientist development process. Deployment issues from these ML toolkits are solved by Learning Orchestra. Furthermore, it enables the development of stateful steps of a ML pipeline using these ML toolkits, which means that the data scientist can run a transform step and save its output transparently into a container over a cluster of virtual machines from AWS or Google cloud environments. The next ML pipeline step, for instance a training step, can import the previous saved data and perform its execution transparently. This Learning Orchestra behavior is a fundamental advantage against other ML pipeline tools, since it enables re-executions of some steps of a pipeline and not always the entire pipeline. 
 
 
 <!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
@@ -115,6 +111,15 @@ Two undergraduate final reports:
 
 - **Gabriel final report:** [link](https://www.researchgate.net/publication/344695445_Learning_Orchestra_building_Machine_Learning_workflows_on_scalable_containers).
 - **Gustavo final report:** [link](https://www.researchgate.net/publication/351330792_LEARNING_ORCHESTRA_WEB_UMA_ALTERNATIVA_PARA_CONSTRUCAO_VISUAL_DE_WORKFLOWS_SOBRE_APRENDIZADO_DE_MAQUINA).
+
+# The Roadmap
+
+
+<img src="./Learning_Orchestra_Architecture_feb_2022.png">
+
+As we can see on figure above, the Learning Orchestra system will be consisted by a lot of diferent layers in the future, and this current version of the Learning Orchestra will be only one of several layers existent in Leanrning Orchestra.
+
+The data scientist will be enable to deploy the Learning Orchestra ML toolkits layer alone or in conjunction with other layers, like AutoML, Training, Monitoring and so forth. The idea is to give flexibility for the data scientist, since a specific tuning or distributed training tool is not always necessary. The ML toolkits layer is sufficient for developing the entire ML pipeline as we will see, but sometimes the data scientist requires some extra services, like AutoML. 
 
 
 ### Contributors :sparkles:
