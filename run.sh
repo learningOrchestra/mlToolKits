@@ -119,6 +119,13 @@ echo "--------------------------------------------------------------------"
 docker push $code_executor_repository
 
 
+observer_repository=127.0.0.1:5050/observer
+
+echo "--------------------------------------------------------------------"
+echo "Pushing observer microservice image..."
+echo "--------------------------------------------------------------------"
+docker push $observer_repository
+
 echo "--------------------------------------------------------------------"
 echo "Updating portainer agent microservice in each cluster node..."
 echo "--------------------------------------------------------------------"
