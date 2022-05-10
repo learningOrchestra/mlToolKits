@@ -1,333 +1,53 @@
-version: "3.8"
-
-x-deploy: &default-deploy
-  replicas: 1
-  restart_policy:
-    condition: on-failure
-
-x-deploy-manager: &default-deploy-manager
-  <<: *default-deploy
-  placement:
-    constraints:
-      - "node.role==manager"
-
-x-deploy-worker: &default-deploy-worker
-  <<: *default-deploy
-  placement:
-    constraints:
-      - "node.role==worker"
-
-x-service-database-env: &default-service-database-env
-  - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
-  - DATABASE_PORT=27017
-  - DATABASE_REPLICA_SET=replica_set
-  - DATABASE_NAME=database
+version: "3.5"
 
 services:
-  databaseapi:
-    build: microservices/database_api_image
-    image: 127.0.0.1:5050/database_api
+  ray-head:
+    image: rayproject/ray:latest
+    shm_size: '2gb'
+    entrypoint: [ '/usr/local/bin/ray']
+    command: ['start', '--head', '--redis-port', '6379', '--redis-shard-ports','6380,6381', '--object-manager-port','12345', '--node-manager-port','12346', '--node-ip-address', 'tasks.ray-head', '--block']
     ports:
-      - "5000:5000"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-manager
-    volumes:
-      - "database_api:/datasets"
-    networks:
-      - database
-    environment: *default-service-database-env
-
-  databaseprimary:
-    image: "bitnami/mongodb:3.6.17-ol-7-r26"
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+      - target: 6380
+        published: 6380
+        protocol: tcp
+        mode: host
+      - target: 6381
+        published: 6381
+        protocol: tcp
+        mode: host
+      - target: 12345
+        published: 12345
+        protocol: tcp
+        mode: host
+      - target: 12346
+        published: 12346
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.labels.Head == true ]
+  ray-worker:
+    image: rayproject/ray:latest
+    shm_size: '2gb'
+    entrypoint: [ '/usr/local/bin/ray']
+    command: ['start', '--redis-address', 'tasks.ray-head:6379', '--object-manager-port', '12345', '--node-manager-port', '12346', '--block']
     ports:
-      - "27017:27017"
-    environment:
-      - MONGODB_ROOT_PASSWORD=owl45#21
-      - MONGODB_ADVERTISED_HOSTNAME=databaseprimary
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_REPLICA_SET_KEY=replicasetkey
-      - MONGODB_REPLICA_SET_NAME=replica_set
-    volumes:
-      - "database:/bitnami"
-    networks:
-      - database
-    deploy: *default-deploy-manager
-
-  databasesecondary:
-    image: "bitnami/mongodb:3.6.17-ol-7-r26"
+      - target: 12345
+        published: 12345
+        protocol: tcp
+        mode: host
+      - target: 12346
+        published: 12346
+        protocol: tcp
+        mode: host
     depends_on:
-      - databaseprimary
-    environment:
-      - MONGODB_PRIMARY_HOST=databaseprimary
-      - MONGODB_PRIMARY_PORT_NUMBER=27017
-      - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
-      - MONGODB_ADVERTISED_HOSTNAME=databasesecondary
-      - MONGODB_REPLICA_SET_NAME=replica_set
-      - MONGODB_REPLICA_SET_KEY=replicasetkey
-      - MONGODB_REPLICA_SET_MODE=secondary
-
-    networks:
-      - database
-    deploy: *default-deploy-worker
-
-  databasearbiter:
-    image: "bitnami/mongodb:3.6.17-ol-7-r26"
-    depends_on:
-      - databaseprimary
-    environment:
-      - MONGODB_PRIMARY_HOST=databaseprimary
-      - MONGODB_PRIMARY_PORT_NUMBER=27017
-      - MONGODB_PRIMARY_ROOT_PASSWORD=owl45#21
-      - MONGODB_ADVERTISED_HOSTNAME=databasearbiter
-      - MONGODB_REPLICA_SET_KEY=replicasetkey
-      - MONGODB_REPLICA_SET_NAME=replica_set
-      - MONGODB_REPLICA_SET_MODE=arbiter
-
-    networks:
-      - database
-    deploy: *default-deploy-worker
-
-  images:
-    image: registry:2.7.1
-    ports:
-      - "5050:5000"
-    deploy: *default-deploy-manager
-    networks:
-      - database
-    volumes:
-      - "images:/var/lib/registry"
-
-  agent:
-    image: portainer/agent:linux-amd64-2.1.0-alpine
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/volumes:/var/lib/docker/volumes
-    networks:
-      - portainer
+      - "ray-head"
     deploy:
       mode: global
       placement:
-        constraints:
-          - "node.platform.os==linux"
-
-  portainer:
-    image: portainer/portainer-ce:2.1.1-alpine
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
-    ports:
-      - "9000:9000"
-      - "8000:8000"
-    volumes:
-      - portainer:/data
-    networks:
-      - portainer
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - "node.role==manager"
-
-  sparkmaster:
-    build: microservices/spark_image
-    image: 127.0.0.1:5050/spark
-    ports:
-      - "4040:4040"
-      - "7077:7077"
-      - "8080:8080"
-    environment:
-      - SPARK_ROLE=master
-    deploy: *default-deploy-worker
-    networks:
-      - spark
-      - database
-
-  sparkworker:
-    image: 127.0.0.1:5050/spark
-    entrypoint: dockerize -wait tcp://sparkmaster:7077 -timeout 240s /sbin/my_init
-    ports:
-      - "8081:8081"
-      - "41352:41352"
-    links:
-      - sparkmaster
-    environment:
-      - SPARK_MASTER=sparkmaster
-      - SPARK_ROLE=slave
-    deploy:
-      replicas: 3
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints:
-          - "node.role==worker"
-    networks:
-      - spark
-      - database
-
-  projection:
-    build: microservices/projection_image
-    image: 127.0.0.1:5050/projection
-    ports:
-      - "5001:5001"
-      - "41000:41000"
-    extra_hosts:
-      - "projection:0.0.0.0"
-    depends_on:
-      - databaseprimary
-      - images
-      - sparkmaster
-      - sparkworker
-    deploy: *default-deploy-worker
-    networks:
-      - database
-      - spark
-    environment: *default-service-database-env
-
-  builder:
-    build: microservices/builder_image
-    image: 127.0.0.1:5050/builder
-    ports:
-      - "5002:5002"
-      - "41100:41100"
-    extra_hosts:
-      - "builder:0.0.0.0"
-    depends_on:
-      - databaseprimary
-      - images
-      - sparkmaster
-      - sparkworker
-    deploy: *default-deploy-worker
-    networks:
-      - database
-      - spark
-    environment: *default-service-database-env
-
-  datatypehandler:
-    build: microservices/data_type_handler_image
-    image: 127.0.0.1:5050/data_type_handler
-    ports:
-      - "5003:5003"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-worker
-    networks:
-      - database
-    environment: *default-service-database-env
-
-  histogram:
-    build: microservices/histogram_image
-    image: 127.0.0.1:5050/histogram
-    ports:
-      - "5004:5004"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-worker
-    networks:
-      - database
-    environment: *default-service-database-env
-
-  databasexecutor:
-    build: microservices/database_executor_image
-    image: 127.0.0.1:5050/database_executor
-    ports:
-      - "5006:5006"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-manager
-    volumes:
-      - "database_executor:/explore"
-      - "database_executor:/transform"
-      - "model:/models"
-      - "binary_executor:/binaries"
-      - "code_executor:/code_executions"
-    networks:
-      - database
-    environment: *default-service-database-env
-
-  gatewayapi:
-    image: devopsfaith/krakend:1.2.0
-    volumes:
-      - "./microservices/krakend:/etc/krakend"
-    ports:
-      - "80:8080"
-      - "8090:8090"
-    deploy: *default-deploy-manager
-    networks:
-      - database
-      - spark
-
-  model:
-    build: microservices/model_image
-    image: 127.0.0.1:5050/model
-    ports:
-      - "5007:5007"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-manager
-    networks:
-      - database
-    environment: *default-service-database-env
-    volumes:
-      - "code_executor:/code_executions"
-      - "database_executor:/explore"
-      - "database_executor:/transform"
-      - "model:/models"
-      - "binary_executor:/binaries"
-
-  binaryexecutor:
-    build: microservices/binary_executor_image
-    image: 127.0.0.1:5050/binary_executor
-    ports:
-      - "5008:5008"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-manager
-    networks:
-      - database
-    environment: *default-service-database-env
-    volumes:
-      - "model:/models"
-      - "binary_executor:/binaries"
-      - "database_executor:/transform"
-      - "code_executor:/code_executions"
-
-  codexecutor:
-    build: microservices/code_executor_image
-    image: 127.0.0.1:5050/code_executor
-    ports:
-      - "5009:5009"
-    depends_on:
-      - databaseprimary
-      - images
-    deploy: *default-deploy-manager
-    volumes:
-      - "code_executor:/code_executions"
-      - "database_executor:/explore"
-      - "database_executor:/transform"
-      - "model:/models"
-      - "binary_executor:/binaries"
-      - "database_api:/datasets"
-    networks:
-      - database
-    environment: *default-service-database-env
-
-networks:
-  database:
-  spark:
-  portainer:
-
-volumes:
-  images:
-  database:
-  database_api:
-  database_executor:
-  code_executor:
-  model:
-  binary_executor:
-  portainer:
+        constraints: [node.labels.Head != true]
