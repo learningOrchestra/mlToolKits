@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.7-slim
 
 WORKDIR /usr/src/data_type_handler
 COPY . /usr/src/data_type_handler
