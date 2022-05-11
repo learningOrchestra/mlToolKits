@@ -1,5 +1,5 @@
 flask==2.1.0
 pymongo==3.10.1
-numpy==1.19.0
+numpy==1.21.0
 datetime==4.3
 pytz==2020.1
