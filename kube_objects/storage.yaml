@@ -2,28 +2,8 @@ kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
   name: learning-orchestra-storage-class
-provisioner: oracle.com/oci-fss
-parameters:
-  mntTargetId: ocid1.mounttarget.oc1.sa_saopaulo_1.aaaaaa4np2s5fjvam5zhkllqojxwiottmewxgylpobqxk3dpfuys2ylefuyqaaaa
-
----
-
-apiVersion: v1
-kind: PersistentVolume
-metadata:
- name: learning-orchestra-persistent-volume
-spec:
- storageClassName: learning-orchestra-storage-class
- capacity:
-  storage: 100Gi
- accessModes:
-  - ReadWriteMany
- mountOptions:
-  - nosuid
- nfs:
-  server: 10.0.20.122
-  path: "/learningOrchestraNFS"
-  readOnly: false
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
 
 ---
 
@@ -57,7 +37,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: learning-orchestra-persistent-volume
 
 ---
 
@@ -74,7 +53,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: learning-orchestra-persistent-volume
 
 ---
 
@@ -91,7 +69,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: learning-orchestra-persistent-volume
 
 ---
 
@@ -108,7 +85,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: learning-orchestra-persistent-volume
 
 ---
 
@@ -125,7 +101,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  volumeName: learning-orchestra-persistent-volume
 
 
 
