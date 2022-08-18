@@ -517,14 +517,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/tensorflow",
+      "endpoint": "/api/learningOrchestra/v1/model/autokeras",
       "method": "POST",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "POST",
-          "url_pattern": "/defaultModel?type=model/tensorflow",
+          "url_pattern": "/defaultModel?type=model/autokeras",
           "host": [
             "http://model:5007"
           ],
@@ -533,14 +533,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/autokeras/{modelName}",
       "method": "PATCH",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "PATCH",
-          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
+          "url_pattern": "/defaultModel/{modelName}?type=model/autokeras",
           "host": [
             "http://model:5007"
           ],
@@ -549,14 +549,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/tensorflow",
+      "endpoint": "/api/learningOrchestra/v1/model/autokeras",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "GET",
-          "url_pattern": "/files?type=model/tensorflow",
+          "url_pattern": "/files?type=model/autokeras",
           "host": [
             "http://databaseapi:5000"
           ],
@@ -565,7 +565,7 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/autokeras/{modelName}",
       "method": "GET",
       "output_encoding": "no-op",
       "querystring_params": [
@@ -586,14 +586,14 @@
       ]
     },
     {
-      "endpoint": "/api/learningOrchestra/v1/model/tensorflow/{modelName}",
+      "endpoint": "/api/learningOrchestra/v1/model/autokeras/{modelName}",
       "method": "DELETE",
       "output_encoding": "no-op",
       "backend": [
         {
           "encoding": "no-op",
           "method": "DELETE",
-          "url_pattern": "/defaultModel/{modelName}?type=model/tensorflow",
+          "url_pattern": "/defaultModel/{modelName}?type=model/autokeras",
           "host": [
             "http://model:5007"
           ],

@@ -51,6 +51,7 @@ class Parameters:
 
     def __get_a_class_instance(self, class_code: str) -> object:
         import tensorflow
+        #todo: verificar se é ncessrio importar o autokeras aqui
         class_instance_name = "class_instance"
         class_instance = None
         context_variables = {}

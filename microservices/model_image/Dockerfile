@@ -1,8 +1,9 @@
-FROM python:3.7-slim
+FROM haifengjin/autokeras:latest
 
 WORKDIR /usr/src/model
 COPY . /usr/src/model
-RUN pip install -r requirements.txt
+RUN python3 -m pip install --upgrade pip \
+    && pip install -r requirements.txt
 
 ENV DEFAULT_MODEL_HOST_IP "0.0.0.0"
 ENV DEFAULT_MODEL_HOST_PORT 5007
