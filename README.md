@@ -1,10 +1,10 @@
 # The Learning Orchestra 
 
-The Learnig Orchestra is a Machine Learning INTEGRATION tool
+The Learning Orchestra is a Machine Learning INTEGRATION tool
 
 ## Learning Orchestra ML Toolkits
 
-The Learning Orchestra tool integrates different services from different layers and the core layer is the ML toolkits layer. The data scientist can use existing ML toolkits, like Tensorflow, Scikit-learn, using a single REST API or the Learning Orchestra Python client. The idea is to facilitate and streamline the data scientist development process. Deployment issues from these ML toolkits are solved by Learning Orchestra. Furthermore, it enables the development of stateful steps of a ML pipeline using these ML toolkits, which means that the data scientist can run a transform step and save its output transparently into a container over a cluster of virtual machines from AWS or Google cloud environments. The next ML pipeline step, for instance a training step, can import the previous saved data and perform its execution transparently. This Learning Orchestra behavior is a fundamental advantage against other ML pipeline tools, since it enables re-executions of some steps of a pipeline and not always the entire pipeline. 
+The Learning Orchestra tool integrates different services from different layers and the core layer is the ML toolkits layer. The data scientist can use existing ML toolkits, like Tensorflow, Scikit-learn, using a single REST API or the Learning Orchestra Python client. The idea is to facilitate and streamline the data scientist development process. Deployment issues from these ML toolkits are solved by Learning Orchestra. Furthermore, it enables the development of stateful steps of a ML pipeline using these ML toolkits, which means that the data scientist can run a transform step and save its output transparently into a container over a cluster of virtual machines from AWS or Google cloud environments. The next ML pipeline step, for instance a training step, can import the previously saved data and perform its execution transparently. This Learning Orchestra behavior is a fundamental advantage against other ML pipeline tools, since it enables re-executions of some steps of a pipeline and not always the entire pipeline. 
 
 
 <!-- TOC depthFrom:2 depthTo:4 withLinks:1 updateOnSave:1 orderedList:0 -->
@@ -28,7 +28,7 @@ The Learning Orchestra tool integrates different services from different layers 
 
 The Learning Orchestra system provides two options to access its high level Machine Learning services: a REST API and a Python client.
 
-REST API: We recommand the utilization of a REST API caller tool, like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/).
+REST API: We recommend the utilization of a REST API caller tool, like [Postman](https://www.postman.com/product/api-client/) or [Insomnia](https://insomnia.rest/).
 
 Python client:
 - Check the [repository](https://github.com/learningOrchestra/pythonClient) for more details.
@@ -159,7 +159,7 @@ The documentation [here](https://learningorchestra.github.io/docs).
 
 There is no website.
 
-###### Who is conductiong the Learning Orchestra system?
+###### Who is conducting the Learning Orchestra system?
 
 See the [contributors list](#contributors-sparkles).
 
@@ -196,7 +196,7 @@ If your cluster failed while a microservice is processing a dataset, the task is
 
 The Docker technology re-deploy the containers when they fail. 
 
-###### What happens if my instances loose the connections?
+###### What happens if my instances lose the connections?
 
 If the network connections between cluster instances fail, the Learning Orchestra tries to re-deploy the microservices on different instances.
 

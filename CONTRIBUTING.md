@@ -19,7 +19,7 @@ When creating an issue for a bug or other undefined/unwanted behaviour remember 
 3. Navigate into the project root directory
 4. Create a new [branch](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging), the branch should be named according to what feature/fix you're implementing
 5. Make your changes, stage them and [commit](https://git-scm.com/docs/git-commit) them to the branch
-    - Make sure to use proper language idioms, formatting and linting before commiting your work, like proper variable naming, indentation, etc.
+    - Make sure to use proper language idioms, formatting and linting before committing your work, like proper variable naming, indentation, etc.
     - Make sure your code passes any tests the repository offers
     - Make sure to adopt the coding style of the repository and not to force your own coding habits into the codebase
 6. [Push](https://git-scm.com/docs/git-push) the changes to your fork
@@ -36,5 +36,5 @@ Please be polite to other members and contributors and follow GitHub etiquette.\
 Don't be rude, use crude language or harass other users.
 
 ## License
-The repository is currently licenses under GNU General Public License v3.0.
+The repository is currently licensed under GNU General Public License v3.0.
 By contributing to the project you agree that your contributions will be licensed under the same license and provisions.
