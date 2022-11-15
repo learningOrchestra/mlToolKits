@@ -6,11 +6,11 @@ x-deploy: &default-deploy
     condition: on-failure
 
 x-nfs-config: &default-nfs
-   driver: local
-    driver_opts:
-      type: nfs
-      o: addr=$NFS_SERVER_IP,rw
-      device: ":/mnt/learningOrchestra"
+  driver: local
+  driver_opts:
+    type: nfs
+    o: addr=$NFS_SERVER_IP,rw
+    device: ":/mnt/learningOrchestra"
 
 x-service-database-env: &default-service-database-env
   - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
