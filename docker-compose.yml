@@ -5,17 +5,12 @@ x-deploy: &default-deploy
   restart_policy:
     condition: on-failure
 
-x-deploy-manager: &default-deploy-manager
-  <<: *default-deploy
-  placement:
-    constraints:
-      - "node.role==manager"
-
-x-deploy-worker: &default-deploy-worker
-  <<: *default-deploy
-  placement:
-    constraints:
-      - "node.role==worker"
+x-nfs-config: &default-nfs
+   driver: local
+    driver_opts:
+      type: nfs
+      o: addr=$NFS_SERVER_IP,rw
+      device: ":/mnt/learningOrchestra"
 
 x-service-database-env: &default-service-database-env
   - DATABASE_URL=mongodb://root:owl45#21@databaseprimary,databasesecondary
@@ -32,7 +27,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     volumes:
       - "database_api:/datasets"
     networks:
@@ -53,7 +48,7 @@ services:
       - "database:/bitnami"
     networks:
       - database
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
 
   databasesecondary:
     image: "bitnami/mongodb:3.6.17-ol-7-r26"
@@ -70,7 +65,7 @@ services:
 
     networks:
       - database
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
 
   databasearbiter:
     image: "bitnami/mongodb:3.6.17-ol-7-r26"
@@ -87,7 +82,7 @@ services:
 
     networks:
       - database
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
 
   agent:
     image: portainer/agent:linux-amd64-2.1.0-alpine
@@ -128,7 +123,7 @@ services:
       - "8080:8080"
     environment:
       - SPARK_ROLE=master
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
     networks:
       - spark
       - database
@@ -168,7 +163,7 @@ services:
       - images
       - sparkmaster
       - sparkworker
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
     networks:
       - database
       - spark
@@ -187,7 +182,7 @@ services:
       - images
       - sparkmaster
       - sparkworker
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
     networks:
       - database
       - spark
@@ -201,7 +196,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
     networks:
       - database
     environment: *default-service-database-env
@@ -214,7 +209,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-worker
+    deploy: *default-deploy
     networks:
       - database
     environment: *default-service-database-env
@@ -227,7 +222,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     volumes:
       - "database_executor:/explore"
       - "database_executor:/transform"
@@ -244,7 +239,7 @@ services:
     ports:
       - "80:8080"
       - "8090:8090"
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     networks:
       - database
       - spark
@@ -257,7 +252,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     networks:
       - database
     environment: *default-service-database-env
@@ -276,7 +271,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     networks:
       - database
     environment: *default-service-database-env
@@ -294,7 +289,7 @@ services:
     depends_on:
       - databaseprimary
       - images
-    deploy: *default-deploy-manager
+    deploy: *default-deploy
     volumes:
       - "code_executor:/code_executions"
       - "database_executor:/explore"
@@ -313,10 +308,18 @@ networks:
 
 volumes:
   images:
+    *default-nfs
   database:
+    *default-nfs
   database_api:
+    *default-nfs
   database_executor:
+    *default-nfs
   code_executor:
+    *default-nfs
   model:
+    *default-nfs
   binary_executor:
+    *default-nfs
   portainer:
+    *default-nfs
