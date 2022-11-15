@@ -48,7 +48,13 @@ services:
       - "database:/bitnami"
     networks:
       - database
-    deploy: *default-deploy
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - "node.role==manager"
 
   databasesecondary:
     image: "bitnami/mongodb:3.6.17-ol-7-r26"
@@ -307,9 +313,8 @@ networks:
   portainer:
 
 volumes:
-  images:
-    *default-nfs
   database:
+  images:
     *default-nfs
   database_api:
     *default-nfs
