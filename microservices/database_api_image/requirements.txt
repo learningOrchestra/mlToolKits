@@ -1,6 +1,6 @@
 pymongo==3.10.1
 flask==2.1.0
-requests==2.23.0
+requests==2.31.0
 datetime==4.3
 pytz==2020.1
 validators==0.18.2
