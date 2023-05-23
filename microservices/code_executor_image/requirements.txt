@@ -3,7 +3,7 @@ flask==2.1.0
 datetime==4.3
 pytz==2020.1
 validators==0.18.2
-requests==2.25.1
+requests==2.31.0
 dill==0.3.3
 # Don't set a specific version in dependencies in bellow,
 # they are used directly by user on API request.
